@@ -8,7 +8,6 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import com.inari.firefly.sprite.tile.TileGrid;
 import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
 
 public class TileGridTest {
@@ -20,11 +19,11 @@ public class TileGridTest {
         TileGrid grid3 = new TileGrid( 1, 1, 10, 10, 10, 10, true );
         
         assertEquals( 
-            "TileGrid [viewId=-1, levelId=-1, width=0, height=0, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=[]]", 
+            "TileGrid [viewId=-1, layerId=-1, width=0, height=0, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=[]]", 
             grid1.toString() 
         );
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=10, height=10, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
+            "TileGrid [viewId=1, layerId=1, width=10, height=10, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
             "grid=" +
             "[[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
             "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
@@ -39,7 +38,7 @@ public class TileGridTest {
             grid2.toString() 
         );
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=10, height=10, worldXPos=10.0, worldYPos=10.0, spherical=true, " +
+            "TileGrid [viewId=1, layerId=1, width=10, height=10, cellWidth=0, cellHeight=0, worldXPos=10.0, worldYPos=10.0, spherical=true, " +
             "grid=" +
             "[[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
             "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
@@ -60,7 +59,7 @@ public class TileGridTest {
         TileGrid grid = new TileGrid( 1, 1, 3, 3 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
             "grid=" +
             "[[-1, -1, -1]" +
             "[-1, -1, -1]" +
@@ -73,7 +72,7 @@ public class TileGridTest {
         grid.set( 50, 2, 2 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
             "grid=" +
             "[[50, -1, -1]" +
             "[-1, 50, -1]" +
@@ -86,7 +85,7 @@ public class TileGridTest {
         grid.set( 150, 0, 2 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
             "grid=" +
             "[[50, -1, 150]" +
             "[-1, 150, -1]" +
@@ -99,7 +98,7 @@ public class TileGridTest {
         grid.reset( 2, 0 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
             "grid=" +
             "[[-1, -1, -1]" +
             "[-1, 150, -1]" +
@@ -133,7 +132,7 @@ public class TileGridTest {
         grid.setSpherical( true );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
             "grid=" +
             "[[-1, -1, -1]" +
             "[-1, -1, -1]" +
@@ -144,7 +143,7 @@ public class TileGridTest {
         grid.set( 100, 4, 1 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
             "grid=" +
             "[[-1, -1, -1]" +
             "[-1, 100, -1]" +
@@ -155,7 +154,7 @@ public class TileGridTest {
         grid.set( 100, 1, 5 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
             "grid=" +
             "[[-1, -1, -1]" +
             "[-1, 100, -1]" +
@@ -166,7 +165,7 @@ public class TileGridTest {
         grid.set( 100, 8, 8 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
             "grid=" +
             "[[-1, -1, -1]" +
             "[-1, 100, -1]" +
@@ -177,7 +176,7 @@ public class TileGridTest {
         grid.reset( 8, 8 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
             "grid=" +
             "[[-1, -1, -1]" +
             "[-1, 100, -1]" +
@@ -193,7 +192,7 @@ public class TileGridTest {
         grid.set( 100, 1, 1 );
         grid.set( 100, 2, 2 );
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
             "grid=" +
             "[[100, -1, -1]" +
             "[-1, 100, -1]" +
@@ -204,7 +203,7 @@ public class TileGridTest {
         grid.setWidth( 5 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=5, height=3, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=" +
+            "TileGrid [viewId=1, layerId=1, width=5, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=" +
             "[[100, -1, -1, -1, -1]" +
             "[-1, 100, -1, -1, -1]" +
             "[-1, -1, 100, -1, -1]]]", 
@@ -214,7 +213,7 @@ public class TileGridTest {
         grid.setHeight( 5 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=5, height=5, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=" +
+            "TileGrid [viewId=1, layerId=1, width=5, height=5, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=" +
             "[[100, -1, -1, -1, -1]" +
             "[-1, 100, -1, -1, -1]" +
             "[-1, -1, 100, -1, -1]" +
@@ -227,7 +226,7 @@ public class TileGridTest {
         grid.set( 100, 4, 4 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=5, height=5, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=" +
+            "TileGrid [viewId=1, layerId=1, width=5, height=5, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=" +
             "[[100, -1, -1, -1, -1]" +
             "[-1, 100, -1, -1, -1]" +
             "[-1, -1, 100, -1, -1]" +
@@ -240,7 +239,7 @@ public class TileGridTest {
         grid.setHeight( 3 );
         
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
             "grid=" +
             "[[100, -1, -1]" +
             "[-1, 100, -1]" +
@@ -256,7 +255,7 @@ public class TileGridTest {
         grid.set( 100, 1, 1 );
         grid.set( 100, 2, 2 );
         assertEquals( 
-            "TileGrid [viewId=1, levelId=1, width=3, height=3, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
+            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
             "grid=" +
             "[[100, -1, -1]" +
             "[-1, 100, -1]" +

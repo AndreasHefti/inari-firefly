@@ -8,9 +8,8 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.functional.Matcher;
-import com.inari.commons.lang.indexed.IndexProvider;
-import com.inari.commons.lang.indexed.IndexedTypeMap;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.component.AttributeMap;
@@ -24,6 +23,7 @@ import com.inari.firefly.entity.event.EntityActivationEvent.Type;
 public class EntitySystem implements IEntitySystem {
     
     private static final int DEFAULT_CAPACITY = 100;
+    private static final int DEFAULT_COMPONENT_TYPE_CAPACITY = 10;
 
     private final IEventDispatcher eventDispatcher;
     
@@ -31,7 +31,7 @@ public class EntitySystem implements IEntitySystem {
     private final DynArray<IndexedTypeSet> usedComponents;
     
     private final Stack<Entity> inactiveEntities;
-    private final IndexedTypeMap<Stack<EntityComponent>> unusedComponents;
+    private final DynArray<Stack<EntityComponent>> unusedComponents;
 
     
     public EntitySystem( FFContext context ) {
@@ -52,10 +52,11 @@ public class EntitySystem implements IEntitySystem {
         }
 
         inactiveEntities = new Stack<Entity>();
-        unusedComponents = new IndexedTypeMap<Stack<EntityComponent>>( 
-            EntityComponent.class, 
-            Stack.class 
-        );
+        int size = Indexer.getIndexedTypeSize( EntityComponent.class );
+        if ( size < DEFAULT_COMPONENT_TYPE_CAPACITY ) {
+            size = DEFAULT_COMPONENT_TYPE_CAPACITY;
+        }
+        unusedComponents = new DynArray<Stack<EntityComponent>>( size );
     }
     
     @Override
@@ -205,10 +206,11 @@ public class EntitySystem implements IEntitySystem {
     
     @Override
     public void initEmptyComponents( Class<? extends EntityComponent> componentType, int number ) {
-        Stack<EntityComponent> components = (Stack<EntityComponent>) unusedComponents.getValue( componentType );
+        int componentTypeIndex = Indexer.getIndexForType( componentType, EntityComponent.class );
+        Stack<EntityComponent> components = (Stack<EntityComponent>) unusedComponents.get( componentTypeIndex );
         if ( components == null ) {
             components = new Stack<EntityComponent>();
-            unusedComponents.put( componentType, components );
+            unusedComponents.set( componentTypeIndex, components );
         }
         
         for ( int i = 0; i < number + 1; i++ ) {
@@ -234,21 +236,6 @@ public class EntitySystem implements IEntitySystem {
         
         return usedComponents.get( entityId );
     }
-
-//    @Override
-//    public final <C extends EntityComponent> Iterator<C> getComponentIterator( Class<C> componentType ) {
-//        return getComponentIterator( componentType, new EntityIdIterator( entityIterator() ) );
-//    }
-//    
-//    @Override
-//    public final <C extends EntityComponent> Iterator<C> getComponentIterator( Class<C> componentType, IntIterator entityIterator ) {
-//        return new EntityComponentIterator<C>( componentType, entityIterator );
-//    }
-//
-//    @Override
-//    public final <C extends EntityComponent> Iterator<C> getComponentIterator( Class<C> componentType, Matcher<Entity> matcher ) {
-//        return getComponentIterator( componentType, new EntityIdIterator( entityIterator( matcher ) ) );
-//    }
     
     // ---- Internal -----------------------------------------------------------
     
@@ -262,14 +249,14 @@ public class EntitySystem implements IEntitySystem {
             EntityComponent component = componentsOfEntity.get( i );
             if ( component != null ) {
                 componentsOfEntity.remove( i );
-                Stack<EntityComponent> stack = unusedComponents.getValue( i );
+                Stack<EntityComponent> stack = unusedComponents.get( i );
                 stack.push( component );
             }
         }
     }
     
     private <C extends EntityComponent> EntityComponent newComponent( Class<C> componentType ) {
-        int componentTypeIndex = IndexProvider.getIndexForType( componentType, EntityComponent.class );
+        int componentTypeIndex = Indexer.getIndexForType( componentType, EntityComponent.class );
         
         EntityComponent result = getUnused( componentTypeIndex );
         if ( result != null ) {
@@ -294,7 +281,7 @@ public class EntitySystem implements IEntitySystem {
     }
     
     private EntityComponent getUnused( int componentTypeIndex ) {
-        Stack<EntityComponent> unusedStack = unusedComponents.getValue( componentTypeIndex );
+        Stack<EntityComponent> unusedStack = unusedComponents.get( componentTypeIndex );
         if ( unusedStack.isEmpty() ) {
             return null;
         }

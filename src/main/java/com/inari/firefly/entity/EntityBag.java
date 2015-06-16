@@ -3,14 +3,14 @@ package com.inari.firefly.entity;
 import java.util.BitSet;
 
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.indexed.IndexProvider;
+import com.inari.commons.lang.indexed.Indexer;
 
 public final class EntityBag {
     
     private BitSet entites;
     
     public EntityBag() {
-        this( IndexProvider.getIndexedObjectSize( Entity.class ) );
+        this( Indexer.getIndexedObjectSize( Entity.class ) );
     }
     
     public EntityBag( int size ) {

@@ -1,9 +1,9 @@
 package com.inari.firefly.entity.event;
 
-import com.inari.commons.event.IAspectedEvent;
+import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.lang.aspect.Aspect;
 
-public final class EntityActivationEvent extends IAspectedEvent<EntityActivationListener> {
+public final class EntityActivationEvent extends AspectedEvent<EntityActivationListener> {
     
     public static enum Type {
         ENTITY_ACTIVATED,

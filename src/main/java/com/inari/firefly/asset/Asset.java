@@ -15,7 +15,6 @@ public abstract class Asset extends NamedIndexedComponent implements DynamicAttr
     public static final AttributeKey<String> ASSET_GROUP = new AttributeKey<String>( "group", String.class, Asset.class );
     
     protected boolean loaded = false;
-    protected String name;
     protected String group;
     
     private DynamicAttributeMap dynamicAttributeMap = new DynamicAttributeMap();

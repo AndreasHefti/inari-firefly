@@ -1,9 +1,9 @@
 package com.inari.firefly.state.event;
 
-import com.inari.commons.event.IEvent;
+import com.inari.commons.event.Event;
 import com.inari.firefly.state.StateChange;
 
-public final class StateChangeEvent extends IEvent<StateChangeListener> {
+public final class StateChangeEvent extends Event<StateChangeListener> {
     
     public final StateChange stateChange;
     

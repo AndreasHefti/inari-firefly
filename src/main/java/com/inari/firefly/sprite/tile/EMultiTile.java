@@ -4,14 +4,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.commons.lang.indexed.IndexProvider;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.AttributeKey;
 import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 
 public class EMultiTile extends ETile {
     
-    public static final int COMPONENT_TYPE = IndexProvider.getIndexForType( EMultiTile.class, EntityComponent.class );
+    public static final int COMPONENT_TYPE = Indexer.getIndexForType( EMultiTile.class, EntityComponent.class );
 
     public static final AttributeKey<int[][]> GRID_POSITIONS = new AttributeKey<int[][]>( "gridXPos", int[][].class, ESingleTile.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 

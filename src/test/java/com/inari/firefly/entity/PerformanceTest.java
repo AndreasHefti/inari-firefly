@@ -9,8 +9,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.indexed.IndexProvider;
-import com.inari.commons.lang.indexed.IndexedTypeMap;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 
 public class PerformanceTest {
@@ -104,7 +103,7 @@ public class PerformanceTest {
         
         long startTime = System.currentTimeMillis();
         IntIterator entityIterator = entities.iterator();
-        int componentIndex = IndexProvider.getIndexForType( ETransform.class, EntityComponent.class );
+        int componentIndex = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
         while( entityIterator.hasNext() ) {
             ETransform result = comps.get( entityIterator.next(), componentIndex );
         }
@@ -130,16 +129,16 @@ public class PerformanceTest {
         
         long startTime = System.currentTimeMillis();
         IntIterator entityIterator = entities.iterator();
-        int componentIndex = IndexProvider.getIndexForType( ETransform.class, EntityComponent.class );
+        int componentIndex = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
         while( entityIterator.hasNext() ) {
             ETransform result = comps.get( entityIterator.next(), componentIndex );
         }
-        entityIterator = entities.iterator();
-        while( entityIterator.hasNext() ) {
-            entityIterator.next();
-            EntityComponent remove = comps.remove( 4, componentIndex );
-            comps.put( 4, remove );
-        }
+//        entityIterator = entities.iterator();
+//        while( entityIterator.hasNext() ) {
+//            entityIterator.next();
+//            EntityComponent remove = comps.remove( 4, componentIndex );
+//            comps.put( 4, remove );
+//        }
         long endTime = System.currentTimeMillis();;
         
         System.out.println( "JavaCollections: for " + NUMBER_OF_ENTITIES + " Components to get: " + ( endTime - startTime ) );
@@ -147,27 +146,24 @@ public class PerformanceTest {
     
     private class IndexedTypeMapDynArrayFacade {
         
-        private IndexedTypeMap<DynArray<EntityComponent>> map = new IndexedTypeMap<DynArray<EntityComponent>>(
-                EntityComponent.class,
-                DynArray.class
-        );
+        private DynArray<DynArray<EntityComponent>> map = new DynArray<DynArray<EntityComponent>>();
         
         public void put( int entityId, EntityComponent component ) {
-            DynArray<EntityComponent> list = map.getValue( component.index() );
+            DynArray<EntityComponent> list = map.get( component.index() );
             if( list == null ) {
                 list = new DynArray<EntityComponent>();
-                map.put( component.index(), list );
+                map.set( component.index(), list );
             }
             list.set( entityId, component );
         }
         
         public <C extends EntityComponent> C get( int entityId, int componentIndex ) {
-            DynArray<EntityComponent> list = map.getValue( componentIndex );
+            DynArray<EntityComponent> list = map.get( componentIndex );
             return (C) list.get( entityId );
         }
         
         public <C extends EntityComponent> C remove( int entityId, int componentIndex ) {
-            DynArray<EntityComponent> list = map.getValue( componentIndex );
+            DynArray<EntityComponent> list = map.get( componentIndex );
             if ( list != null ) {
                 return (C) list.remove( entityId );
             }

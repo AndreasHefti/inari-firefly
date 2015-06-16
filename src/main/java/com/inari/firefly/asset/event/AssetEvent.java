@@ -1,9 +1,9 @@
 package com.inari.firefly.asset.event;
 
-import com.inari.commons.event.IEvent;
+import com.inari.commons.event.Event;
 import com.inari.firefly.asset.Asset;
 
-public final class AssetEvent extends IEvent<AssetEventListener> {
+public final class AssetEvent extends Event<AssetEventListener> {
     
     public static enum Type {
         ASSET_CREATED,

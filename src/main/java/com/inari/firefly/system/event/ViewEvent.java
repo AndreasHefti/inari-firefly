@@ -1,9 +1,9 @@
 package com.inari.firefly.system.event;
 
-import com.inari.commons.event.IEvent;
+import com.inari.commons.event.Event;
 import com.inari.firefly.system.View;
 
-public final class ViewEvent extends IEvent<ViewEventListener> {
+public final class ViewEvent extends Event<ViewEventListener> {
     
     public static enum Type {
         VIEW_CREATED,
