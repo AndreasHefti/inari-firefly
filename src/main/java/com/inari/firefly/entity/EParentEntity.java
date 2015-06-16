@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.commons.lang.indexed.IndexProvider;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.AttributeKey;
 import com.inari.firefly.component.AttributeMap;
 
 public class EParentEntity extends EntityComponent {
     
-    public static final int COMPONENT_TYPE = IndexProvider.getIndexForType( EParentEntity.class, EntityComponent.class );
+    public static final int COMPONENT_TYPE = Indexer.getIndexForType( EParentEntity.class, EntityComponent.class );
     
     public static final AttributeKey<Integer> PARENT_ENTITY_ID = new AttributeKey<Integer>( "parentEntityId", Integer.class, EParentEntity.class );
     public static final AttributeKey<Integer> ORDERING = new AttributeKey<Integer>( "ordering", Integer.class, EParentEntity.class );

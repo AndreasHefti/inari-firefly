@@ -5,13 +5,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Vector2f;
-import com.inari.commons.lang.indexed.IndexProvider;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.AttributeKey;
 import com.inari.firefly.component.AttributeMap;
 
 public final class ETransform extends EntityComponent {
     
-    public static final int COMPONENT_TYPE = IndexProvider.getIndexForType( ETransform.class, EntityComponent.class );
+    public static final int COMPONENT_TYPE = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
     
     public static final AttributeKey<Float> XPOSITION = new AttributeKey<Float>( "xpos", Float.class, ETransform.class );
     public static final AttributeKey<Float> YPOSITION = new AttributeKey<Float>( "ypos", Float.class, ETransform.class );

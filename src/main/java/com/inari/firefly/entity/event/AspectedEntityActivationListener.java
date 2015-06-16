@@ -1,7 +1,7 @@
 package com.inari.firefly.entity.event;
 
-import com.inari.commons.event.IAspectedEventListener;
+import com.inari.commons.event.AspectedEventListener;
 
-public interface AspectedEntityActivationListener extends EntityActivationListener, IAspectedEventListener {
+public interface AspectedEntityActivationListener extends EntityActivationListener, AspectedEventListener {
     // Just to bring the Aspect into the EntityActivationListener
 }

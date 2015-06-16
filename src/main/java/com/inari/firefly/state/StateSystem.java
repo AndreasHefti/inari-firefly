@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.commons.lang.indexed.IndexProvider;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.FFContext;
@@ -23,10 +23,10 @@ public class StateSystem implements ComponentBuilderFactory, UpdateEventListener
     private IEventDispatcher eventDispatcher;
     private FFContext context;
     
-    private DynArray<Workflow> workflows = new DynArray<Workflow>( IndexProvider.getIndexedObjectSize( Workflow.class ) );
-    private DynArray<State> states = new DynArray<State>( IndexProvider.getIndexedObjectSize( State.class ) );
-    private DynArray<Collection<StateChange>> stateChangesForState = new DynArray<Collection<StateChange>>( IndexProvider.getIndexedObjectSize( State.class ) );
-    private DynArray<StateChangeCondition> conditions = new DynArray<StateChangeCondition>( IndexProvider.getIndexedObjectSize( StateChangeCondition.class ) );
+    private DynArray<Workflow> workflows = new DynArray<Workflow>( Indexer.getIndexedObjectSize( Workflow.class ) );
+    private DynArray<State> states = new DynArray<State>( Indexer.getIndexedObjectSize( State.class ) );
+    private DynArray<Collection<StateChange>> stateChangesForState = new DynArray<Collection<StateChange>>( Indexer.getIndexedObjectSize( State.class ) );
+    private DynArray<StateChangeCondition> conditions = new DynArray<StateChangeCondition>( Indexer.getIndexedObjectSize( StateChangeCondition.class ) );
     
     private int updateStep = 10;
 

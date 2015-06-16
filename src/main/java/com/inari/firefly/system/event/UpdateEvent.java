@@ -1,8 +1,8 @@
 package com.inari.firefly.system.event;
 
-import com.inari.commons.event.IEvent;
+import com.inari.commons.event.Event;
 
-public final class UpdateEvent extends IEvent<UpdateEventListener>{
+public final class UpdateEvent extends Event<UpdateEventListener>{
     
     /** Use this if the game loop works with elapsed time on update */
     private long timeElapsed;

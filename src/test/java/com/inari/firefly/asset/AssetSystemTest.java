@@ -12,12 +12,12 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.inari.commons.event.IAspectedEvent;
-import com.inari.commons.event.IAspectedEventListener;
-import com.inari.commons.event.IEvent;
+import com.inari.commons.event.TestAspectedEvent;
+import com.inari.commons.event.AspectedEventListener;
+import com.inari.commons.event.Event;
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.commons.event.IMatchedEvent;
-import com.inari.commons.event.IMatchedEventListener;
+import com.inari.commons.event.MatchedEvent;
+import com.inari.commons.event.MatchedEventListener;
 import com.inari.commons.lang.TypedKey;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.asset.event.AssetEvent;
@@ -93,9 +93,9 @@ public class AssetSystemTest {
         
         ComponentBuilder<TestAsset> assetBuilder = service.getAssetBuilder( TestAsset.class );
         assetBuilder
-            .setAttribute( TestAsset.ASSET_NAME, "asset1" )
+            .setAttribute( TestAsset.NAME, "asset1" )
             .setAttribute( TestAsset.ASSET_GROUP,"group1" )
-            .build();
+            .build( 0 );
         
         assertEquals( 
             "AssetSystem [\n" + 
@@ -105,21 +105,21 @@ public class AssetSystemTest {
         );
         
         assetBuilder
-            .setAttribute( TestAsset.ASSET_NAME, "asset2" )
+            .setAttribute( TestAsset.NAME, "asset2" )
             .setAttribute( TestAsset.ASSET_GROUP,"group1" )
-            .build();
+            .build( 1 );
         assetBuilder
-            .setAttribute( TestAsset.ASSET_NAME, "asset3" )
+            .setAttribute( TestAsset.NAME, "asset3" )
             .setAttribute( TestAsset.ASSET_GROUP,"group1" )
-            .build();
+            .build( 2 );
         assetBuilder
-            .setAttribute( TestAsset.ASSET_NAME, "asset4" )
+            .setAttribute( TestAsset.NAME, "asset4" )
             .setAttribute( TestAsset.ASSET_GROUP,"group2" )
-            .build();
+            .build( 3 );
         assetBuilder
-            .setAttribute( TestAsset.ASSET_NAME, "asset5" )
+            .setAttribute( TestAsset.NAME, "asset5" )
             .setAttribute( TestAsset.ASSET_GROUP,"group3" )
-            .build();
+            .build( 4 );
         
         assertEquals( 
             "AssetSystem [\n" + 
@@ -149,7 +149,7 @@ public class AssetSystemTest {
         
         service
             .getAssetBuilder( TestAsset.class )
-                .setAttribute( TestAsset.ASSET_NAME, "asset1" )
+                .setAttribute( TestAsset.NAME, "asset1" )
                 .setAttribute( TestAsset.ASSET_GROUP,"group1" )
             .build();
         
@@ -260,25 +260,25 @@ public class AssetSystemTest {
         private List<String> events = new ArrayList<String>();
 
         @Override
-        public <L> void register( Class<? extends IEvent<L>> eventType, L listener ) {}
+        public <L> void register( Class<? extends Event<L>> eventType, L listener ) {}
 
         @Override
-        public <L> boolean unregister( Class<? extends IEvent<L>> eventType, L listener ) {
+        public <L> boolean unregister( Class<? extends Event<L>> eventType, L listener ) {
             return false;
         }
 
         @Override
-        public <L> void notify( IEvent<L> event ) {
+        public <L> void notify( Event<L> event ) {
             events.add( ( (AssetEvent) event ).getType().toString() );
         }
 
         @Override
-        public <L extends IAspectedEventListener> void notify( IAspectedEvent<L> event ) {
+        public <L extends AspectedEventListener> void notify( TestAspectedEvent<L> event ) {
             //events.add( ( (AssetEvent) event ).getActionType().toString() );
         }
 
         @Override
-        public <L extends IMatchedEventListener> void notify( IMatchedEvent<L> event ) {
+        public <L extends MatchedEventListener> void notify( MatchedEvent<L> event ) {
             //events.add( event.getClass().getSimpleName() );
         }
 

@@ -1,11 +1,11 @@
 package com.inari.firefly.entity.event;
 
-import com.inari.commons.event.IAspectedEvent;
+import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.firefly.entity.IEntitySystem;
 
 @Deprecated // check if this is really useful
-public abstract class EntityChangeEvent extends IAspectedEvent<EntityChangeListener> {
+public abstract class EntityChangeEvent extends AspectedEvent<EntityChangeListener> {
     
     public enum Type {
         COMPONENT_ADDED,

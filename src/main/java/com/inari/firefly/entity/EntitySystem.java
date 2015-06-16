@@ -8,7 +8,7 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.functional.Matcher;
-import com.inari.commons.lang.indexed.IndexProvider;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.indexed.IndexedTypeMap;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
@@ -269,7 +269,7 @@ public class EntitySystem implements IEntitySystem {
     }
     
     private <C extends EntityComponent> EntityComponent newComponent( Class<C> componentType ) {
-        int componentTypeIndex = IndexProvider.getIndexForType( componentType, EntityComponent.class );
+        int componentTypeIndex = Indexer.getIndexForType( componentType, EntityComponent.class );
         
         EntityComponent result = getUnused( componentTypeIndex );
         if ( result != null ) {

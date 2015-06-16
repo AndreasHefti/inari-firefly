@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.indexed.IndexProvider;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.EventDispatcherMock;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.LowerSystemFacadeMock;
@@ -18,7 +18,7 @@ public class ViewSystemTest {
 
     @Test
     public void testCreation() {
-        IndexProvider.clear();
+        Indexer.clear();
         FFContext context = createContext();
         IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
         ViewSystem viewSystem = new ViewSystem( context );
@@ -39,7 +39,7 @@ public class ViewSystemTest {
     
     @Test
     public void testCreateViews() {
-        IndexProvider.clear();
+        Indexer.clear();
         FFContext context = createContext();
         IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
         ViewSystem viewSystem = new ViewSystem( context );
@@ -77,7 +77,7 @@ public class ViewSystemTest {
     
     @Test
     public void testCreateLayersForBaseView() {
-        IndexProvider.clear();
+        Indexer.clear();
         FFContext context = createContext();
         IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
         ViewSystem viewSystem = new ViewSystem( context );

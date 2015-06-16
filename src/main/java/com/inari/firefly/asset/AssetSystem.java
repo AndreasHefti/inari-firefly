@@ -105,12 +105,12 @@ public final class AssetSystem implements ComponentBuilderFactory, Disposable {
             Collection<Asset> alsoDisposedAssets = disposeAsset( asset );
             if ( alsoDisposedAssets != null ) {
                 for ( Asset alsoDisposedAsset : alsoDisposedAssets ) {
-                    delete( alsoDisposedAsset.group, alsoDisposedAsset.name );
+                    delete( alsoDisposedAsset.group, alsoDisposedAsset.getName() );
                 }
             }
         }
         
-        delete( asset.group, asset.name );
+        delete( asset.group, asset.getName() );
     }
 
     public final void deleteAssets( String group ) {
@@ -126,11 +126,11 @@ public final class AssetSystem implements ComponentBuilderFactory, Disposable {
                     assetsToDeleteAlso.addAll( assetsToDeleteAlso );
                 }
             } 
-            delete( asset.group, asset.name );
+            delete( asset.group, asset.getName() );
         }
         
         for ( Asset alsoDisposedAsset : assetsToDeleteAlso ) {
-            delete( alsoDisposedAsset.group, alsoDisposedAsset.name );
+            delete( alsoDisposedAsset.group, alsoDisposedAsset.getName() );
         }
     }
     
@@ -296,7 +296,7 @@ public final class AssetSystem implements ComponentBuilderFactory, Disposable {
             
             asset.fromAttributeMap( attributes );
             
-            if ( asset.name == null ) {
+            if ( asset.getName() == null ) {
                 asset.setName( "New Asset" );
             }
             
@@ -304,12 +304,12 @@ public final class AssetSystem implements ComponentBuilderFactory, Disposable {
                 asset.group = DEFAULT_GROUP_NAME;
             }
 
-            if ( hasAsset( asset.group, asset.name ) ) {
-                throw new ComponentCreationException( "There is already an Asset with name: " + asset.name + " registered for this AssetSystem" );
+            if ( hasAsset( asset.group, asset.getName() ) ) {
+                throw new ComponentCreationException( "There is already an Asset with name: " + asset.getName() + " registered for this AssetSystem" );
             }
 
             Map<String, Asset> nameMapping = getOrCreateNameMapForGroup( asset.group );
-            nameMapping.put( asset.name, asset );
+            nameMapping.put( asset.getName(), asset );
             
             eventDispatcher.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
             return asset;

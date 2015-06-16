@@ -1,9 +1,9 @@
 package com.inari.firefly.system.event;
 
-import com.inari.commons.event.IEvent;
+import com.inari.commons.event.Event;
 import com.inari.commons.geom.Rectangle;
 
-public final class RenderEvent extends IEvent<RenderEventListener> {
+public final class RenderEvent extends Event<RenderEventListener> {
 
     /** Use this if the game loop works with approximation time on rendering */
     private long approximationTime;

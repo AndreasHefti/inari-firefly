@@ -9,7 +9,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.indexed.IndexProvider;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.indexed.IndexedTypeMap;
 import com.inari.commons.lang.list.DynArray;
 
@@ -104,7 +104,7 @@ public class PerformanceTest {
         
         long startTime = System.currentTimeMillis();
         IntIterator entityIterator = entities.iterator();
-        int componentIndex = IndexProvider.getIndexForType( ETransform.class, EntityComponent.class );
+        int componentIndex = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
         while( entityIterator.hasNext() ) {
             ETransform result = comps.get( entityIterator.next(), componentIndex );
         }
@@ -130,7 +130,7 @@ public class PerformanceTest {
         
         long startTime = System.currentTimeMillis();
         IntIterator entityIterator = entities.iterator();
-        int componentIndex = IndexProvider.getIndexForType( ETransform.class, EntityComponent.class );
+        int componentIndex = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
         while( entityIterator.hasNext() ) {
             ETransform result = comps.get( entityIterator.next(), componentIndex );
         }

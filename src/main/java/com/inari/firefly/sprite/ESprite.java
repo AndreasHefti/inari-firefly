@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.graphics.RGBColor;
-import com.inari.commons.lang.indexed.IndexProvider;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.AttributeKey;
 import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -14,7 +14,7 @@ import com.inari.firefly.system.ViewAwareComponent;
 
 public final class ESprite extends EntityComponent implements SpriteRenderable, LayeredComponent, ViewAwareComponent {
     
-    public static final int COMPONENT_TYPE = IndexProvider.getIndexForType( ESprite.class, EntityComponent.class );
+    public static final int COMPONENT_TYPE = Indexer.getIndexForType( ESprite.class, EntityComponent.class );
 
     public static final AttributeKey<Integer> SPRITE_ID = new AttributeKey<Integer>( "spriteId", Integer.class, ESprite.class );
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, ESprite.class );
