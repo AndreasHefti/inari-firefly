@@ -12,7 +12,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.inari.commons.event.TestAspectedEvent;
+import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.event.AspectedEventListener;
 import com.inari.commons.event.Event;
 import com.inari.commons.event.IEventDispatcher;
@@ -273,7 +273,7 @@ public class AssetSystemTest {
         }
 
         @Override
-        public <L extends AspectedEventListener> void notify( TestAspectedEvent<L> event ) {
+        public <L extends AspectedEventListener> void notify( AspectedEvent<L> event ) {
             //events.add( ( (AssetEvent) event ).getActionType().toString() );
         }
 

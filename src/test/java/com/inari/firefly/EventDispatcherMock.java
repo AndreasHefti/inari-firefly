@@ -3,7 +3,7 @@ package com.inari.firefly;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.inari.commons.event.TestAspectedEvent;
+import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.event.AspectedEventListener;
 import com.inari.commons.event.Event;
 import com.inari.commons.event.IEventDispatcher;
@@ -29,7 +29,7 @@ public class EventDispatcherMock implements IEventDispatcher {
     }
 
     @Override
-    public <L extends AspectedEventListener> void notify( TestAspectedEvent<L> event ) {
+    public <L extends AspectedEventListener> void notify( AspectedEvent<L> event ) {
         events.add( event );
     }
 
