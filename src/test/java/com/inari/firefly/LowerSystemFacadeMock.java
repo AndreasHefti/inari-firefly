@@ -67,6 +67,12 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
         return 100;
     }
 
+    @Override
+    public void init( FFContext context ) {
+        // TODO Auto-generated method stub
+        
+    }
+
     
 
 }

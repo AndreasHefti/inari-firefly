@@ -114,7 +114,7 @@ public class MovementAnimationController extends EntityController {
         EMovement movement = entitySystem.getComponent( entityId, EMovement.COMPONENT_TYPE );
         Vector2f velocityVector = movement.getVelocityVector();
         if ( velocityXAnimationId > 0 ) {
-            FloatAnimation animation = animationSystem.getFloatAnimation( velocityXAnimationId );
+            FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, velocityXAnimationId );
             if ( animation != null ) {
                 if ( animation.isActive() ) {
                     velocityVector.dx = animation.get( entityId, velocityVector.dx );
@@ -125,7 +125,7 @@ public class MovementAnimationController extends EntityController {
             }
         } 
         if ( velocityYAnimationId > 0 ) {
-            FloatAnimation animation = animationSystem.getFloatAnimation( velocityYAnimationId );
+            FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, velocityYAnimationId );
             if ( animation != null ) {
                 if ( animation.isActive() ) {
                     velocityVector.dy = animation.get( entityId, velocityVector.dy );

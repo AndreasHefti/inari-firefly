@@ -5,7 +5,6 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
@@ -15,6 +14,7 @@ import com.inari.firefly.entity.IEntitySystem;
 import com.inari.firefly.entity.event.AspectedEntityActivationListener;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.ViewSystem;
 import com.inari.firefly.system.event.ViewEvent;
 import com.inari.firefly.system.event.ViewEvent.Type;
@@ -22,21 +22,27 @@ import com.inari.firefly.system.event.ViewEventListener;
 
 public final class TileGridSystem 
     implements 
+        FFSystem,
         ComponentBuilderFactory, 
         ViewEventListener,
-        AspectedEntityActivationListener, 
-        Disposable {
+        AspectedEntityActivationListener {
     
     public static final int VOID_ENTITY_ID = -1;
     
-    private final IEventDispatcher eventDispatcher;
-    private final IEntitySystem entityProvider;
-    private final ViewSystem viewSystem;
+    private IEventDispatcher eventDispatcher;
+    private IEntitySystem entityProvider;
+    private ViewSystem viewSystem;
     
-    private final DynArray<DynArray<TileGrid>> tileGridOfViewsPerLayer = new DynArray<DynArray<TileGrid>>();
-    private final DynArray<TileGrid> tileGridOfViews = new DynArray<TileGrid>();
+    private final DynArray<DynArray<TileGrid>> tileGridOfViewsPerLayer;
+    private final DynArray<TileGrid> tileGridOfViews;
     
-    public TileGridSystem( FFContext context ) {
+    public TileGridSystem() {
+        tileGridOfViewsPerLayer = new DynArray<DynArray<TileGrid>>();
+        tileGridOfViews = new DynArray<TileGrid>();
+    }
+    
+    @Override
+    public void init( FFContext context ) {
         eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
         entityProvider = context.get( FFContext.System.ENTITY_SYSTEM );
         viewSystem = context.get( FFContext.System.VIEW_SYSTEM );

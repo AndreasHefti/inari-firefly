@@ -4,24 +4,29 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.indexed.IndexedAspectBuilder;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.IEntitySystem;
 import com.inari.firefly.movement.event.MoveEvent;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.event.UpdateEvent;
 import com.inari.firefly.system.event.UpdateEventListener;
 
-public final class MovementSystem implements UpdateEventListener, Disposable {
+public final class MovementSystem implements FFSystem, UpdateEventListener {
     
     private final static Aspect MOVEMENT_ASPECT = IndexedAspectBuilder.build( EntityComponent.class, EMovement.class );
 
     private IEventDispatcher eventDispatcher;
     private IEntitySystem entitySystem;
 
-    MovementSystem(  FFContext context  ) {
+    MovementSystem() {
+        
+    }
+    
+    @Override
+    public void init( FFContext context ) {
         eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
         entitySystem = context.get( FFContext.System.ENTITY_SYSTEM );
         

@@ -19,13 +19,14 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
+import com.inari.firefly.system.FFSystem;
 
-public class EntitySystem implements IEntitySystem {
+public class EntitySystem implements FFSystem, IEntitySystem {
     
     private static final int DEFAULT_CAPACITY = 100;
     private static final int DEFAULT_COMPONENT_TYPE_CAPACITY = 10;
 
-    private final IEventDispatcher eventDispatcher;
+    private IEventDispatcher eventDispatcher;
     
     private final DynArray<Entity> activeEntities;
     private final DynArray<IndexedTypeSet> usedComponents;
@@ -34,16 +35,14 @@ public class EntitySystem implements IEntitySystem {
     private final DynArray<Stack<EntityComponent>> unusedComponents;
 
     
-    public EntitySystem( FFContext context ) {
-        this( context, DEFAULT_CAPACITY );
+    EntitySystem() {
+        this( DEFAULT_CAPACITY );
     }
     
-    public EntitySystem( FFContext context,  int initialCapacity ) {
+    EntitySystem( int initialCapacity ) {
         if ( initialCapacity < 0 ) {
             initialCapacity = DEFAULT_CAPACITY;
         }
-        
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
         
         activeEntities = new DynArray<Entity>( initialCapacity );
         usedComponents = new DynArray<IndexedTypeSet>( initialCapacity );
@@ -57,6 +56,11 @@ public class EntitySystem implements IEntitySystem {
             size = DEFAULT_COMPONENT_TYPE_CAPACITY;
         }
         unusedComponents = new DynArray<Stack<EntityComponent>>( size );
+    }
+    
+    @Override
+    public void init( FFContext context ) {
+        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
     }
     
     @Override

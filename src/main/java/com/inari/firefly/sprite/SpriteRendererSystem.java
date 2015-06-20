@@ -8,7 +8,6 @@ import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.IEntitySystem;
@@ -17,26 +16,31 @@ import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.sprite.tile.ETile;
 import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.sprite.tile.TileGridSystem;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.ILowerSystemFacade;
 import com.inari.firefly.system.event.RenderEvent;
 import com.inari.firefly.system.event.RenderEventListener;
 
-public final class SpriteRendererSystem implements AspectedEntityActivationListener, RenderEventListener, Disposable {
+public final class SpriteRendererSystem implements FFSystem, AspectedEntityActivationListener, RenderEventListener {
     
-    private final IEventDispatcher eventDispatcher;
-    private final IEntitySystem entityProvider;
-    private final TileGridSystem tileGridSystem;
-    private final ILowerSystemFacade lowerSystemFacade;
+    private IEventDispatcher eventDispatcher;
+    private IEntitySystem entityProvider;
+    private TileGridSystem tileGridSystem;
+    private ILowerSystemFacade lowerSystemFacade;
     
     private final DynArray<DynArray<IndexedTypeSet>> renderablesPerView;
     
-    SpriteRendererSystem( FFContext context ) {
+    SpriteRendererSystem() {
+        renderablesPerView = new DynArray<DynArray<IndexedTypeSet>>();
+    }
+    
+    @Override
+    public void init( FFContext context ) {
         eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
         entityProvider = context.get( FFContext.System.ENTITY_SYSTEM );
         lowerSystemFacade = context.get( FFContext.System.LOWER_SYSTEM_FACADE );
         tileGridSystem = context.get( FFContext.System.TILE_GRID_SYSTEM ); 
-        renderablesPerView = new DynArray<DynArray<IndexedTypeSet>>();
-        
+
         eventDispatcher.register( EntityActivationEvent.class, this );
         eventDispatcher.register( RenderEvent.class, this );
     }

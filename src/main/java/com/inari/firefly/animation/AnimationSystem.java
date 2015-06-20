@@ -1,58 +1,93 @@
 package com.inari.firefly.animation;
 
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFContext;
+import com.inari.firefly.component.Component;
+import com.inari.firefly.component.build.BaseComponentBuilder;
+import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.event.UpdateEvent;
 import com.inari.firefly.system.event.UpdateEventListener;
 
-public final class AnimationSystem implements ComponentBuilderFactory, UpdateEventListener, Disposable {
+public final class AnimationSystem implements FFSystem, ComponentBuilderFactory, UpdateEventListener {
     
-    private final DynArray<FloatAnimation> floatAnimations = new DynArray<FloatAnimation>();
-    private final DynArray<IntAnimation> intAnimations = new DynArray<IntAnimation>();
-    private final DynArray<ValueAnimation<?>> valueAnimations = new DynArray<ValueAnimation<?>>();
+    private final DynArray<Animation> animations;
 
-    AnimationSystem( FFContext context ) {
+    AnimationSystem() {
+        animations = new DynArray<Animation>();
+    }
+    
+    @Override
+    public void init( FFContext context ) {
+        
     }
     
     @Override
     public void dispose( FFContext context ) {
-        floatAnimations.clear();
+        animations.clear();
     }
 
     @Override
     public final void update( UpdateEvent event ) {
         long updateTime = event.getUpdate();
-        for ( Animation animation : floatAnimations ) {
-            updateAnimation( updateTime, animation );
+        for ( int i = 0; i < animations.capacity(); i++ ) {
+            Animation animation = animations.get( i );
+            if ( animation != null ) {
+                animation.update( updateTime );
+                if ( animation.finished ) {
+                    animations.remove( animation.indexedId() );
+                    animation.dispose();
+                }
+            }
         }
-        for ( Animation animation : intAnimations ) {
-            updateAnimation( updateTime, animation );
+    }
+    
+    public final Animation getAnimation( int animationId ) {
+        return animations.get( animationId );
+    }
+    
+    public final <A extends Animation> A getAnimation( Class<A> type, int animationId ) {
+        Animation animation = animations.get( animationId );
+        if ( animation == null ) {
+            return null;
         }
-        for ( Animation animation : valueAnimations ) {
-            updateAnimation( updateTime, animation );
+        return type.cast( animation );
+    }
+    
+    
+    @Override
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
+    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
+        if ( !Animation.class.isAssignableFrom( type ) ) {
+            throw new IllegalArgumentException( "The IComponentType is not a subtype of Animation." + type );
         }
+        
+        return new AnimationBuilder( this, type );
     }
     
-    public final FloatAnimation getFloatAnimation( int animationId ) {
-        return floatAnimations.get( animationId );
+    public final <A extends Animation> AnimationBuilder<A> getAnimationBuilder( Class<A> animationType ) {
+        return new AnimationBuilder<A>( this, animationType );
     }
     
-    public final IntAnimation getIntAnimation( int animationId ) {
-        return intAnimations.get( animationId );
-    }
-    
-    @SuppressWarnings( "unchecked" )
-    public final <V> ValueAnimation<V> getValueAnimation( int animationId ) {
-        return (ValueAnimation<V>) valueAnimations.get( animationId );
-    }
-    
-    private final void updateAnimation( long updateTime, Animation animation ) {
-        animation.update( updateTime );
-        if ( animation.finished ) {
-            floatAnimations.remove( animation.indexedId() );
-            animation.dispose();
+    public final class AnimationBuilder<A extends Animation> extends BaseComponentBuilder<A> {
+        
+        private final Class<A> animationType;
+        
+        private AnimationBuilder( AnimationSystem system, Class<A> animationType ) {
+            super( system );
+            this.animationType = animationType;
+        }
+
+        @Override
+        public A build( int componentId ) {
+            attributes.put( Component.INSTANCE_TYPE_NAME, animationType.getName() );
+            A animation = getInstance( componentId );
+            
+            animation.fromAttributeMap( attributes );
+            
+            animations.set( animation.indexedId(), animation );
+            return animation;
         }
     }
 

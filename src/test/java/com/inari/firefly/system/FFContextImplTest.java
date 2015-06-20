@@ -85,8 +85,12 @@ public class FFContextImplTest {
             // TODO Auto-generated method stub
             return 0;
         }
-        
-        
+
+        @Override
+        public void init( FFContext context ) {
+            // TODO Auto-generated method stub
+            
+        }
 
     }
 

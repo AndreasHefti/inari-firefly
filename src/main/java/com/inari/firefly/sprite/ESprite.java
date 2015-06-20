@@ -9,6 +9,7 @@ import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.AttributeKey;
 import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
+import com.inari.firefly.movement.EMovement;
 
 public final class ESprite extends EntityComponent implements SpriteRenderable {
     
@@ -19,11 +20,13 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, ESprite.class );
     public static final AttributeKey<Integer> ORDERING = new AttributeKey<Integer>( "ordering", Integer.class, ESprite.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, ESprite.class );
+    public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, EMovement.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         SPRITE_ID,
         VIEW_ID,
         LAYER_ID, 
-        TINT_COLOR 
+        TINT_COLOR,
+        CONTROLLER_ID
     };
 
     private int spriteId;
@@ -31,6 +34,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     private int layerId;
     private int ordering;
     private final RGBColor tintColor;
+    private int controllerId = -1;
     
     ESprite() {
         spriteId = -1;
@@ -92,6 +96,13 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         this.tintColor.a = tintColor.a;
     }
 
+    public final int getControllerId() {
+        return controllerId;
+    }
+
+    public final void setControllerId( int controllerId ) {
+        this.controllerId = controllerId;
+    }
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
@@ -105,6 +116,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         layerId = attributes.getValue( LAYER_ID, layerId );
         ordering = attributes.getValue( ORDERING, ordering );
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
+        controllerId = attributes.getValue( CONTROLLER_ID, controllerId );
     }
 
     @Override
@@ -114,6 +126,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         attributes.put( LAYER_ID, layerId );
         attributes.put( ORDERING, ordering );
         attributes.put( TINT_COLOR, tintColor );
+        attributes.put( CONTROLLER_ID, controllerId );
     }
 
     @Override
@@ -129,6 +142,8 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         builder.append( ordering );
         builder.append( ", tintColor=" );
         builder.append( tintColor );
+        builder.append( ", controllerId=" );
+        builder.append( controllerId );
         builder.append( "]" );
         return builder.toString();
     }

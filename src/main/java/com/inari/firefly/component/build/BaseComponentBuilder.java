@@ -1,8 +1,12 @@
 package com.inari.firefly.component.build;
 
+import java.lang.reflect.Constructor;
+
+import com.inari.firefly.FFContext;
 import com.inari.firefly.component.AttributeKey;
 import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.component.AttributeMapImpl;
+import com.inari.firefly.component.Component;
 
 public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     
@@ -57,6 +61,46 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     public final <CC> ComponentBuilder<CC> buildAndNext( int componentId, Class<CC> componentType ) {
         build( componentId );
         return componentFactory.getComponentBuilder( componentType );
+    }
+    
+    protected C getInstance( int componentId ) {
+        return getInstance( null, componentId );
+    }
+    
+    protected C getInstance( FFContext context, int componentId ) {
+        try {
+            String className = attributes.getValue( Component.INSTANCE_TYPE_NAME );
+            if ( className == null ) {
+                throw new ComponentCreationException( "Missing mandatory attribute " + Component.INSTANCE_TYPE_NAME + " for StateChangeCondition" );
+            }
+            @SuppressWarnings( "unchecked" )
+            Class<C> typeClass = (Class<C>) Class.forName( className );
+            if ( componentId < 0 ) {
+                try {
+                    Constructor<C> constructor = typeClass.getConstructor();
+                    return constructor.newInstance();
+                } catch ( Throwable t ) {
+                    if ( context == null ) {
+                        throw new ComponentCreationException( "No Component: " + className + " with default constructor found", t );
+                    }
+                    Constructor<C> constructor = typeClass.getConstructor( FFContext.class );
+                    return constructor.newInstance( context );
+                }
+            } else {
+                try {
+                    Constructor<C> constructor = typeClass.getConstructor( int.class );
+                    return constructor.newInstance( componentId );
+                } catch ( Throwable t ) {
+                    if ( context == null ) {
+                        throw new ComponentCreationException( "No Component: " + className + " with default constructor found", t );
+                    }
+                    Constructor<C> constructor = typeClass.getConstructor( int.class, FFContext.class );
+                    return constructor.newInstance( componentId, context );
+                }
+            }
+        } catch ( Exception e ) {
+            throw new ComponentCreationException( "Unexpected Exception while trying to instantiate Component", e );
+        }
     }
 
 }

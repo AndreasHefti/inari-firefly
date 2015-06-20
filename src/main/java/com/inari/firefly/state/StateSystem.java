@@ -1,39 +1,48 @@
 package com.inari.firefly.state;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFContext;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.state.event.StateChangeEvent;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.event.UpdateEvent;
 import com.inari.firefly.system.event.UpdateEventListener;
 
-public class StateSystem implements ComponentBuilderFactory, UpdateEventListener, Disposable {
+public class StateSystem implements FFSystem, ComponentBuilderFactory, UpdateEventListener {
     
     private IEventDispatcher eventDispatcher;
     private FFContext context;
     
-    private DynArray<Workflow> workflows = new DynArray<Workflow>( Indexer.getIndexedObjectSize( Workflow.class ) );
-    private DynArray<State> states = new DynArray<State>( Indexer.getIndexedObjectSize( State.class ) );
-    private DynArray<Collection<StateChange>> stateChangesForState = new DynArray<Collection<StateChange>>( Indexer.getIndexedObjectSize( State.class ) );
-    private DynArray<StateChangeCondition> conditions = new DynArray<StateChangeCondition>( Indexer.getIndexedObjectSize( StateChangeCondition.class ) );
+    private final DynArray<Workflow> workflows;
+    private final DynArray<State> states;
+    private final DynArray<Collection<StateChange>> stateChangesForState;
+    private final DynArray<StateChangeCondition> conditions;
     
     private int updateStep = 10;
 
-    public StateSystem( FFContext context ) {
+    public StateSystem(  ) {
+        workflows = new DynArray<Workflow>( Indexer.getIndexedObjectSize( Workflow.class ) );
+        states = new DynArray<State>( Indexer.getIndexedObjectSize( State.class ) );
+        stateChangesForState = new DynArray<Collection<StateChange>>( Indexer.getIndexedObjectSize( State.class ) );
+        conditions = new DynArray<StateChangeCondition>( Indexer.getIndexedObjectSize( StateChangeCondition.class ) );
+    }
+    
+    @Override
+    public void init( FFContext context ) {
+        if ( this.context != null ) {
+            return;
+        }
         this.context = context;
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
         
+        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
         eventDispatcher.register( UpdateEvent.class, this );
     }
 
@@ -295,40 +304,9 @@ public class StateSystem implements ComponentBuilderFactory, UpdateEventListener
 
         @Override
         public StateChangeCondition build( int componentId ) {
-            String className = attributes.getValue( Component.INSTANCE_TYPE_NAME );
-            if ( className == null ) {
-                throw new ComponentCreationException( "Missing mandatory attribute " + Component.INSTANCE_TYPE_NAME + " for StateChangeCondition" );
-            }
-            
-            try {
-                StateChangeCondition result = getInstance( className, componentId );
-                result.fromAttributeMap( attributes );
-                return result;
-            } catch ( Exception e ) {
-                throw new ComponentCreationException( "Failed to create StateChangeCondition with componentId:" + componentId + " by search also for constructors with IFFContext parameter.", e );
-            }
-        }
-
-        private StateChangeCondition getInstance( String className, int componentId ) throws Exception {
-            @SuppressWarnings( "unchecked" )
-            Class<StateChangeCondition> typeClass = (Class<StateChangeCondition>) Class.forName( className );
-            if ( componentId < 0 ) {
-                try {
-                    Constructor<StateChangeCondition> constructor = typeClass.getConstructor();
-                    return constructor.newInstance();
-                } catch ( Throwable t ) {
-                    Constructor<StateChangeCondition> constructor = typeClass.getConstructor( FFContext.class );
-                    return constructor.newInstance( context );
-                }
-            } else {
-                try {
-                    Constructor<StateChangeCondition> constructor = typeClass.getConstructor( int.class );
-                    return constructor.newInstance( componentId );
-                } catch ( Throwable t ) {
-                    Constructor<StateChangeCondition> constructor = typeClass.getConstructor( int.class, FFContext.class );
-                    return constructor.newInstance( componentId, context );
-                }
-            }
+            StateChangeCondition result = getInstance( context, componentId );
+            result.fromAttributeMap( attributes );
+            return result;
         }
     }
 

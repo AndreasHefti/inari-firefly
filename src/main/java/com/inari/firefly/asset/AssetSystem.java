@@ -1,6 +1,5 @@
 package com.inari.firefly.asset;
 
-import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -9,23 +8,29 @@ import java.util.Set;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.asset.event.AssetEvent;
+import com.inari.firefly.component.Component;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
+import com.inari.firefly.system.FFSystem;
 
-public final class AssetSystem implements ComponentBuilderFactory, Disposable {
+public final class AssetSystem implements FFSystem, ComponentBuilderFactory {
     
     public static final String DEFAULT_GROUP_NAME = "FF_DEFAULT_ASSET_GROUP";
     
-    private final IEventDispatcher eventDispatcher;
-    private final Map<String, Map<String, Asset>> groupNameMapping = new LinkedHashMap<String, Map<String, Asset>>();
+    private IEventDispatcher eventDispatcher;
+    private final Map<String, Map<String, Asset>> groupNameMapping;
     
     
-    public AssetSystem( FFContext context ) {
+    public AssetSystem() {
+        groupNameMapping = new LinkedHashMap<String, Map<String, Asset>>();
+    }
+    
+    @Override
+    public void init( FFContext context ) {
         eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
     }
 
@@ -50,7 +55,7 @@ public final class AssetSystem implements ComponentBuilderFactory, Disposable {
         return new AssetBuilder( this, type );
     }
 
-    public final <A extends Asset> ComponentBuilder<A> getAssetBuilder( Class<A> assetType ) {
+    public final <A extends Asset> AssetBuilder<A> getAssetBuilder( Class<A> assetType ) {
         return new AssetBuilder<A>( this, assetType );
     }
     
@@ -286,13 +291,8 @@ public final class AssetSystem implements ComponentBuilderFactory, Disposable {
 
         @Override
         public A build( int componentId ) {
-            A asset;
-            try {
-                Constructor<A> constructor = assetType.getDeclaredConstructor( int.class );
-                asset = constructor.newInstance( componentId );
-            } catch ( Exception e ) {
-                throw new ComponentCreationException( "Failed to create an instance for Asset: " + assetType, e );
-            }
+            attributes.put( Component.INSTANCE_TYPE_NAME, assetType.getName() );
+            A asset = getInstance( componentId );
             
             asset.fromAttributeMap( attributes );
             

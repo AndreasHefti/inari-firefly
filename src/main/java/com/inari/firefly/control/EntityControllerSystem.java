@@ -7,25 +7,41 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFContext;
+import com.inari.firefly.component.build.BaseComponentBuilder;
+import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.entity.IEntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
 import com.inari.firefly.entity.event.EntityActivationListener;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.event.UpdateEvent;
 import com.inari.firefly.system.event.UpdateEventListener;
 
-public final class EntityControllerSystem implements ComponentBuilderFactory, EntityActivationListener, UpdateEventListener, Disposable {
+public final class EntityControllerSystem 
+    implements 
+        FFSystem,
+        ComponentBuilderFactory, 
+        EntityActivationListener, 
+        UpdateEventListener {
     
-    private final IEntitySystem entitySystem;
+    private IEntitySystem entitySystem;
+    private FFContext context;
     
-    private Set<ComponentControllerType> allActiveControllerTypes = new HashSet<ComponentControllerType>();
-    private DynArray<EntityController> controller = new DynArray<EntityController>();
-    private DynArray<IntBag> entitiesPerController = new DynArray<IntBag>();
+    private final Set<ComponentControllerType> allActiveControllerTypes;
+    private final DynArray<EntityController> controller;
+    private final DynArray<IntBag> entitiesPerController;
 
-    EntityControllerSystem( FFContext context ) {
+    EntityControllerSystem() {
+        allActiveControllerTypes = new HashSet<ComponentControllerType>();
+        controller = new DynArray<EntityController>();
+        entitiesPerController = new DynArray<IntBag>();
+    }
+    
+    @Override
+    public void init( FFContext context ) {
+        this.context = context;
         entitySystem = context.get( FFContext.System.ENTITY_SYSTEM );
     }
 
@@ -73,6 +89,20 @@ public final class EntityControllerSystem implements ComponentBuilderFactory, En
         }
     }
     
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
+        if ( type == EntityController.class ) {
+            return (ComponentBuilder<C>) getEntityControllerBuilder();
+        }
+        
+        throw new IllegalArgumentException( "Unsupported IComponent type for StateSystem. Type: " + type );
+    }
+    
+    public final EntityControllerBuilder getEntityControllerBuilder() {
+        return new EntityControllerBuilder( this );
+    }
+    
     private void addEntityController( EntityController entityController ) {
         if ( controller.contains( entityController.indexedId() ) ) {
             return;
@@ -81,4 +111,18 @@ public final class EntityControllerSystem implements ComponentBuilderFactory, En
         allActiveControllerTypes.add( entityController.getComponentControllerType() );
     }
 
+    private final class EntityControllerBuilder extends BaseComponentBuilder<EntityController> {
+
+        protected EntityControllerBuilder( ComponentBuilderFactory componentFactory ) {
+            super( componentFactory );
+        }
+
+        @Override
+        public EntityController build( int componentId ) {
+            EntityController result = getInstance( context, componentId );
+            result.fromAttributeMap( attributes );
+            addEntityController( result );
+            return result;
+        }
+    }
 }

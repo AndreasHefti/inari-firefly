@@ -7,7 +7,6 @@ import java.util.List;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.component.AttributeKey;
 import com.inari.firefly.component.build.BaseComponentBuilder;
@@ -17,21 +16,25 @@ import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.event.RenderEvent;
 import com.inari.firefly.system.event.ViewEvent;
 
-public final class ViewSystem implements ComponentBuilderFactory, Disposable {
+public final class ViewSystem implements FFSystem, ComponentBuilderFactory {
     
     public static final int BASE_VIEW_ID = 0;
 
-    private final IEventDispatcher eventDispatcher;
+    private IEventDispatcher eventDispatcher;
     
     private final DynArray<View> views;
-    private final DynArray<List<Layer>> layersOfView = new DynArray<List<Layer>>();
+    private final DynArray<List<Layer>> layersOfView;
     
     
-    ViewSystem( FFContext context ) {
+    ViewSystem() {
+        views = new DynArray<View>();
+        layersOfView = new DynArray<List<Layer>>();
+    }
+    
+    @Override
+    public void init( FFContext context ) {
         this.eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
 
-        views = new DynArray<View>();
-        
         // create the base view that is the screen
         ILowerSystemFacade lowerSystemFacade = context.get( FFContext.System.LOWER_SYSTEM_FACADE );
         Rectangle screenBounds = new Rectangle(

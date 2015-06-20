@@ -30,6 +30,11 @@ public abstract class Animation extends NamedIndexedComponent {
         return Animation.class;
     }
 
+    @Override
+    public final Class<Animation> getIndexedObjectType() {
+        return Animation.class;
+    }
+
     public final long getStartTime() {
         return startTime;
     }
