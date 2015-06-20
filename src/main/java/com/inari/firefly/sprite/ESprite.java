@@ -9,34 +9,34 @@ import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.AttributeKey;
 import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
-import com.inari.firefly.system.LayeredComponent;
-import com.inari.firefly.system.ViewAwareComponent;
 
-public final class ESprite extends EntityComponent implements SpriteRenderable, LayeredComponent, ViewAwareComponent {
+public final class ESprite extends EntityComponent implements SpriteRenderable {
     
     public static final int COMPONENT_TYPE = Indexer.getIndexForType( ESprite.class, EntityComponent.class );
 
     public static final AttributeKey<Integer> SPRITE_ID = new AttributeKey<Integer>( "spriteId", Integer.class, ESprite.class );
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, ESprite.class );
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, ESprite.class );
-    public static final AttributeKey<RGBColor> RENDER_COLOR = new AttributeKey<RGBColor>( "renderColor", RGBColor.class, ESprite.class );
+    public static final AttributeKey<Integer> ORDERING = new AttributeKey<Integer>( "ordering", Integer.class, ESprite.class );
+    public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, ESprite.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         SPRITE_ID,
         VIEW_ID,
         LAYER_ID, 
-        RENDER_COLOR 
+        TINT_COLOR 
     };
 
     private int spriteId;
     private int viewId;
     private int layerId;
-    private final RGBColor renderColor;
+    private int ordering;
+    private final RGBColor tintColor;
     
     ESprite() {
         spriteId = -1;
         viewId = 0;
         layerId = 0;
-        renderColor = new RGBColor( 1, 1, 1, 0 );
+        tintColor = new RGBColor( 1, 1, 1, 0 );
     }
     
     @Override
@@ -70,17 +70,26 @@ public final class ESprite extends EntityComponent implements SpriteRenderable, 
     public final void setLayerId( int layerId ) {
         this.layerId = layerId;
     }
-
+    
     @Override
-    public final RGBColor getRenderColor() {
-        return renderColor;
+    public final int getOrdering() {
+        return ordering;
     }
 
-    public final void setRenderColor( RGBColor renderColor ) {
-        this.renderColor.r = renderColor.r;
-        this.renderColor.g = renderColor.g;
-        this.renderColor.b = renderColor.b;
-        this.renderColor.a = renderColor.a;
+    public final void setOrdering( int ordering ) {
+        this.ordering = ordering;
+    }
+
+    @Override
+    public final RGBColor getTintColor() {
+        return tintColor;
+    }
+
+    public final void setTintColor( RGBColor tintColor ) {
+        this.tintColor.r = tintColor.r;
+        this.tintColor.g = tintColor.g;
+        this.tintColor.b = tintColor.b;
+        this.tintColor.a = tintColor.a;
     }
 
 
@@ -94,7 +103,8 @@ public final class ESprite extends EntityComponent implements SpriteRenderable, 
         spriteId = attributes.getValue( SPRITE_ID, spriteId );
         viewId = attributes.getValue( VIEW_ID, viewId );
         layerId = attributes.getValue( LAYER_ID, layerId );
-        setRenderColor( attributes.getValue( RENDER_COLOR, this.renderColor ) );
+        ordering = attributes.getValue( ORDERING, ordering );
+        setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
     }
 
     @Override
@@ -102,20 +112,23 @@ public final class ESprite extends EntityComponent implements SpriteRenderable, 
         attributes.put( SPRITE_ID, spriteId );
         attributes.put( VIEW_ID, viewId );
         attributes.put( LAYER_ID, layerId );
-        attributes.put( RENDER_COLOR, renderColor );
+        attributes.put( ORDERING, ordering );
+        attributes.put( TINT_COLOR, tintColor );
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append( "CSprite [spriteId=" );
+        builder.append( "ESprite [spriteId=" );
         builder.append( spriteId );
         builder.append( ", viewId=" );
         builder.append( viewId );
         builder.append( ", layerId=" );
         builder.append( layerId );
-        builder.append( ", renderColor=" );
-        builder.append( renderColor );
+        builder.append( ", ordering=" );
+        builder.append( ordering );
+        builder.append( ", tintColor=" );
+        builder.append( tintColor );
         builder.append( "]" );
         return builder.toString();
     }

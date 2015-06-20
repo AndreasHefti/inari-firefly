@@ -1,6 +1,7 @@
 package com.inari.firefly.sprite.tile;
 
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.list.DynArray;
@@ -76,8 +77,7 @@ public final class TileGridSystem
 
     @Override
     public final boolean match( Aspect aspect ) {
-        return aspect.contains( ESingleTile.COMPONENT_TYPE ) || 
-               aspect.contains( EMultiTile.COMPONENT_TYPE );
+        return aspect.contains( ETile.COMPONENT_TYPE );
     }
     
     public final boolean hasTileGrid( int viewId, int layerId ) {
@@ -175,31 +175,27 @@ public final class TileGridSystem
     
     
     private final void registerEntity( int entityId, Aspect entityAspect ) {
-        if ( entityAspect.contains( ESingleTile.COMPONENT_TYPE ) ) {
-            ESingleTile tile = entityProvider.getComponent( entityId, ESingleTile.COMPONENT_TYPE );
-            TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
-            tileGrid.set( entityId, tile.getGridXPosition(), tile.getGridYPosition() );
+        ETile tile = entityProvider.getComponent( entityId, ETile.COMPONENT_TYPE );
+        TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
+        if ( tile.isMultiPosition() ) {
+            Position gridPosition = tile.getGridPosition();
+            tileGrid.set( entityId, gridPosition.x, gridPosition.y );
         } else {
-            EMultiTile tile = entityProvider.getComponent( entityId, EMultiTile.COMPONENT_TYPE );
-            TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
-            int[][] positions = tile.getGridPositions();
-            for ( int i = 0; i < positions.length; i++ ) {
-                tileGrid.set( entityId, positions[ i ][ 0 ], positions[ i ][ 1 ] );
+            for ( Position gridPosition : tile.getGridPositions() ) {
+                tileGrid.set( entityId, gridPosition.x, gridPosition.y );
             }
         }
     }
     
     private final void unregisterEntity( int entityId, Aspect entityAspect ) {
-        if ( entityAspect.contains( ESingleTile.COMPONENT_TYPE ) ) {
-            ESingleTile tile = entityProvider.getComponent( entityId, ESingleTile.COMPONENT_TYPE );
-            TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
-            tileGrid.reset( tile.getGridXPosition(), tile.getGridYPosition() );
+        ETile tile = entityProvider.getComponent( entityId, ETile.COMPONENT_TYPE );
+        TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
+        if ( tile.isMultiPosition() ) {
+            Position gridPosition = tile.getGridPosition();
+            tileGrid.reset( gridPosition.x, gridPosition.y );
         } else {
-            EMultiTile tile = entityProvider.getComponent( entityId, EMultiTile.COMPONENT_TYPE );
-            TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
-            int[][] positions = tile.getGridPositions();
-            for ( int i = 0; i < positions.length; i++ ) {
-                tileGrid.reset( positions[ i ][ 0 ], positions[ i ][ 1 ] );
+            for ( Position gridPosition : tile.getGridPositions() ) {
+                tileGrid.reset( gridPosition.x, gridPosition.y );
             }
         }
     }

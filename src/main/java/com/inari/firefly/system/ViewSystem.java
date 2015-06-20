@@ -203,18 +203,9 @@ public final class ViewSystem implements ComponentBuilderFactory, Disposable {
             }
             
             int viewId = view.indexedId();
-            Collection<Layer> layers = layersOfView.remove( viewId );
-            
             renderEvent.setViewId( viewId );
             renderEvent.setClip( view.getBounds() );
-            if ( layers != null ) {
-                for ( Layer layer : layers ) {
-                    renderEvent.setLayerId( layer.indexedId() );
-                    eventDispatcher.notify( renderEvent );
-                } 
-            } else {
-                eventDispatcher.notify( renderEvent );
-            }
+            eventDispatcher.notify( renderEvent );
         }
     }
     

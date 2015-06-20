@@ -333,7 +333,7 @@ public final class TileGrid implements Component {
             return result;
         }
 
-        final Vector2f getWorldPosition() {
+        public final Vector2f getWorldPosition() {
             return worldPosition;
         }
 

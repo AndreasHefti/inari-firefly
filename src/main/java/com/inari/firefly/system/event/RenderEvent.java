@@ -9,8 +9,6 @@ public final class RenderEvent extends Event<RenderEventListener> {
     private long approximationTime;
     /** Defines current View for rendering */
     private int viewId;
-    /** Defines the current layer for rendering */
-    private int layerId;
     /** Defines a clipping area */
     private final Rectangle clip = new Rectangle();
     
@@ -28,14 +26,6 @@ public final class RenderEvent extends Event<RenderEventListener> {
 
     public final void setViewId( int viewId ) {
         this.viewId = viewId;
-    }
-
-    public int getLayerId() {
-        return layerId;
-    }
-
-    public void setLayerId( int layerId ) {
-        this.layerId = layerId;
     }
     
     public Rectangle getClip() {

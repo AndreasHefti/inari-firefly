@@ -392,63 +392,6 @@ public class EntitySystem implements IEntitySystem {
         }
     }
     
-//    private final class EntityIdIterator implements IntIterator {
-//        
-//        private final Iterator<Entity> delegate;
-//
-//        public EntityIdIterator( Iterator<Entity> delegate ) {
-//            super();
-//            this.delegate = delegate;
-//        }
-//
-//        @Override
-//        public boolean hasNext() {
-//            return delegate.hasNext();
-//        }
-//
-//        @Override
-//        public int next() {
-//            return delegate.next().indexedId();
-//        }
-//    }
-//    
-//    private final class EntityComponentIterator<C extends EntityComponent> implements Iterator<C> {
-//        
-//        private final IntIterator entityIterator;
-//        private final Class<C> componentType;
-//        private C next = null;
-//        
-//        private EntityComponentIterator( Class<C> componentType, IntIterator entityIterator ) {
-//            this.entityIterator = entityIterator;
-//            this.componentType = componentType;
-//            findNext();
-//        }
-//
-//        @Override
-//        public boolean hasNext() {
-//            return next != null;
-//        }
-//
-//        @Override
-//        public C next() {
-//            C result = next;
-//            findNext();
-//            return result;
-//        }
-//        
-//        private void findNext() {
-//            next = null;
-//            while( entityIterator.hasNext() && next == null ) {
-//                next = getComponent( entityIterator.next(), componentType );
-//            }
-//        }
-//
-//        @Override
-//        public void remove() {
-//            throw new UnsupportedOperationException();
-//        }
-//    }
-    
     private final Entity createEntity( int componentId ) {
         if ( componentId >= 0 ) {
             return new Entity( componentId, this );
