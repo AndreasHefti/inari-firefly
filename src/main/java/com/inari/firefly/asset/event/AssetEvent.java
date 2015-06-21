@@ -12,20 +12,14 @@ public final class AssetEvent extends Event<AssetEventListener> {
         ASSET_DELETED
     }
     
-    private final Asset asset;
-    private final Type type;
+    public final Asset asset;
+    public final Class<? extends Asset> assetType;
+    public final Type type;
 
     public AssetEvent( Asset asset, Type type ) {
         this.asset = asset;
+        assetType = asset.getIndexedObjectType();
         this.type = type;
-    }
-
-    public final Asset getAsset() {
-        return asset;
-    }
-
-    public final Type getType() {
-        return type;
     }
 
     @Override

@@ -1,7 +1,10 @@
 package com.inari.firefly.animation;
 
+import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFContext;
+import com.inari.firefly.animation.event.AnimationEvent;
+import com.inari.firefly.animation.event.AnimationEventListener;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
@@ -10,7 +13,9 @@ import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.event.UpdateEvent;
 import com.inari.firefly.system.event.UpdateEventListener;
 
-public final class AnimationSystem implements FFSystem, ComponentBuilderFactory, UpdateEventListener {
+public final class AnimationSystem implements FFSystem, ComponentBuilderFactory, UpdateEventListener, AnimationEventListener {
+    
+    private IEventDispatcher eventDispatcher;
     
     private final DynArray<Animation> animations;
 
@@ -20,12 +25,38 @@ public final class AnimationSystem implements FFSystem, ComponentBuilderFactory,
     
     @Override
     public void init( FFContext context ) {
+        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
         
+        eventDispatcher.register( UpdateEvent.class, this );
+        eventDispatcher.register( AnimationEvent.class, this );
     }
     
     @Override
     public void dispose( FFContext context ) {
         animations.clear();
+        
+        eventDispatcher.unregister( UpdateEvent.class, this );
+        eventDispatcher.unregister( AnimationEvent.class, this );
+    }
+    
+    @Override
+    public void onAnimationEvent( AnimationEvent event ) {
+        Animation animation = animations.get( event.animationId );
+        if ( animation == null ) {
+            return;
+        }
+        
+        switch ( event.type ) {
+            case START_ANIMATION: {
+                animation.active = true;
+                break;
+            }
+            case STOP_ANIMATION: {
+                animation.active = false;
+                animation.finished = true;
+                break;
+            }
+        }
     }
 
     @Override

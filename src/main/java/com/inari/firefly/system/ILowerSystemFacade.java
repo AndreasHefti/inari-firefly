@@ -2,6 +2,7 @@ package com.inari.firefly.system;
 
 import com.inari.firefly.asset.event.AssetEventListener;
 import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sprite.SpriteRenderable;
 import com.inari.firefly.system.event.ViewEventListener;
 
@@ -16,6 +17,10 @@ public interface ILowerSystemFacade extends FFSystem, AssetEventListener, ViewEv
     void endRendering( View view );
     
     void flush();
+    
+    void playSound( Sound sound );
+    
+    void stopSound( Sound sound );
 
     int getScreenWidth();
 
