@@ -4,9 +4,10 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.EntityControllerSystem;
+import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.IEntitySystem;
 import com.inari.firefly.movement.MovementSystem;
+import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.sprite.SpriteRendererSystem;
 import com.inari.firefly.sprite.tile.TileGridSystem;
 import com.inari.firefly.state.StateSystem;
@@ -37,7 +38,7 @@ public interface FFContext {
         
         public static final TypedKey<IEntitySystem> ENTITY_SYSTEM = TypedKey.create( "FF_ENTITY_SYSTEM", IEntitySystem.class );
         
-        public static final TypedKey<EntityControllerSystem> ENTITY_CONTROLLER_SYSTEM = TypedKey.create( "FF_NTITY_CONTROLLER_SYSTEM", EntityControllerSystem.class );
+        public static final TypedKey<ControllerSystem> ENTITY_CONTROLLER_SYSTEM = TypedKey.create( "FF_NTITY_CONTROLLER_SYSTEM", ControllerSystem.class );
         
         public static final TypedKey<TileGridSystem> TILE_GRID_SYSTEM = TypedKey.create( "FF_TILE_GRID_SYSTEM", TileGridSystem.class ); 
         
@@ -49,8 +50,9 @@ public interface FFContext {
         
         public static final TypedKey<AnimationSystem> ANIMATION_SYSTEM = TypedKey.create( "FF_ANIMATION_SYSTEM", AnimationSystem.class );
         
-        public static final TypedKey<MovementSystem> MOVEMENT_SYSTEM = TypedKey.create( "FF_MovementSystem", MovementSystem.class );
+        public static final TypedKey<MovementSystem> MOVEMENT_SYSTEM = TypedKey.create( "FF_MOVEMENT_SYSTEM", MovementSystem.class );
         
+        public static final TypedKey<SoundSystem> SOUND_SYSTEM = TypedKey.create( "FF_SOUND_SYSTEM", SoundSystem.class );
         
     }
     

@@ -13,17 +13,20 @@ public final class Sound extends NamedIndexedComponent {
     public static final AttributeKey<Float> VOLUME = new AttributeKey<Float>( "volume", Float.class, Sound.class );
     public static final AttributeKey<Float> PITCH = new AttributeKey<Float>( "pitch", Float.class, Sound.class );
     public static final AttributeKey<Float> PAN = new AttributeKey<Float>( "pan", Float.class, Sound.class );
+    public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, Sound.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         LOOPING,
         VOLUME,
         PITCH,
-        PAN
+        PAN,
+        CONTROLLER_ID
     };
     
     private boolean looping;
-    private float volume;
-    private float pitch;
-    private float pan;
+    float volume;
+    float pitch;
+    float pan;
+    private int controllerId;
     
     Sound( int id ) {
         super( id );
@@ -71,6 +74,14 @@ public final class Sound extends NamedIndexedComponent {
         this.pan = pan;
     }
 
+    public final int getControllerId() {
+        return controllerId;
+    }
+
+    public final void setControllerId( int controllerId ) {
+        this.controllerId = controllerId;
+    }
+
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
@@ -86,6 +97,7 @@ public final class Sound extends NamedIndexedComponent {
         volume = attributes.getValue( VOLUME, volume );
         pitch = attributes.getValue( PITCH, pitch );
         pan = attributes.getValue( PAN, pan );
+        controllerId = attributes.getValue( CONTROLLER_ID, controllerId );
     }
 
     @Override
@@ -96,6 +108,7 @@ public final class Sound extends NamedIndexedComponent {
         attributes.put( VOLUME, volume );
         attributes.put( PITCH, pitch );
         attributes.put( PAN, pan );
+        attributes.put( CONTROLLER_ID, controllerId );
     }
 
     

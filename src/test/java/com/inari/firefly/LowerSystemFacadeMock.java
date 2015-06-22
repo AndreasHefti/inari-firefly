@@ -2,6 +2,7 @@ package com.inari.firefly;
 
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sprite.SpriteRenderable;
 import com.inari.firefly.system.ILowerSystemFacade;
 import com.inari.firefly.system.View;
@@ -69,6 +70,12 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
 
     @Override
     public void init( FFContext context ) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onSoundEvent( SoundEvent event ) {
         // TODO Auto-generated method stub
         
     }

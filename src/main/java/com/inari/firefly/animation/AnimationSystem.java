@@ -1,5 +1,7 @@
 package com.inari.firefly.animation;
 
+import java.lang.reflect.Constructor;
+
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFContext;
@@ -108,6 +110,11 @@ public final class AnimationSystem implements FFSystem, ComponentBuilderFactory,
         private AnimationBuilder( AnimationSystem system, Class<A> animationType ) {
             super( system );
             this.animationType = animationType;
+        }
+        
+        @Override
+        protected A createInstance( Constructor<A> constructor, Object... paramValues ) throws Exception {
+            return constructor.newInstance( paramValues );
         }
 
         @Override

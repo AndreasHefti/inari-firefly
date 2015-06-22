@@ -248,10 +248,12 @@ public final class ViewSystem implements FFSystem, ComponentBuilderFactory {
                     throw new ComponentCreationException( "Layering is not enabled for view with id: " + viewId + ". Enable Layering for View first" );
                 }
                 
-                List<Layer> layers = layersOfView.get( viewId );
-                if ( layers == null ) {
+                List<Layer> layers;
+                if ( !layersOfView.contains( viewId ) ) {
                     layers = new ArrayList<Layer>();
                     layersOfView.set( viewId, layers );
+                } else {
+                    layers = layersOfView.get( viewId );
                 }
              
                 layers.add( layer );

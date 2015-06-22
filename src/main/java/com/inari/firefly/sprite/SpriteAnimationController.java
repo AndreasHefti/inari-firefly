@@ -5,16 +5,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.graphics.RGBColor;
-import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.FloatAnimation;
 import com.inari.firefly.animation.IntAnimation;
 import com.inari.firefly.component.AttributeKey;
 import com.inari.firefly.component.AttributeMap;
-import com.inari.firefly.control.ComponentControllerType;
-import com.inari.firefly.control.EntityController;
-import com.inari.firefly.entity.IEntitySystem;
+import com.inari.firefly.entity.EntityController;
 
 public class SpriteAnimationController extends EntityController {
     
@@ -31,42 +28,19 @@ public class SpriteAnimationController extends EntityController {
         TINT_BLUE_ANIMATION_ID
     };
     
-    private static final ComponentControllerType COMPONENT_CONTROLLER_TYPE = new ComponentControllerType() {
-        
-        @Override
-        public final int getControllerId( IndexedTypeSet entityComponents ) {
-            if ( !entityComponents.contains( ESprite.COMPONENT_TYPE ) ) {
-                return -1;
-            }
-            ESprite sprite = entityComponents.get( ESprite.COMPONENT_TYPE );
-            return sprite.getControllerId();
-        }
 
-        @Override
-        public final Class<ESprite> getType() {
-            return ESprite.class;
-        }
-        
-        @Override
-        public final AttributeKey<Integer> getAttribute() {
-            return ESprite.CONTROLLER_ID;
-        }
-    };
     
     private final AnimationSystem animationSystem;
-    private final IEntitySystem entitySystem;
     
-    private int spriteAnimationId;
-    private int tintRedAnimationId;
-    private int tintGreenAnimationId;
-    private int tintBlueAnimationId;
-    private int tintAlphaAnimationId;
+    private int spriteAnimationId = -1;
+    private int tintRedAnimationId = -1;
+    private int tintGreenAnimationId = -1;
+    private int tintBlueAnimationId = -1;
+    private int tintAlphaAnimationId = -1;
     
     SpriteAnimationController( int id, FFContext context ) {
-        super( id );
-        
+        super( id, context );
         animationSystem = context.get( FFContext.System.ANIMATION_SYSTEM );
-        entitySystem = context.get( FFContext.System.ENTITY_SYSTEM );
     }
 
     public final int getSpriteAnimationId() {
@@ -138,17 +112,17 @@ public class SpriteAnimationController extends EntityController {
         attributes.put( TINT_BLUE_ANIMATION_ID, tintBlueAnimationId );
         attributes.put( TINT_ALPHA_ANIMATION_ID, tintAlphaAnimationId );
     }
-    
+
     @Override
-    public final ComponentControllerType getComponentControllerType() {
-        return COMPONENT_CONTROLLER_TYPE;
+    protected int getControlledComponentTypeId() {
+        return ESprite.COMPONENT_TYPE;
     }
-    
+
     @Override
-    public final void update( long time, int entityId ) {
+    protected final void update( long time, int entityId ) {
         ESprite sprite = entitySystem.getComponent( entityId, ESprite.COMPONENT_TYPE );
         RGBColor tintColor = sprite.getTintColor();
-        if ( spriteAnimationId > 0 ) {
+        if ( spriteAnimationId >= 0 ) {
             IntAnimation animation = animationSystem.getAnimation( IntAnimation.class, spriteAnimationId );
             if ( animation != null ) {
                 if ( animation.isActive() ) {
@@ -158,7 +132,7 @@ public class SpriteAnimationController extends EntityController {
                 spriteAnimationId = -1;
             }
         } 
-        if ( tintRedAnimationId > 0 ) {
+        if ( tintRedAnimationId >= 0 ) {
             FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, tintRedAnimationId );
             if ( animation != null ) {
                 if ( animation.isActive() ) {
@@ -168,7 +142,7 @@ public class SpriteAnimationController extends EntityController {
                 tintRedAnimationId = -1;
             }
         }
-        if ( tintGreenAnimationId > 0 ) {
+        if ( tintGreenAnimationId >= 0 ) {
             FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, tintGreenAnimationId );
             if ( animation != null ) {
                 if ( animation.isActive() ) {
@@ -178,7 +152,7 @@ public class SpriteAnimationController extends EntityController {
                 tintGreenAnimationId = -1;
             }
         }
-        if ( tintBlueAnimationId > 0 ) {
+        if ( tintBlueAnimationId >= 0 ) {
             FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, tintBlueAnimationId );
             if ( animation != null ) {
                 if ( animation.isActive() ) {
@@ -188,7 +162,7 @@ public class SpriteAnimationController extends EntityController {
                 tintBlueAnimationId = -1;
             }
         }
-        if ( tintAlphaAnimationId > 0 ) {
+        if ( tintAlphaAnimationId >= 0 ) {
             FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, tintAlphaAnimationId );
             if ( animation != null ) {
                 if ( animation.isActive() ) {

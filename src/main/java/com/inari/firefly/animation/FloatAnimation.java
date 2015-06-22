@@ -7,6 +7,6 @@ public abstract class FloatAnimation extends Animation {
         super( id );
     }
 
-    public abstract float get( int entityId, float currentValue );
+    public abstract float get( int componentId, float currentValue );
 
 }

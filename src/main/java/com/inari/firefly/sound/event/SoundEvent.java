@@ -1,6 +1,7 @@
 package com.inari.firefly.sound.event;
 
 import com.inari.commons.event.Event;
+import com.inari.firefly.sound.Sound;
 
 public final class SoundEvent extends Event<SoundEventListener> {
     
@@ -9,10 +10,12 @@ public final class SoundEvent extends Event<SoundEventListener> {
         STOP_PLAYING,
     }
     
-    public final int soundId;
+    public final Sound sound;
+    public final Type type;
 
-    public SoundEvent( int soundId ) {
-        this.soundId = soundId;
+    public SoundEvent( Sound sound, Type type ) {
+        this.sound = sound;
+        this.type = type;
     }
 
     @Override

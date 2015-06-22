@@ -7,6 +7,6 @@ public abstract class IntAnimation extends Animation {
         super( id );
     }
 
-    public abstract int get( int entityId, int currentValue );
+    public abstract int get( int component, int currentValue );
 
 }

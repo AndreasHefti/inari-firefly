@@ -39,6 +39,7 @@ public final class EMovement extends EntityComponent {
         return ( velocityVector.dx != 0 || velocityVector.dy != 0 );
     }
 
+    @Override
     public final int getControllerId() {
         return controllerId;
     }

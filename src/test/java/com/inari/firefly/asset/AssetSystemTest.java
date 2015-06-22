@@ -136,16 +136,19 @@ public class AssetSystemTest {
     @Test
     public void testCreateLoadDisposeAndDeleteSingleAsset() {
         final TestEventDispatcher ted = new TestEventDispatcher();
-        AssetSystem service = new AssetSystem( new FFContext() {
-            @SuppressWarnings( "unchecked" )
-            @Override
-            public <T> T get( TypedKey<T> key ) {
-                return (T) ted;
+        AssetSystem service = new AssetSystem();
+        service.init(  
+            new FFContext() {
+                @SuppressWarnings( "unchecked" )
+                @Override
+                public <T> T get( TypedKey<T> key ) {
+                    return (T) ted;
+                }
+                @Override
+                public void dispose() {
+                }
             }
-            @Override
-            public void dispose() {
-            }
-        });
+        );
         
         service
             .getAssetBuilder( TestAsset.class )
@@ -199,16 +202,19 @@ public class AssetSystemTest {
 
     
     private AssetSystem getDefaultService() {
-        AssetSystem service = new AssetSystem( new FFContext() {
-            @SuppressWarnings( "unchecked" )
-            @Override
-            public <T> T get( TypedKey<T> key ) {
-                return (T) new TestEventDispatcher();
+        AssetSystem service = new AssetSystem();
+        service.init(  
+            new FFContext() {
+                @SuppressWarnings( "unchecked" )
+                @Override
+                public <T> T get( TypedKey<T> key ) {
+                    return (T) new TestEventDispatcher();
+                }
+                @Override
+                public void dispose() {
+                }
             }
-            @Override
-            public void dispose() {
-            }
-        });
+        );
         return service;
     }
     
@@ -234,9 +240,8 @@ public class AssetSystemTest {
         }
 
         @Override
-        public Class<? extends Asset> getComponentType() {
-            // TODO Auto-generated method stub
-            return null;
+        public Class<TestAsset> getComponentType() {
+            return TestAsset.class;
         }
 
         @Override
@@ -269,7 +274,7 @@ public class AssetSystemTest {
 
         @Override
         public <L> void notify( Event<L> event ) {
-            events.add( ( (AssetEvent) event ).getType().toString() );
+            events.add( ( (AssetEvent) event ).type.toString() );
         }
 
         @Override

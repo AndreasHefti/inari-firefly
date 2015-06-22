@@ -1,18 +1,16 @@
 package com.inari.firefly.sound;
 
+import com.inari.commons.StringUtils;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.asset.event.AssetEventListener;
-import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.system.FFSystem;
 
-public class SoundSystem implements FFSystem, ComponentBuilderFactory, AssetEventListener {
+public final class SoundSystem implements FFSystem, AssetEventListener {
     
     private IEventDispatcher eventDispatcher;
-    
     private final DynArray<Sound> sounds;
 
     SoundSystem() {
@@ -20,26 +18,27 @@ public class SoundSystem implements FFSystem, ComponentBuilderFactory, AssetEven
     }
     
     @Override
-    public void init( FFContext context ) {
+    public final void init( FFContext context ) {
         eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
-        
         eventDispatcher.register( AssetEvent.class, this );
     }
     
     @Override
-    public void dispose( FFContext context ) {
+    public final void dispose( FFContext context ) {
         eventDispatcher.unregister( AssetEvent.class, this );
         sounds.clear();
     }
 
     @Override
-    public void onAssetEvent( AssetEvent event ) {
+    public final void onAssetEvent( AssetEvent event ) {
         if ( event.assetType != SoundAsset.class ) {
             return;
         }
         switch ( event.type ) {
             case ASSET_LOADED: {
-                
+                Sound sound = new Sound( event.asset.indexedId() );
+                sound.setName( event.asset.getName() );
+                sounds.add( sound );
                 break;
             }
             case ASSET_DISPOSED: {
@@ -50,13 +49,23 @@ public class SoundSystem implements FFSystem, ComponentBuilderFactory, AssetEven
         }
         
     }
-
-    @Override
-    public <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        // TODO Auto-generated method stub
+    
+    public final Sound getSound( int soundId ) {
+        return sounds.get( soundId );
+    }
+    
+    public final Sound getSound( String name ) {
+        if ( StringUtils.isBlank( name ) ) {
+            return null;
+        }
+        
+        for ( Sound sound : sounds ) {
+            if ( name.equals( sound.getName() ) ) {
+                return sound;
+            }
+        }
+        
         return null;
     }
-
-    
 
 }

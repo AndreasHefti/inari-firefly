@@ -7,6 +7,6 @@ public abstract class ValueAnimation<V> extends Animation {
         super( id );
     }
     
-    public abstract V get( int entityId, V currentValue );
+    public abstract V get( int componentId, V currentValue );
 
 }

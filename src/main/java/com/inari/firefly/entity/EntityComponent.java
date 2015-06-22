@@ -21,5 +21,9 @@ public abstract class EntityComponent implements Component, Indexed {
     public final int index() {
         return index;
     }
+    
+    public int getControllerId() {
+        return -1;
+    }
 
 }

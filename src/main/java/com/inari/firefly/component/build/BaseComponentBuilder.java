@@ -67,7 +67,7 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         return getInstance( null, componentId );
     }
     
-    protected C getInstance( FFContext context, int componentId ) {
+    protected C getInstance( FFContext context, Integer componentId ) {
         try {
             String className = attributes.getValue( Component.INSTANCE_TYPE_NAME );
             if ( className == null ) {
@@ -75,32 +75,36 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
             }
             @SuppressWarnings( "unchecked" )
             Class<C> typeClass = (Class<C>) Class.forName( className );
-            if ( componentId < 0 ) {
+            if ( componentId == null ) {
                 try {
-                    Constructor<C> constructor = typeClass.getConstructor();
-                    return constructor.newInstance();
+                    Constructor<C> constructor = typeClass.getDeclaredConstructor();
+                    return createInstance( constructor );
                 } catch ( Throwable t ) {
                     if ( context == null ) {
                         throw new ComponentCreationException( "No Component: " + className + " with default constructor found", t );
                     }
-                    Constructor<C> constructor = typeClass.getConstructor( FFContext.class );
-                    return constructor.newInstance( context );
+                    Constructor<C> constructor = typeClass.getDeclaredConstructor( FFContext.class );
+                    return createInstance( constructor, context );
                 }
             } else {
                 try {
-                    Constructor<C> constructor = typeClass.getConstructor( int.class );
-                    return constructor.newInstance( componentId );
+                    Constructor<C> constructor = typeClass.getDeclaredConstructor( int.class );
+                    return createInstance( constructor, componentId );
                 } catch ( Throwable t ) {
                     if ( context == null ) {
                         throw new ComponentCreationException( "No Component: " + className + " with default constructor found", t );
                     }
-                    Constructor<C> constructor = typeClass.getConstructor( int.class, FFContext.class );
-                    return constructor.newInstance( componentId, context );
+                    Constructor<C> constructor = typeClass.getDeclaredConstructor( int.class, FFContext.class );
+                    return createInstance( constructor, componentId, context );
                 }
             }
         } catch ( Exception e ) {
             throw new ComponentCreationException( "Unexpected Exception while trying to instantiate Component", e );
         }
+    }
+    
+    protected C createInstance( Constructor<C> constructor, Object... paramValues ) throws Exception {
+        return constructor.newInstance( paramValues );
     }
 
 }

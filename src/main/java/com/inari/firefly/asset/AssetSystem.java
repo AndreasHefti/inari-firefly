@@ -1,5 +1,6 @@
 package com.inari.firefly.asset;
 
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -287,6 +288,11 @@ public final class AssetSystem implements FFSystem, ComponentBuilderFactory {
         private AssetBuilder( AssetSystem system, Class<A> assetType ) {
             super( system );
             this.assetType = assetType;
+        }
+
+        @Override
+        protected A createInstance( Constructor<A> constructor, Object... paramValues ) throws Exception {
+            return constructor.newInstance( paramValues );
         }
 
         @Override

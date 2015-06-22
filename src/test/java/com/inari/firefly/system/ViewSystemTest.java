@@ -21,12 +21,13 @@ public class ViewSystemTest {
         Indexer.clear();
         FFContext context = createContext();
         IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
-        ViewSystem viewSystem = new ViewSystem( context );
+        ViewSystem viewSystem = new ViewSystem();
+        viewSystem.init( context );
         
         
         assertEquals( 
             "ViewSystem [views=DynArray [list=[" +
-            "View [isBase=true, order=-1, name=BASE_VIEW, active=true, layeringEnabled=false, bounds=Rectangle: 0,0,100,100, worldPosition=Position: 0,0, clearColor=RGBColor [configId=null, r=0.0, g=0.0, b=0.0, a=1.0], zoom=1.0, indexedId()=0]], size()=1, capacity()=1], " +
+            "View [isBase=true, order=-1, name=BASE_VIEW, active=true, layeringEnabled=false, bounds=Rectangle: 0,0,100,100, worldPosition=Position: 0,0, clearColor=RGBColor [r=0.0, g=0.0, b=0.0, a=1.0], zoom=1.0, indexedId()=0]], size()=1, capacity()=1], " +
             "layersOfView=DynArray [list=[], size()=0, capacity()=0]]", 
             viewSystem.toString() 
         );
@@ -42,7 +43,8 @@ public class ViewSystemTest {
         Indexer.clear();
         FFContext context = createContext();
         IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
-        ViewSystem viewSystem = new ViewSystem( context );
+        ViewSystem viewSystem = new ViewSystem();
+        viewSystem.init( context );
         
         viewSystem.getViewBuilder()
             .setAttribute( View.ORDER, 2 )
@@ -60,9 +62,9 @@ public class ViewSystemTest {
         
         assertEquals( 
             "ViewSystem [views=DynArray [list=[" +
-            "View [isBase=true, order=-1, name=BASE_VIEW, active=true, layeringEnabled=false, bounds=Rectangle: 0,0,100,100, worldPosition=Position: 0,0, clearColor=RGBColor [configId=null, r=0.0, g=0.0, b=0.0, a=1.0], zoom=1.0, indexedId()=0], " +
-            "View [isBase=false, order=2, name=Header, active=true, layeringEnabled=false, bounds=Rectangle: 0,0,10,100, worldPosition=Position: 0,0, clearColor=RGBColor [configId=null, r=0.0, g=0.0, b=0.0, a=1.0], zoom=1.0, indexedId()=1], " +
-            "View [isBase=false, order=3, name=Body, active=true, layeringEnabled=false, bounds=Rectangle: 0,10,90,100, worldPosition=Position: 0,0, clearColor=RGBColor [configId=null, r=0.0, g=0.0, b=0.0, a=1.0], zoom=1.0, indexedId()=2]], size()=3, capacity()=3], " +
+            "View [isBase=true, order=-1, name=BASE_VIEW, active=true, layeringEnabled=false, bounds=Rectangle: 0,0,100,100, worldPosition=Position: 0,0, clearColor=RGBColor [r=0.0, g=0.0, b=0.0, a=1.0], zoom=1.0, indexedId()=0], " +
+            "View [isBase=false, order=2, name=Header, active=true, layeringEnabled=false, bounds=Rectangle: 0,0,10,100, worldPosition=Position: 0,0, clearColor=RGBColor [r=0.0, g=0.0, b=0.0, a=1.0], zoom=1.0, indexedId()=1], " +
+            "View [isBase=false, order=3, name=Body, active=true, layeringEnabled=false, bounds=Rectangle: 0,10,90,100, worldPosition=Position: 0,0, clearColor=RGBColor [r=0.0, g=0.0, b=0.0, a=1.0], zoom=1.0, indexedId()=2]], size()=3, capacity()=3], " +
             "layersOfView=DynArray [list=[], size()=0, capacity()=0]]", 
             viewSystem.toString() 
         );
@@ -80,7 +82,8 @@ public class ViewSystemTest {
         Indexer.clear();
         FFContext context = createContext();
         IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
-        ViewSystem viewSystem = new ViewSystem( context );
+        ViewSystem viewSystem = new ViewSystem();
+        viewSystem.init( context );
         
         try {
             viewSystem.getLayerBuilder()
@@ -92,7 +95,7 @@ public class ViewSystemTest {
             assertEquals( "Layering is not enabled for view with id: 0. Enable Layering for View first", e.getMessage() );
         }
         
-        viewSystem.getView( 0 ).setLayeringEnabled( true );
+        viewSystem.getView( ViewSystem.BASE_VIEW_ID ).setLayeringEnabled( true );
         
         viewSystem.getLayerBuilder()
             .setAttribute( Layer.VIEW_ID, ViewSystem.BASE_VIEW_ID )
@@ -107,7 +110,7 @@ public class ViewSystemTest {
         
         assertEquals( 
             "ViewSystem [views=DynArray [list=[" +
-            "View [isBase=true, order=-1, name=BASE_VIEW, active=true, layeringEnabled=true, bounds=Rectangle: 0,0,100,100, worldPosition=Position: 0,0, clearColor=RGBColor [configId=null, r=0.0, g=0.0, b=0.0, a=1.0], zoom=1.0, indexedId()=0]], size()=1, capacity()=1], " +
+            "View [isBase=true, order=-1, name=BASE_VIEW, active=true, layeringEnabled=true, bounds=Rectangle: 0,0,100,100, worldPosition=Position: 0,0, clearColor=RGBColor [r=0.0, g=0.0, b=0.0, a=1.0], zoom=1.0, indexedId()=0]], size()=1, capacity()=1], " +
             "layersOfView=DynArray [list=[[" +
             "Layer [viewId=0, name=Layer1, indexedId=1], " +
             "Layer [viewId=0, name=Layer2, indexedId=2], " +
@@ -127,8 +130,8 @@ public class ViewSystemTest {
                 .setAttribute( Layer.NAME, "Layer1" )
                 .build();
             fail( "Exception expected here" );
-        } catch ( Exception e ) {
-            assertEquals( "The View with id: 100. dont exists.", e.getMessage() );
+        } catch ( IndexOutOfBoundsException e ) {
+            assertEquals( "Index: 100, Size: 1", e.getMessage() );
         }
     }
 

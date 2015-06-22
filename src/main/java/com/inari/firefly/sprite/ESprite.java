@@ -96,6 +96,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         this.tintColor.a = tintColor.a;
     }
 
+    @Override
     public final int getControllerId() {
         return controllerId;
     }

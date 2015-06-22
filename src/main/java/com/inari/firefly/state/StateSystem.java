@@ -1,5 +1,6 @@
 package com.inari.firefly.state;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -300,6 +301,11 @@ public class StateSystem implements FFSystem, ComponentBuilderFactory, UpdateEve
         
         private StateChangeConditionBuilder( StateSystem system ) {
             super( system );
+        }
+        
+        @Override
+        protected StateChangeCondition createInstance( Constructor<StateChangeCondition> constructor, Object... paramValues ) throws Exception {
+            return constructor.newInstance( paramValues );
         }
 
         @Override
