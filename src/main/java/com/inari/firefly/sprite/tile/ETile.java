@@ -9,8 +9,8 @@ import com.inari.commons.geom.Vector2i;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.sprite.SpriteRenderable;
 
@@ -143,7 +143,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
+    public final void fromAttributes( AttributeMap attributes ) {
         spriteId = attributes.getValue( SPRITE_ID, spriteId );
         viewId = attributes.getValue( VIEW_ID, viewId );
         layerId = attributes.getValue( LAYER_ID, layerId );
@@ -167,7 +167,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
+    public final void toAttributes( AttributeMap attributes ) {
         attributes.put( SPRITE_ID, spriteId );
         attributes.put( VIEW_ID, viewId );
         attributes.put( LAYER_ID, layerId );

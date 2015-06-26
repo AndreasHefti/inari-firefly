@@ -22,7 +22,6 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
     private IEntitySystem entitySystem;
 
     MovementSystem() {
-        
     }
     
     @Override

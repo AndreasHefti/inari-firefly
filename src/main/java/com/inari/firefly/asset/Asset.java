@@ -3,9 +3,9 @@ package com.inari.firefly.asset;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
 import com.inari.firefly.component.dynattr.DynamicAttributeMap;
 import com.inari.firefly.component.dynattr.DynamicAttributedComponent;
@@ -50,8 +50,8 @@ public abstract class Asset extends NamedIndexedComponent implements DynamicAttr
     }
 
     @Override
-    public void fromAttributeMap( AttributeMap attributes ) {
-        super.fromAttributeMap( attributes );
+    public void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
         group = attributes.getValue( ASSET_GROUP, group );
         
         if ( hasDynamicAttributes() ) {
@@ -60,8 +60,8 @@ public abstract class Asset extends NamedIndexedComponent implements DynamicAttr
     }
 
     @Override
-    public void toAttributeMap( AttributeMap attributes ) {
-        super.toAttributeMap( attributes );
+    public void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
         attributes.put( ASSET_GROUP, group );
         
         if ( hasDynamicAttributes() ) {

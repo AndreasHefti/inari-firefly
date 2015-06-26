@@ -1,4 +1,7 @@
-package com.inari.firefly.component;
+package com.inari.firefly.component.attr;
+
+import com.inari.firefly.component.Component;
+import com.inari.firefly.entity.EntityComponent;
 
 public final class AttributeKey<T> {
     
@@ -47,10 +50,7 @@ public final class AttributeKey<T> {
         if ( getClass() != obj.getClass() )
             return false;
         AttributeKey<?> other = (AttributeKey<?>) obj;
-        if ( componentType == null ) {
-            if ( other.componentType != null )
-                return false;
-        } else if ( componentType != other.componentType )
+        if ( componentType != other.componentType ) 
             return false;
         if ( name == null ) {
             if ( other.name != null )
@@ -62,7 +62,15 @@ public final class AttributeKey<T> {
 
     @Override
     public String toString() {
-        return "AttributeKey [name=" + name + ", componentType=" + componentType + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append( name );
+        builder.append( ":" );
+        builder.append( valueType.getSimpleName() );
+        if ( EntityComponent.class.isAssignableFrom( componentType )  ) {
+            builder.append( ":" );
+            builder.append( componentType.getSimpleName() );
+        }
+        return builder.toString();
     }
 
 }

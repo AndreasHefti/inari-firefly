@@ -1,9 +1,9 @@
 package com.inari.firefly.sprite;
 
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.system.LayeredComponent;
+import com.inari.firefly.system.LayerAware;
 
-public interface SpriteRenderable extends LayeredComponent {
+public interface SpriteRenderable extends LayerAware {
     
     int getSpriteId();
     

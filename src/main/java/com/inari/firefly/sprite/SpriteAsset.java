@@ -6,8 +6,8 @@ import java.util.Set;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.asset.Asset;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 public final class SpriteAsset extends Asset {
     
@@ -67,9 +67,9 @@ public final class SpriteAsset extends Asset {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
+    public final void fromAttributes( AttributeMap attributes ) {
         checkNotAlreadyLoaded();
-        super.fromAttributeMap( attributes );
+        super.fromAttributes( attributes );
         textureId[ 0 ] = attributes.getValue( TEXTURE_ID, textureId[ 0 ] );
         
         Rectangle textureRegion = attributes.getValue( TEXTURE_REGION );
@@ -79,8 +79,8 @@ public final class SpriteAsset extends Asset {
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
-        super.toAttributeMap( attributes );
+    public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
         attributes.put( TEXTURE_ID, textureId[ 0 ] );
         attributes.put( TEXTURE_REGION, new Rectangle( textureRegion ) );
     }

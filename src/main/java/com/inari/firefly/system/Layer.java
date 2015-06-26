@@ -3,9 +3,9 @@ package com.inari.firefly.system;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.build.ComponentCreationException;
 
 public final class Layer extends NamedIndexedComponent {
@@ -35,8 +35,8 @@ public final class Layer extends NamedIndexedComponent {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
-        super.fromAttributeMap( attributes );
+    public final void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
         
         viewId = attributes.getValue( VIEW_ID, -1 );
         if ( viewId < 0 ) {
@@ -45,8 +45,8 @@ public final class Layer extends NamedIndexedComponent {
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
-        super.toAttributeMap( attributes );
+    public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
         
         attributes.put( VIEW_ID, viewId );
     }

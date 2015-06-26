@@ -6,8 +6,8 @@ import java.util.Set;
 
 import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.indexed.Indexer;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 public final class ETransform extends EntityComponent {
     
@@ -120,7 +120,7 @@ public final class ETransform extends EntityComponent {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
+    public final void fromAttributes( AttributeMap attributes ) {
         xpos = attributes.getValue( XPOSITION, xpos );
         ypos = attributes.getValue( YPOSITION, ypos );
         xscale = attributes.getValue( XSCALE, xscale );
@@ -131,7 +131,7 @@ public final class ETransform extends EntityComponent {
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
+    public final void toAttributes( AttributeMap attributes ) {
         attributes.put( XPOSITION, xpos );
         attributes.put( YPOSITION, ypos );
         attributes.put( XSCALE, xscale );

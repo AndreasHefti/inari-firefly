@@ -3,9 +3,9 @@ package com.inari.firefly.animation;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 public abstract class Animation extends NamedIndexedComponent {
     
@@ -78,16 +78,16 @@ public abstract class Animation extends NamedIndexedComponent {
     }
 
     @Override
-    public void fromAttributeMap( AttributeMap attributes ) {
-        super.fromAttributeMap( attributes );
+    public void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
         startTime = attributes.getValue( START_TIME, startTime );
         endTime = attributes.getValue( END_TIME, endTime );
         looping = attributes.getValue( LOOPING, looping );
     }
 
     @Override
-    public void toAttributeMap( AttributeMap attributes ) {
-        super.toAttributeMap( attributes );
+    public void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
         attributes.put( START_TIME, startTime );
         attributes.put( END_TIME, endTime );
         attributes.put( LOOPING, looping );

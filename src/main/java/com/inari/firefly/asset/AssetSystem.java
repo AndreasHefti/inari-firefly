@@ -12,13 +12,16 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.component.Component;
+import com.inari.firefly.component.ComponentBuilderHelper;
+import com.inari.firefly.component.ComponentSystem;
+import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFSystem;
 
-public final class AssetSystem implements FFSystem, ComponentBuilderFactory {
+public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBuilderFactory {
     
     public static final String DEFAULT_GROUP_NAME = "FF_DEFAULT_ASSET_GROUP";
     
@@ -37,13 +40,7 @@ public final class AssetSystem implements FFSystem, ComponentBuilderFactory {
 
     @Override
     public final void dispose( FFContext context ) {
-        for ( Map<String, Asset> assetMap : groupNameMapping.values() ) {
-            for ( Asset asset : assetMap.values() ) {
-                disposeAsset( asset );
-            }
-        }
-        
-        groupNameMapping.clear();
+        clear();
     }
 
     @Override
@@ -151,6 +148,79 @@ public final class AssetSystem implements FFSystem, ComponentBuilderFactory {
     
     public final boolean hasGroup( String group ) {
         return groupNameMapping.containsKey( group );
+    }
+    
+    private final void deleteAsset( int assetId ) {
+        Asset asset = getAsset( assetId );
+        if ( asset != null ) {
+            deleteAsset( asset.group, asset.getName() );
+        }
+    }
+
+    private final Asset getAsset( int componentId ) {
+        for ( Map<String, Asset> assetsOfGroup : groupNameMapping.values() ) {
+            for ( Asset asset : assetsOfGroup.values() ) {
+                if ( componentId == asset.indexedId() ) {
+                    return asset;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    public final void clear() {
+        for ( Map<String, Asset> assetMap : groupNameMapping.values() ) {
+            for ( Asset asset : assetMap.values() ) {
+                disposeAsset( asset );
+            }
+        }
+        
+        groupNameMapping.clear();
+    }
+    
+    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
+    @Override
+    public final Set<Class<?>> supportedComponentTypes() {
+        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
+            SUPPORTED_COMPONENT_TYPES.add( Asset.class );
+        }
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    @Override
+    public final void fromAttributes( Attributes attributes ) {
+        fromAttributes( attributes, BuildType.CLEAR_OLD );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    @Override
+    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
+        if ( buildType == BuildType.CLEAR_OLD ) {
+            clear();
+        }
+        
+        for ( Class<? extends Asset> assetSubType : attributes.getAllSubTypes( Asset.class ) ) {
+            new ComponentBuilderHelper<Asset>() {
+                @Override
+                public Asset get( int id ) {
+                    return getAsset( id );
+                }
+                @Override
+                public void delete( int id ) {
+                    deleteAsset( id );
+                }
+            }.buildComponents( Asset.class, buildType, (AssetBuilder<Asset>) getAssetBuilder( assetSubType ), attributes );
+        }
+    }
+
+    @Override
+    public final void toAttributes( Attributes attributes ) {
+        for ( Map<String, Asset> assetMap : groupNameMapping.values() ) {
+            for ( Asset asset : assetMap.values() ) {
+                ComponentBuilderHelper.toAttributes( attributes, asset.getIndexedObjectType(), asset );
+            }
+        }
     }
     
     private Asset getAsset( String group, String name ) {
@@ -266,21 +336,6 @@ public final class AssetSystem implements FFSystem, ComponentBuilderFactory {
         return result;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "AssetSystem [\n" );
-        for ( Map<String, Asset> nameMapping : groupNameMapping.values() ) {
-            for ( Asset asset : nameMapping.values() ) {
-                builder.append( "  " ).append( asset ).append( "\n" );
-            }
-        }
-        builder.append( "]" );
-        return builder.toString();
-    }
-    
-    
-    
     public final class AssetBuilder<A extends Asset> extends BaseComponentBuilder<A> {
         
         private final Class<A> assetType;
@@ -300,7 +355,7 @@ public final class AssetSystem implements FFSystem, ComponentBuilderFactory {
             attributes.put( Component.INSTANCE_TYPE_NAME, assetType.getName() );
             A asset = getInstance( componentId );
             
-            asset.fromAttributeMap( attributes );
+            asset.fromAttributes( attributes );
             
             if ( asset.getName() == null ) {
                 asset.setName( "New Asset" );

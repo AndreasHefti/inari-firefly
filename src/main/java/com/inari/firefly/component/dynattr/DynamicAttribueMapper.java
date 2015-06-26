@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.inari.firefly.component.AttributeKey;
+import com.inari.firefly.component.attr.AttributeKey;
 
 public abstract class DynamicAttribueMapper {
 

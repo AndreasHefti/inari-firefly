@@ -1,7 +1,13 @@
 package com.inari.firefly.control;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFContext;
+import com.inari.firefly.component.ComponentBuilderHelper;
+import com.inari.firefly.component.ComponentSystem;
+import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
@@ -12,6 +18,7 @@ import com.inari.firefly.system.event.UpdateEventListener;
 public final class ControllerSystem 
     implements 
         FFSystem,
+        ComponentSystem,
         ComponentBuilderFactory,
         UpdateEventListener {
     
@@ -29,6 +36,17 @@ public final class ControllerSystem
 
     @Override
     public final void dispose( FFContext context ) {
+        clear();
+    }
+    
+    public final void deleteController( int id ) {
+        Controller removed = controller.remove( id );
+        if ( removed != null ) {
+            removed.dispose();
+        }
+    }
+
+    public final void clear() {
         for ( Controller c : controller ) {
             c.dispose( context );
         }
@@ -45,20 +63,6 @@ public final class ControllerSystem
             }
         }
     }
-
-//    @Override
-//    public void onEntityActivationEvent( EntityActivationEvent event ) {
-//        if ( event.type == Type.ENTITY_ACTIVATED ) {
-//            IndexedTypeSet components = entitySystem.getComponents( event.entityId );
-//            for ( EntityControllerAdapter entityControllerAdapter : allActiveEntityController ) {
-//                int controllerId = entityControllerAdapter.getControllerId( components );
-//                if ( controllerId >= 0 ) {
-//                    Controller c = controller.get( controllerId );
-//                    c.addComponentId( event.entityId );
-//                }
-//            }
-//        }
-//    }
     
     @Override
     @SuppressWarnings( "unchecked" )
@@ -73,6 +77,44 @@ public final class ControllerSystem
     public final ControllerBuilder getControllerBuilder() {
         return new ControllerBuilder( this );
     }
+    
+    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
+    @Override
+    public final Set<Class<?>> supportedComponentTypes() {
+        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
+            SUPPORTED_COMPONENT_TYPES.add( Controller.class );
+        }
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    @Override
+    public final void fromAttributes( Attributes attributes ) {
+        fromAttributes( attributes, BuildType.CLEAR_OLD );
+    }
+
+    @Override
+    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
+        if ( buildType == BuildType.CLEAR_OLD ) {
+            clear();
+        }
+        
+        new ComponentBuilderHelper<Controller>() {
+            @Override
+            public Controller get( int id ) {
+                return controller.get( id );
+            }
+            @Override
+            public void delete( int id ) {
+                deleteController( id );
+            }
+        }.buildComponents( Controller.class, buildType, getControllerBuilder(), attributes );
+    }
+
+    @Override
+    public final void toAttributes( Attributes attributes ) {
+        ComponentBuilderHelper.toAttributes( attributes, Controller.class, controller );
+    }
+    
 
     private final class ControllerBuilder extends BaseComponentBuilder<Controller> {
 
@@ -83,9 +125,10 @@ public final class ControllerSystem
         @Override
         public Controller build( int componentId ) {
             Controller result = getInstance( context, componentId );
-            result.fromAttributeMap( attributes );
+            result.fromAttributes( attributes );
             controller.set( result.indexedId(), result );
             return result;
         }
     }
+
 }

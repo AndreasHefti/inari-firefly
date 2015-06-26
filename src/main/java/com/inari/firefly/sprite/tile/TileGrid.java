@@ -8,9 +8,9 @@ import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.IntIterator;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.component.Component;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 public final class TileGrid implements Component {
     
@@ -96,7 +96,7 @@ public final class TileGrid implements Component {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
+    public final void fromAttributes( AttributeMap attributes ) {
         viewId = attributes.getValue( ATTRIBUTE_KEY_VIEW_ID, viewId );
         layerId = attributes.getValue( ATTRIBUTE_KEY_LAYER_ID, layerId );
         width = attributes.getValue( ATTRIBUTE_KEY_WIDTH, width );
@@ -110,7 +110,7 @@ public final class TileGrid implements Component {
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
+    public final void toAttributes( AttributeMap attributes ) {
         attributes.put( ATTRIBUTE_KEY_VIEW_ID, viewId );
         attributes.put( ATTRIBUTE_KEY_LAYER_ID, layerId );
         attributes.put( ATTRIBUTE_KEY_WIDTH, width );
@@ -259,35 +259,6 @@ public final class TileGrid implements Component {
     
     public final TileGridIterator iterator( Rectangle worldClip ) {
         return new TileGridIterator( new Rectangle( -1, 0, width, height ) );
-    }
-
-    @Override
-    public final String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "TileGrid [viewId=" );
-        builder.append( viewId );
-        builder.append( ", layerId=" );
-        builder.append( layerId );
-        builder.append( ", width=" );
-        builder.append( width );
-        builder.append( ", height=" );
-        builder.append( height );
-        builder.append( ", cellWidth=" );
-        builder.append( cellWidth );
-        builder.append( ", cellHeight=" );
-        builder.append( cellHeight );
-        builder.append( ", worldXPos=" );
-        builder.append( worldXPos );
-        builder.append( ", worldYPos=" );
-        builder.append( worldYPos );
-        builder.append( ", spherical=" );
-        builder.append( spherical );
-        builder.append( ", grid=[" );
-        for ( int y = 0; y < height; y++ ) {
-            builder.append( Arrays.toString( grid[ y ] ) );
-        }
-        builder.append( "]]" );
-        return builder.toString();
     }
 
     private void createGrid() {

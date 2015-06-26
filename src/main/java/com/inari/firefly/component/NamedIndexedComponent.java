@@ -6,6 +6,8 @@ import java.util.Set;
 
 import com.inari.commons.lang.indexed.BaseIndexedObject;
 import com.inari.commons.lang.indexed.IndexedObject;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 public abstract class NamedIndexedComponent extends BaseIndexedObject implements NamedComponent {
 
@@ -46,12 +48,12 @@ public abstract class NamedIndexedComponent extends BaseIndexedObject implements
     }
 
     @Override
-    public void fromAttributeMap( AttributeMap attributes ) {
+    public void fromAttributes( AttributeMap attributes ) {
         name = attributes.getValue( NAME, name );
     }
 
     @Override
-    public void toAttributeMap( AttributeMap attributes ) {
+    public void toAttributes( AttributeMap attributes ) {
         attributes.put( NAME, name );
     }
 

@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 
 public class DynamicAttributeMap {

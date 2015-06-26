@@ -3,23 +3,33 @@ package com.inari.firefly.component.build;
 import java.lang.reflect.Constructor;
 
 import com.inari.firefly.FFContext;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
-import com.inari.firefly.component.AttributeMapImpl;
 import com.inari.firefly.component.Component;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.component.attr.ComponentAttributeMap;
 
 public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     
-    protected final AttributeMap attributes = new AttributeMapImpl();
+    protected final AttributeMap attributes;
     private final ComponentBuilderFactory componentFactory;
     
     protected BaseComponentBuilder( ComponentBuilderFactory componentFactory ) {
+            this.attributes = new ComponentAttributeMap();
+            this.componentFactory = componentFactory;
+        }
+    
+    protected BaseComponentBuilder( 
+        ComponentBuilderFactory componentFactory,
+        AttributeMap attributes
+    ) {
+        this.attributes = attributes;
         this.componentFactory = componentFactory;
     }
     
     @Override
-    public final void clear() {
+    public final ComponentBuilder<C> clear() {
         attributes.clear();
+        return this;
     }
 
     @Override
@@ -27,7 +37,12 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         attributes.putAll( attributes );
         return this;
     }
-    
+
+    @Override
+    public final AttributeMap getAttributes() {
+        return attributes;
+    }
+
     @Override
     public final ComponentBuilder<C> setAttribute( AttributeKey<?> key, Object value ) {
         attributes.putUntyped( key, value );
@@ -36,18 +51,18 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
 
     @Override
     public C build() {
-        return build( -1 );
+        return build( getId() );
     }
 
     @Override
     public final ComponentBuilder<C> buildAndNext() {
-        build( -1 );
+        build( getId() );
         return this;
     }
 
     @Override
     public final <CC> ComponentBuilder<CC> buildAndNext( Class<CC> componentType ) {
-        build( -1 );
+        build( getId() );
         return componentFactory.getComponentBuilder( componentType );
     }
 
@@ -105,6 +120,14 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     
     protected C createInstance( Constructor<C> constructor, Object... paramValues ) throws Exception {
         return constructor.newInstance( paramValues );
+    }
+    
+    private int getId() {
+        int id = -1;
+        if ( attributes.getComponentKey() != null && attributes.getComponentKey().getId() >= 0 ) {
+            id = attributes.getComponentKey().getId(); 
+        }
+        return id;
     }
 
 }

@@ -9,8 +9,8 @@ import com.inari.firefly.FFContext;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.FloatAnimation;
 import com.inari.firefly.animation.IntAnimation;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
 
 public class SpriteAnimationController extends EntityController {
@@ -91,8 +91,8 @@ public class SpriteAnimationController extends EntityController {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
-        super.fromAttributeMap( attributes );
+    public final void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
         
         spriteAnimationId = attributes.getValue( SPRITE_ID_ANIMATION_ID, spriteAnimationId );
         tintRedAnimationId = attributes.getValue( TINT_RED_ANIMATION_ID, tintRedAnimationId );
@@ -103,8 +103,8 @@ public class SpriteAnimationController extends EntityController {
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
-        super.toAttributeMap( attributes );
+    public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
         
         attributes.put( SPRITE_ID_ANIMATION_ID, spriteAnimationId );
         attributes.put( TINT_RED_ANIMATION_ID, tintRedAnimationId );

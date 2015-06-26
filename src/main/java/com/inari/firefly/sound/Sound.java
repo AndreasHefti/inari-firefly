@@ -3,9 +3,9 @@ package com.inari.firefly.sound;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 public final class Sound extends NamedIndexedComponent {
     
@@ -90,8 +90,8 @@ public final class Sound extends NamedIndexedComponent {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
-        super.fromAttributeMap( attributes );
+    public final void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
         
         looping = attributes.getValue( LOOPING, looping );
         volume = attributes.getValue( VOLUME, volume );
@@ -101,8 +101,8 @@ public final class Sound extends NamedIndexedComponent {
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
-        super.toAttributeMap( attributes );
+    public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
         
         attributes.put( LOOPING, looping );
         attributes.put( VOLUME, volume );

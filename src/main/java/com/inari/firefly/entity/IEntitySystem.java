@@ -5,10 +5,12 @@ import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.functional.Matcher;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.firefly.Disposable;
+import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.entity.EntitySystem.EntityBuilder;
+import com.inari.firefly.system.FFSystem;
 
-public interface IEntitySystem extends ComponentBuilderFactory, Disposable, Iterable<Entity> {
+public interface IEntitySystem extends FFSystem, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
     
     void initEmptyComponents( Class<? extends EntityComponent> type, int number );
     

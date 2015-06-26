@@ -7,8 +7,8 @@ import java.util.Set;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.FloatAnimation;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 
 public final class SoundAnimationController extends SoundController {
@@ -65,8 +65,8 @@ public final class SoundAnimationController extends SoundController {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
-        super.fromAttributeMap( attributes );
+    public final void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
         
         volumeAnimationId = attributes.getValue( VOLUME_ANIMATION_ID, volumeAnimationId );
         pitchAnimationId = attributes.getValue( PITCH_ANIMATION_ID, pitchAnimationId );
@@ -74,8 +74,8 @@ public final class SoundAnimationController extends SoundController {
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
-        super.toAttributeMap( attributes );
+    public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
         
         attributes.put( VOLUME_ANIMATION_ID, volumeAnimationId );
         attributes.put( PITCH_ANIMATION_ID, pitchAnimationId );

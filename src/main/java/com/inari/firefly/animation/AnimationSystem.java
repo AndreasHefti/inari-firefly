@@ -1,6 +1,8 @@
 package com.inari.firefly.animation;
 
 import java.lang.reflect.Constructor;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.list.DynArray;
@@ -8,6 +10,9 @@ import com.inari.firefly.FFContext;
 import com.inari.firefly.animation.event.AnimationEvent;
 import com.inari.firefly.animation.event.AnimationEventListener;
 import com.inari.firefly.component.Component;
+import com.inari.firefly.component.ComponentBuilderHelper;
+import com.inari.firefly.component.ComponentSystem;
+import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
@@ -15,7 +20,13 @@ import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.event.UpdateEvent;
 import com.inari.firefly.system.event.UpdateEventListener;
 
-public final class AnimationSystem implements FFSystem, ComponentBuilderFactory, UpdateEventListener, AnimationEventListener {
+public final class AnimationSystem 
+    implements 
+        FFSystem, 
+        ComponentSystem,
+        ComponentBuilderFactory, 
+        UpdateEventListener, 
+        AnimationEventListener {
     
     private IEventDispatcher eventDispatcher;
     
@@ -35,12 +46,19 @@ public final class AnimationSystem implements FFSystem, ComponentBuilderFactory,
     
     @Override
     public void dispose( FFContext context ) {
-        animations.clear();
+        clear();
         
         eventDispatcher.unregister( UpdateEvent.class, this );
         eventDispatcher.unregister( AnimationEvent.class, this );
     }
     
+    public final void clear() {
+        for ( Animation animation : animations ) {
+            animation.dispose();
+        }
+        animations.clear();
+    }
+
     @Override
     public void onAnimationEvent( AnimationEvent event ) {
         Animation animation = animations.get( event.animationId );
@@ -88,6 +106,12 @@ public final class AnimationSystem implements FFSystem, ComponentBuilderFactory,
         return type.cast( animation );
     }
     
+    public final void deleteAnimation( int animationId ) {
+        Animation animation = animations.remove( animationId );
+        if ( animation != null ) {
+            animation.dispose();
+        }
+    }
     
     @Override
     @SuppressWarnings( { "unchecked", "rawtypes" } )
@@ -102,6 +126,54 @@ public final class AnimationSystem implements FFSystem, ComponentBuilderFactory,
     public final <A extends Animation> AnimationBuilder<A> getAnimationBuilder( Class<A> animationType ) {
         return new AnimationBuilder<A>( this, animationType );
     }
+    
+    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
+    @Override
+    public final Set<Class<?>> supportedComponentTypes() {
+        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
+            SUPPORTED_COMPONENT_TYPES.add( Animation.class );
+        }
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    @Override
+    public final void fromAttributes( Attributes attributes ) {
+        fromAttributes( attributes, BuildType.CLEAR_OLD ); 
+    }
+
+    @SuppressWarnings( "unchecked" )
+    @Override
+    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
+        if ( buildType == BuildType.CLEAR_OLD ) {
+            clear();
+        }
+        
+        for ( Class<? extends Animation> animationSubType : attributes.getAllSubTypes( Animation.class ) ) {
+            new ComponentBuilderHelper<Animation>() {
+                @Override
+                public Animation get( int id ) {
+                    return getAnimation( id );
+                }
+                @Override
+                public void delete( int id ) {
+                    deleteAnimation( id );
+                }
+            }.buildComponents( Animation.class, buildType, (AnimationBuilder<Animation>) getAnimationBuilder( animationSubType ), attributes );
+        }
+        
+    }
+
+    
+
+    @Override
+    public final void toAttributes( Attributes attributes ) {
+        for ( Animation animation : animations ) {
+            ComponentBuilderHelper.toAttributes( attributes, animation.getIndexedObjectType(), animation );
+        }
+    }
+    
+    
+    
     
     public final class AnimationBuilder<A extends Animation> extends BaseComponentBuilder<A> {
         
@@ -122,7 +194,7 @@ public final class AnimationSystem implements FFSystem, ComponentBuilderFactory,
             attributes.put( Component.INSTANCE_TYPE_NAME, animationType.getName() );
             A animation = getInstance( componentId );
             
-            animation.fromAttributeMap( attributes );
+            animation.fromAttributes( attributes );
             
             animations.set( animation.indexedId(), animation );
             return animation;

@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.firefly.asset.Asset;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 public final class TextureAsset extends Asset {
     
@@ -68,16 +68,16 @@ public final class TextureAsset extends Asset {
     }
     
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
-        super.fromAttributeMap( attributes );
+    public final void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
         resourceName = attributes.getValue( RESOURCE_NAME, resourceName );
         width = attributes.getValue( TEXTURE_WIDTH, width );
         height = attributes.getValue( TEXTURE_HEIGHT, height );
     }
     
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
-        super.toAttributeMap( attributes );
+    public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
         attributes.put( RESOURCE_NAME, resourceName );
         attributes.put( TEXTURE_WIDTH, width );
         attributes.put( TEXTURE_WIDTH, height );

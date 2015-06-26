@@ -26,6 +26,9 @@ public final class SoundSystem implements FFSystem, AssetEventListener {
     @Override
     public final void dispose( FFContext context ) {
         eventDispatcher.unregister( AssetEvent.class, this );
+        for ( Sound sound : sounds ) {
+            sound.dispose();
+        }
         sounds.clear();
     }
 

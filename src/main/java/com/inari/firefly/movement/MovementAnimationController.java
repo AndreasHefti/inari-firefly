@@ -8,8 +8,8 @@ import com.inari.commons.geom.Vector2f;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.FloatAnimation;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
 
 public class MovementAnimationController extends EntityController {
@@ -55,16 +55,16 @@ public class MovementAnimationController extends EntityController {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
-        super.fromAttributeMap( attributes );
+    public final void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
         
         velocityXAnimationId = attributes.getValue( VELOCITY_X_ANIMATION_ID, velocityXAnimationId );
         velocityYAnimationId = attributes.getValue( VELOCITY_Y_ANIMATION_ID, velocityYAnimationId );
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
-        super.toAttributeMap( attributes );
+    public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
         
         attributes.put( VELOCITY_X_ANIMATION_ID, velocityXAnimationId );
         attributes.put( VELOCITY_Y_ANIMATION_ID, velocityYAnimationId );

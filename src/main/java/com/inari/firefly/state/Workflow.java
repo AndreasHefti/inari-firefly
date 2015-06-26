@@ -3,9 +3,9 @@ package com.inari.firefly.state;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 public final class Workflow extends NamedIndexedComponent {
     
@@ -36,14 +36,14 @@ public final class Workflow extends NamedIndexedComponent {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
-        super.fromAttributeMap( attributes );
+    public final void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
         currentStateId = attributes.getValue( CURRENT_STATE_ID, currentStateId );
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
-        super.toAttributeMap( attributes );
+    public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
         attributes.put( NAME, name );
         attributes.put( CURRENT_STATE_ID, currentStateId );
     }

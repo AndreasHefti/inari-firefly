@@ -20,6 +20,8 @@ public interface ILowerSystemFacade extends FFSystem, AssetEventListener, ViewEv
     void flush();
     
     void soundAttributesChanged( Sound sound );
+    
+    Input getInput();
 
     int getScreenWidth();
 

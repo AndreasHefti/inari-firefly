@@ -1,13 +1,15 @@
 package com.inari.firefly.component.build;
 
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 public interface ComponentBuilder<C> {
     
-    void clear();
+    ComponentBuilder<C> clear();
     
     ComponentBuilder<C> setAttributes( AttributeMap attributes );
+    
+    AttributeMap getAttributes();
     
     ComponentBuilder<C> setAttribute( AttributeKey<?> key, Object value );
     

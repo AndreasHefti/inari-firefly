@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.inari.commons.event.AspectedEvent;
@@ -19,22 +20,31 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.event.MatchedEvent;
 import com.inari.commons.event.MatchedEventListener;
 import com.inari.commons.lang.TypedKey;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.asset.event.AssetEvent;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
 
 public class AssetSystemTest {
+    
+    @Before
+    public void clear() {
+        Indexer.clear();
+    }
     
     @Test
     public void testCreation() {
         AssetSystem service = getDefaultService();
         
+        Attributes attrs = new Attributes();
+        service.toAttributes( attrs );
+        
         assertEquals( 
-            "AssetSystem [\n" + 
-            "]", 
-            service.toString() 
+            "", 
+            attrs.toString()
         );
     }
     
@@ -90,6 +100,7 @@ public class AssetSystemTest {
     @Test
     public void testBuildAsset() {
         AssetSystem service = getDefaultService();
+        Attributes attrs = new Attributes();
         
         ComponentBuilder<TestAsset> assetBuilder = service.getAssetBuilder( TestAsset.class );
         assetBuilder
@@ -97,13 +108,13 @@ public class AssetSystemTest {
             .setAttribute( TestAsset.ASSET_GROUP,"group1" )
             .build( 0 );
         
+        service.toAttributes( attrs );
         assertEquals( 
-            "AssetSystem [\n" + 
-            "  TestAsset [loaded=false, name=asset1, group=group1, id()=0]\n" + 
-            "]", 
-            service.toString() 
+            "TestAsset(0)::name:String=asset1, group:String=group1 ", 
+            attrs.toString() 
         );
         
+        attrs.clear();
         assetBuilder
             .setAttribute( TestAsset.NAME, "asset2" )
             .setAttribute( TestAsset.ASSET_GROUP,"group1" )
@@ -121,22 +132,23 @@ public class AssetSystemTest {
             .setAttribute( TestAsset.ASSET_GROUP,"group3" )
             .build( 4 );
         
+        service.toAttributes( attrs );
         assertEquals( 
-            "AssetSystem [\n" + 
-            "  TestAsset [loaded=false, name=asset1, group=group1, id()=0]\n" + 
-            "  TestAsset [loaded=false, name=asset2, group=group1, id()=1]\n" + 
-            "  TestAsset [loaded=false, name=asset3, group=group1, id()=2]\n" + 
-            "  TestAsset [loaded=false, name=asset4, group=group2, id()=3]\n" + 
-            "  TestAsset [loaded=false, name=asset5, group=group3, id()=4]\n" + 
-            "]", 
-            service.toString() 
+            "TestAsset(0)::name:String=asset1, group:String=group1 " +
+            "TestAsset(1)::name:String=asset2, group:String=group1 " +
+            "TestAsset(2)::name:String=asset3, group:String=group1 " +
+            "TestAsset(3)::name:String=asset4, group:String=group2 " +
+            "TestAsset(4)::name:String=asset5, group:String=group3 ", 
+            attrs.toString() 
         );
+        attrs.clear();
     }
     
     @Test
     public void testCreateLoadDisposeAndDeleteSingleAsset() {
         final TestEventDispatcher ted = new TestEventDispatcher();
         AssetSystem service = new AssetSystem();
+        Attributes attrs = new Attributes();
         service.init(  
             new FFContext() {
                 @SuppressWarnings( "unchecked" )
@@ -161,20 +173,20 @@ public class AssetSystemTest {
             ted.toString() 
         );
         
+        attrs.clear();
+        service.toAttributes( attrs );
         assertEquals( 
-            "AssetSystem [\n" + 
-            "  TestAsset [loaded=false, name=asset1, group=group1, id()=5]\n" + 
-            "]", 
-            service.toString() 
+            "TestAsset(0)::name:String=asset1, group:String=group1 ", 
+            attrs.toString() 
         );
         
         service.loadAsset( "group1", "asset1" );
         assertTrue( service.isAssetLoaded( "group1", "asset1" ) );
+        attrs.clear();
+        service.toAttributes( attrs );
         assertEquals( 
-            "AssetSystem [\n" + 
-            "  TestAsset [loaded=true, name=asset1, group=group1, id()=5]\n" + 
-            "]", 
-            service.toString() 
+            "TestAsset(0)::name:String=asset1, group:String=group1 ", 
+            attrs.toString() 
         );
         assertEquals( 
             "TestEventDispatcher [events=[ASSET_CREATED, ASSET_LOADED]]", 
@@ -183,20 +195,97 @@ public class AssetSystemTest {
         
         service.disposeAsset( "group1", "asset1" );
         assertFalse( service.isAssetLoaded( "group1", "asset1" ) );
+        attrs.clear();
+        service.toAttributes( attrs );
         assertEquals( 
             "TestEventDispatcher [events=[ASSET_CREATED, ASSET_LOADED, ASSET_DISPOSED]]", 
             ted.toString() 
         );
         
         service.deleteAsset( "group1", "asset1" );
+        attrs.clear();
+        service.toAttributes( attrs );
         assertEquals( 
-            "AssetSystem [\n" + 
-            "]", 
-            service.toString() 
+            "", 
+            attrs.toString() 
         );
         assertEquals( 
             "TestEventDispatcher [events=[ASSET_CREATED, ASSET_LOADED, ASSET_DISPOSED, ASSET_DELETED]]", 
             ted.toString() 
+        );
+    }
+    
+    @Test
+    public void testPreventingOfUseOfIdTwice() {
+        AssetSystem service = getDefaultService();
+        Attributes attrs = new Attributes();
+        
+        service.getAssetBuilder( TestAsset.class )
+            .setAttribute( Asset.NAME, "asset2" )
+            .setAttribute( Asset.ASSET_GROUP,"group1" )
+            .buildAndNext( 1 );
+        
+        try {
+            service.getAssetBuilder( TestAsset.class )
+                .setAttribute( Asset.NAME, "asset2" )
+                .setAttribute( Asset.ASSET_GROUP,"group3" )
+                .buildAndNext( 1 );
+            fail( "Exception expected here" );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            assertEquals( "", e.getCause().getMessage() );
+        }
+        
+        service.toAttributes( attrs );
+        assertEquals( 
+            "", 
+            attrs.toString() 
+        );
+    }
+    
+    @Test
+    public void testDifferentTypesOnDifferentGroups() {
+        AssetSystem service = getDefaultService();
+        Attributes attrs = new Attributes();
+        
+        service.getAssetBuilder( TestAsset.class )
+            .setAttribute( Asset.NAME, "asset2" )
+            .setAttribute( Asset.ASSET_GROUP,"group1" )
+            .buildAndNext( 1 )
+            .setAttribute( Asset.NAME, "asset3" )
+            .setAttribute( Asset.ASSET_GROUP,"group1" )
+            .buildAndNext( 2 )
+            .setAttribute( Asset.NAME, "asset4" )
+            .setAttribute( Asset.ASSET_GROUP,"group2" )
+            .buildAndNext( 3 )
+            .setAttribute( Asset.NAME, "asset5" )
+            .setAttribute( Asset.ASSET_GROUP,"group3" )
+            .build( 4 );
+        service.getAssetBuilder( TestAsset2.class )
+            .setAttribute( Asset.NAME, "asset22" )
+            .setAttribute( Asset.ASSET_GROUP,"group1" )
+            .buildAndNext( 1 )
+            .setAttribute( Asset.NAME, "asset23" )
+            .setAttribute( Asset.ASSET_GROUP,"group1" )
+            .buildAndNext( 2 )
+            .setAttribute( Asset.NAME, "asset24" )
+            .setAttribute( Asset.ASSET_GROUP,"group2" )
+            .buildAndNext( 3 )
+            .setAttribute( Asset.NAME, "asset25" )
+            .setAttribute( Asset.ASSET_GROUP,"group3" )
+            .build( 4 );
+        
+        service.toAttributes( attrs );
+        assertEquals( 
+            "TestAsset(1)::name:String=asset2, group:String=group1 " +
+            "TestAsset(2)::name:String=asset3, group:String=group1 " +
+            "TestAsset2(1)::name:String=asset22, group:String=group1 " +
+            "TestAsset2(2)::name:String=asset23, group:String=group1 " +
+            "TestAsset(3)::name:String=asset4, group:String=group2 " +
+            "TestAsset2(3)::name:String=asset24, group:String=group2 " +
+            "TestAsset(4)::name:String=asset5, group:String=group3 " +
+            "TestAsset2(4)::name:String=asset25, group:String=group3 ", 
+            attrs.toString() 
         );
     }
 
@@ -230,33 +319,45 @@ public class AssetSystemTest {
         }
 
         @Override
-        public void fromAttributeMap( AttributeMap attributes ) {
-            super.fromAttributeMap( attributes );
+        public void fromAttributes( AttributeMap attributes ) {
+            super.fromAttributes( attributes );
         }
 
         @Override
-        public void toAttributeMap( AttributeMap attributes ) {
-            super.toAttributeMap( attributes );
+        public void toAttributes( AttributeMap attributes ) {
+            super.toAttributes( attributes );
         }
 
         @Override
         public Class<TestAsset> getComponentType() {
             return TestAsset.class;
         }
+    }
+    
+    public static class TestAsset2 extends Asset {
+        
+        TestAsset2( int assetId ) {
+            super( assetId );
+        } 
 
         @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append( "TestAsset [loaded=" );
-            builder.append( loaded );
-            builder.append( ", name=" );
-            builder.append( name );
-            builder.append( ", group=" );
-            builder.append( group );
-            builder.append( ", id()=" );
-            builder.append( indexedId() );
-            builder.append( "]" );
-            return builder.toString();
+        public Set<AttributeKey<?>> attributeKeys() {
+            return super.attributeKeys( new HashSet<AttributeKey<?>>() );
+        }
+
+        @Override
+        public void fromAttributes( AttributeMap attributes ) {
+            super.fromAttributes( attributes );
+        }
+
+        @Override
+        public void toAttributes( AttributeMap attributes ) {
+            super.toAttributes( attributes );
+        }
+
+        @Override
+        public Class<TestAsset2> getComponentType() {
+            return TestAsset2.class;
         }
     }
 

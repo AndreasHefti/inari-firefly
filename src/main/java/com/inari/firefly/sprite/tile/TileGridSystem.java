@@ -144,7 +144,7 @@ public final class TileGridSystem
             @Override
             public TileGrid build( int componentId ) {
                 TileGrid tileGrid = new TileGrid();
-                tileGrid.fromAttributeMap( attributes );
+                tileGrid.fromAttributes( attributes );
                 int viewId = tileGrid.getViewId();
                 int layerId = tileGrid.getLayerId();
                 if ( viewId < 0 ) {

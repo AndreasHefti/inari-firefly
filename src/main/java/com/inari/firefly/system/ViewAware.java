@@ -1,6 +1,6 @@
 package com.inari.firefly.system;
 
-public interface ViewAwareComponent {
+public interface ViewAware {
     
     public int getViewId();
 

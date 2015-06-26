@@ -6,9 +6,9 @@ import java.util.Set;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 public class View extends NamedIndexedComponent {
     
@@ -122,8 +122,8 @@ public class View extends NamedIndexedComponent {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
-        super.fromAttributeMap( attributes );
+    public final void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
         
         order = attributes.getValue( ORDER, order );
         active = attributes.getValue( ACTIVE, active );
@@ -146,8 +146,8 @@ public class View extends NamedIndexedComponent {
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
-        super.toAttributeMap( attributes );
+    public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
         
         attributes.put( ORDER, order );
         attributes.put( ACTIVE, active );

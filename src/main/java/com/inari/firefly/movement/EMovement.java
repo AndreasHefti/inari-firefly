@@ -6,9 +6,9 @@ import java.util.Set;
 
 import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.indexed.Indexer;
-import com.inari.firefly.component.AttributeKey;
-import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.component.Component;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 
 public final class EMovement extends EntityComponent {
@@ -59,14 +59,14 @@ public final class EMovement extends EntityComponent {
     }
 
     @Override
-    public final void fromAttributeMap( AttributeMap attributes ) {
+    public final void fromAttributes( AttributeMap attributes ) {
         velocityVector.dx = attributes.getValue( VELOCITY_X, velocityVector.dx );
         velocityVector.dy = attributes.getValue( VELOCITY_Y, velocityVector.dy );
         controllerId = attributes.getValue( CONTROLLER_ID, controllerId );
     }
 
     @Override
-    public final void toAttributeMap( AttributeMap attributes ) {
+    public final void toAttributes( AttributeMap attributes ) {
         attributes.put( VELOCITY_X, velocityVector.dx );
         attributes.put( VELOCITY_Y, velocityVector.dy );
         attributes.put( CONTROLLER_ID, controllerId );

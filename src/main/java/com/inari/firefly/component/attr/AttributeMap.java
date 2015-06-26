@@ -1,8 +1,11 @@
-package com.inari.firefly.component;
+package com.inari.firefly.component.attr;
 
-import java.util.Set;
 
 public interface AttributeMap {
+    
+    ComponentKey getComponentKey();
+    
+    void setComponentKey( ComponentKey typeKey );
 
     <A> A getValue( AttributeKey<A> key );
 
@@ -23,8 +26,6 @@ public interface AttributeMap {
     <A> A getValue( AttributeKey<A> key, A defaultValue );
 
     Object getUntypedValue( AttributeKey<?> key, Object defaultValue );
-
-    Set<Class<? extends Component>> getComponentTypes();
 
     void clear();
 

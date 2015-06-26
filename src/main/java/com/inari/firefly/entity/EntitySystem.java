@@ -1,5 +1,6 @@
 package com.inari.firefly.entity;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
@@ -12,16 +13,18 @@ import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFContext;
-import com.inari.firefly.component.AttributeMap;
 import com.inari.firefly.component.Component;
+import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.component.attr.ComponentKey;
+import com.inari.firefly.component.attr.EntityAttributeMap;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
-import com.inari.firefly.system.FFSystem;
 
-public class EntitySystem implements FFSystem, IEntitySystem {
+public class EntitySystem implements IEntitySystem {
     
     private static final int DEFAULT_CAPACITY = 100;
     private static final int DEFAULT_COMPONENT_TYPE_CAPACITY = 10;
@@ -90,7 +93,11 @@ public class EntitySystem implements FFSystem, IEntitySystem {
             throw new IllegalArgumentException( "The IComponentType is not a subtype of Asset." + type );
         }
         
-        return (ComponentBuilder<C>) new EntityBuilder( this );
+        return (ComponentBuilder<C>) getEntityBuilder();
+    }
+    
+    public final EntityBuilder getEntityBuilder() {
+        return new EntityBuilder( this );
     }
 
     @Override
@@ -241,6 +248,62 @@ public class EntitySystem implements FFSystem, IEntitySystem {
         return usedComponents.get( entityId );
     }
     
+    // ---- ComponentSystem implementation --------------------------------------
+    
+    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
+    @Override
+    public final Set<Class<?>> supportedComponentTypes() {
+        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
+            SUPPORTED_COMPONENT_TYPES.add( Entity.class );
+        }
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    @Override
+    public final void fromAttributes( Attributes attributes ) {
+        fromAttributes( attributes, BuildType.CLEAR_OLD );
+    }
+
+    @Override
+    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
+        if ( buildType == BuildType.CLEAR_OLD ) {
+            restoreAll();
+        }
+        
+        EntityBuilder entityBuilder = getEntityBuilder();
+        for ( AttributeMap attrsOfView : attributes.getAllOfType( Entity.class ) ) {
+            int entityId = attrsOfView.getComponentKey().getId();
+            if ( buildType == BuildType.MERGE_ATTRIBUTES ) {
+                IndexedTypeSet componentsOfEntity = getComponents( entityId );
+                if ( componentsOfEntity != null ) {
+                    for ( EntityComponent comp : componentsOfEntity.<EntityComponent>getIterable() ) {
+                        comp.toAttributes( entityBuilder.getAttributes() );
+                    }
+                }
+            } else if ( buildType == BuildType.OVERWRITE ) {
+                restore( entityId );
+            }
+            entityBuilder
+                .setAttributes( attrsOfView )
+                .buildAndNext()
+                .clear();
+        } 
+    }
+
+    @Override
+    public final void toAttributes( Attributes attributes ) {
+        for ( Entity entity : activeEntities ) {
+            ComponentKey key = new ComponentKey( Entity.class, entity.getId() );
+            EntityAttributeMap attributeMap = new EntityAttributeMap();
+            attributeMap.setComponentKey( key );
+            attributes.add( attributeMap );
+            IndexedTypeSet components = getComponents( entity.getId() );
+            for ( EntityComponent component : components.<EntityComponent>getIterable() ) {
+                component.toAttributes( attributeMap );
+            }
+        }
+    }
+    
     // ---- Internal -----------------------------------------------------------
     
     private void restoreEntityComponents( int entityId ) {
@@ -272,7 +335,7 @@ public class EntitySystem implements FFSystem, IEntitySystem {
     
     private <C extends EntityComponent> EntityComponent newComponent( Class<C> componentType, AttributeMap attributes ) {
         EntityComponent newComponent = newComponent( componentType );
-        newComponent.fromAttributeMap( attributes );
+        newComponent.fromAttributes( attributes );
         return newComponent;
     }
     
@@ -410,12 +473,12 @@ public class EntitySystem implements FFSystem, IEntitySystem {
     }
     
     
-    public final class EntityBuilder extends BaseComponentBuilder<Entity> {
+    protected final class EntityBuilder extends BaseComponentBuilder<Entity> {
         
         private IndexedTypeSet prefabComponents;
 
         private EntityBuilder( EntitySystem system ) {
-            super( system );
+            super( system, new EntityAttributeMap() );
         }
         
         public EntityBuilder setPrefabComponents( IndexedTypeSet prefabComponents ) {
@@ -441,7 +504,7 @@ public class EntitySystem implements FFSystem, IEntitySystem {
                 }
             }
             
-            Set<Class<? extends Component>> componentTypes = attributes.getComponentTypes();
+            Set<Class<? extends Component>> componentTypes = ( (EntityAttributeMap) attributes ).getEntityComponentTypes();
             for ( Class<? extends Component> componentType : componentTypes ) {
                 if ( !EntityComponent.class.isAssignableFrom( componentType ) ) {
                     continue;
@@ -455,7 +518,5 @@ public class EntitySystem implements FFSystem, IEntitySystem {
             return entity;
         }
     }
-
-    
 
 }

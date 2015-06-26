@@ -2,6 +2,9 @@ package com.inari.firefly.component;
 
 import java.util.Set;
 
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
+
 /** This is the top level definition of all attributed Components in the firefly application.
  * 
  *  Defines a Component with Attributes. The Component has a Set of AttributeKey's that are supported by the Component
@@ -30,8 +33,8 @@ public interface Component {
     
     Set<AttributeKey<?>> attributeKeys();
     
-    void fromAttributeMap( AttributeMap attributes );
+    void fromAttributes( AttributeMap attributes );
     
-    void toAttributeMap( AttributeMap attributes );
+    void toAttributes( AttributeMap attributes );
 
 }
