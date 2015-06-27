@@ -20,7 +20,7 @@ public class ViewSystemTest {
     public void testCreation() {
         Indexer.clear();
         FFContext context = createContext();
-        IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        IEventDispatcher eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         ViewSystem viewSystem = new ViewSystem();
         viewSystem.init( context );
         Attributes attrs = new Attributes();
@@ -39,9 +39,7 @@ public class ViewSystemTest {
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=[" +
-            "ViewEvent [type=VIEW_CREATED, view=0], " +
-            "ComponentSystemEvent [type=INITIALISED, componentSystem=ViewSystem]]]", 
+            "TestEventDispatcher [events=[ViewEvent [type=VIEW_CREATED, view=0]]]", 
             eventDispatcher.toString() 
         );
     }
@@ -50,7 +48,7 @@ public class ViewSystemTest {
     public void testCreateViews() {
         Indexer.clear();
         FFContext context = createContext();
-        IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        IEventDispatcher eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         ViewSystem viewSystem = new ViewSystem();
         viewSystem.init( context );
         Attributes attrs = new Attributes();
@@ -103,7 +101,6 @@ public class ViewSystemTest {
         assertEquals( 
             "TestEventDispatcher [events=[" +
             "ViewEvent [type=VIEW_CREATED, view=0], " +
-            "ComponentSystemEvent [type=INITIALISED, componentSystem=ViewSystem], " +
             "ViewEvent [type=VIEW_CREATED, view=1], " +
             "ViewEvent [type=VIEW_CREATED, view=2]]]", 
             eventDispatcher.toString() 
@@ -114,7 +111,7 @@ public class ViewSystemTest {
     public void testCreateLayersForBaseView() {
         Indexer.clear();
         FFContext context = createContext();
-        IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        IEventDispatcher eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         ViewSystem viewSystem = new ViewSystem();
         viewSystem.init( context );
         Attributes attrs = new Attributes();
@@ -165,9 +162,7 @@ public class ViewSystemTest {
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=[" +
-            "ViewEvent [type=VIEW_CREATED, view=0], " +
-            "ComponentSystemEvent [type=INITIALISED, componentSystem=ViewSystem]]]", 
+            "TestEventDispatcher [events=[ViewEvent [type=VIEW_CREATED, view=0]]]", 
             eventDispatcher.toString() 
         );
         
@@ -185,8 +180,8 @@ public class ViewSystemTest {
 
     private FFContext createContext() {
         InitMap initMap = new FFContextImpl.InitMap();
-        initMap.put( FFContext.System.EVENT_DISPATCHER, EventDispatcherMock.class );
-        initMap.put( FFContext.System.LOWER_SYSTEM_FACADE, LowerSystemFacadeMock.class );
+        initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcherMock.class );
+        initMap.put( FFContext.LOWER_SYSTEM_FACADE, LowerSystemFacadeMock.class );
         return new FFContextImpl( initMap, true );
     }
 

@@ -33,8 +33,6 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.component.event.ComponentSystemEvent;
-import com.inari.firefly.component.event.ComponentSystemEvent.Type;
 import com.inari.firefly.state.event.StateChangeEvent;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.event.UpdateEvent;
@@ -67,9 +65,8 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
         }
         this.context = context;
         
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         eventDispatcher.register( UpdateEvent.class, this );
-        eventDispatcher.notify( new ComponentSystemEvent( Type.INITIALISED, this ) );
     }
     
     @Override
@@ -79,7 +76,6 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
         clear();
         context = null;
         eventDispatcher = null;
-        eventDispatcher.notify( new ComponentSystemEvent( Type.DISPOSED, this ) );
     }
 
     public final int getUpdateStep() {

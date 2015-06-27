@@ -16,6 +16,7 @@
 package com.inari.firefly.component.build;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import com.inari.firefly.FFContext;
 import com.inari.firefly.component.Component;
@@ -97,39 +98,57 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         return getInstance( null, componentId );
     }
     
+    @SuppressWarnings( "unchecked" )
     protected C getInstance( FFContext context, Integer componentId ) {
+        String className = attributes.getValue( Component.INSTANCE_TYPE_NAME );
+        if ( className == null ) {
+            throw new ComponentCreationException( "Missing mandatory attribute " + Component.INSTANCE_TYPE_NAME + " for StateChangeCondition" );
+        }
+        
+        Class<C> typeClass = null;
         try {
-            String className = attributes.getValue( Component.INSTANCE_TYPE_NAME );
-            if ( className == null ) {
-                throw new ComponentCreationException( "Missing mandatory attribute " + Component.INSTANCE_TYPE_NAME + " for StateChangeCondition" );
-            }
-            @SuppressWarnings( "unchecked" )
-            Class<C> typeClass = (Class<C>) Class.forName( className );
-            if ( componentId == null ) {
+            typeClass = (Class<C>) Class.forName( className );
+        } catch ( Exception e ) {
+            throw new ComponentCreationException( "Failed to get class for name: " + className );
+        }
+        if ( componentId == null ) {
+            try {
+                Constructor<C> constructor = typeClass.getDeclaredConstructor();
+                return createInstance( constructor );
+            } catch ( InvocationTargetException ite ) {
+                throw new ComponentCreationException( "Error while constructing: " + typeClass, ite.getCause() );
+            } catch ( Throwable t ) {
+                if ( context == null ) {
+                    throw new ComponentCreationException( "No Component: " + className + " with default constructor found", t );
+                }
                 try {
-                    Constructor<C> constructor = typeClass.getDeclaredConstructor();
-                    return createInstance( constructor );
-                } catch ( Throwable t ) {
-                    if ( context == null ) {
-                        throw new ComponentCreationException( "No Component: " + className + " with default constructor found", t );
-                    }
                     Constructor<C> constructor = typeClass.getDeclaredConstructor( FFContext.class );
                     return createInstance( constructor, context );
-                }
-            } else {
-                try {
-                    Constructor<C> constructor = typeClass.getDeclaredConstructor( int.class );
-                    return createInstance( constructor, componentId );
-                } catch ( Throwable t ) {
-                    if ( context == null ) {
-                        throw new ComponentCreationException( "No Component: " + className + " with default constructor found", t );
-                    }
-                    Constructor<C> constructor = typeClass.getDeclaredConstructor( int.class, FFContext.class );
-                    return createInstance( constructor, componentId, context );
+                } catch ( InvocationTargetException ite ) {
+                    throw new ComponentCreationException( "Error while constructing: " + typeClass, ite.getCause() );
+                } catch ( Throwable tt ) { 
+                    throw new ComponentCreationException( "Error:", tt );
                 }
             }
-        } catch ( Exception e ) {
-            throw new ComponentCreationException( "Unexpected Exception while trying to instantiate Component", e );
+        } else {
+            try {
+                Constructor<C> constructor = typeClass.getDeclaredConstructor( int.class );
+                return createInstance( constructor, componentId );
+            } catch ( InvocationTargetException ite ) {
+                throw new ComponentCreationException( "Error while constructing: " + typeClass, ite.getCause() );
+            } catch ( Throwable t ) {
+                if ( context == null ) {
+                    throw new ComponentCreationException( "No Component: " + className + " with default constructor found", t );
+                }
+                try {
+                    Constructor<C> constructor = typeClass.getDeclaredConstructor( int.class, FFContext.class );
+                    return createInstance( constructor, componentId, context );
+                } catch ( InvocationTargetException ite ) {
+                    throw new ComponentCreationException( "Error while constructing: " + typeClass, ite.getCause() );
+                } catch ( Throwable tt ) { 
+                    throw new ComponentCreationException( "Error:", tt );
+                }
+            }
         }
     }
     

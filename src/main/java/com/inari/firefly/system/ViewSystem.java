@@ -34,8 +34,6 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.component.event.ComponentSystemEvent;
-import com.inari.firefly.component.event.ComponentSystemEvent.Type;
 import com.inari.firefly.system.event.RenderEvent;
 import com.inari.firefly.system.event.ViewEvent;
 
@@ -55,10 +53,10 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
 
         // create the base view that is the screen
-        ILowerSystemFacade lowerSystemFacade = context.get( FFContext.System.LOWER_SYSTEM_FACADE );
+        ILowerSystemFacade lowerSystemFacade = context.get( FFContext.LOWER_SYSTEM_FACADE );
         Rectangle screenBounds = new Rectangle(
             0, 0,
             lowerSystemFacade.getScreenWidth(),
@@ -71,18 +69,10 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
             .setAttribute( View.BOUNDS, screenBounds )
             .build( BASE_VIEW_ID )
             .setBase( true );
-        
-        eventDispatcher.notify( 
-            new ComponentSystemEvent( Type.INITIALISED, this ) 
-        );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        eventDispatcher.notify( 
-            new ComponentSystemEvent( Type.DISPOSED, this ) 
-        );
-        
         clear();
     }
 

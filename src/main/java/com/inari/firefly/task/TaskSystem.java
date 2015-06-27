@@ -27,8 +27,6 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.component.event.ComponentSystemEvent;
-import com.inari.firefly.component.event.ComponentSystemEvent.Type;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.task.event.TaskEvent;
 import com.inari.firefly.task.event.TaskEventListener;
@@ -45,21 +43,13 @@ public final class TaskSystem implements FFSystem, ComponentSystem, ComponentBui
     @Override
     public final void init( FFContext context ) {
         this.context = context;
-        IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        IEventDispatcher eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         eventDispatcher.register( TaskEvent.class, this );
-        
-        eventDispatcher.notify( 
-            new ComponentSystemEvent( Type.INITIALISED, this ) 
-        );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
-        eventDispatcher.notify( 
-            new ComponentSystemEvent( Type.DISPOSED, this ) 
-        );
-        
+        IEventDispatcher eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         eventDispatcher.unregister( TaskEvent.class, this );
         tasks.clear();
     }

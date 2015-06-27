@@ -51,9 +51,9 @@ public final class SpriteRendererSystem implements FFSystem, AspectedEntityActiv
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         entityProvider = context.get( FFContext.System.ENTITY_SYSTEM );
-        lowerSystemFacade = context.get( FFContext.System.LOWER_SYSTEM_FACADE );
+        lowerSystemFacade = context.get( FFContext.LOWER_SYSTEM_FACADE );
         tileGridSystem = context.get( FFContext.System.TILE_GRID_SYSTEM ); 
 
         eventDispatcher.register( EntityActivationEvent.class, this );
@@ -62,7 +62,7 @@ public final class SpriteRendererSystem implements FFSystem, AspectedEntityActiv
     
     @Override
     public final void dispose( FFContext context ) {
-        IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        IEventDispatcher eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         eventDispatcher.unregister( EntityActivationEvent.class, this );
         eventDispatcher.unregister( RenderEvent.class, this );
         

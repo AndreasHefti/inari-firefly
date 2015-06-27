@@ -19,7 +19,6 @@ import com.inari.commons.event.Event;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.event.MatchedEvent;
 import com.inari.commons.event.MatchedEventListener;
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.asset.event.AssetEvent;
@@ -27,6 +26,8 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
+import com.inari.firefly.system.FFContextImpl;
+import com.inari.firefly.system.FFContextImpl.InitMap;
 
 public class AssetSystemTest {
     
@@ -37,7 +38,9 @@ public class AssetSystemTest {
     
     @Test
     public void testCreation() {
-        AssetSystem service = getDefaultService();
+        FFContext ffContext = getTestFFContext();
+        AssetSystem service = new AssetSystem();
+        service.init( ffContext );
         
         Attributes attrs = new Attributes();
         service.toAttributes( attrs );
@@ -50,7 +53,9 @@ public class AssetSystemTest {
     
     @Test
     public void testIllegalCalls() {
-        AssetSystem service = getDefaultService();
+        FFContext ffContext = getTestFFContext();
+        AssetSystem service = new AssetSystem();
+        service.init( ffContext );
         
         try {
             service.loadAsset( "group", "name" );
@@ -99,7 +104,9 @@ public class AssetSystemTest {
     
     @Test
     public void testBuildAsset() {
-        AssetSystem service = getDefaultService();
+        FFContext ffContext = getTestFFContext();
+        AssetSystem service = new AssetSystem();
+        service.init( ffContext );
         Attributes attrs = new Attributes();
         
         ComponentBuilder<TestAsset> assetBuilder = service.getAssetBuilder( TestAsset.class );
@@ -146,21 +153,11 @@ public class AssetSystemTest {
     
     @Test
     public void testCreateLoadDisposeAndDeleteSingleAsset() {
-        final TestEventDispatcher ted = new TestEventDispatcher();
+        FFContext ffContext = getTestFFContext();
+        IEventDispatcher eventDispatcher = ffContext.get( FFContext.EVENT_DISPATCHER );
         AssetSystem service = new AssetSystem();
+        service.init( ffContext );
         Attributes attrs = new Attributes();
-        service.init(  
-            new FFContext() {
-                @SuppressWarnings( "unchecked" )
-                @Override
-                public <T> T get( TypedKey<T> key ) {
-                    return (T) ted;
-                }
-                @Override
-                public void dispose() {
-                }
-            }
-        );
         
         service
             .getAssetBuilder( TestAsset.class )
@@ -170,7 +167,7 @@ public class AssetSystemTest {
         
         assertEquals( 
             "TestEventDispatcher [events=[ASSET_CREATED]]", 
-            ted.toString() 
+            eventDispatcher.toString() 
         );
         
         attrs.clear();
@@ -190,7 +187,7 @@ public class AssetSystemTest {
         );
         assertEquals( 
             "TestEventDispatcher [events=[ASSET_CREATED, ASSET_LOADED]]", 
-            ted.toString() 
+            eventDispatcher.toString() 
         );
         
         service.disposeAsset( "group1", "asset1" );
@@ -199,7 +196,7 @@ public class AssetSystemTest {
         service.toAttributes( attrs );
         assertEquals( 
             "TestEventDispatcher [events=[ASSET_CREATED, ASSET_LOADED, ASSET_DISPOSED]]", 
-            ted.toString() 
+            eventDispatcher.toString() 
         );
         
         service.deleteAsset( "group1", "asset1" );
@@ -211,13 +208,15 @@ public class AssetSystemTest {
         );
         assertEquals( 
             "TestEventDispatcher [events=[ASSET_CREATED, ASSET_LOADED, ASSET_DISPOSED, ASSET_DELETED]]", 
-            ted.toString() 
+            eventDispatcher.toString() 
         );
     }
     
     @Test
     public void testPreventingOfUseOfIdTwice() {
-        AssetSystem service = getDefaultService();
+        FFContext ffContext = getTestFFContext();
+        AssetSystem service = new AssetSystem();
+        service.init( ffContext );
         Attributes attrs = new Attributes();
         
         service.getAssetBuilder( TestAsset.class )
@@ -233,19 +232,28 @@ public class AssetSystemTest {
             fail( "Exception expected here" );
         } catch ( Exception e ) {
             e.printStackTrace();
-            assertEquals( "", e.getCause().getMessage() );
+            assertEquals( 
+                "Error while constructing: class com.inari.firefly.asset.AssetSystemTest$TestAsset", 
+                e.getMessage() 
+            );
+            assertEquals( 
+                "The Object index: 1 is already used by another Object!", 
+                e.getCause().getMessage() 
+           );
         }
         
         service.toAttributes( attrs );
         assertEquals( 
-            "", 
+            "TestAsset(1)::name:String=asset2, group:String=group1 ", 
             attrs.toString() 
         );
     }
     
     @Test
     public void testDifferentTypesOnDifferentGroups() {
-        AssetSystem service = getDefaultService();
+        FFContext ffContext = getTestFFContext();
+        AssetSystem service = new AssetSystem();
+        service.init( ffContext );
         Attributes attrs = new Attributes();
         
         service.getAssetBuilder( TestAsset.class )
@@ -290,21 +298,11 @@ public class AssetSystemTest {
     }
 
     
-    private AssetSystem getDefaultService() {
-        AssetSystem service = new AssetSystem();
-        service.init(  
-            new FFContext() {
-                @SuppressWarnings( "unchecked" )
-                @Override
-                public <T> T get( TypedKey<T> key ) {
-                    return (T) new TestEventDispatcher();
-                }
-                @Override
-                public void dispose() {
-                }
-            }
-        );
-        return service;
+    private FFContext getTestFFContext() {
+        InitMap initMap = new InitMap();
+        initMap.put( FFContext.EVENT_DISPATCHER, TestEventDispatcher.class );
+        FFContext result = new FFContextImpl( initMap, true );
+        return result;
     }
     
     public static class TestAsset extends Asset {
@@ -361,10 +359,10 @@ public class AssetSystemTest {
         }
     }
 
-    private class TestEventDispatcher implements IEventDispatcher {
+    public static class TestEventDispatcher implements IEventDispatcher {
         
         private List<String> events = new ArrayList<String>();
-
+        
         @Override
         public <L> void register( Class<? extends Event<L>> eventType, L listener ) {}
 

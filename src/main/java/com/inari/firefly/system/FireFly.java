@@ -38,18 +38,18 @@ public final class FireFly {
 
     public FireFly( Class<? extends ILowerSystemFacade> lowerSystemFacadeType ) {
         InitMap initMap = new InitMap();
-        initMap.put( FFContext.System.EVENT_DISPATCHER, EventDispatcher.class );
+        initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcher.class );
         initMap.put( FFContext.System.ASSET_SYSTEM, AssetSystem.class );
         initMap.put( FFContext.System.ENTITY_SYSTEM, EntitySystem.class );
-        initMap.put( FFContext.System.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
+        initMap.put( FFContext.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
 
         context = new FFContextImpl( initMap );
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
     }
     
     public FireFly( InitMap initMap ) {
         context = new FFContextImpl( initMap );
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
     }
     
     public final void dispose() {

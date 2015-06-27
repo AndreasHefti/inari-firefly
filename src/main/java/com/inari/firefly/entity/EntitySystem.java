@@ -36,7 +36,6 @@ import com.inari.firefly.component.attr.EntityAttributeMap;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.component.event.ComponentSystemEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
 
@@ -79,19 +78,11 @@ public class EntitySystem implements IEntitySystem {
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
-        
-        eventDispatcher.notify( 
-            new ComponentSystemEvent( ComponentSystemEvent.Type.INITIALISED, this ) 
-        );
+        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
     }
     
     @Override
     public void dispose( FFContext context ) {
-        eventDispatcher.notify( 
-            new ComponentSystemEvent( ComponentSystemEvent.Type.DISPOSED, this ) 
-        );
-        
         activeEntities.clear();
         inactiveEntities.clear();
         usedComponents.clear();

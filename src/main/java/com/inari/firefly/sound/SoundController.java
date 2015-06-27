@@ -31,8 +31,8 @@ public abstract class SoundController extends Controller implements SoundEventLi
     SoundController( int id, FFContext context ) {
         super( id );
         soundSystem = context.get( FFContext.System.SOUND_SYSTEM );
-        lowerSystemFacade = context.get( FFContext.System.LOWER_SYSTEM_FACADE );
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        lowerSystemFacade = context.get( FFContext.LOWER_SYSTEM_FACADE );
+        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         
         eventDispatcher.register( SoundEvent.class, this );
     }

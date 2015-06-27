@@ -26,8 +26,6 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.component.event.ComponentSystemEvent;
-import com.inari.firefly.component.event.ComponentSystemEvent.Type;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.event.UpdateEvent;
 import com.inari.firefly.system.event.UpdateEventListener;
@@ -49,18 +47,10 @@ public final class ControllerSystem
     @Override
     public void init( FFContext context ) {
         this.context = context;
-        
-        context.get( FFContext.System.EVENT_DISPATCHER ).notify( 
-            new ComponentSystemEvent( Type.INITIALISED, this ) 
-        );
     }
 
     @Override
     public final void dispose( FFContext context ) {
-        context.get( FFContext.System.EVENT_DISPATCHER ).notify( 
-            new ComponentSystemEvent( Type.DISPOSED, this ) 
-        );
-        
         clear();
     }
     

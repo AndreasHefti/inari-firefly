@@ -17,18 +17,24 @@ package com.inari.firefly.system;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.inari.commons.lang.TypedKey;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.FFContext;
+import com.inari.firefly.component.ComponentSystem;
+import com.inari.firefly.component.ComponentSystem.BuildType;
+import com.inari.firefly.component.attr.Attributes;
 
 public class FFContextImpl implements FFContext {
 
     private final Map<TypedKey<?>, Object> systemComponents = new LinkedHashMap<TypedKey<?>, Object>();
+    private final Map<TypedKey<? extends ComponentSystem>, Set<Class<?>>> componentTypes = new LinkedHashMap<TypedKey<? extends ComponentSystem>, Set<Class<?>>>();
     
     public FFContextImpl( InitMap initMap ) {
         create( initMap );
@@ -55,7 +61,27 @@ public class FFContextImpl implements FFContext {
         
         systemComponents.clear();
     }
+    
+    @Override
+    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
+        for ( TypedKey<? extends ComponentSystem> key : componentTypes.keySet() ) {
+            get( key ).fromAttributes( attributes, buildType );
+        }
+    }
 
+    @Override
+    public final void toAttributes( Attributes attributes ) {
+        for ( TypedKey<? extends ComponentSystem> key : componentTypes.keySet() ) {
+            get( key ).toAttributes( attributes );
+        }
+    }
+    
+    @Override
+    public final Map<TypedKey<? extends ComponentSystem>, Set<Class<?>>> getComponentTypes() {
+        return new HashMap<TypedKey<? extends ComponentSystem>, Set<Class<?>>>( componentTypes );
+    }
+
+    @SuppressWarnings( "unchecked" )
     private void create( InitMap componentsToCreate ) {
         for( Map.Entry<TypedKey<?>, Class<?>> componentToCreate : componentsToCreate ) {
 
@@ -64,6 +90,12 @@ public class FFContextImpl implements FFContext {
             
             try {
                 Object component = type.newInstance();
+                if ( component instanceof ComponentSystem ) {
+                    componentTypes.put( 
+                        (TypedKey<? extends ComponentSystem>) key, 
+                        ( (ComponentSystem) component ).supportedComponentTypes() 
+                    );
+                }
                 systemComponents.put( key, component );
             } catch ( Exception e ) {
                 throw new FFInitException( "Failed to create instance for component: " + type, e );
@@ -85,62 +117,8 @@ public class FFContextImpl implements FFContext {
             return;
         }
         checkCompleteness();
-        
-//        for( Map.Entry<TypedKey<?>, Class<? extends FFSystem>> componentToInitialise : componentsToInitialise ) {
-//
-//            TypedKey<?> key = componentToInitialise.getKey();
-//            Class<? extends FFSystem> type = componentToInitialise.getValue();
-//            
-//            Constructor<?> constructor = findSuitableConstructor( type );
-//            Object instance = instantiateComponent( type, constructor );
-//            
-//            if ( instance == null ) {
-//                throw new FFInitException( "Failed to create instance for component: " + type + ", Constructor " + constructor + " As no valid signature (emtpy or with IFFContext argument) " );
-//            }
-//            
-//            if ( key == FFContext.System.LOWER_SYSTEM_FACADE && constructor.getParameterCount() == 0 ) {
-//                ILowerSystemFacade lowerSystemFacade = (ILowerSystemFacade) instance;
-//                IEventDispatcher eventDispatcher = get( FFContext.System.EVENT_DISPATCHER );
-//                eventDispatcher.register( ViewEvent.class, lowerSystemFacade );
-//                eventDispatcher.register( ViewEvent.class, lowerSystemFacade );
-//            }
-//
-//            systemComponents.put( key, instance );
-//        }
-//        
-        
     }
-    
-//    private Object instantiateComponent( Class<?> type, Constructor<?> constructor ) {
-//        Class<?>[] parameterTypes = constructor.getParameterTypes();
-//        Object instance = null;
-//        try {
-//            if ( parameterTypes.length == 0 ) {
-//                instance = constructor.newInstance();
-//            } else if ( parameterTypes.length == 1 && parameterTypes[ 0 ] == FFContext.class ) {
-//                instance = constructor.newInstance( this );
-//            } 
-//        } catch ( Exception e ) {
-//            throw new FFInitException( "Failed to create instance for component: " + type, e );
-//        }
-//        return instance;
-//    }
 
-//    private Constructor<?> findSuitableConstructor( Class<?> type ) {
-//        Constructor<?> constructor = null;
-//        try {
-//            constructor = type.getConstructor();
-//        } catch ( Exception e ) {
-//            try {
-//                constructor = type.getConstructor( FFContext.class );
-//            } catch ( Exception ee ) {}
-//        }
-//        if ( constructor == null ) {
-//            throw new FFInitException( "No suitable Constructor (signature: emtpy or with IFFContext argument) found for type: " + type );
-//        }
-//        return constructor;
-//    }
-    
     private void checkCompleteness() {
         for ( Field field : FFContext.System.class.getFields() ) {
             if ( Modifier.isStatic( field.getModifiers() ) && field.getType() == TypedKey.class ) {
@@ -154,17 +132,6 @@ public class FFContextImpl implements FFContext {
                 }
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "FFContextImpl [\n" );
-        for ( Map.Entry<TypedKey<?>, Object> entry : systemComponents.entrySet() ) {
-            builder.append( "  [" ).append( entry.getKey() ).append( "] : " ).append( entry.getValue() ).append( "\n" );
-        }
-        builder.append( "]" );
-        return builder.toString();
     }
     
     public static final class InitMap implements Iterable<Map.Entry<TypedKey<?>, Class<?>>> {
@@ -185,5 +152,7 @@ public class FFContextImpl implements FFContext {
         }
 
     }
+
+    
     
 }

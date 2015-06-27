@@ -41,7 +41,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         entitySystem = context.get( FFContext.System.ENTITY_SYSTEM );
         
         eventDispatcher.register( UpdateEvent.class, this );

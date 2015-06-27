@@ -31,8 +31,6 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.component.event.ComponentSystemEvent;
-import com.inari.firefly.component.event.ComponentSystemEvent.Type;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.event.UpdateEvent;
 import com.inari.firefly.system.event.UpdateEventListener;
@@ -55,22 +53,14 @@ public final class AnimationSystem
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         
         eventDispatcher.register( UpdateEvent.class, this );
         eventDispatcher.register( AnimationEvent.class, this );
-        
-        eventDispatcher.notify( 
-            new ComponentSystemEvent( Type.INITIALISED, this ) 
-        );
     }
     
     @Override
     public void dispose( FFContext context ) {
-        eventDispatcher.notify( 
-            new ComponentSystemEvent( Type.DISPOSED, this ) 
-        );
-        
         clear();
         
         eventDispatcher.unregister( UpdateEvent.class, this );

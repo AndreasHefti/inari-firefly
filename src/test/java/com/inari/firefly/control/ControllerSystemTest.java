@@ -19,7 +19,7 @@ public class ControllerSystemTest {
         ComponentBuilder<MovementAnimationController> componentBuilder = controllerSystem.getComponentBuilder( MovementAnimationController.class );
         assertNotNull( componentBuilder );
         assertEquals( 
-            "com.inari.firefly.control.ControllerSystem$EntityControllerBuilder", 
+            "com.inari.firefly.control.ControllerSystem$ControllerBuilder", 
             componentBuilder.getClass().getName() 
         );
         

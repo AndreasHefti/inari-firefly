@@ -34,7 +34,7 @@ public final class SoundSystem implements FFSystem, AssetEventListener {
     
     @Override
     public final void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
         eventDispatcher.register( AssetEvent.class, this );
     }
     
