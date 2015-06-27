@@ -9,7 +9,6 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
-
 public class TileGridTest {
 
     @Test

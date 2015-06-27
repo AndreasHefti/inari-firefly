@@ -13,7 +13,6 @@ import com.inari.firefly.EventDispatcherMock;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.LowerSystemFacadeMock;
 import com.inari.firefly.system.FFContextImpl.InitMap;
-
 public class ViewSystemTest {
 
     @Test
