@@ -156,27 +156,6 @@ public final class ETransform extends EntityComponent {
         attributes.put( ROTATION, rotation );
     }
 
-    @Override
-    public final String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "CTransform [xpos=" );
-        builder.append( xpos );
-        builder.append( ", ypos=" );
-        builder.append( ypos );
-        builder.append( ", xscale=" );
-        builder.append( xscale );
-        builder.append( ", yscale=" );
-        builder.append( yscale );
-        builder.append( ", rotationXPos=" );
-        builder.append( rotationXPos );
-        builder.append( ", rotationYPos=" );
-        builder.append( rotationYPos );
-        builder.append( ", rotation=" );
-        builder.append( rotation );
-        builder.append( "]" );
-        return builder.toString();
-    }
-
     public static final void addPosition( ETransform source, ETransform dest ) {
         dest.xpos = dest.xpos + source.xpos;
         dest.ypos = dest.ypos + source.ypos;

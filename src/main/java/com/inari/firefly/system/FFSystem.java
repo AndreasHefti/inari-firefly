@@ -20,6 +20,6 @@ import com.inari.firefly.FFContext;
 
 public interface FFSystem extends Disposable {
     
-    void init( FFContext context );
+    void init( FFContext context ) throws FFInitException;
 
 }

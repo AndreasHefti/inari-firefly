@@ -79,10 +79,11 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
     
     @Override
     public final void dispose( FFContext context ) {
-        clear();
         eventDispatcher.notify( 
             new ComponentSystemEvent( Type.DISPOSED, this ) 
         );
+        
+        clear();
     }
 
     public final boolean hasView( int viewId ) {
@@ -105,7 +106,7 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
         View view = views.get( viewId );
         if ( view != null && view.isActive() ) {
             view.setActive( false );
-            eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_DISABLED ) );
+            eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_DISPOSED ) );
         }
     }
     

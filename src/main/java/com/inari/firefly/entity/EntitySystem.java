@@ -36,6 +36,7 @@ import com.inari.firefly.component.attr.EntityAttributeMap;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentCreationException;
+import com.inari.firefly.component.event.ComponentSystemEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
 
@@ -79,10 +80,18 @@ public class EntitySystem implements IEntitySystem {
     @Override
     public void init( FFContext context ) {
         eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        
+        eventDispatcher.notify( 
+            new ComponentSystemEvent( ComponentSystemEvent.Type.INITIALISED, this ) 
+        );
     }
     
     @Override
     public void dispose( FFContext context ) {
+        eventDispatcher.notify( 
+            new ComponentSystemEvent( ComponentSystemEvent.Type.DISPOSED, this ) 
+        );
+        
         activeEntities.clear();
         inactiveEntities.clear();
         usedComponents.clear();
@@ -373,29 +382,29 @@ public class EntitySystem implements IEntitySystem {
     
     // ---- Utilities --------------------------------------------------------
     
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "EntitySystem [inactiveEntites=" ).append( inactiveEntities.size() ).append( " activeEntities=" );
-        for ( Entity entity : activeEntities ) {
-            builder.append( "entity{" ).append( entity.indexedId() );
-            IndexedTypeSet components = getComponents( entity.indexedId() );
-            if ( components != null ) {
-                builder.append( ":" );
-                Iterator<EntityComponent> iterator = components.<EntityComponent>getIterable().iterator();
-                while ( iterator.hasNext() ) {
-                    EntityComponent component = iterator.next();
-                    builder.append( component.indexedType().getSimpleName() );
-                    if ( iterator.hasNext() ) {
-                        builder.append( "," );
-                    }
-                }
-            }
-            builder.append( "}" );
-        }
-        builder.append( "]" );
-        return builder.toString();
-    }
+//    @Override
+//    public String toString() {
+//        StringBuilder builder = new StringBuilder();
+//        builder.append( "EntitySystem [inactiveEntites=" ).append( inactiveEntities.size() ).append( " activeEntities=" );
+//        for ( Entity entity : activeEntities ) {
+//            builder.append( "entity{" ).append( entity.indexedId() );
+//            IndexedTypeSet components = getComponents( entity.indexedId() );
+//            if ( components != null ) {
+//                builder.append( ":" );
+//                Iterator<EntityComponent> iterator = components.<EntityComponent>getIterable().iterator();
+//                while ( iterator.hasNext() ) {
+//                    EntityComponent component = iterator.next();
+//                    builder.append( component.indexedType().getSimpleName() );
+//                    if ( iterator.hasNext() ) {
+//                        builder.append( "," );
+//                    }
+//                }
+//            }
+//            builder.append( "}" );
+//        }
+//        builder.append( "]" );
+//        return builder.toString();
+//    }
 
     private abstract class EntityIterator implements Iterator<Entity> {
         

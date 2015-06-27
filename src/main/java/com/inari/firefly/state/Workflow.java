@@ -63,15 +63,4 @@ public final class Workflow extends NamedIndexedComponent {
         attributes.put( CURRENT_STATE_ID, currentStateId );
     }
 
-    @Override
-    public final String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "Workflow [name=" );
-        builder.append( name );
-        builder.append( ", currentStateId=" );
-        builder.append( currentStateId );
-        builder.append( "]" );
-        return builder.toString();
-    }
-
 }

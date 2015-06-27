@@ -87,15 +87,4 @@ public final class EMovement extends EntityComponent {
         attributes.put( CONTROLLER_ID, controllerId );
     }
 
-    @Override
-    public final String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "EMovement [velocityVector=" );
-        builder.append( velocityVector );
-        builder.append( ", controllerId=" );
-        builder.append( controllerId );
-        builder.append( "]" );
-        return builder.toString();
-    }
-
 }

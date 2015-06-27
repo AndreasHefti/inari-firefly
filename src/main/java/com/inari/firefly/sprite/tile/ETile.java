@@ -205,28 +205,4 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         attributes.put( TINT_COLOR, tintColor );
     }
 
-    @Override
-    public final String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "ETile [spriteId=" );
-        builder.append( spriteId );
-        builder.append( ", viewId=" );
-        builder.append( viewId );
-        builder.append( ", layerId=" );
-        builder.append( layerId );
-        builder.append( ", multiPosition=" );
-        builder.append( multiPosition );
-        builder.append( ", gridPosition=" );
-        builder.append( gridPosition );
-        builder.append( ", gridPositions=" );
-        builder.append( gridPositions );
-        builder.append( ", offset=" );
-        builder.append( offset );
-        builder.append( ", tintColor=" );
-        builder.append( tintColor );
-        builder.append( "]" );
-        return builder.toString();
-    }
-
-
 }

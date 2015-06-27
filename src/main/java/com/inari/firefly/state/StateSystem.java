@@ -39,6 +39,7 @@ import com.inari.firefly.state.event.StateChangeEvent;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.event.UpdateEvent;
 import com.inari.firefly.system.event.UpdateEventListener;
+import com.inari.firefly.task.event.TaskEvent;
 
 public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderFactory, UpdateEventListener {
     
@@ -127,6 +128,10 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
                 
                 if ( condition.check( workflow, event.getTimeElapsed() ) ) {
                     workflow.setCurrentStateId( stateChange.getToStateId() );
+                    int taskId = stateChange.getTaskId();
+                    if ( taskId >= 0 ) {
+                        eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, taskId ) );
+                    }
                     eventDispatcher.notify( new StateChangeEvent( stateChange ) );
                 }
             }

@@ -144,24 +144,4 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         attributes.put( TINT_COLOR, tintColor );
         attributes.put( CONTROLLER_ID, controllerId );
     }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "ESprite [spriteId=" );
-        builder.append( spriteId );
-        builder.append( ", viewId=" );
-        builder.append( viewId );
-        builder.append( ", layerId=" );
-        builder.append( layerId );
-        builder.append( ", ordering=" );
-        builder.append( ordering );
-        builder.append( ", tintColor=" );
-        builder.append( tintColor );
-        builder.append( ", controllerId=" );
-        builder.append( controllerId );
-        builder.append( "]" );
-        return builder.toString();
-    }
-
 }

@@ -38,4 +38,15 @@ public final class ComponentSystemEvent extends Event<ComponentSystemEventListen
         listener.onComponentSystemEvent( this );
     }
 
+    @Override
+    public final String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "ComponentSystemEvent [type=" );
+        builder.append( type );
+        builder.append( ", componentSystem=" );
+        builder.append( componentSystem.getClass().getSimpleName() );
+        builder.append( "]" );
+        return builder.toString();
+    }
+
 }

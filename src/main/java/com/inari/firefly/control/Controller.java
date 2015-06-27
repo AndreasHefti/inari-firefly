@@ -20,7 +20,7 @@ import com.inari.firefly.Disposable;
 import com.inari.firefly.component.NamedIndexedComponent;
 
 public abstract class Controller extends NamedIndexedComponent implements Disposable {
-    
+   
     // TODO check if this is a proper init
     protected IntBag componentIds = new IntBag( 10, -1 );
     

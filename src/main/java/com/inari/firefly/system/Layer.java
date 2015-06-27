@@ -66,17 +66,4 @@ public final class Layer extends NamedIndexedComponent {
         attributes.put( VIEW_ID, viewId );
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "Layer [viewId=" );
-        builder.append( viewId );
-        builder.append( ", name=" );
-        builder.append( name );
-        builder.append( ", indexedId=" );
-        builder.append( indexedId() );
-        builder.append( "]" );
-        return builder.toString();
-    }
-
 }

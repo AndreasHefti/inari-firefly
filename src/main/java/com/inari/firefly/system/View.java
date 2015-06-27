@@ -172,31 +172,4 @@ public class View extends NamedIndexedComponent {
         attributes.put( LAYERING_ENABLED, layeringEnabled );
         attributes.put( ZOOM, zoom );
     }
-
-    @Override
-    public final String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "View [isBase=" );
-        builder.append( isBase );
-        builder.append( ", order=" );
-        builder.append( order );
-        builder.append( ", name=" );
-        builder.append( name );
-        builder.append( ", active=" );
-        builder.append( active );
-        builder.append( ", layeringEnabled=" );
-        builder.append( layeringEnabled );
-        builder.append( ", bounds=" );
-        builder.append( bounds );
-        builder.append( ", worldPosition=" );
-        builder.append( worldPosition );
-        builder.append( ", clearColor=" );
-        builder.append( clearColor );
-        builder.append( ", zoom=" );
-        builder.append( zoom );
-        builder.append( ", indexedId()=" );
-        builder.append( indexedId() );
-        builder.append( "]" );
-        return builder.toString();
-    }
 }

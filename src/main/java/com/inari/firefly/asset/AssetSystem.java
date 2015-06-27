@@ -34,6 +34,8 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
+import com.inari.firefly.component.event.ComponentSystemEvent;
+import com.inari.firefly.component.event.ComponentSystemEvent.Type;
 import com.inari.firefly.system.FFSystem;
 
 public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBuilderFactory {
@@ -51,10 +53,18 @@ public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBu
     @Override
     public void init( FFContext context ) {
         eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        
+        eventDispatcher.notify( 
+            new ComponentSystemEvent( Type.INITIALISED, this ) 
+        );
     }
 
     @Override
     public final void dispose( FFContext context ) {
+        eventDispatcher.notify( 
+            new ComponentSystemEvent( Type.DISPOSED, this ) 
+        );
+        
         clear();
     }
 
@@ -351,6 +361,7 @@ public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBu
         return result;
     }
 
+    
     public final class AssetBuilder<A extends Asset> extends BaseComponentBuilder<A> {
         
         private final Class<A> assetType;

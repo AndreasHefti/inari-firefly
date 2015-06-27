@@ -100,20 +100,4 @@ public final class SpriteAsset extends Asset {
         attributes.put( TEXTURE_REGION, new Rectangle( textureRegion ) );
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "SpriteAsset [ ");
-        builder.append( ", name=" );
-        builder.append( name );
-        builder.append( ", group=" );
-        builder.append( group );
-        builder.append( ", textureId=" );
-        builder.append( Arrays.toString( textureId ) );
-        builder.append( ", textureRegion=" );
-        builder.append( textureRegion );
-        builder.append( "]" );
-        return builder.toString();
-    }
-
 }

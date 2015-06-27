@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.component.ComponentSystem;
@@ -26,6 +27,8 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
+import com.inari.firefly.component.event.ComponentSystemEvent;
+import com.inari.firefly.component.event.ComponentSystemEvent.Type;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.task.event.TaskEvent;
 import com.inari.firefly.task.event.TaskEventListener;
@@ -42,12 +45,22 @@ public final class TaskSystem implements FFSystem, ComponentSystem, ComponentBui
     @Override
     public final void init( FFContext context ) {
         this.context = context;
-        context.get( FFContext.System.EVENT_DISPATCHER ).register( TaskEvent.class, this );
+        IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        eventDispatcher.register( TaskEvent.class, this );
+        
+        eventDispatcher.notify( 
+            new ComponentSystemEvent( Type.INITIALISED, this ) 
+        );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        context.get( FFContext.System.EVENT_DISPATCHER ).unregister( TaskEvent.class, this );
+        IEventDispatcher eventDispatcher = context.get( FFContext.System.EVENT_DISPATCHER );
+        eventDispatcher.notify( 
+            new ComponentSystemEvent( Type.DISPOSED, this ) 
+        );
+        
+        eventDispatcher.unregister( TaskEvent.class, this );
         tasks.clear();
     }
 

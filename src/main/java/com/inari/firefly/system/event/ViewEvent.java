@@ -23,7 +23,7 @@ public final class ViewEvent extends Event<ViewEventListener> {
     public static enum Type {
         VIEW_CREATED,
         VIEW_ACTIVATED,
-        VIEW_DISABLED,
+        VIEW_DISPOSED,
         VIEW_DELETED
     }
     
