@@ -18,6 +18,7 @@ package com.inari.firefly.component.attr;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.inari.firefly.entity.Entity;
 
@@ -135,9 +136,9 @@ public class ComponentAttributeMap implements AttributeMap {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        Iterator<HashMap.Entry<AttributeKey<?>, Object>> it = attributes.entrySet().iterator();
+        Iterator<Map.Entry<AttributeKey<?>, Object>> it = attributes.entrySet().iterator();
         while ( it.hasNext() ) {
-            HashMap.Entry<AttributeKey<?>, Object> entry = it.next();
+            Map.Entry<AttributeKey<?>, Object> entry = it.next();
             builder.append( entry.getKey().toString() );
             builder.append( "=" );
             builder.append( String.valueOf( entry.getValue() ) );
