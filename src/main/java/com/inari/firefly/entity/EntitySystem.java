@@ -105,7 +105,7 @@ public class EntitySystem implements IEntitySystem {
     @SuppressWarnings( "unchecked" )
     public <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
         if ( type != Entity.class ) {
-            throw new IllegalArgumentException( "The IComponentType is not a subtype of Asset." + type );
+            throw new IllegalArgumentException( "The IComponentType is not supported: " + type );
         }
         
         return (ComponentBuilder<C>) getEntityBuilder();
