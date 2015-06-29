@@ -63,7 +63,7 @@ public final class TileGrid implements Component {
     private float worldYPos;
     private boolean spherical;
     
-    private int[][] grid;
+    protected int[][] grid;
     
     TileGrid() {
         viewId = -1;
@@ -129,7 +129,7 @@ public final class TileGrid implements Component {
         attributes.put( ATTRIBUTE_KEY_VIEW_ID, viewId );
         attributes.put( ATTRIBUTE_KEY_LAYER_ID, layerId );
         attributes.put( ATTRIBUTE_KEY_WIDTH, width );
-        attributes.put( ATTRIBUTE_KEY_WIDTH, height );
+        attributes.put( ATTRIBUTE_KEY_HEIGHT, height );
         attributes.put( ATTRIBUTE_KEY_CELL_WIDTH, cellWidth );
         attributes.put( ATTRIBUTE_KEY_CELL_HEIGHT, cellHeight );
         attributes.put( ATTRIBUTE_KEY_WORLD_XPOS, worldXPos );

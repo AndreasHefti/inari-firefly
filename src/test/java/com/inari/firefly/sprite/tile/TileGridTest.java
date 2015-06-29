@@ -8,6 +8,9 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import com.inari.commons.StringUtils;
+import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.component.attr.ComponentAttributeMap;
 import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
 public class TileGridTest {
 
@@ -16,93 +19,177 @@ public class TileGridTest {
         TileGrid grid1 = new TileGrid();
         TileGrid grid2 = new TileGrid( 1, 1, 10, 10 );
         TileGrid grid3 = new TileGrid( 1, 1, 10, 10, 10, 10, true );
-        
-        assertEquals( 
-            "TileGrid [viewId=-1, layerId=-1, width=0, height=0, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=[]]", 
-            grid1.toString() 
+        AttributeMap attrs = new ComponentAttributeMap();
+
+        grid1.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=-1, "
+                + "layerId:Integer=-1,"
+                + " width:Integer=0, "
+                + "height:Integer=0, "
+                + "cellWidth:Integer=0, "
+                + "cellHeight:Integer=0, "
+                + "worldXPos:Float=0.0, "
+                + "worldYPos:Float=0.0, "
+                + "spherical:Boolean=false",
+            attrs.toString()
         );
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=10, height=10, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
-            "grid=" +
-            "[[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]]]", 
-            grid2.toString() 
+
+        attrs.clear();
+        grid2.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+                + "layerId:Integer=1, "
+                + "width:Integer=10, "
+                + "height:Integer=10, "
+                + "cellWidth:Integer=0, "
+                + "cellHeight:Integer=0, "
+                + "worldXPos:Float=0.0, "
+                + "worldYPos:Float=0.0, "
+                + "spherical:Boolean=false",
+            attrs.toString()
         );
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=10, height=10, cellWidth=0, cellHeight=0, worldXPos=10.0, worldYPos=10.0, spherical=true, " +
-            "grid=" +
-            "[[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]]]", 
-            grid3.toString() 
+        assertEquals(
+            "[[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+            + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+            + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+            + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+            + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+            + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+            + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+            + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+            + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+            + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]]",
+            StringUtils.array2DToString( grid2.grid )
+        );
+
+        attrs.clear();
+        grid3.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+                + "layerId:Integer=1, "
+                + "width:Integer=10, "
+                + "height:Integer=10, "
+                + "cellWidth:Integer=0, "
+                + "cellHeight:Integer=0, "
+                + "worldXPos:Float=10.0, "
+                + "worldYPos:Float=10.0, "
+                + "spherical:Boolean=true",
+            attrs.toString()
+        );
+        assertEquals(
+            "[[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+                + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+                + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+                + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+                + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+                + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+                + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+                + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+                + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]"
+                + "[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]]",
+            StringUtils.array2DToString( grid3.grid )
         );
     }
     
     @Test
     public void testSetReset() {
         TileGrid grid = new TileGrid( 1, 1, 3, 3 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
-            "grid=" +
+        AttributeMap attrs = new ComponentAttributeMap();
+
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+            + "layerId:Integer=1, "
+            + "width:Integer=3, "
+            + "height:Integer=3, "
+            + "cellWidth:Integer=0, "
+            + "cellHeight:Integer=0, "
+            + "worldXPos:Float=0.0, "
+            + "worldYPos:Float=0.0, "
+            + "spherical:Boolean=false",
+            attrs.toString()
+        );
+        assertEquals(
             "[[-1, -1, -1]" +
             "[-1, -1, -1]" +
-            "[-1, -1, -1]]]", 
-            grid.toString() 
+            "[-1, -1, -1]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         grid.set( 50, 0, 0 );
         grid.set( 50, 1, 1 );
         grid.set( 50, 2, 2 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
-            "grid=" +
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+            + "layerId:Integer=1, "
+            + "width:Integer=3, "
+            + "height:Integer=3, "
+            + "cellWidth:Integer=0, "
+            + "cellHeight:Integer=0, "
+            + "worldXPos:Float=0.0, "
+            + "worldYPos:Float=0.0, "
+            + "spherical:Boolean=false",
+            attrs.toString()
+        );
+        assertEquals(
             "[[50, -1, -1]" +
             "[-1, 50, -1]" +
-            "[-1, -1, 50]]]", 
-            grid.toString() 
+            "[-1, -1, 50]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         grid.set( 150, 2, 0 );
         grid.set( 150, 1, 1 );
         grid.set( 150, 0, 2 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
-            "grid=" +
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+            + "layerId:Integer=1, "
+            + "width:Integer=3, "
+            + "height:Integer=3, "
+            + "cellWidth:Integer=0, "
+            + "cellHeight:Integer=0, "
+            + "worldXPos:Float=0.0, "
+            + "worldYPos:Float=0.0, "
+            + "spherical:Boolean=false",
+            attrs.toString()
+        );
+        assertEquals(
             "[[50, -1, 150]" +
             "[-1, 150, -1]" +
-            "[150, -1, 50]]]", 
-            grid.toString() 
+            "[150, -1, 50]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         grid.reset( 0, 0 );
         grid.reset( 1, 0 );
         grid.reset( 2, 0 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
-            "grid=" +
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+            + "layerId:Integer=1, "
+            + "width:Integer=3, "
+            + "height:Integer=3, "
+            + "cellWidth:Integer=0, "
+            + "cellHeight:Integer=0, "
+            + "worldXPos:Float=0.0, "
+            + "worldYPos:Float=0.0, "
+            + "spherical:Boolean=false",
+            attrs.toString()
+        );
+        assertEquals(
             "[[-1, -1, -1]" +
             "[-1, 150, -1]" +
-            "[150, -1, 50]]]", 
-            grid.toString() 
+            "[150, -1, 50]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         try {
@@ -129,137 +216,279 @@ public class TileGridTest {
     public void testSphericalSetReset() {
         TileGrid grid = new TileGrid( 1, 1, 3, 3 );
         grid.setSpherical( true );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
-            "grid=" +
+        AttributeMap attrs = new ComponentAttributeMap();
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+                + "layerId:Integer=1, "
+                + "width:Integer=3, "
+                + "height:Integer=3, "
+                + "cellWidth:Integer=0, "
+                + "cellHeight:Integer=0, "
+                + "worldXPos:Float=0.0, "
+                + "worldYPos:Float=0.0, "
+                + "spherical:Boolean=true",
+            attrs.toString()
+        );
+        assertEquals(
             "[[-1, -1, -1]" +
             "[-1, -1, -1]" +
-            "[-1, -1, -1]]]", 
-            grid.toString() 
+            "[-1, -1, -1]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         grid.set( 100, 4, 1 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
-            "grid=" +
-            "[[-1, -1, -1]" +
-            "[-1, 100, -1]" +
-            "[-1, -1, -1]]]", 
-            grid.toString() 
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+                + "layerId:Integer=1, "
+                + "width:Integer=3, "
+                + "height:Integer=3, "
+                + "cellWidth:Integer=0, "
+                + "cellHeight:Integer=0, "
+                + "worldXPos:Float=0.0, "
+                + "worldYPos:Float=0.0, "
+                + "spherical:Boolean=true",
+            attrs.toString()
+        );
+        assertEquals(
+            "[[-1, -1, -1]"
+            + "[-1, 100, -1]"
+            + "[-1, -1, -1]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         grid.set( 100, 1, 5 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
-            "grid=" +
-            "[[-1, -1, -1]" +
-            "[-1, 100, -1]" +
-            "[-1, 100, -1]]]", 
-            grid.toString() 
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+                + "layerId:Integer=1, "
+                + "width:Integer=3, "
+                + "height:Integer=3, "
+                + "cellWidth:Integer=0, "
+                + "cellHeight:Integer=0, "
+                + "worldXPos:Float=0.0, "
+                + "worldYPos:Float=0.0, "
+                + "spherical:Boolean=true",
+            attrs.toString()
+        );
+        assertEquals(
+            "[[-1, -1, -1]"
+            + "[-1, 100, -1]"
+            + "[-1, 100, -1]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         grid.set( 100, 8, 8 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
-            "grid=" +
-            "[[-1, -1, -1]" +
-            "[-1, 100, -1]" +
-            "[-1, 100, 100]]]", 
-            grid.toString() 
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+                + "layerId:Integer=1, "
+                + "width:Integer=3, "
+                + "height:Integer=3, "
+                + "cellWidth:Integer=0, "
+                + "cellHeight:Integer=0, "
+                + "worldXPos:Float=0.0, "
+                + "worldYPos:Float=0.0, "
+                + "spherical:Boolean=true",
+            attrs.toString()
+        );
+        assertEquals(
+            "[[-1, -1, -1]"
+            + "[-1, 100, -1]"
+            + "[-1, 100, 100]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         grid.reset( 8, 8 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=true, " +
-            "grid=" +
-            "[[-1, -1, -1]" +
-            "[-1, 100, -1]" +
-            "[-1, 100, -1]]]", 
-            grid.toString() 
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+                + "layerId:Integer=1, "
+                + "width:Integer=3, "
+                + "height:Integer=3, "
+                + "cellWidth:Integer=0, "
+                + "cellHeight:Integer=0, "
+                + "worldXPos:Float=0.0, "
+                + "worldYPos:Float=0.0, "
+                + "spherical:Boolean=true",
+            attrs.toString()
+        );
+        assertEquals(
+            "[[-1, -1, -1]"
+            + "[-1, 100, -1]"
+            + "[-1, 100, -1]]",
+            StringUtils.array2DToString( grid.grid )
         );
     }
     
     @Test
     public void testResize() {
         TileGrid grid = new TileGrid( 1, 1, 3, 3 );
+        AttributeMap attrs = new ComponentAttributeMap();
+
         grid.set( 100, 0, 0 );
         grid.set( 100, 1, 1 );
         grid.set( 100, 2, 2 );
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
-            "grid=" +
-            "[[100, -1, -1]" +
-            "[-1, 100, -1]" +
-            "[-1, -1, 100]]]", 
-            grid.toString() 
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+            + "layerId:Integer=1, "
+            + "width:Integer=3, "
+            + "height:Integer=3, "
+            + "cellWidth:Integer=0, "
+            + "cellHeight:Integer=0, "
+            + "worldXPos:Float=0.0, "
+            + "worldYPos:Float=0.0, "
+            + "spherical:Boolean=false",
+            attrs.toString()
+        );
+        assertEquals(
+            "[[100, -1, -1]"
+            + "[-1, 100, -1]"
+            + "[-1, -1, 100]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         grid.setWidth( 5 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=5, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=" +
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+            + "layerId:Integer=1, "
+            + "width:Integer=5, "
+            + "height:Integer=3, "
+            + "cellWidth:Integer=0, "
+            + "cellHeight:Integer=0, "
+            + "worldXPos:Float=0.0, "
+            + "worldYPos:Float=0.0, "
+            + "spherical:Boolean=false",
+            attrs.toString()
+        );
+        assertEquals(
             "[[100, -1, -1, -1, -1]" +
             "[-1, 100, -1, -1, -1]" +
-            "[-1, -1, 100, -1, -1]]]", 
-            grid.toString() 
+            "[-1, -1, 100, -1, -1]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         grid.setHeight( 5 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=5, height=5, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=" +
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+            + "layerId:Integer=1, "
+            + "width:Integer=5, "
+            + "height:Integer=5, "
+            + "cellWidth:Integer=0, "
+            + "cellHeight:Integer=0, "
+            + "worldXPos:Float=0.0, "
+            + "worldYPos:Float=0.0, "
+            + "spherical:Boolean=false",
+            attrs.toString()
+        );
+        assertEquals(
             "[[100, -1, -1, -1, -1]" +
             "[-1, 100, -1, -1, -1]" +
             "[-1, -1, 100, -1, -1]" +
             "[-1, -1, -1, -1, -1]" +
-            "[-1, -1, -1, -1, -1]]]", 
-            grid.toString() 
+            "[-1, -1, -1, -1, -1]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         grid.set( 100, 3, 3 );
         grid.set( 100, 4, 4 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=5, height=5, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, grid=" +
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+            + "layerId:Integer=1, "
+            + "width:Integer=5, "
+            + "height:Integer=5, "
+            + "cellWidth:Integer=0, "
+            + "cellHeight:Integer=0, "
+            + "worldXPos:Float=0.0, "
+            + "worldYPos:Float=0.0, "
+            + "spherical:Boolean=false",
+            attrs.toString()
+        );
+        assertEquals(
             "[[100, -1, -1, -1, -1]" +
             "[-1, 100, -1, -1, -1]" +
             "[-1, -1, 100, -1, -1]" +
             "[-1, -1, -1, 100, -1]" +
-            "[-1, -1, -1, -1, 100]]]", 
-            grid.toString() 
+            "[-1, -1, -1, -1, 100]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         grid.setWidth( 3 );
         grid.setHeight( 3 );
-        
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
-            "grid=" +
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+            + "layerId:Integer=1, "
+            + "width:Integer=3, "
+            + "height:Integer=3, "
+            + "cellWidth:Integer=0, "
+            + "cellHeight:Integer=0, "
+            + "worldXPos:Float=0.0, "
+            + "worldYPos:Float=0.0, "
+            + "spherical:Boolean=false",
+            attrs.toString()
+        );
+        assertEquals(
             "[[100, -1, -1]" +
             "[-1, 100, -1]" +
-            "[-1, -1, 100]]]", 
-            grid.toString() 
+            "[-1, -1, 100]]",
+            StringUtils.array2DToString( grid.grid )
         );
     }
     
     @Test
     public void testIterator() {
         TileGrid grid = new TileGrid( 1, 1, 3, 3 );
+        AttributeMap attrs = new ComponentAttributeMap();
+
         grid.set( 100, 0, 0 );
         grid.set( 100, 1, 1 );
         grid.set( 100, 2, 2 );
-        assertEquals( 
-            "TileGrid [viewId=1, layerId=1, width=3, height=3, cellWidth=0, cellHeight=0, worldXPos=0.0, worldYPos=0.0, spherical=false, " +
-            "grid=" +
+
+        attrs.clear();
+        grid.toAttributes( attrs );
+        assertEquals(
+            "viewId:Integer=1, "
+            + "layerId:Integer=1, "
+            + "width:Integer=3, "
+            + "height:Integer=3, "
+            + "cellWidth:Integer=0, "
+            + "cellHeight:Integer=0, "
+            + "worldXPos:Float=0.0, "
+            + "worldYPos:Float=0.0, "
+            + "spherical:Boolean=false",
+            attrs.toString()
+        );
+        assertEquals(
             "[[100, -1, -1]" +
             "[-1, 100, -1]" +
-            "[-1, -1, 100]]]", 
-            grid.toString() 
+            "[-1, -1, 100]]",
+            StringUtils.array2DToString( grid.grid )
         );
         
         TileGridIterator iterator = grid.iterator();
