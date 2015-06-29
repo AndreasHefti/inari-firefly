@@ -42,9 +42,15 @@ public final class Sound extends NamedIndexedComponent {
     float pitch;
     float pan;
     private int controllerId;
+    private final boolean streaming;
     
-    Sound( int id ) {
+    Sound( int id, boolean streaming ) {
         super( id );
+        this.streaming = streaming;
+    }
+
+    public final boolean isStreaming() {
+        return streaming;
     }
 
     @Override

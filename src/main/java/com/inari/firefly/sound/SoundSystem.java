@@ -54,7 +54,10 @@ public final class SoundSystem implements FFSystem, AssetEventListener {
         }
         switch ( event.type ) {
             case ASSET_LOADED: {
-                Sound sound = new Sound( event.asset.indexedId() );
+                Sound sound = new Sound( 
+                    event.asset.indexedId(), 
+                    ( (SoundAsset) event.asset ).isStreaming() 
+                );
                 sound.setName( event.asset.getName() );
                 sounds.add( sound );
                 break;

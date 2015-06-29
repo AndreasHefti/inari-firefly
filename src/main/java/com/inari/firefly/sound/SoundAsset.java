@@ -26,12 +26,15 @@ import com.inari.firefly.component.attr.AttributeMap;
 public class SoundAsset extends Asset {
     
     public static final AttributeKey<String> RESOURCE_NAME = new AttributeKey<String>( "resourceName", String.class, SoundAsset.class );
+    public static final AttributeKey<Boolean> STREAMING = new AttributeKey<Boolean>( "streaming", Boolean.class, SoundAsset.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
         ASSET_GROUP,
-        RESOURCE_NAME
+        RESOURCE_NAME,
+        STREAMING
     } ) );
     
     private String resourceName;
+    private boolean streaming;
 
     SoundAsset( int id ) {
         super( id );
@@ -50,7 +53,15 @@ public class SoundAsset extends Asset {
         checkNotAlreadyLoaded();
         this.resourceName = resourceName;
     }
-    
+
+    public final boolean isStreaming() {
+        return streaming;
+    }
+
+    public final void setStreaming( boolean streaming ) {
+        this.streaming = streaming;
+    }
+
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
@@ -62,11 +73,12 @@ public class SoundAsset extends Asset {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         resourceName = attributes.getValue( RESOURCE_NAME, resourceName );
+        streaming = attributes.getValue( STREAMING, streaming );
     }
     
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        attributes.put( RESOURCE_NAME, resourceName );
+        attributes.put( STREAMING, streaming );
     }
 }
