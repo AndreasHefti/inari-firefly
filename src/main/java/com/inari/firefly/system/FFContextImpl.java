@@ -15,8 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.system;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -89,7 +88,9 @@ public class FFContextImpl implements FFContext {
             Class<?> type = componentToCreate.getValue();
             
             try {
-                Object component = type.newInstance();
+                Constructor<?> defaultConstructor = type.getDeclaredConstructor();
+                defaultConstructor.setAccessible( true );
+                Object component = defaultConstructor.newInstance();
                 if ( component instanceof ComponentSystem ) {
                     componentTypes.put( 
                         (TypedKey<? extends ComponentSystem>) key, 
@@ -116,23 +117,23 @@ public class FFContextImpl implements FFContext {
         if ( skipCheck ) {
             return;
         }
-        checkCompleteness();
+//        checkCompleteness();
     }
 
-    private void checkCompleteness() {
-        for ( Field field : FFContext.System.class.getFields() ) {
-            if ( Modifier.isStatic( field.getModifiers() ) && field.getType() == TypedKey.class ) {
-                try {
-                    Object key = field.get( null );
-                    if ( !systemComponents.containsKey( key ) ) {
-                        throw new FFInitException( "Missing Component after init: " + key );
-                    }
-                } catch ( Exception e ) {
-                    throw new FFInitException( "Unknown exception while checkCompleteness: " + field, e );
-                }
-            }
-        }
-    }
+//    private void checkCompleteness() {
+//        for ( Field field : FFContext.System.class.getFields() ) {
+//            if ( Modifier.isStatic( field.getModifiers() ) && field.getType() == TypedKey.class ) {
+//                try {
+//                    Object key = field.get( null );
+//                    if ( !systemComponents.containsKey( key ) ) {
+//                        throw new FFInitException( "Missing Component after init: " + key );
+//                    }
+//                } catch ( Exception e ) {
+//                    throw new FFInitException( "Unknown exception while checkCompleteness: " + field, e );
+//                }
+//            }
+//        }
+//    }
     
     public static final class InitMap implements Iterable<Map.Entry<TypedKey<?>, Class<?>>> {
         

@@ -44,7 +44,7 @@ public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBu
     private final Map<String, Map<String, Asset>> groupNameMapping;
     
     
-    public AssetSystem() {
+    AssetSystem() {
         groupNameMapping = new LinkedHashMap<String, Map<String, Asset>>();
     }
     

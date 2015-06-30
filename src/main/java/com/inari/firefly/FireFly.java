@@ -13,15 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system;
+package com.inari.firefly;
 
 import com.inari.commons.event.EventDispatcher;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetSystem;
+import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.movement.MovementSystem;
+import com.inari.firefly.sound.SoundSystem;
+import com.inari.firefly.sprite.SpriteRendererSystem;
+import com.inari.firefly.sprite.tile.TileGridSystem;
+import com.inari.firefly.state.StateSystem;
+import com.inari.firefly.system.FFContextImpl;
 import com.inari.firefly.system.FFContextImpl.InitMap;
+import com.inari.firefly.system.ILowerSystemFacade;
+import com.inari.firefly.system.ViewSystem;
 import com.inari.firefly.system.event.RenderEvent;
 import com.inari.firefly.system.event.UpdateEvent;
 
@@ -39,9 +48,17 @@ public final class FireFly {
     public FireFly( Class<? extends ILowerSystemFacade> lowerSystemFacadeType ) {
         InitMap initMap = new InitMap();
         initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcher.class );
-        initMap.put( FFContext.System.ASSET_SYSTEM, AssetSystem.class );
-        initMap.put( FFContext.System.ENTITY_SYSTEM, EntitySystem.class );
         initMap.put( FFContext.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
+        initMap.put( FFContext.System.ASSET_SYSTEM, AssetSystem.class );
+        initMap.put( FFContext.System.STATE_SYSTEM, StateSystem.class );
+        initMap.put( FFContext.System.VIEW_SYSTEM, ViewSystem.class );
+        initMap.put( FFContext.System.ENTITY_SYSTEM, EntitySystem.class );
+        initMap.put( FFContext.System.SPRITE_RENDERER_SYSTEM, SpriteRendererSystem.class );
+        initMap.put( FFContext.System.TILE_GRID_SYSTEM, TileGridSystem.class );
+        initMap.put( FFContext.System.MOVEMENT_SYSTEM, MovementSystem.class );
+        initMap.put( FFContext.System.ENTITY_CONTROLLER_SYSTEM, ControllerSystem.class );
+        initMap.put( FFContext.System.ANIMATION_SYSTEM, AnimationSystem.class );
+        initMap.put( FFContext.System.SOUND_SYSTEM, SoundSystem.class );
 
         context = new FFContextImpl( initMap );
         eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
