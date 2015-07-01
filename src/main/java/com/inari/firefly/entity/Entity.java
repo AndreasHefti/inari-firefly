@@ -70,7 +70,7 @@ public final class Entity extends BaseIndexedObject {
     }
     
     public final void restore() {
-        provider.restore( indexedId() );
+        provider.delete( indexedId() );
     } 
 
     @Override

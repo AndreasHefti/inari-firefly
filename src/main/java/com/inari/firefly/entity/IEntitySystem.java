@@ -39,11 +39,11 @@ public interface IEntitySystem extends FFSystem, ComponentSystem, ComponentBuild
     
     void deactivate( int entityId );
     
-    void restore( int entityId );
+    void delete( int entityId );
     
-    void restoreAll( IntIterator iterator );
+    void deleteAll( IntIterator iterator );
     
-    public void restoreAll();
+    public void deleteAll();
 
     Entity getEntity( int entityId );
 

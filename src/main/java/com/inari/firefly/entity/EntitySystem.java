@@ -27,8 +27,10 @@ import com.inari.commons.lang.functional.Matcher;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.component.Component;
+import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.attr.ComponentKey;
@@ -142,7 +144,7 @@ public class EntitySystem implements IEntitySystem {
     }
 
     @Override
-    public final void restore( int entityId ) {
+    public final void delete( int entityId ) {
         if ( activeEntities.get( entityId ) != null ) {
             deactivate( entityId );
         }
@@ -151,16 +153,16 @@ public class EntitySystem implements IEntitySystem {
     }
     
     @Override
-    public final void restoreAll( IntIterator iterator ) {
+    public final void deleteAll( IntIterator iterator ) {
         while( iterator.hasNext() ) {
-            restore( iterator.next() );
+            delete( iterator.next() );
         }
     }
 
     @Override
-    public void restoreAll() {
+    public void deleteAll() {
         for ( Entity entity : activeEntities ) {
-            restore( entity.indexedId() );
+            delete( entity.indexedId() );
         }
     }
 
@@ -278,11 +280,15 @@ public class EntitySystem implements IEntitySystem {
     public final void fromAttributes( Attributes attributes ) {
         fromAttributes( attributes, BuildType.CLEAR_OLD );
     }
+    
+    private static final AttributeKey<String> ACTIVE_ENTITY_IDS = new AttributeKey<String>( "ACTIVE_ENTITY_IDS", String.class, ActiveEntitiesComponent.class );
+    private static interface ActiveEntitiesComponent extends Component{}
+    private static final ComponentKey ACTIVE_ENTITIES_IDS_KEY = new ComponentKey( ActiveEntitiesComponent.class, 0 );
 
     @Override
     public final void fromAttributes( Attributes attributes, BuildType buildType ) {
         if ( buildType == BuildType.CLEAR_OLD ) {
-            restoreAll();
+            deleteAll();
         }
         
         EntityBuilder entityBuilder = getEntityBuilder();
@@ -296,26 +302,53 @@ public class EntitySystem implements IEntitySystem {
                     }
                 }
             } else if ( buildType == BuildType.OVERWRITE ) {
-                restore( entityId );
+                delete( entityId );
             }
             entityBuilder
                 .setAttributes( attrsOfView )
                 .buildAndNext()
                 .clear();
-        } 
+        }
+        
+        AttributeMap attributeMap = attributes.get( ACTIVE_ENTITIES_IDS_KEY );
+        if ( attributeMap == null ) {
+            return;
+        }
+        String activeEntityIdsString = attributeMap.getValue( ACTIVE_ENTITY_IDS );
+        IntBag activeEntityIds = new IntBag();
+        activeEntityIds.fromConfigString( activeEntityIdsString );
+        IntIterator iterator = activeEntityIds.iterator();
+        while ( iterator.hasNext() ) {
+            activate( iterator.next() );
+        }
     }
 
     @Override
     public final void toAttributes( Attributes attributes ) {
+        IntBag activeEntityIds = new IntBag( activeEntities.size() );
         for ( Entity entity : activeEntities ) {
-            ComponentKey key = new ComponentKey( Entity.class, entity.getId() );
-            EntityAttributeMap attributeMap = new EntityAttributeMap();
-            attributeMap.setComponentKey( key );
-            attributes.add( attributeMap );
-            IndexedTypeSet components = getComponents( entity.getId() );
-            for ( EntityComponent component : components.<EntityComponent>getIterable() ) {
-                component.toAttributes( attributeMap );
-            }
+            entityToAttribute( attributes, entity );
+            activeEntityIds.add( entity.getId() );
+        }
+        
+        EntityAttributeMap attributeMap = new EntityAttributeMap();
+        attributeMap.setComponentKey( ACTIVE_ENTITIES_IDS_KEY );
+        attributes.add( attributeMap );
+        attributeMap.put( ACTIVE_ENTITY_IDS, activeEntityIds.toConfigString() );
+        
+        for ( Entity entity : inactiveEntities ) {
+            entityToAttribute( attributes, entity );
+        }
+    }
+
+    private void entityToAttribute( Attributes attributes, Entity entity ) {
+        ComponentKey key = new ComponentKey( Entity.class, entity.getId() );
+        EntityAttributeMap attributeMap = new EntityAttributeMap();
+        attributeMap.setComponentKey( key );
+        attributes.add( attributeMap );
+        IndexedTypeSet components = getComponents( entity.getId() );
+        for ( EntityComponent component : components.<EntityComponent>getIterable() ) {
+            component.toAttributes( attributeMap );
         }
     }
     
@@ -372,30 +405,6 @@ public class EntitySystem implements IEntitySystem {
     }
     
     // ---- Utilities --------------------------------------------------------
-    
-//    @Override
-//    public String toString() {
-//        StringBuilder builder = new StringBuilder();
-//        builder.append( "EntitySystem [inactiveEntites=" ).append( inactiveEntities.size() ).append( " activeEntities=" );
-//        for ( Entity entity : activeEntities ) {
-//            builder.append( "entity{" ).append( entity.indexedId() );
-//            IndexedTypeSet components = getComponents( entity.indexedId() );
-//            if ( components != null ) {
-//                builder.append( ":" );
-//                Iterator<EntityComponent> iterator = components.<EntityComponent>getIterable().iterator();
-//                while ( iterator.hasNext() ) {
-//                    EntityComponent component = iterator.next();
-//                    builder.append( component.indexedType().getSimpleName() );
-//                    if ( iterator.hasNext() ) {
-//                        builder.append( "," );
-//                    }
-//                }
-//            }
-//            builder.append( "}" );
-//        }
-//        builder.append( "]" );
-//        return builder.toString();
-//    }
 
     private abstract class EntityIterator implements Iterator<Entity> {
         
