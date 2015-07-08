@@ -34,7 +34,6 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.attr.ComponentKey;
-import com.inari.firefly.component.attr.EntityAttributeMap;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentCreationException;
@@ -281,9 +280,9 @@ public class EntitySystem implements IEntitySystem {
         fromAttributes( attributes, BuildType.CLEAR_OLD );
     }
     
-    private static final AttributeKey<String> ACTIVE_ENTITY_IDS = new AttributeKey<String>( "ACTIVE_ENTITY_IDS", String.class, ActiveEntitiesComponent.class );
-    private static interface ActiveEntitiesComponent extends Component{}
-    private static final ComponentKey ACTIVE_ENTITIES_IDS_KEY = new ComponentKey( ActiveEntitiesComponent.class, 0 );
+    static final AttributeKey<String> ACTIVE_ENTITY_IDS = new AttributeKey<String>( "ACTIVE_ENTITY_IDS", String.class, ActiveEntitiesComponent.class );
+    static interface ActiveEntitiesComponent extends Component{}
+    static final ComponentKey ACTIVE_ENTITIES_IDS_KEY = new ComponentKey( ActiveEntitiesComponent.class, 0 );
 
     @Override
     public final void fromAttributes( Attributes attributes, BuildType buildType ) {

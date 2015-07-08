@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.component.attr;
+package com.inari.firefly.entity;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.firefly.component.Component;
-import com.inari.firefly.entity.Entity;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.ComponentAttributeMap;
+import com.inari.firefly.component.attr.ComponentKey;
 
 public class EntityAttributeMap extends ComponentAttributeMap {
     
     @Override
     public final void setComponentKey( ComponentKey typeKey ) {
-        if ( typeKey.getType() != Entity.class ) {
+        if ( typeKey.getType() != Entity.class && typeKey.getType() != EntitySystem.ActiveEntitiesComponent.class ) {
             throw new IllegalArgumentException( "The ComponentKey has not the expected type: " + Entity.class.getName() );
         }
         super.setComponentKey( typeKey );
@@ -34,7 +36,7 @@ public class EntityAttributeMap extends ComponentAttributeMap {
     public Set<Class<? extends Component>> getEntityComponentTypes() {
         Set<Class<? extends Component>> componentTypes = new HashSet<Class<? extends Component>>();
         for ( AttributeKey<?> attrKey : attributes.keySet() ) {
-            componentTypes.add( attrKey.componentType );
+            componentTypes.add( attrKey.componentType() );
         }
         return componentTypes;
     }
