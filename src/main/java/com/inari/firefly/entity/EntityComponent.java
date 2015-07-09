@@ -15,11 +15,11 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
-import com.inari.commons.lang.indexed.Indexed;
+import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.Component;
 
-public abstract class EntityComponent implements Component, Indexed {
+public abstract class EntityComponent implements Component, IndexedType {
     
     private final int index;
     
@@ -28,7 +28,7 @@ public abstract class EntityComponent implements Component, Indexed {
     }
     
     @Override
-    public final Class<EntityComponent> indexedType() {
+    public final Class<EntityComponent> indexedBaseType() {
         return EntityComponent.class;
     }
 
