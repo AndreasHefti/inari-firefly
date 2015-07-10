@@ -26,8 +26,8 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.IEntitySystem;
-import com.inari.firefly.entity.event.AspectedEntityActivationListener;
 import com.inari.firefly.entity.event.EntityActivationEvent;
+import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.ViewSystem;
@@ -40,7 +40,7 @@ public final class TileGridSystem
         FFSystem,
         ComponentBuilderFactory, 
         ViewEventListener,
-        AspectedEntityActivationListener {
+        EntityActivationListener {
     
     public static final int VOID_ENTITY_ID = -1;
     
@@ -92,7 +92,7 @@ public final class TileGridSystem
     @Override
     public final void onViewEvent( ViewEvent event ) {
         if ( event.type == Type.VIEW_DELETED ) {
-            deleteAllTileGrid( event.view.indexedId() );
+            deleteAllTileGrid( event.view.index() );
         }
     }
 

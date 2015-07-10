@@ -26,8 +26,8 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.IEntitySystem;
-import com.inari.firefly.entity.event.AspectedEntityActivationListener;
 import com.inari.firefly.entity.event.EntityActivationEvent;
+import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.sprite.tile.ETile;
 import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.sprite.tile.TileGridSystem;
@@ -36,7 +36,7 @@ import com.inari.firefly.system.ILowerSystemFacade;
 import com.inari.firefly.system.event.RenderEvent;
 import com.inari.firefly.system.event.RenderEventListener;
 
-public final class SpriteRendererSystem implements FFSystem, AspectedEntityActivationListener, RenderEventListener {
+public final class SpriteRendererSystem implements FFSystem, EntityActivationListener, RenderEventListener {
     
     private IEventDispatcher eventDispatcher;
     private IEntitySystem entityProvider;

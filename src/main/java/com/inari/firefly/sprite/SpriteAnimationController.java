@@ -126,10 +126,10 @@ public class SpriteAnimationController extends EntityController {
         attributes.put( TINT_GREEN_ANIMATION_ID, tintGreenAnimationId );
         attributes.put( TINT_BLUE_ANIMATION_ID, tintBlueAnimationId );
         attributes.put( TINT_ALPHA_ANIMATION_ID, tintAlphaAnimationId );
-    }
+    } 
 
     @Override
-    protected int getControlledComponentTypeId() {
+    protected final int getControlledComponentTypeId() {
         return ESprite.COMPONENT_TYPE;
     }
 

@@ -84,9 +84,9 @@ public class MovementAnimationController extends EntityController {
         attributes.put( VELOCITY_X_ANIMATION_ID, velocityXAnimationId );
         attributes.put( VELOCITY_Y_ANIMATION_ID, velocityYAnimationId );
     }
-    
+
     @Override
-    protected int getControlledComponentTypeId() {
+    protected final int getControlledComponentTypeId() {
         return EMovement.COMPONENT_TYPE;
     }
 

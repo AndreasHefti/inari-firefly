@@ -175,7 +175,7 @@ public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBu
     private final Asset getAsset( int componentId ) {
         for ( Map<String, Asset> assetsOfGroup : groupNameMapping.values() ) {
             for ( Asset asset : assetsOfGroup.values() ) {
-                if ( componentId == asset.indexedId() ) {
+                if ( componentId == asset.index() ) {
                     return asset;
                 }
             }
@@ -233,7 +233,7 @@ public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBu
     public final void toAttributes( Attributes attributes ) {
         for ( Map<String, Asset> assetMap : groupNameMapping.values() ) {
             for ( Asset asset : assetMap.values() ) {
-                ComponentBuilderHelper.toAttributes( attributes, asset.getIndexedObjectType(), asset );
+                ComponentBuilderHelper.toAttributes( attributes, asset.indexedObjectType(), asset );
             }
         }
     }
@@ -248,7 +248,7 @@ public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBu
     }
     
     private Collection<Asset> disposeAsset( Asset asset ) {
-        Collection<Asset> toDisposeFirst = findeAssetsToDisposeFirst( asset.indexedId() );
+        Collection<Asset> toDisposeFirst = findeAssetsToDisposeFirst( asset.index() );
         if ( !toDisposeFirst.isEmpty() ) {
             for ( Asset toDispose : toDisposeFirst ) {
                 if ( toDispose.loaded ) {
@@ -316,7 +316,7 @@ public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBu
         Map<String, Asset> forGroup = groupNameMapping.get( mostPossibleGroup );
         if ( forGroup != null ) {
             for ( Asset asset : forGroup.values() ) {
-                if ( asset.indexedId() == id ) {
+                if ( asset.index() == id ) {
                     return asset;
                 }
             }
@@ -324,7 +324,7 @@ public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBu
         
         for ( Map<String, Asset> nameMapping : groupNameMapping.values() ) {
             for ( Asset asset : nameMapping.values() ) {
-                if ( asset.indexedId() == id ) {
+                if ( asset.index() == id ) {
                     return asset;
                 }
             }

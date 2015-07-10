@@ -79,7 +79,7 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
 
     @Override
     public void startRendering( View view ) {
-        log.add( "startRendering::View(" + view.indexedId() + ")" );
+        log.add( "startRendering::View(" + view.index() + ")" );
     }
 
     @Override
@@ -94,12 +94,12 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
 
     @Override
     public void endRendering( View view ) {
-        log.add( "endRendering::View(" + view.indexedId() + ")" );
+        log.add( "endRendering::View(" + view.index() + ")" );
     }
     
     @Override
     public void soundAttributesChanged( Sound sound ) {
-        log.add( "soundAttributesChanged::Sound(" + sound.indexedId() + ")" );
+        log.add( "soundAttributesChanged::Sound(" + sound.index() + ")" );
     }
 
     @Override

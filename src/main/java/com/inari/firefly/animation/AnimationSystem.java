@@ -102,7 +102,7 @@ public final class AnimationSystem
             if ( animation != null ) {
                 animation.update( updateTime );
                 if ( animation.finished ) {
-                    animations.remove( animation.indexedId() );
+                    animations.remove( animation.index() );
                     animation.dispose();
                 }
             }
@@ -181,7 +181,7 @@ public final class AnimationSystem
     @Override
     public final void toAttributes( Attributes attributes ) {
         for ( Animation animation : animations ) {
-            ComponentBuilderHelper.toAttributes( attributes, animation.getIndexedObjectType(), animation );
+            ComponentBuilderHelper.toAttributes( attributes, animation.indexedObjectType(), animation );
         }
     }
     
@@ -207,7 +207,7 @@ public final class AnimationSystem
             
             animation.fromAttributes( attributes );
             
-            animations.set( animation.indexedId(), animation );
+            animations.set( animation.index(), animation );
             return animation;
         }
     }

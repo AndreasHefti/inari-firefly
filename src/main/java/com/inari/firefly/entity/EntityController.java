@@ -16,6 +16,7 @@
 package com.inari.firefly.entity;
 
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.lang.aspect.Aspect;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.event.EntityActivationEvent;
@@ -65,6 +66,11 @@ public abstract class EntityController extends Controller implements EntityActiv
                 update( time, entityId );
             }
         }
+    }
+    
+    @Override
+    public final boolean match( Aspect aspect ) {
+        return aspect.contains( getControlledComponentTypeId() );
     }
 
     protected abstract int getControlledComponentTypeId();

@@ -29,7 +29,7 @@ public abstract class Controller extends NamedIndexedComponent implements Dispos
     }
 
     @Override
-    public final Class<Controller> getIndexedObjectType() {
+    public final Class<Controller> indexedObjectType() {
         return Controller.class;
     }
     

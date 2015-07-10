@@ -15,8 +15,10 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity.event;
 
+import com.inari.commons.event.AspectedEventListener;
+
 @Deprecated // check if this is really useful
-public interface EntityChangeListener {
+public interface EntityChangeListener extends AspectedEventListener {
     
     public void onEntityChangeEvent( EntityChangeEvent event );
 

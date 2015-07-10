@@ -42,7 +42,7 @@ public abstract class Asset extends NamedIndexedComponent implements DynamicAttr
         return loaded;
     }
     @Override
-    public final Class<? extends Asset> getIndexedObjectType() {
+    public final Class<? extends Asset> indexedObjectType() {
         return getComponentType();
     }
     

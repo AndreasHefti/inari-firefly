@@ -103,7 +103,7 @@ public final class SoundAnimationController extends SoundController {
             FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, volumeAnimationId );
             if ( animation != null ) {
                 if ( animation.isActive() ) {
-                    float newVolume = animation.get( sound.indexedId(), sound.volume );
+                    float newVolume = animation.get( sound.index(), sound.volume );
                     if ( newVolume != sound.volume ) {
                         sound.volume = newVolume;
                     }
@@ -117,7 +117,7 @@ public final class SoundAnimationController extends SoundController {
             FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, pitchAnimationId );
             if ( animation != null ) {
                 if ( animation.isActive() ) {
-                    float newPitch = animation.get( sound.indexedId(), sound.pitch );
+                    float newPitch = animation.get( sound.index(), sound.pitch );
                     if ( newPitch != sound.pitch ) {
                         sound.pitch = newPitch;
                     }
@@ -131,7 +131,7 @@ public final class SoundAnimationController extends SoundController {
             FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, panAnimationId );
             if ( animation != null ) {
                 if ( animation.isActive() ) {
-                    float newPan = animation.get( sound.indexedId(), sound.pan );
+                    float newPan = animation.get( sound.index(), sound.pan );
                     if ( newPan != sound.pan ) {
                         sound.pan = newPan;
                     }

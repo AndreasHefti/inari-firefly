@@ -111,8 +111,8 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
     
     public final void clear() {
         for( View view : views ) {
-            disableLayering( view.indexedId() );
-            deleteView( view.indexedId() );
+            disableLayering( view.index() );
+            deleteView( view.index() );
         }
         views.clear();
         layersOfView.clear();
@@ -125,7 +125,7 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
     public final Layer getLayer( int layerId ) {
         for ( List<Layer> layers : layersOfView ) {
             for ( Layer layer : layers ) {
-                if ( layer.indexedId() == layerId ) {
+                if ( layer.index() == layerId ) {
                     return layer;
                 }
             }
@@ -141,7 +141,7 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
         
         Collection<Layer> layers = layersOfView.get( viewId );
         for ( Layer layer : layers ) {
-            if ( layerId == layer.indexedId() ) {
+            if ( layerId == layer.index() ) {
                 return layer;
             }
         }
@@ -201,7 +201,7 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
             Iterator<Layer> layerIt = layers.iterator();
             while ( layerIt.hasNext() ) {
                 Layer layer = layerIt.next();
-                if ( layer.indexedId() == layerId ) {
+                if ( layer.index() == layerId ) {
                     layerIt.remove();
                     layer.dispose();
                 }
@@ -258,7 +258,7 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
                 continue;
             }
             
-            int viewId = view.indexedId();
+            int viewId = view.index();
             renderEvent.setViewId( viewId );
             renderEvent.setClip( view.getBounds() );
             eventDispatcher.notify( renderEvent );
@@ -285,7 +285,7 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
 
             @SuppressWarnings( "unused" )
             public ComponentBuilder<Layer> setAttribute( AttributeKey<Integer> key, View value ) {
-                return super.setAttribute( key, value.indexedId() );
+                return super.setAttribute( key, value.index() );
             }
 
             @Override
@@ -321,7 +321,7 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
             public View build( int componentId ) {
                 View view = new View( componentId );
                 view.fromAttributes( attributes );
-                views.set( view.indexedId(), view );
+                views.set( view.index(), view );
                 eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_CREATED ) );
                 return view;
             }

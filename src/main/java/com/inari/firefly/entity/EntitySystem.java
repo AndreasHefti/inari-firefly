@@ -161,7 +161,7 @@ public class EntitySystem implements IEntitySystem {
     @Override
     public void deleteAll() {
         for ( Entity entity : activeEntities ) {
-            delete( entity.indexedId() );
+            delete( entity.index() );
         }
     }
 
@@ -210,7 +210,7 @@ public class EntitySystem implements IEntitySystem {
         if ( entity == null || entity.isActive() ) {
             return;
         }
-        int entityId = entity.indexedId();
+        int entityId = entity.index();
         
         Aspect aspect = getEntityAspect( entityId );
         if ( aspect == null || aspect.isEmpty() ) {
@@ -220,11 +220,11 @@ public class EntitySystem implements IEntitySystem {
         }
         
         inactiveEntities.remove( entity );
-        activeEntities.set( entity.indexedId(), entity ) ;
+        activeEntities.set( entity.index(), entity ) ;
         
         if ( eventDispatcher != null ) {
             eventDispatcher.notify( 
-                new EntityActivationEvent( entity.indexedId(), aspect, Type.ENTITY_ACTIVATED ) 
+                new EntityActivationEvent( entity.index(), aspect, Type.ENTITY_ACTIVATED ) 
             );
         }
     }
@@ -514,10 +514,10 @@ public class EntitySystem implements IEntitySystem {
             Entity entity = createEntity( componentId );
             
             IndexedTypeSet components;
-            components = getComponents( entity.indexedId() );
+            components = getComponents( entity.index() );
             if ( components == null ) {
                 components = new IndexedTypeSet( EntityComponent.class );
-                usedComponents.set( entity.indexedId(), components );
+                usedComponents.set( entity.index(), components );
             }
             
             // if we have prefab components we set them first

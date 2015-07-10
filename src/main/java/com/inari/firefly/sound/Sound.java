@@ -54,7 +54,7 @@ public final class Sound extends NamedIndexedComponent {
     }
 
     @Override
-    public final Class<Sound> getIndexedObjectType() {
+    public final Class<Sound> indexedObjectType() {
         return Sound.class;
     }
 

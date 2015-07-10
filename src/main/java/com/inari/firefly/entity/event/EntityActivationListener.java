@@ -15,7 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity.event;
 
-public interface EntityActivationListener {
+import com.inari.commons.event.AspectedEventListener;
+
+public interface EntityActivationListener extends AspectedEventListener {
 
     public void onEntityActivationEvent( EntityActivationEvent event );
 

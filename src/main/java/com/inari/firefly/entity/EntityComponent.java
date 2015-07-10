@@ -33,6 +33,11 @@ public abstract class EntityComponent implements Component, IndexedType {
     }
 
     @Override
+    public Class<? extends IndexedType> indexedType() {
+        return this.getClass();
+    }
+
+    @Override
     public final int index() {
         return index;
     }

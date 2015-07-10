@@ -88,13 +88,13 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
 
     public final void clear() {
         for ( Workflow workflow : workflows ) {
-            deleteWorkflow( workflow.indexedId() );
+            deleteWorkflow( workflow.index() );
         }
         workflows.clear();
         states.clear();
         stateChangesForState.clear();
         for ( StateChangeCondition condition : conditions ) {
-            deleteCondition( condition.indexedId() );
+            deleteCondition( condition.index() );
         }
         conditions.clear();
     }
@@ -140,7 +140,7 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
             return false;
         }
         
-        deleteWorkflow( workflow.indexedId() );
+        deleteWorkflow( workflow.index() );
         return true;
     }
 
@@ -157,7 +157,7 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
     public final int getWorkflowId( String name ) {
         for ( Workflow workflow : workflows ) {
             if ( workflow.getName().equals( name ) ) {
-                return workflow.indexedId();
+                return workflow.index();
             }
         }
         
@@ -194,7 +194,7 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
 
     public final void deleteAllStates( int workflowId ) {
         for ( State state : states ) {
-            deleteState( state.indexedId() );
+            deleteState( state.index() );
         }
     }
 
@@ -217,7 +217,7 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
     public final StateChange getStateChange( int id ) {
         for ( Collection<StateChange> stateChanges : stateChangesForState ) {
             for ( StateChange stateChange : stateChanges ) {
-                if ( stateChange.indexedId() == id ) {
+                if ( stateChange.index() == id ) {
                     return stateChange;
                 }
             }
@@ -229,7 +229,7 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
             Iterator<StateChange> it = stateChanges.iterator();
             while ( it.hasNext() ) {
                 StateChange stateChange = it.next();
-                if ( stateChange.indexedId() == id ) {
+                if ( stateChange.index() == id ) {
                     it.remove();
                     stateChange.dispose();
                     return;
@@ -292,7 +292,7 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
             public Workflow build( int componentId ) {
                 Workflow workflow = new Workflow( componentId );
                 workflow.fromAttributes( attributes );
-                workflows.set( workflow.indexedId(), workflow );
+                workflows.set( workflow.index(), workflow );
                 return workflow;
             }
         };
@@ -308,7 +308,7 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
             public State build( int componentId ) {
                 State state = new State( componentId );
                 state.fromAttributes( attributes );
-                states.set( state.indexedId(), state );
+                states.set( state.index(), state );
                 return state;
             }
         };
@@ -406,7 +406,7 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
         for ( Collection<StateChange> stateChanges : stateChangesForState ) {
             for ( StateChange stateChange : stateChanges ) {
                 if ( conditionId == stateChange.getConditionId() ) {
-                    throw new IllegalArgumentException( "The StateChangeCondition with id:" + conditionId + " is still on use form StateChange with id:" + stateChange.indexedId() );
+                    throw new IllegalArgumentException( "The StateChangeCondition with id:" + conditionId + " is still on use form StateChange with id:" + stateChange.index() );
                 }
             }
         }

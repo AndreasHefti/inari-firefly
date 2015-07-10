@@ -58,7 +58,7 @@ public abstract class ComponentBuilderHelper<C extends Component> {
     }
     public final static <C extends Component> void toAttributes( Attributes attributes, Class<? extends C> componentType, C component ) {
         AttributeMap attrs = new ComponentAttributeMap();
-        int id = ( component instanceof IndexedObject )? ( (IndexedObject) component ).indexedId() : -1;
+        int id = ( component instanceof IndexedObject )? ( (IndexedObject) component ).index() : -1;
         attrs.setComponentKey( new ComponentKey( componentType, id ) );
         component.toAttributes( attrs );
         attributes.add( attrs );

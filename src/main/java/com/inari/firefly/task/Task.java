@@ -42,7 +42,7 @@ public abstract class Task extends NamedIndexedComponent {
     }
 
     @Override
-    public final Class<Task> getIndexedObjectType() {
+    public final Class<Task> indexedObjectType() {
         return Task.class;
     }
 

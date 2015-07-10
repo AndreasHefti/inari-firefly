@@ -29,7 +29,7 @@ public final class Entity extends BaseIndexedObject {
     }
 
     @Override
-    public final Class<Entity> getIndexedObjectType() {
+    public final Class<Entity> indexedObjectType() {
         return Entity.class;
     }
     
@@ -54,15 +54,15 @@ public final class Entity extends BaseIndexedObject {
     }
 
     public final boolean isActive() {
-        return provider.isActive( indexedId() );
+        return provider.isActive( index() );
     }
     
     public final boolean setActive( boolean activate ) {
         if ( activate && !isActive() ) {
-            provider.activate( indexedId() );
+            provider.activate( index() );
             return isActive();
         } else if ( !activate && isActive() ) {
-            provider.deactivate( indexedId() );
+            provider.deactivate( index() );
             return !isActive();
         }
         
@@ -70,15 +70,15 @@ public final class Entity extends BaseIndexedObject {
     }
     
     public final void restore() {
-        provider.delete( indexedId() );
+        provider.delete( index() );
     } 
 
     @Override
     public final String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append( "Entity [indexedId=" ).append( indexedId() ).append( ", isActive=" ).append( isActive() ).append( "]" );
+        builder.append( "Entity [indexedId=" ).append( index() ).append( ", isActive=" ).append( isActive() ).append( "]" );
         if ( isActive() ) {
-            builder.append( "\n  Components [index=" ).append( provider.getComponents( indexedId() )  ).append( "]" );
+            builder.append( "\n  Components [index=" ).append( provider.getComponents( index() )  ).append( "]" );
         }
         return builder.toString();
     }

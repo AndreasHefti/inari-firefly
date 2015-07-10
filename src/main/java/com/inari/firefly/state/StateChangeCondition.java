@@ -30,7 +30,7 @@ public abstract class StateChangeCondition extends NamedIndexedComponent {
     }
 
     @Override
-    public final Class<StateChangeCondition> getIndexedObjectType() {
+    public final Class<StateChangeCondition> indexedObjectType() {
         return StateChangeCondition.class;
     }
 

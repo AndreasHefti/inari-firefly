@@ -46,7 +46,7 @@ public final class ViewEvent extends Event<ViewEventListener> {
         builder.append( "ViewEvent [type=" );
         builder.append( type );
         builder.append( ", view=" );
-        builder.append( view.indexedId() );
+        builder.append( view.index() );
         builder.append( "]" );
         return builder.toString();
     }

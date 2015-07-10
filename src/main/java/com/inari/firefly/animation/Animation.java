@@ -49,7 +49,7 @@ public abstract class Animation extends NamedIndexedComponent {
     }
 
     @Override
-    public final Class<Animation> getIndexedObjectType() {
+    public final Class<Animation> indexedObjectType() {
         return Animation.class;
     }
 

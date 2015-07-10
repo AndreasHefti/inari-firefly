@@ -141,7 +141,7 @@ public final class ControllerSystem
         public Controller build( int componentId ) {
             Controller result = getInstance( context, componentId );
             result.fromAttributes( attributes );
-            controller.set( result.indexedId(), result );
+            controller.set( result.index(), result );
             return result;
         }
     }

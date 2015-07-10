@@ -33,7 +33,7 @@ public final class AssetEvent extends Event<AssetEventListener> {
 
     public AssetEvent( Asset asset, Type type ) {
         this.asset = asset;
-        assetType = asset.getIndexedObjectType();
+        assetType = asset.indexedObjectType();
         this.type = type;
     }
 

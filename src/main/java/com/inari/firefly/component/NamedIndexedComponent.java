@@ -43,7 +43,7 @@ public abstract class NamedIndexedComponent extends BaseIndexedObject implements
     }
 
     @Override
-    public Class<? extends IndexedObject> getIndexedObjectType() {
+    public Class<? extends IndexedObject> indexedObjectType() {
         return this.getClass();
     }
 
