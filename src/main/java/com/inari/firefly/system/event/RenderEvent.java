@@ -48,7 +48,7 @@ public final class RenderEvent extends Event<RenderEventListener> {
     }
 
     public void setClip( Rectangle clip ) {
-        this.clip.fromOther( clip );
+        this.clip.setFrom( clip );
     }
 
     @Override
