@@ -17,8 +17,8 @@ import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.event.AspectedEventListener;
 import com.inari.commons.event.Event;
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.commons.event.MatchedEvent;
-import com.inari.commons.event.MatchedEventListener;
+import com.inari.commons.event.PredicatedEvent;
+import com.inari.commons.event.PredicatedEventListener;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.asset.event.AssetEvent;
@@ -382,7 +382,7 @@ public class AssetSystemTest {
         }
 
         @Override
-        public <L extends MatchedEventListener> void notify( MatchedEvent<L> event ) {
+        public <L extends PredicatedEventListener> void notify( PredicatedEvent<L> event ) {
             //events.add( event.getClass().getSimpleName() );
         }
 

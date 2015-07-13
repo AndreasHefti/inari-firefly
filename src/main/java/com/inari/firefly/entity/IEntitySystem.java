@@ -17,7 +17,7 @@ package com.inari.firefly.entity;
 
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspect;
-import com.inari.commons.lang.functional.Matcher;
+import com.inari.commons.lang.functional.Predicate;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.component.ComponentSystem;
@@ -51,7 +51,7 @@ public interface IEntitySystem extends FFSystem, ComponentSystem, ComponentBuild
 
     Iterable<Entity> entities( Aspect aspect );
 
-    Iterable<Entity> entities( Matcher<Entity> matcher );
+    Iterable<Entity> entities( Predicate<Entity> predicate );
 
     <T extends EntityComponent> T getComponent( int entityId, Class<T> componentType );
     

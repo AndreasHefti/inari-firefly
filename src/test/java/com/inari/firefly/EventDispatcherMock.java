@@ -7,8 +7,8 @@ import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.event.AspectedEventListener;
 import com.inari.commons.event.Event;
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.commons.event.MatchedEvent;
-import com.inari.commons.event.MatchedEventListener;
+import com.inari.commons.event.PredicatedEvent;
+import com.inari.commons.event.PredicatedEventListener;
 
 public class EventDispatcherMock implements IEventDispatcher {
     
@@ -34,7 +34,7 @@ public class EventDispatcherMock implements IEventDispatcher {
     }
 
     @Override
-    public <L extends MatchedEventListener> void notify( MatchedEvent<L> event ) {
+    public <L extends PredicatedEventListener> void notify( PredicatedEvent<L> event ) {
         events.add( event );
     }
 

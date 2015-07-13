@@ -23,7 +23,7 @@ import java.util.Stack;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspect;
-import com.inari.commons.lang.functional.Matcher;
+import com.inari.commons.lang.functional.Predicate;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
@@ -197,11 +197,11 @@ public class EntitySystem implements IEntitySystem {
     
 
     @Override
-    public final Iterable<Entity> entities( final Matcher<Entity> matcher ) {
+    public final Iterable<Entity> entities( final Predicate<Entity> predicate ) {
         return new Iterable<Entity>() {
             @Override
             public final Iterator<Entity> iterator() {
-                return new MatcherEntityIterator( matcher );
+                return new PredicatedEntityIterator( predicate );
             }
         };
     }
@@ -458,13 +458,13 @@ public class EntitySystem implements IEntitySystem {
         }
     }
     
-    private final class MatcherEntityIterator extends EntityIterator {
+    private final class PredicatedEntityIterator extends EntityIterator {
         
-        private final Matcher<Entity> matcher;
+        private final Predicate<Entity> predicate;
 
-        private MatcherEntityIterator( Matcher<Entity> matcher ) {
+        private PredicatedEntityIterator( Predicate<Entity> predicate ) {
             super( activeEntities.iterator() );
-            this.matcher = matcher;
+            this.predicate = predicate;
             findNext();
         }
 
@@ -474,7 +474,7 @@ public class EntitySystem implements IEntitySystem {
             boolean foundNext = false;
             while ( !foundNext && delegate.hasNext() ) {
                 Entity next = delegate.next();
-                if ( matcher.match( next ) ) {
+                if ( predicate.apply( next ) ) {
                     foundNext = true;
                     current = next;
                 }
