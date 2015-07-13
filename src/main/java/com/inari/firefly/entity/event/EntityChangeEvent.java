@@ -17,7 +17,6 @@ package com.inari.firefly.entity.event;
 
 import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.lang.aspect.Aspect;
-import com.inari.firefly.entity.IEntitySystem;
 
 @Deprecated // check if this is really useful
 public abstract class EntityChangeEvent extends AspectedEvent<EntityChangeListener> {
@@ -33,10 +32,7 @@ public abstract class EntityChangeEvent extends AspectedEvent<EntityChangeListen
     public final Aspect aspect;
     public final Type type;
     
-    public EntityChangeEvent( 
-        int entityId, int componentId, Aspect aspect,
-        IEntitySystem provider, Type type 
-    ) {
+    public EntityChangeEvent( int entityId, int componentId, Aspect aspect, Type type ) {
         this.entityId = entityId;
         this.componentId = componentId;
         this.aspect = aspect;

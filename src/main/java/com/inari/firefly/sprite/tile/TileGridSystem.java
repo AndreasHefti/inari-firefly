@@ -25,7 +25,7 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.entity.IEntitySystem;
+import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
@@ -45,7 +45,7 @@ public final class TileGridSystem
     public static final int VOID_ENTITY_ID = -1;
     
     private IEventDispatcher eventDispatcher;
-    private IEntitySystem entityProvider;
+    private EntitySystem entitySystem;
     private ViewSystem viewSystem;
     
     private final DynArray<DynArray<TileGrid>> tileGridOfViewsPerLayer;
@@ -59,7 +59,7 @@ public final class TileGridSystem
     @Override
     public void init( FFContext context ) {
         eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
-        entityProvider = context.get( FFContext.System.ENTITY_SYSTEM );
+        entitySystem = context.get( FFContext.System.ENTITY_SYSTEM );
         viewSystem = context.get( FFContext.System.VIEW_SYSTEM );
         
         eventDispatcher.register( EntityActivationEvent.class, this );
@@ -196,7 +196,7 @@ public final class TileGridSystem
     
     
     private final void registerEntity( int entityId, Aspect entityAspect ) {
-        ETile tile = entityProvider.getComponent( entityId, ETile.COMPONENT_TYPE );
+        ETile tile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
         TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
         if ( tile.isMultiPosition() ) {
             Position gridPosition = tile.getGridPosition();
@@ -209,7 +209,7 @@ public final class TileGridSystem
     }
     
     private final void unregisterEntity( int entityId, Aspect entityAspect ) {
-        ETile tile = entityProvider.getComponent( entityId, ETile.COMPONENT_TYPE );
+        ETile tile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
         TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
         if ( tile.isMultiPosition() ) {
             Position gridPosition = tile.getGridPosition();

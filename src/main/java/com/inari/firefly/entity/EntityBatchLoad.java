@@ -26,10 +26,10 @@ import com.inari.firefly.entity.EntitySystem.EntityBuilder;
 
 public class EntityBatchLoad implements Loadable {
     
-    private final IEntitySystem entitySystem;
+    private final EntitySystem entitySystem;
     private List<AttributeMap> entityAttributes = new ArrayList<AttributeMap>();
 
-    EntityBatchLoad( IEntitySystem entitySystem ) {
+    EntityBatchLoad( EntitySystem entitySystem ) {
         this.entitySystem = entitySystem;
     }
 

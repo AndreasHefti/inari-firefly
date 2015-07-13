@@ -28,19 +28,23 @@ import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
+import com.inari.firefly.Disposable;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.component.Component;
+import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.attr.ComponentKey;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
+import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
+import com.inari.firefly.system.FFSystem;
 
-public class EntitySystem implements IEntitySystem {
+public class EntitySystem implements FFSystem, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
     
     private static final int DEFAULT_CAPACITY = 100;
     private static final int DEFAULT_COMPONENT_TYPE_CAPACITY = 10;
@@ -90,21 +94,19 @@ public class EntitySystem implements IEntitySystem {
         unusedComponents.clear();
     }
 
-    @Override
-    public void initEmptyEntities( int number ) {
+    public final void initEmptyEntities( int number ) {
         for ( int i = 0; i < number + 1; i++ ) {
             inactiveEntities.push( new Entity( -1, this ) );
         }
     }
     
-    @Override
-    public EntityBuilder createEntityBuilder() {
+    public final EntityBuilder createEntityBuilder() {
         return new EntityBuilder( this );
     }
     
     @Override
     @SuppressWarnings( "unchecked" )
-    public <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
+    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
         if ( type != Entity.class ) {
             throw new IllegalArgumentException( "The IComponentType is not supported: " + type );
         }
@@ -116,17 +118,14 @@ public class EntitySystem implements IEntitySystem {
         return new EntityBuilder( this );
     }
 
-    @Override
     public final boolean isActive( int entityId ) {
         return activeEntities.get( entityId ) != null;
     }
     
-    @Override
-    public void activate( int entityId ) {
+    public final void activate( int entityId ) {
         activate( activeEntities.get( entityId ) );
     }
     
-    @Override
     public final void deactivate( int entityId ) {
         Entity entity = activeEntities.remove( entityId );
         if ( entity == null ) {
@@ -142,7 +141,6 @@ public class EntitySystem implements IEntitySystem {
         }
     }
 
-    @Override
     public final void delete( int entityId ) {
         if ( activeEntities.get( entityId ) != null ) {
             deactivate( entityId );
@@ -151,26 +149,22 @@ public class EntitySystem implements IEntitySystem {
         restoreEntityComponents( entityId );
     }
     
-    @Override
     public final void deleteAll( IntIterator iterator ) {
         while( iterator.hasNext() ) {
             delete( iterator.next() );
         }
     }
 
-    @Override
-    public void deleteAll() {
+    public final void deleteAll() {
         for ( Entity entity : activeEntities ) {
             delete( entity.index() );
         }
     }
 
-    @Override
     public final Entity getEntity( int entityId ) {
         return activeEntities.get( entityId );
     }
 
-    @Override
     public final Aspect getEntityAspect( int entityId ) {
         IndexedTypeSet components = getComponents( entityId );
         if ( components == null ) {
@@ -185,7 +179,6 @@ public class EntitySystem implements IEntitySystem {
         return activeEntities.iterator();
     }
 
-    @Override
     public final Iterable<Entity> entities( final Aspect aspect ) {
         return new Iterable<Entity>() {
             @Override
@@ -196,7 +189,6 @@ public class EntitySystem implements IEntitySystem {
     }
     
 
-    @Override
     public final Iterable<Entity> entities( final Predicate<Entity> predicate ) {
         return new Iterable<Entity>() {
             @Override
@@ -231,8 +223,7 @@ public class EntitySystem implements IEntitySystem {
     
     // ---- Components ------------------------------------------------
     
-    @Override
-    public void initEmptyComponents( Class<? extends EntityComponent> componentType, int number ) {
+    public final void initEmptyComponents( Class<? extends EntityComponent> componentType, int number ) {
         int componentTypeIndex = Indexer.getIndexForType( componentType, EntityComponent.class );
         Stack<EntityComponent> components = (Stack<EntityComponent>) unusedComponents.get( componentTypeIndex );
         if ( components == null ) {
@@ -245,17 +236,14 @@ public class EntitySystem implements IEntitySystem {
         }
     }
 
-    @Override
     public final <T extends EntityComponent> T getComponent( int entityId, Class<T> componentType ) {
         return usedComponents.get( entityId ).get( componentType );
     }
 
-    @Override
     public final <T extends EntityComponent> T getComponent( int entityId, int componentId ) {
         return usedComponents.get( entityId ).get( componentId );
     }
 
-    @Override
     public final IndexedTypeSet getComponents( int entityId ) {
         if ( activeEntities.get( entityId ) == null ) {
             return null;

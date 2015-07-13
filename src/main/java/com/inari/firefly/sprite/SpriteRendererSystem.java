@@ -25,7 +25,7 @@ import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.IEntitySystem;
+import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.sprite.tile.ETile;
@@ -39,7 +39,7 @@ import com.inari.firefly.system.event.RenderEventListener;
 public final class SpriteRendererSystem implements FFSystem, EntityActivationListener, RenderEventListener {
     
     private IEventDispatcher eventDispatcher;
-    private IEntitySystem entityProvider;
+    private EntitySystem entitySystem;
     private TileGridSystem tileGridSystem;
     private ILowerSystemFacade lowerSystemFacade;
     
@@ -52,7 +52,7 @@ public final class SpriteRendererSystem implements FFSystem, EntityActivationLis
     @Override
     public void init( FFContext context ) {
         eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
-        entityProvider = context.get( FFContext.System.ENTITY_SYSTEM );
+        entitySystem = context.get( FFContext.System.ENTITY_SYSTEM );
         lowerSystemFacade = context.get( FFContext.LOWER_SYSTEM_FACADE );
         tileGridSystem = context.get( FFContext.System.TILE_GRID_SYSTEM ); 
 
@@ -76,7 +76,7 @@ public final class SpriteRendererSystem implements FFSystem, EntityActivationLis
     
     @Override
     public final void onEntityActivationEvent( EntityActivationEvent event ) {
-        IndexedTypeSet components = entityProvider.getComponents( event.entityId );
+        IndexedTypeSet components = entitySystem.getComponents( event.entityId );
         ESprite sprite = components.get( ESprite.COMPONENT_TYPE );
         int viewId = sprite.getViewId();
         switch ( event.type ) {
@@ -123,7 +123,7 @@ public final class SpriteRendererSystem implements FFSystem, EntityActivationLis
         
         Vector2f actualWorldPosition  = iterator.getWorldPosition();
         while( iterator.hasNext() ) {
-            ETile cTile = entityProvider.getComponent( iterator.next(), ETile.COMPONENT_TYPE );
+            ETile cTile = entitySystem.getComponent( iterator.next(), ETile.COMPONENT_TYPE );
             lowerSystemFacade.renderSprite( cTile, actualWorldPosition.dx, actualWorldPosition.dy );
         }
     }

@@ -21,9 +21,9 @@ import com.inari.commons.lang.indexed.IndexedTypeSet;
 
 public final class Entity extends BaseIndexedObject {
     
-    private final IEntitySystem provider;
+    private final EntitySystem provider;
 
-    Entity( int entityId, IEntitySystem provider ) {
+    Entity( int entityId, EntitySystem provider ) {
         super( entityId );
         this.provider = provider;
     }

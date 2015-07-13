@@ -26,7 +26,7 @@ import com.inari.firefly.entity.event.EntityActivationListener;
 public abstract class EntityController extends Controller implements EntityActivationListener {
     
     protected IEventDispatcher eventDispatcher;
-    protected IEntitySystem entitySystem;
+    protected EntitySystem entitySystem;
     
     protected EntityController( int id, FFContext context ) {
         super( id );
