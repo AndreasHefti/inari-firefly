@@ -72,10 +72,12 @@ public final class Attributes implements Iterable<AttributeMap> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         for ( Map.Entry<ComponentKey, AttributeMap> entry : attributes.entrySet() ) {
+            if ( builder.length() > 0 ) {
+                builder.append( " " );
+            }
             builder.append( entry.getKey() );
             builder.append( "::" );
             builder.append( entry.getValue() );
-            builder.append( " " );
         }
         return builder.toString();
     }

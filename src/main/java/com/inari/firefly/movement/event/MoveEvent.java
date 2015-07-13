@@ -31,4 +31,13 @@ public final class MoveEvent extends Event<MoveEventListener> {
         listener.onMoveEvent( this );
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "MoveEvent [entityIds=" );
+        builder.append( entityIds );
+        builder.append( "]" );
+        return builder.toString();
+    }
+
 }

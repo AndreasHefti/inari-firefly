@@ -24,11 +24,11 @@ public final class TaskEvent extends Event<TaskEventListener> {
         REMOVE_TASK
     }
     
-    public final Type type;
+    public final Type eventType;
     public final int taskId;
 
-    public TaskEvent( Type type, int taskId ) {
-        this.type = type;
+    public TaskEvent( Type eventType, int taskId ) {
+        this.eventType = eventType;
         this.taskId = taskId;
     }
 
@@ -36,6 +36,17 @@ public final class TaskEvent extends Event<TaskEventListener> {
     public final void notify( TaskEventListener listener ) {
         listener.onTaskEvent( this );
         
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "TaskEvent [eventType=" );
+        builder.append( eventType );
+        builder.append( ", taskId=" );
+        builder.append( taskId );
+        builder.append( "]" );
+        return builder.toString();
     }
 
 }

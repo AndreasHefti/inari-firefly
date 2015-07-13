@@ -56,4 +56,17 @@ public final class RenderEvent extends Event<RenderEventListener> {
         listener.render( this );
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "RenderEvent [viewId=" );
+        builder.append( viewId );
+        builder.append( ", clip=" );
+        builder.append( clip );
+        builder.append( ", approximationTime=" );
+        builder.append( approximationTime );
+        builder.append( "]" );
+        return builder.toString();
+    }
+
 }

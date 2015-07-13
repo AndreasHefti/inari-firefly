@@ -44,4 +44,15 @@ public final class UpdateEvent extends Event<UpdateEventListener>{
         listener.update( this );
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "UpdateEvent [update=" );
+        builder.append( update );
+        builder.append( ", timeElapsed=" );
+        builder.append( timeElapsed );
+        builder.append( "]" );
+        return builder.toString();
+    }
+
 }

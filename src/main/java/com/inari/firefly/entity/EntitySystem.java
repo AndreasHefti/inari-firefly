@@ -44,18 +44,18 @@ import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
 import com.inari.firefly.system.FFSystem;
 
-public class EntitySystem implements FFSystem, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
+public final class EntitySystem implements FFSystem, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
     
     private static final int DEFAULT_CAPACITY = 100;
     private static final int DEFAULT_COMPONENT_TYPE_CAPACITY = 10;
 
     private IEventDispatcher eventDispatcher;
     
-    private final DynArray<Entity> activeEntities;
-    private final DynArray<IndexedTypeSet> usedComponents;
+    protected final DynArray<Entity> activeEntities;
+    protected final DynArray<IndexedTypeSet> usedComponents;
     
-    private final Stack<Entity> inactiveEntities;
-    private final DynArray<Stack<EntityComponent>> unusedComponents;
+    protected final Stack<Entity> inactiveEntities;
+    protected final DynArray<Stack<EntityComponent>> unusedComponents;
 
     
     EntitySystem() {

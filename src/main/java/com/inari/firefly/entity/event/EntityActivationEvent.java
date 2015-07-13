@@ -27,13 +27,13 @@ public final class EntityActivationEvent extends AspectedEvent<EntityActivationL
     
     public final int entityId;
     public final Aspect aspect;
-    public final Type type;
+    public final Type eventType;
 
-    public EntityActivationEvent( int entityId, Aspect aspect, Type type ) {
+    public EntityActivationEvent( int entityId, Aspect aspect, Type eventType ) {
         super();
         this.entityId = entityId;
         this.aspect = aspect;
-        this.type = type;
+        this.eventType = eventType;
     }
 
     @Override
@@ -45,4 +45,18 @@ public final class EntityActivationEvent extends AspectedEvent<EntityActivationL
     public final void notify( EntityActivationListener listener ) {
         listener.onEntityActivationEvent( this );
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "EntityActivationEvent [eventType=" );
+        builder.append( eventType );
+        builder.append( ", entityId=" );
+        builder.append( entityId );
+        builder.append( ", aspect=" );
+        builder.append( aspect );
+        builder.append( "]" );
+        return builder.toString();
+    }
+
 }

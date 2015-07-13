@@ -27,7 +27,7 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
 
     @Override
     public void onAssetEvent( AssetEvent event ) {
-        switch ( event.type ) {
+        switch ( event.eventType ) {
             case ASSET_LOADED: {
                 loadedAssets.add( event.asset );
                 break;
@@ -42,7 +42,7 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
 
     @Override
     public void onViewEvent( ViewEvent event ) {
-        switch ( event.type ) {
+        switch ( event.eventType ) {
             case VIEW_ACTIVATED: {
                 views.add( event.view );
                 break;
@@ -57,7 +57,7 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
     
     @Override
     public void onSoundEvent( SoundEvent event ) {
-        switch ( event.type ) {
+        switch ( event.eventType ) {
             case PLAY_SOUND: {
                 sounds.add( event.sound );
                 break;

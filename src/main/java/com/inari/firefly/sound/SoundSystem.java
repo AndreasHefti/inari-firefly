@@ -52,7 +52,7 @@ public final class SoundSystem implements FFSystem, AssetEventListener {
         if ( event.assetType != SoundAsset.class ) {
             return;
         }
-        switch ( event.type ) {
+        switch ( event.eventType ) {
             case ASSET_LOADED: {
                 Sound sound = new Sound( 
                     event.asset.index(), 

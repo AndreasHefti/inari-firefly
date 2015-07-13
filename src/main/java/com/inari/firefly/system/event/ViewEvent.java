@@ -28,10 +28,10 @@ public final class ViewEvent extends Event<ViewEventListener> {
     }
     
     public final View view;
-    public final Type type;
+    public final Type eventType;
 
-    public ViewEvent( View view, Type type ) {
-        this.type = type;
+    public ViewEvent( View view, Type eventType ) {
+        this.eventType = eventType;
         this.view = view;
     }
 
@@ -43,8 +43,8 @@ public final class ViewEvent extends Event<ViewEventListener> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append( "ViewEvent [type=" );
-        builder.append( type );
+        builder.append( "ViewEvent [eventType=" );
+        builder.append( eventType );
         builder.append( ", view=" );
         builder.append( view.index() );
         builder.append( "]" );

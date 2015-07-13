@@ -79,7 +79,7 @@ public final class SpriteRendererSystem implements FFSystem, EntityActivationLis
         IndexedTypeSet components = entitySystem.getComponents( event.entityId );
         ESprite sprite = components.get( ESprite.COMPONENT_TYPE );
         int viewId = sprite.getViewId();
-        switch ( event.type ) {
+        switch ( event.eventType ) {
             case ENTITY_ACTIVATED: {
                 DynArray<IndexedTypeSet> renderablesOfView = getRenderablesOfView( viewId, true );
                 renderablesOfView.add( components );

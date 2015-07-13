@@ -26,16 +26,27 @@ public final class SoundEvent extends Event<SoundEventListener> {
     }
     
     public final Sound sound;
-    public final Type type;
+    public final Type eventType;
 
-    public SoundEvent( Sound sound, Type type ) {
+    public SoundEvent( Sound sound, Type eventType ) {
         this.sound = sound;
-        this.type = type;
+        this.eventType = eventType;
     }
 
     @Override
     public final void notify( SoundEventListener listener ) {
         listener.onSoundEvent( this );
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "SoundEvent [eventType=" );
+        builder.append( eventType );
+        builder.append( ", soundId=" );
+        builder.append( sound.index() );
+        builder.append( "]" );
+        return builder.toString();
     }
 
 }

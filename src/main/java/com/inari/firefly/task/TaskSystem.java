@@ -56,7 +56,7 @@ public final class TaskSystem implements FFSystem, ComponentSystem, ComponentBui
 
     @Override
     public final void onTaskEvent( TaskEvent taskEvent ) {
-        switch ( taskEvent.type ) {
+        switch ( taskEvent.eventType ) {
             case RUN_TASK: {
                 Task task = tasks.get( taskEvent.taskId );
                 if ( task != null ) {

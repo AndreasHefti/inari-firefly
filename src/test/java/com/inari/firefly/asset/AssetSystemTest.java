@@ -5,23 +5,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.inari.commons.event.AspectedEvent;
-import com.inari.commons.event.AspectedEventListener;
-import com.inari.commons.event.Event;
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.commons.event.PredicatedEvent;
-import com.inari.commons.event.PredicatedEventListener;
 import com.inari.commons.lang.indexed.Indexer;
+import com.inari.firefly.EventDispatcherMock;
 import com.inari.firefly.FFContext;
-import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
@@ -117,7 +110,7 @@ public class AssetSystemTest {
         
         service.toAttributes( attrs );
         assertEquals( 
-            "TestAsset(0)::name:String=asset1, group:String=group1 ", 
+            "TestAsset(0)::name:String=asset1, group:String=group1", 
             attrs.toString() 
         );
         
@@ -145,7 +138,7 @@ public class AssetSystemTest {
             "TestAsset(1)::name:String=asset2, group:String=group1 " +
             "TestAsset(2)::name:String=asset3, group:String=group1 " +
             "TestAsset(3)::name:String=asset4, group:String=group2 " +
-            "TestAsset(4)::name:String=asset5, group:String=group3 ", 
+            "TestAsset(4)::name:String=asset5, group:String=group3", 
             attrs.toString() 
         );
         attrs.clear();
@@ -166,14 +159,14 @@ public class AssetSystemTest {
             .build();
         
         assertEquals( 
-            "TestEventDispatcher [events=[ASSET_CREATED]]", 
+            "TestEventDispatcher [events=[AssetEvent [eventType=ASSET_CREATED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset]]]", 
             eventDispatcher.toString() 
         );
         
         attrs.clear();
         service.toAttributes( attrs );
         assertEquals( 
-            "TestAsset(0)::name:String=asset1, group:String=group1 ", 
+            "TestAsset(0)::name:String=asset1, group:String=group1", 
             attrs.toString() 
         );
         
@@ -182,11 +175,13 @@ public class AssetSystemTest {
         attrs.clear();
         service.toAttributes( attrs );
         assertEquals( 
-            "TestAsset(0)::name:String=asset1, group:String=group1 ", 
+            "TestAsset(0)::name:String=asset1, group:String=group1", 
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=[ASSET_CREATED, ASSET_LOADED]]", 
+            "TestEventDispatcher [events=[" +
+            "AssetEvent [eventType=ASSET_CREATED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
+            "AssetEvent [eventType=ASSET_LOADED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset]]]", 
             eventDispatcher.toString() 
         );
         
@@ -195,7 +190,10 @@ public class AssetSystemTest {
         attrs.clear();
         service.toAttributes( attrs );
         assertEquals( 
-            "TestEventDispatcher [events=[ASSET_CREATED, ASSET_LOADED, ASSET_DISPOSED]]", 
+            "TestEventDispatcher [events=[" +
+            "AssetEvent [eventType=ASSET_CREATED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
+            "AssetEvent [eventType=ASSET_LOADED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
+            "AssetEvent [eventType=ASSET_DISPOSED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset]]]", 
             eventDispatcher.toString() 
         );
         
@@ -207,7 +205,11 @@ public class AssetSystemTest {
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=[ASSET_CREATED, ASSET_LOADED, ASSET_DISPOSED, ASSET_DELETED]]", 
+            "TestEventDispatcher [events=[" +
+            "AssetEvent [eventType=ASSET_CREATED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
+            "AssetEvent [eventType=ASSET_LOADED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
+            "AssetEvent [eventType=ASSET_DISPOSED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
+            "AssetEvent [eventType=ASSET_DELETED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset]]]", 
             eventDispatcher.toString() 
         );
     }
@@ -244,7 +246,7 @@ public class AssetSystemTest {
         
         service.toAttributes( attrs );
         assertEquals( 
-            "TestAsset(1)::name:String=asset2, group:String=group1 ", 
+            "TestAsset(1)::name:String=asset2, group:String=group1", 
             attrs.toString() 
         );
     }
@@ -292,7 +294,7 @@ public class AssetSystemTest {
             "TestAsset(3)::name:String=asset4, group:String=group2 " +
             "TestAsset2(3)::name:String=asset24, group:String=group2 " +
             "TestAsset(4)::name:String=asset5, group:String=group3 " +
-            "TestAsset2(4)::name:String=asset25, group:String=group3 ", 
+            "TestAsset2(4)::name:String=asset25, group:String=group3", 
             attrs.toString() 
         );
     }
@@ -300,7 +302,7 @@ public class AssetSystemTest {
     
     private FFContext getTestFFContext() {
         InitMap initMap = new InitMap();
-        initMap.put( FFContext.EVENT_DISPATCHER, TestEventDispatcher.class );
+        initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcherMock.class );
         FFContext result = new FFContextImpl( initMap, true );
         return result;
     }
@@ -356,43 +358,6 @@ public class AssetSystemTest {
         @Override
         public Class<TestAsset2> getComponentType() {
             return TestAsset2.class;
-        }
-    }
-
-    public static class TestEventDispatcher implements IEventDispatcher {
-        
-        private List<String> events = new ArrayList<String>();
-        
-        @Override
-        public <L> void register( Class<? extends Event<L>> eventType, L listener ) {}
-
-        @Override
-        public <L> boolean unregister( Class<? extends Event<L>> eventType, L listener ) {
-            return false;
-        }
-
-        @Override
-        public <L> void notify( Event<L> event ) {
-            events.add( ( (AssetEvent) event ).type.toString() );
-        }
-
-        @Override
-        public <L extends AspectedEventListener> void notify( AspectedEvent<L> event ) {
-            //events.add( ( (AssetEvent) event ).getActionType().toString() );
-        }
-
-        @Override
-        public <L extends PredicatedEventListener> void notify( PredicatedEvent<L> event ) {
-            //events.add( event.getClass().getSimpleName() );
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append( "TestEventDispatcher [events=" );
-            builder.append( events );
-            builder.append( "]" );
-            return builder.toString();
         }
     }
 

@@ -29,17 +29,28 @@ public final class AssetEvent extends Event<AssetEventListener> {
     
     public final Asset asset;
     public final Class<? extends Asset> assetType;
-    public final Type type;
+    public final Type eventType;
 
-    public AssetEvent( Asset asset, Type type ) {
+    public AssetEvent( Asset asset, Type eventType ) {
         this.asset = asset;
         assetType = asset.indexedObjectType();
-        this.type = type;
+        this.eventType = eventType;
     }
 
     @Override
     public final void notify( AssetEventListener listener ) {
         listener.onAssetEvent( this );
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "AssetEvent [eventType=" );
+        builder.append( eventType );
+        builder.append( ", assetType=" );
+        builder.append( assetType );
+        builder.append( "]" );
+        return builder.toString();
     }
 
 }

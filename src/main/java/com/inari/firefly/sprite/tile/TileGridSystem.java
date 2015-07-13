@@ -77,7 +77,7 @@ public final class TileGridSystem
 
     @Override
     public final void onEntityActivationEvent( EntityActivationEvent event ) {
-        switch ( event.type ) {
+        switch ( event.eventType ) {
             case ENTITY_ACTIVATED: {
                 registerEntity( event.entityId, event.aspect );
                 break;
@@ -91,7 +91,7 @@ public final class TileGridSystem
     
     @Override
     public final void onViewEvent( ViewEvent event ) {
-        if ( event.type == Type.VIEW_DELETED ) {
+        if ( event.eventType == Type.VIEW_DELETED ) {
             deleteAllTileGrid( event.view.index() );
         }
     }

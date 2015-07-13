@@ -43,7 +43,7 @@ public abstract class EntityController extends Controller implements EntityActiv
 
     @Override
     public final void onEntityActivationEvent( EntityActivationEvent event ) {
-        switch ( event.type ) {
+        switch ( event.eventType ) {
             case ENTITY_ACTIVATED: {
                 if ( hasControllerId( event.entityId, indexedId ) ) {
                     componentIds.add( event.entityId );

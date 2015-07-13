@@ -35,11 +35,11 @@ public class ViewSystemTest {
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
             "layeringEnabled:Boolean=false, " +
-            "zoom:Float=1.0 ", 
+            "zoom:Float=1.0", 
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=[ViewEvent [type=VIEW_CREATED, view=0]]]", 
+            "TestEventDispatcher [events=[ViewEvent [eventType=VIEW_CREATED, view=0]]]", 
             eventDispatcher.toString() 
         );
     }
@@ -95,14 +95,14 @@ public class ViewSystemTest {
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
             "layeringEnabled:Boolean=false, " +
-            "zoom:Float=1.0 ", 
+            "zoom:Float=1.0", 
             attrs.toString() 
         );
         assertEquals( 
             "TestEventDispatcher [events=[" +
-            "ViewEvent [type=VIEW_CREATED, view=0], " +
-            "ViewEvent [type=VIEW_CREATED, view=1], " +
-            "ViewEvent [type=VIEW_CREATED, view=2]]]", 
+            "ViewEvent [eventType=VIEW_CREATED, view=0], " +
+            "ViewEvent [eventType=VIEW_CREATED, view=1], " +
+            "ViewEvent [eventType=VIEW_CREATED, view=2]]]", 
             eventDispatcher.toString() 
         );
     }
@@ -158,11 +158,11 @@ public class ViewSystemTest {
             "viewId:Integer=0 " +
             "Layer(3)::" +
             "name:String=Layer3, " +
-            "viewId:Integer=0 ", 
+            "viewId:Integer=0", 
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=[ViewEvent [type=VIEW_CREATED, view=0]]]", 
+            "TestEventDispatcher [events=[ViewEvent [eventType=VIEW_CREATED, view=0]]]", 
             eventDispatcher.toString() 
         );
         
