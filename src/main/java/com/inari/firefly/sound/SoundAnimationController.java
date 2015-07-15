@@ -99,48 +99,35 @@ public final class SoundAnimationController extends SoundController {
 
     @Override
     public final void update( long time, Sound sound ) {
-        if ( volumeAnimationId >= 0 ) {
-            FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, volumeAnimationId );
-            if ( animation != null ) {
-                if ( animation.isActive() ) {
-                    float newVolume = animation.get( sound.index(), sound.volume );
-                    if ( newVolume != sound.volume ) {
-                        sound.volume = newVolume;
-                    }
-                    lowerSystemFacade.soundAttributesChanged( sound );
-                }
-            } else {
-                volumeAnimationId = -1;
+        if ( volumeAnimationId >= 0 && animationSystem.exists( volumeAnimationId ) ) {
+            float newVolume = animationSystem.getValue( volumeAnimationId, time, sound.index(), sound.volume );
+            if ( newVolume != sound.volume ) {
+                sound.volume = newVolume;
+                lowerSystemFacade.soundAttributesChanged( sound );
             }
-        } 
-        if ( pitchAnimationId >= 0 ) {
-            FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, pitchAnimationId );
-            if ( animation != null ) {
-                if ( animation.isActive() ) {
-                    float newPitch = animation.get( sound.index(), sound.pitch );
-                    if ( newPitch != sound.pitch ) {
-                        sound.pitch = newPitch;
-                    }
-                    lowerSystemFacade.soundAttributesChanged( sound );
-                }
-            } else {
-                pitchAnimationId = -1;
-            }
+        } else {
+            volumeAnimationId = -1;
         }
-        if ( panAnimationId >= 0 ) {
-            FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, panAnimationId );
-            if ( animation != null ) {
-                if ( animation.isActive() ) {
-                    float newPan = animation.get( sound.index(), sound.pan );
-                    if ( newPan != sound.pan ) {
-                        sound.pan = newPan;
-                    }
-                    lowerSystemFacade.soundAttributesChanged( sound );
-                }
-            } else {
-                panAnimationId = -1;
+
+        if ( pitchAnimationId >= 0 && animationSystem.exists( pitchAnimationId ) ) {
+            float newPitch = animationSystem.getValue( pitchAnimationId, time, sound.index(), sound.pitch );
+            if ( newPitch != sound.pitch ) {
+                sound.pitch = newPitch;
+                lowerSystemFacade.soundAttributesChanged( sound );
             }
-        } 
+        } else {
+            pitchAnimationId = -1;
+        }
+
+        if ( panAnimationId >= 0 && animationSystem.exists( panAnimationId ) ) {
+            float newPan = animationSystem.getValue( panAnimationId, time, sound.index(), sound.pan );
+            if ( newPan != sound.pan ) {
+                sound.pan = newPan;
+                lowerSystemFacade.soundAttributesChanged( sound );
+            }
+        } else {
+            panAnimationId = -1;
+        }
     }
 
 }

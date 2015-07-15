@@ -108,7 +108,4 @@ public abstract class Animation extends NamedIndexedComponent {
         attributes.put( LOOPING, looping );
     }
 
-
-    public abstract void update( long time );
-
 }

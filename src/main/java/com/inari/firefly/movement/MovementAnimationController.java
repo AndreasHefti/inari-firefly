@@ -94,27 +94,19 @@ public class MovementAnimationController extends EntityController {
     protected final void update( long time, int entityId ) {
         EMovement movement = entitySystem.getComponent( entityId, EMovement.COMPONENT_TYPE );
         Vector2f velocityVector = movement.getVelocityVector();
-        if ( velocityXAnimationId >= 0 ) {
-            FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, velocityXAnimationId );
-            if ( animation != null ) {
-                if ( animation.isActive() ) {
-                    velocityVector.dx = animation.get( entityId, velocityVector.dx );
-                }
-            } else {
-                velocityXAnimationId = -1;
-                velocityVector.dx = 0;
-            }
-        } 
-        if ( velocityYAnimationId >= 0 ) {
-            FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, velocityYAnimationId );
-            if ( animation != null ) {
-                if ( animation.isActive() ) {
-                    velocityVector.dy = animation.get( entityId, velocityVector.dy );
-                }
-            } else {
-                velocityYAnimationId = -1;
-                velocityVector.dy = 0;
-            }
+
+        if ( velocityXAnimationId >= 0 && animationSystem.exists( velocityXAnimationId ) ) {
+            velocityVector.dx = animationSystem.getValue( velocityXAnimationId, time, entityId, velocityVector.dx );
+        } else {
+            velocityXAnimationId = -1;
+            velocityVector.dx = 0;
+        }
+
+        if ( velocityYAnimationId >= 0 && animationSystem.exists( velocityYAnimationId ) ) {
+            velocityVector.dy = animationSystem.getValue( velocityYAnimationId, time, entityId, velocityVector.dy );
+        } else {
+            velocityYAnimationId = -1;
+            velocityVector.dy = 0;
         }
     }
 

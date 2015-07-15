@@ -94,16 +94,37 @@ public final class AnimationSystem
         }
     }
 
+    public final boolean exists( int animationId ) {
+        return ( animations.get( animationId ) != null );
+    }
+
+    public final boolean isActive( int animationId ) {
+        if ( animationId < 0 ) {
+            return false;
+        }
+
+        Animation animation = animations.get( animationId );
+        if ( animation == null ) {
+            return false;
+        }
+
+        return animation.isActive();
+    }
+
     @Override
     public final void update( UpdateEvent event ) {
         long updateTime = event.getUpdate();
         for ( int i = 0; i < animations.capacity(); i++ ) {
             Animation animation = animations.get( i );
             if ( animation != null ) {
-                animation.update( updateTime );
+                if ( animation.active && updateTime > animation.getEndTime() ) {
+                    animation.active = false;
+                }
                 if ( animation.finished ) {
                     animations.remove( animation.index() );
                     animation.dispose();
+                } else if ( !animation.active && updateTime > animation.getStartTime() ) {
+                    animation.active = true;
                 }
             }
         }
@@ -119,6 +140,33 @@ public final class AnimationSystem
             return null;
         }
         return type.cast( animation );
+    }
+
+    public final float getValue( int animationId, long time, int componentId, float currentValue ) {
+        if ( !isActive( animationId ) ) {
+            return currentValue;
+        }
+
+        FloatAnimation animation = getAnimation( FloatAnimation.class, animationId );
+        return animation.getValue( time, componentId, currentValue );
+    }
+
+    public final int getValue( int animationId, long time, int componentId, int currentValue ) {
+        if ( !isActive( animationId ) ) {
+            return currentValue;
+        }
+
+        IntAnimation animation = getAnimation( IntAnimation.class, animationId );
+        return animation.getValue( time, componentId, currentValue );
+    }
+
+    public final <V> V getValue( int animationId, long time, int componentId, V currentValue ) {
+        if ( !isActive( animationId ) ) {
+            return currentValue;
+        }
+
+        ValueAnimation<V> animation = getAnimation( ValueAnimation.class, animationId );
+        return animation.getValue( time, componentId, currentValue );
     }
     
     public final void deleteAnimation( int animationId ) {

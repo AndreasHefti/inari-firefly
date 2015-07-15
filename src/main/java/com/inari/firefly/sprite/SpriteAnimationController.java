@@ -137,55 +137,35 @@ public class SpriteAnimationController extends EntityController {
     protected final void update( long time, int entityId ) {
         ESprite sprite = entitySystem.getComponent( entityId, ESprite.COMPONENT_TYPE );
         RGBColor tintColor = sprite.getTintColor();
-        if ( spriteAnimationId >= 0 ) {
-            IntAnimation animation = animationSystem.getAnimation( IntAnimation.class, spriteAnimationId );
-            if ( animation != null ) {
-                if ( animation.isActive() ) {
-                    sprite.setSpriteId( animation.get( entityId, sprite.getSpriteId() ) );
-                }
-            } else {
-                spriteAnimationId = -1;
-            }
-        } 
-        if ( tintRedAnimationId >= 0 ) {
-            FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, tintRedAnimationId );
-            if ( animation != null ) {
-                if ( animation.isActive() ) {
-                    tintColor.r = animation.get( entityId, tintColor.r );
-                }
-            } else {
-                tintRedAnimationId = -1;
-            }
+
+        if ( spriteAnimationId >= 0 && animationSystem.exists( spriteAnimationId ) ) {
+            sprite.setSpriteId( animationSystem.getValue( spriteAnimationId, time, entityId, sprite.getSpriteId() ) );
+        } else {
+            spriteAnimationId = -1;
         }
-        if ( tintGreenAnimationId >= 0 ) {
-            FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, tintGreenAnimationId );
-            if ( animation != null ) {
-                if ( animation.isActive() ) {
-                    tintColor.g = animation.get( entityId, tintColor.r );
-                }
-            } else {
-                tintGreenAnimationId = -1;
-            }
+
+        if ( tintRedAnimationId >= 0 && animationSystem.exists( tintRedAnimationId ) ) {
+            tintColor.r = animationSystem.getValue( tintRedAnimationId, time, entityId, tintColor.r );
+        } else {
+            tintRedAnimationId = -1;
         }
-        if ( tintBlueAnimationId >= 0 ) {
-            FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, tintBlueAnimationId );
-            if ( animation != null ) {
-                if ( animation.isActive() ) {
-                    tintColor.b = animation.get( entityId, tintColor.r );
-                }
-            } else {
-                tintBlueAnimationId = -1;
-            }
+
+        if ( tintGreenAnimationId >= 0 && animationSystem.exists( tintGreenAnimationId ) ) {
+            tintColor.g = animationSystem.getValue( tintGreenAnimationId, time, entityId, tintColor.r );
+        } else {
+            tintGreenAnimationId = -1;
         }
-        if ( tintAlphaAnimationId >= 0 ) {
-            FloatAnimation animation = animationSystem.getAnimation( FloatAnimation.class, tintAlphaAnimationId );
-            if ( animation != null ) {
-                if ( animation.isActive() ) {
-                    tintColor.a = animation.get( entityId, tintColor.r );
-                }
-            } else {
-                tintAlphaAnimationId = -1;
-            }
+
+        if ( tintBlueAnimationId >= 0 && animationSystem.exists( tintBlueAnimationId ) ) {
+            tintColor.b = animationSystem.getValue( tintBlueAnimationId, time, entityId, tintColor.r );
+        } else {
+            tintBlueAnimationId = -1;
+        }
+
+        if ( tintAlphaAnimationId >= 0 && animationSystem.exists( tintAlphaAnimationId ) ) {
+            tintColor.a = animationSystem.getValue( tintAlphaAnimationId, time, entityId, tintColor.r );
+        } else {
+            tintAlphaAnimationId = -1;
         }
     }
 
