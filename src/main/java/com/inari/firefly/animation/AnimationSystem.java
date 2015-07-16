@@ -117,9 +117,6 @@ public final class AnimationSystem
         for ( int i = 0; i < animations.capacity(); i++ ) {
             Animation animation = animations.get( i );
             if ( animation != null ) {
-                if ( animation.active && updateTime > animation.getEndTime() ) {
-                    animation.active = false;
-                }
                 if ( animation.finished ) {
                     animations.remove( animation.index() );
                     animation.dispose();

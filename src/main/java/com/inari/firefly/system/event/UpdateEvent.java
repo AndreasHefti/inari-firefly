@@ -27,16 +27,18 @@ public final class UpdateEvent extends Event<UpdateEventListener>{
         return timeElapsed;
     }
 
-    public final void setTimeElapsed( long timeElapsed ) {
+    public final UpdateEvent setTimeElapsed( long timeElapsed ) {
         this.timeElapsed = timeElapsed;
+        return this;
     }
 
     public final long getUpdate() {
         return update;
     }
 
-    public final void setUpdate( long update ) {
+    public final UpdateEvent setUpdate( long update ) {
         this.update = update;
+        return this;
     }
 
     @Override
