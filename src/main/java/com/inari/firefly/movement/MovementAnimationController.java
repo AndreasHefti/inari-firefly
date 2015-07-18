@@ -22,7 +22,6 @@ import java.util.Set;
 import com.inari.commons.geom.Vector2f;
 import com.inari.firefly.FFContext;
 import com.inari.firefly.animation.AnimationSystem;
-import com.inari.firefly.animation.FloatAnimation;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
