@@ -15,7 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
-import com.inari.commons.lang.aspect.Aspect;
+import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.indexed.BaseIndexedObject;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 
@@ -37,7 +37,7 @@ public final class Entity extends BaseIndexedObject {
         return indexedId;
     }
 
-    public final Aspect getAspect() {
+    public final IndexedAspect getAspect() {
         return provider.getEntityAspect( indexedId );
     }
     
