@@ -19,15 +19,15 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.indexed.IndexedAspectBuilder;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.event.MoveEvent;
 import com.inari.firefly.system.FFSystem;
-import com.inari.firefly.system.event.UpdateEvent;
-import com.inari.firefly.system.event.UpdateEventListener;
+import com.inari.firefly.system.UpdateEvent;
+import com.inari.firefly.system.UpdateEventListener;
 
 public final class MovementSystem implements FFSystem, UpdateEventListener {
     

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.inari.firefly.Disposable;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.Loadable;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntitySystem.EntityBuilder;

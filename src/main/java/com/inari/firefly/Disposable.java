@@ -1,5 +1,7 @@
 package com.inari.firefly;
 
+import com.inari.firefly.system.FFContext;
+
 public interface Disposable {
     
     /** Dispose the object/system.

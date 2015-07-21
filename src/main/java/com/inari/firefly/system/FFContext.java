@@ -1,4 +1,4 @@
-package com.inari.firefly;
+package com.inari.firefly.system;
 
 import java.util.Map;
 import java.util.Set;
@@ -17,8 +17,7 @@ import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.sprite.SpriteRendererSystem;
 import com.inari.firefly.sprite.tile.TileGridSystem;
 import com.inari.firefly.state.StateSystem;
-import com.inari.firefly.system.ILowerSystemFacade;
-import com.inari.firefly.system.ViewSystem;
+import com.inari.firefly.system.view.ViewSystem;
 
 public interface FFContext {
     
@@ -64,8 +63,7 @@ public interface FFContext {
         public static final TypedKey<SoundSystem> SOUND_SYSTEM = TypedKey.create( "FF_SOUND_SYSTEM", SoundSystem.class );
         
     }
-    
-    
+
 
     <T> T get( TypedKey<T> key );
     
@@ -74,7 +72,5 @@ public interface FFContext {
     void toAttributes( Attributes attributes );
     
     Map<TypedKey<? extends ComponentSystem>, Set<Class<?>>> getComponentTypes();
-    
-    void dispose();
 
 }

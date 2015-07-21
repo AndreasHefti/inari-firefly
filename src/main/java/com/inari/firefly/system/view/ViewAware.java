@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system.event;
+package com.inari.firefly.system.view;
 
-public interface RenderEventListener {
+public interface ViewAware {
     
-    public void render( RenderEvent event );
+    int getViewId();
 
 }

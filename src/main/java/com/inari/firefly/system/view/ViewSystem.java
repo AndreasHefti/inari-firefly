@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system;
+package com.inari.firefly.system.view;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +25,6 @@ import java.util.Set;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.FFContext;
 import com.inari.firefly.component.ComponentBuilderHelper;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -34,8 +33,11 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.system.event.RenderEvent;
-import com.inari.firefly.system.event.ViewEvent;
+import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFSystem;
+import com.inari.firefly.system.ILowerSystemFacade;
+import com.inari.firefly.system.RenderEvent;
+import com.inari.firefly.system.view.event.ViewEvent;
 
 public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBuilderFactory {
     
@@ -69,6 +71,10 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
             .setAttribute( View.BOUNDS, screenBounds )
             .build( BASE_VIEW_ID )
             .setBase( true );
+    }
+
+    public final int viewArrayLength() {
+        return views.capacity();
     }
     
     @Override
@@ -250,19 +256,6 @@ public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBui
         deleteLayers( viewId );
         layersOfView.remove( viewId );
         view.setLayeringEnabled( false );
-    }
-    
-    public final void renderActiveViews( RenderEvent renderEvent ) {
-        for ( View view : views ) {
-            if ( !view.isActive() ) {
-                continue;
-            }
-            
-            int viewId = view.index();
-            renderEvent.setViewId( viewId );
-            renderEvent.setClip( view.getBounds() );
-            eventDispatcher.notify( renderEvent );
-        }
     }
     
     @Override

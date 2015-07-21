@@ -24,7 +24,7 @@ import java.util.Set;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentBuilderHelper;

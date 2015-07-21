@@ -14,7 +14,7 @@ import org.junit.Test;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.EventDispatcherMock;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;

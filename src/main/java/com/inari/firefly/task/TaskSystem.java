@@ -21,7 +21,7 @@ import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;

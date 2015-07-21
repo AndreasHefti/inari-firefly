@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system.event;
+package com.inari.firefly.system;
 
 import com.inari.commons.event.Event;
 import com.inari.commons.geom.Rectangle;
@@ -21,34 +21,22 @@ import com.inari.commons.geom.Rectangle;
 public final class RenderEvent extends Event<RenderEventListener> {
 
     /** Use this if the game loop works with approximation time on rendering */
-    private long approximationTime;
+    long approximationTime;
     /** Defines current View for rendering */
-    private int viewId;
+    int viewId;
     /** Defines a clipping area */
-    private final Rectangle clip = new Rectangle();
+    final Rectangle clip = new Rectangle();
     
     public final long getApproximationTime() {
         return approximationTime;
-    }
-
-    public final void setApproximationTime( long approximationTime ) {
-        this.approximationTime = approximationTime;
     }
     
     public final int getViewId() {
         return viewId;
     }
 
-    public final void setViewId( int viewId ) {
-        this.viewId = viewId;
-    }
-    
-    public Rectangle getClip() {
+    public final Rectangle getClip() {
         return clip;
-    }
-
-    public void setClip( Rectangle clip ) {
-        this.clip.setFrom( clip );
     }
 
     @Override

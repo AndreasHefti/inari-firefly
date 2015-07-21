@@ -13,32 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system.event;
+package com.inari.firefly.system;
 
 import com.inari.commons.event.Event;
 
 public final class UpdateEvent extends Event<UpdateEventListener>{
-    
-    /** Use this if the game loop works with elapsed time on update */
-    private long timeElapsed;
-    private long update = 0;
 
+    long lastUpdateTime = 0;
+    long time = 0;
+    long timeElapsed = 0;
+    long update = 0;
+
+    public UpdateEvent( long systemTime, long time, long timeElapsed, long update ) {
+        this.lastUpdateTime = systemTime;
+        this.time = time;
+        this.timeElapsed = timeElapsed;
+        this.update = update;
+    }
+
+    public final long getTime() {
+        return time;
+    }
+
+    public final long systemTime() {
+        return lastUpdateTime;
+    }
+
+    /** Use this if the game loop works with elapsed time on update */
     public final long getTimeElapsed() {
         return timeElapsed;
     }
 
-    public final UpdateEvent setTimeElapsed( long timeElapsed ) {
-        this.timeElapsed = timeElapsed;
-        return this;
-    }
-
     public final long getUpdate() {
         return update;
-    }
-
-    public final UpdateEvent setUpdate( long update ) {
-        this.update = update;
-        return this;
     }
 
     @Override

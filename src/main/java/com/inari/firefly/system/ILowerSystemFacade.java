@@ -20,7 +20,8 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.sprite.SpriteRenderable;
-import com.inari.firefly.system.event.ViewEventListener;
+import com.inari.firefly.system.view.event.ViewEventListener;
+import com.inari.firefly.system.view.View;
 
 public interface ILowerSystemFacade extends FFSystem, AssetEventListener, ViewEventListener, SoundEventListener {
     

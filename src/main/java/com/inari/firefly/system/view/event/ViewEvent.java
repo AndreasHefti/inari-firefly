@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system.event;
+package com.inari.firefly.system.view.event;
 
 import com.inari.commons.event.Event;
-import com.inari.firefly.system.View;
+import com.inari.firefly.system.view.View;
 
 public final class ViewEvent extends Event<ViewEventListener> {
     

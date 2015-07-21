@@ -16,7 +16,7 @@
 package com.inari.firefly.sprite;
 
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.system.LayerAware;
+import com.inari.firefly.system.view.LayerAware;
 
 public interface SpriteRenderable extends LayerAware {
     

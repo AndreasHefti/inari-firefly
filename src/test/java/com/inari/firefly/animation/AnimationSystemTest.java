@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 import com.inari.firefly.EventDispatcherMock;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.system.FFContextImpl;
-import com.inari.firefly.system.event.UpdateEvent;
+import com.inari.firefly.system.UpdateEvent;
 
 public class AnimationSystemTest {
 

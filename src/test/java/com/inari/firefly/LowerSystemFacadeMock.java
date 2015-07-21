@@ -10,10 +10,11 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sprite.SpriteRenderable;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.ILowerSystemFacade;
 import com.inari.firefly.system.Input;
-import com.inari.firefly.system.View;
-import com.inari.firefly.system.event.ViewEvent;
+import com.inari.firefly.system.view.View;
+import com.inari.firefly.system.view.event.ViewEvent;
 
 public class LowerSystemFacadeMock implements ILowerSystemFacade {
     

@@ -21,7 +21,7 @@ import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.animation.event.AnimationEvent;
 import com.inari.firefly.animation.event.AnimationEventListener;
 import com.inari.firefly.component.Component;
@@ -32,8 +32,8 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.system.FFSystem;
-import com.inari.firefly.system.event.UpdateEvent;
-import com.inari.firefly.system.event.UpdateEventListener;
+import com.inari.firefly.system.UpdateEvent;
+import com.inari.firefly.system.UpdateEventListener;
 
 public final class AnimationSystem 
     implements 
@@ -113,7 +113,7 @@ public final class AnimationSystem
 
     @Override
     public final void update( UpdateEvent event ) {
-        long updateTime = event.getUpdate();
+        long updateTime = event.getTime();
         for ( int i = 0; i < animations.capacity(); i++ ) {
             Animation animation = animations.get( i );
             if ( animation != null ) {

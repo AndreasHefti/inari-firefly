@@ -23,7 +23,7 @@ import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
@@ -33,8 +33,8 @@ import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.sprite.tile.TileGridSystem;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.ILowerSystemFacade;
-import com.inari.firefly.system.event.RenderEvent;
-import com.inari.firefly.system.event.RenderEventListener;
+import com.inari.firefly.system.RenderEvent;
+import com.inari.firefly.system.RenderEventListener;
 
 public final class SpriteRendererSystem implements FFSystem, EntityActivationListener, RenderEventListener {
     

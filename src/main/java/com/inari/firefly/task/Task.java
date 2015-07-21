@@ -18,7 +18,7 @@ package com.inari.firefly.task;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.NamedIndexedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;

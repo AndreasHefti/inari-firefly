@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system;
+package com.inari.firefly.system.view;
 
 import java.util.Arrays;
 import java.util.Set;

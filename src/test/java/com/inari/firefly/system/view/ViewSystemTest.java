@@ -1,4 +1,4 @@
-package com.inari.firefly.system;
+package com.inari.firefly.system.view;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -10,10 +10,15 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.EventDispatcherMock;
-import com.inari.firefly.FFContext;
 import com.inari.firefly.LowerSystemFacadeMock;
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextImpl;
 import com.inari.firefly.system.FFContextImpl.InitMap;
+import com.inari.firefly.system.view.Layer;
+import com.inari.firefly.system.view.View;
+import com.inari.firefly.system.view.ViewSystem;
+
 public class ViewSystemTest {
 
     @Test
@@ -179,7 +184,7 @@ public class ViewSystemTest {
     }
 
     private FFContext createContext() {
-        InitMap initMap = new FFContextImpl.InitMap();
+        InitMap initMap = new InitMap();
         initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcherMock.class );
         initMap.put( FFContext.LOWER_SYSTEM_FACADE, LowerSystemFacadeMock.class );
         return new FFContextImpl( initMap, true );

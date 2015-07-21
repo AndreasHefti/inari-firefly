@@ -29,7 +29,7 @@ import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.Disposable;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.AttributeKey;

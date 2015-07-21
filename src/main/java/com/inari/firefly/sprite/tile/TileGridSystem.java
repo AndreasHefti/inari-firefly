@@ -20,7 +20,7 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
@@ -30,10 +30,10 @@ import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.FFSystem;
-import com.inari.firefly.system.ViewSystem;
-import com.inari.firefly.system.event.ViewEvent;
-import com.inari.firefly.system.event.ViewEvent.Type;
-import com.inari.firefly.system.event.ViewEventListener;
+import com.inari.firefly.system.view.ViewSystem;
+import com.inari.firefly.system.view.event.ViewEvent;
+import com.inari.firefly.system.view.event.ViewEvent.Type;
+import com.inari.firefly.system.view.event.ViewEventListener;
 
 public final class TileGridSystem 
     implements 

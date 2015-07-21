@@ -20,10 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.animation.AnimationSystem;
-import com.inari.firefly.animation.FloatAnimation;
-import com.inari.firefly.animation.IntAnimation;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;

@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly;
+package com.inari.firefly.system;
 
 import com.inari.commons.event.EventDispatcher;
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.geom.Position;
+import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.TypedKey;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetSystem;
@@ -27,23 +29,20 @@ import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.sprite.SpriteRendererSystem;
 import com.inari.firefly.sprite.tile.TileGridSystem;
 import com.inari.firefly.state.StateSystem;
-import com.inari.firefly.system.FFContextImpl;
 import com.inari.firefly.system.FFContextImpl.InitMap;
-import com.inari.firefly.system.ILowerSystemFacade;
-import com.inari.firefly.system.ViewSystem;
-import com.inari.firefly.system.event.RenderEvent;
-import com.inari.firefly.system.event.UpdateEvent;
+import com.inari.firefly.system.view.View;
+import com.inari.firefly.system.view.ViewSystem;
 
 public final class FireFly {
     
-    private final FFContext context;
+    private FFContextImpl context;
     
-    private final IEventDispatcher eventDispatcher;
+    private IEventDispatcher eventDispatcher;
+    private ViewSystem viewSystem;
+
     private final UpdateEvent updateEvent = new UpdateEvent();
     private final RenderEvent renderEvent = new RenderEvent();
 
-    private long lastUpdateTime = 0;
-    private long update = 0;
 
     public FireFly( Class<? extends ILowerSystemFacade> lowerSystemFacadeType ) {
         InitMap initMap = new InitMap();
@@ -60,15 +59,27 @@ public final class FireFly {
         initMap.put( FFContext.System.ANIMATION_SYSTEM, AnimationSystem.class );
         initMap.put( FFContext.System.SOUND_SYSTEM, SoundSystem.class );
 
-        context = new FFContextImpl( initMap );
-        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        init( initMap );
     }
     
     public FireFly( InitMap initMap ) {
+        init( initMap );
+    }
+
+    private void init( InitMap initMap ) {
         context = new FFContextImpl( initMap );
         eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        viewSystem = context.get( FFContext.System.VIEW_SYSTEM );
+
+        if ( eventDispatcher == null ) {
+            throw new FFInitException( "Missing IEventDispatcher instance from FFContext" );
+        }
+        if ( viewSystem == null ) {
+            throw new FFInitException( "Missing ViewSystem instance from FFContext" );
+        }
     }
-    
+
+
     public final void dispose() {
         context.dispose();
     }
@@ -82,26 +93,39 @@ public final class FireFly {
     }
     
     public final void update() {
-        long timeElapsed = 0;
-        if ( lastUpdateTime == 0 ) {
-            lastUpdateTime = System.nanoTime();
+        updateEvent.timeElapsed = 0;
+        if ( updateEvent.lastUpdateTime == 0 ) {
+            updateEvent.lastUpdateTime = System.nanoTime();
         } else {
             long currentTime = System.nanoTime();
-            timeElapsed = currentTime - lastUpdateTime;
-            lastUpdateTime = currentTime;
+            updateEvent.timeElapsed = currentTime - updateEvent.lastUpdateTime;
+            updateEvent.lastUpdateTime = currentTime;
         }
-        
-        updateEvent.setTimeElapsed( timeElapsed );
-        updateEvent.setUpdate( update );
-        
+
+        updateEvent.update++;
         eventDispatcher.notify( updateEvent );
-        
-        update++;
     }
     
     public final void render() {
         // NOTE: for now there is no renderer that works with approximationTime so I skip the calculation so far.
         // TODO: implements the calculation of approximationTime and set it to the event.
+        for ( int i = 0; i < viewSystem.viewArrayLength(); i++ ) {
+            View view = viewSystem.getView( i );
+            if ( view == null || !view.isActive() ) {
+                continue;
+            }
+
+            int viewId = view.index();
+            Rectangle bounds = view.getBounds();
+            Position worldPosition = view.getWorldPosition();
+            renderEvent.viewId = viewId;
+            renderEvent.clip.x = worldPosition.x;
+            renderEvent.clip.y = worldPosition.y;
+            renderEvent.clip.width = bounds.width;
+            renderEvent.clip.height = bounds.height;
+
+            eventDispatcher.notify( renderEvent );
+        }
         eventDispatcher.notify( renderEvent );
     }
 

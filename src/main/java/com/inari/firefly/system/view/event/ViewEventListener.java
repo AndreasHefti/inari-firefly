@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system;
+package com.inari.firefly.system.view.event;
 
-public interface LayerAware extends ViewAware {
 
-    public int getLayerId();
+public interface ViewEventListener {
+
+    void onViewEvent( ViewEvent event );
 
 }

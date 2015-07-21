@@ -16,7 +16,7 @@
 package com.inari.firefly.sound;
 
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.firefly.FFContext;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;

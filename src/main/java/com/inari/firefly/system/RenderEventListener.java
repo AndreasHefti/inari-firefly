@@ -15,8 +15,8 @@
  ******************************************************************************/ 
 package com.inari.firefly.system;
 
-public interface ViewAware {
+public interface RenderEventListener {
     
-    public int getViewId();
+    public void render( RenderEvent event );
 
 }
