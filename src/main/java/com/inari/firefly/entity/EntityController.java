@@ -69,7 +69,7 @@ public abstract class EntityController extends Controller implements EntityActiv
     }
     
     @Override
-    public final boolean match( Aspect aspect ) {
+    public final boolean match( IndexedAspect aspect ) {
         return aspect.contains( getControlledComponentTypeId() );
     }
 

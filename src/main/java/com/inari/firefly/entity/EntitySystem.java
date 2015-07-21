@@ -22,7 +22,7 @@ import java.util.Stack;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.aspect.Aspect;
+import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.functional.Predicate;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
@@ -165,7 +165,7 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
         return activeEntities.get( entityId );
     }
 
-    public final Aspect getEntityAspect( int entityId ) {
+    public final IndexedAspect getEntityAspect( int entityId ) {
         IndexedTypeSet components = getComponents( entityId );
         if ( components == null ) {
             return null;
@@ -179,7 +179,7 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
         return activeEntities.iterator();
     }
 
-    public final Iterable<Entity> entities( final Aspect aspect ) {
+    public final Iterable<Entity> entities( final IndexedAspect aspect ) {
         return new Iterable<Entity>() {
             @Override
             public final Iterator<Entity> iterator() {
@@ -204,8 +204,8 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
         }
         int entityId = entity.index();
         
-        Aspect aspect = getEntityAspect( entityId );
-        if ( aspect == null || aspect.isEmpty() ) {
+        IndexedAspect aspect = getEntityAspect( entityId );
+        if ( aspect == null || aspect.valid() ) {
             throw new IllegalStateException( 
                 String.format( "The Entity with id: %s has no or an empty Aspect. This makes no sense and an empty Entity cannot activated", entityId ) 
             );
@@ -424,9 +424,9 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
     
     private final class AspectedEntityIterator extends EntityIterator {
         
-        private final Aspect aspect;
+        private final IndexedAspect aspect;
         
-        public AspectedEntityIterator( Aspect aspect ) {
+        public AspectedEntityIterator( IndexedAspect aspect ) {
             super( activeEntities.iterator() );
             this.aspect = aspect;
             findNext();

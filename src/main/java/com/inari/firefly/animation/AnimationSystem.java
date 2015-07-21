@@ -162,6 +162,7 @@ public final class AnimationSystem
             return currentValue;
         }
 
+        @SuppressWarnings( "unchecked" )
         ValueAnimation<V> animation = getAnimation( ValueAnimation.class, animationId );
         return animation.getValue( time, componentId, currentValue );
     }

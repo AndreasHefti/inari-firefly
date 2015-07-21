@@ -20,7 +20,7 @@ import java.util.Comparator;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.geom.Vector2f;
-import com.inari.commons.lang.aspect.Aspect;
+import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.system.FFContext;
@@ -70,7 +70,7 @@ public final class SpriteRendererSystem implements FFSystem, EntityActivationLis
     }
     
     @Override
-    public final boolean match( Aspect aspect ) {
+    public final boolean match( IndexedAspect aspect ) {
         return aspect.contains( ESprite.COMPONENT_TYPE );
     }
     

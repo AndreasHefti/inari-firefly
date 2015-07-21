@@ -18,7 +18,7 @@ package com.inari.firefly.sprite.tile;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.Aspect;
+import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.build.BaseComponentBuilder;
@@ -97,7 +97,7 @@ public final class TileGridSystem
     }
 
     @Override
-    public final boolean match( Aspect aspect ) {
+    public final boolean match( IndexedAspect aspect ) {
         return aspect.contains( ETile.COMPONENT_TYPE );
     }
     
@@ -195,7 +195,7 @@ public final class TileGridSystem
     }
     
     
-    private final void registerEntity( int entityId, Aspect entityAspect ) {
+    private final void registerEntity( int entityId, IndexedAspect entityAspect ) {
         ETile tile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
         TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
         if ( tile.isMultiPosition() ) {
@@ -208,7 +208,7 @@ public final class TileGridSystem
         }
     }
     
-    private final void unregisterEntity( int entityId, Aspect entityAspect ) {
+    private final void unregisterEntity( int entityId, IndexedAspect entityAspect ) {
         ETile tile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
         TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
         if ( tile.isMultiPosition() ) {
