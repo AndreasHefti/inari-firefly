@@ -24,6 +24,8 @@ public final class UpdateEvent extends Event<UpdateEventListener>{
     long timeElapsed = 0;
     long update = 0;
 
+    UpdateEvent() {}
+
     public UpdateEvent( long systemTime, long time, long timeElapsed, long update ) {
         this.lastUpdateTime = systemTime;
         this.time = time;

@@ -78,21 +78,21 @@ public class AnimationSystemTest {
             animationSystem.getAnimation( 0 ).toString()
         );
 
-        animationSystem.update( new UpdateEvent().setUpdate( 1 ) );
+        animationSystem.update( new UpdateEvent( 0, 1, 1, 1 ) );
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",
             animationSystem.getAnimation( 0 ).toString()
         );
 
-        animationSystem.update( new UpdateEvent().setUpdate( 10 ) );
+        animationSystem.update( new UpdateEvent( 0, 10, 1, 10 ) );
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",
             animationSystem.getAnimation( 0 ).toString()
         );
 
-        animationSystem.update( new UpdateEvent().setUpdate( 11 ) );
+        animationSystem.update( new UpdateEvent( 0, 11, 1, 11 ) );
 
         // now the Animation should be active
         assertEquals(
@@ -110,7 +110,7 @@ public class AnimationSystemTest {
         );
 
         // ...and after next update be removed
-        animationSystem.update( new UpdateEvent().setUpdate( 12 ) );
+        animationSystem.update( new UpdateEvent( 0, 12, 1, 12 ) );
         assertFalse( animationSystem.exists( 0 ) );
     }
 

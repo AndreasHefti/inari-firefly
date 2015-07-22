@@ -1,10 +1,11 @@
-package com.inari.firefly;
+package com.inari.firefly.system;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
+import com.inari.firefly.LowerSystemFacadeMock;
 import com.inari.firefly.component.attr.Attributes;
 
 public class FireFlyTest {
