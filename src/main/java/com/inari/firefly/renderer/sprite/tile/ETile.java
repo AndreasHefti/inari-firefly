@@ -27,6 +27,8 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
+import com.inari.firefly.renderer.BlendMode;
+import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteRenderable;
 
 public final class ETile extends EntityComponent implements SpriteRenderable {
@@ -43,6 +45,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     public static final AttributeKey<Integer> X_OFFSET = new AttributeKey<Integer>( "xOffset", Integer.class, ETile.class );
     public static final AttributeKey<Integer> Y_OFFSET = new AttributeKey<Integer>( "yOffset", Integer.class, ETile.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, ETile.class );
+    public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ESprite.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         SPRITE_ID, 
         VIEW_ID,
@@ -53,7 +56,8 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         GRID_POSITIONS,
         X_OFFSET,
         Y_OFFSET,
-        TINT_COLOR
+        TINT_COLOR,
+        BLEND_MODE
     };
     
     private int spriteId;
@@ -66,6 +70,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
 
     private final Vector2i offset;
     private final RGBColor tintColor;
+    private BlendMode blendMode;
 
     protected ETile() {
         spriteId = -1;
@@ -75,6 +80,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         gridPositions = new DynArray<Position>();
         offset = new Vector2i( 0, 0 );
         tintColor = new RGBColor( 1, 1, 1, 0 );
+        blendMode = BlendMode.NONE;
     }
     
     @Override
@@ -152,6 +158,16 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         this.tintColor.b = tintColor.b;
         this.tintColor.a = tintColor.a;
     }
+
+    @Override
+    public final BlendMode getBlendMode() {
+        return blendMode;
+    }
+
+    public final void setBlendMode( BlendMode blendMode ) {
+        this.blendMode = blendMode;
+    }
+
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
@@ -179,6 +195,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         offset.dx = attributes.getValue( X_OFFSET, offset.dx );
         offset.dy = attributes.getValue( Y_OFFSET, offset.dy );
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
+        blendMode = attributes.getValue( BLEND_MODE, blendMode );
     }
 
     @Override
@@ -203,6 +220,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         attributes.put( X_OFFSET, offset.dx );
         attributes.put( Y_OFFSET, offset.dy );
         attributes.put( TINT_COLOR, tintColor );
+        attributes.put( BLEND_MODE, blendMode );
     }
 
 }

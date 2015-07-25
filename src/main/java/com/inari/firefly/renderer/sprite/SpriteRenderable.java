@@ -16,6 +16,7 @@
 package com.inari.firefly.renderer.sprite;
 
 import com.inari.commons.graphics.RGBColor;
+import com.inari.firefly.renderer.BlendMode;
 import com.inari.firefly.system.view.LayerAware;
 
 public interface SpriteRenderable extends LayerAware {
@@ -23,6 +24,8 @@ public interface SpriteRenderable extends LayerAware {
     int getSpriteId();
     
     RGBColor getTintColor();
+    
+    BlendMode getBlendMode();
     
     int getOrdering();
 

@@ -25,6 +25,7 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.movement.EMovement;
+import com.inari.firefly.renderer.BlendMode;
 
 public final class ESprite extends EntityComponent implements SpriteRenderable {
     
@@ -35,12 +36,14 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, ESprite.class );
     public static final AttributeKey<Integer> ORDERING = new AttributeKey<Integer>( "ordering", Integer.class, ESprite.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, ESprite.class );
+    public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ESprite.class );
     public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, EMovement.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         SPRITE_ID,
         VIEW_ID,
         LAYER_ID, 
         TINT_COLOR,
+        BLEND_MODE,
         CONTROLLER_ID
     };
 
@@ -49,13 +52,16 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     private int layerId;
     private int ordering;
     private final RGBColor tintColor;
-    private int controllerId = -1;
+    private BlendMode blendMode;
+    private int controllerId;
     
     ESprite() {
         spriteId = -1;
         viewId = 0;
         layerId = 0;
         tintColor = new RGBColor( 1, 1, 1, 0 );
+        blendMode = BlendMode.NONE;
+        controllerId = -1;
     }
     
     @Override
@@ -112,6 +118,15 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     }
 
     @Override
+    public final BlendMode getBlendMode() {
+        return blendMode;
+    }
+
+    public final void setBlendMode( BlendMode blendMode ) {
+        this.blendMode = blendMode;
+    }
+
+    @Override
     public final int getControllerId() {
         return controllerId;
     }
@@ -132,6 +147,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         layerId = attributes.getValue( LAYER_ID, layerId );
         ordering = attributes.getValue( ORDERING, ordering );
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
+        blendMode = attributes.getValue( BLEND_MODE, blendMode );
         controllerId = attributes.getValue( CONTROLLER_ID, controllerId );
     }
 
@@ -142,6 +158,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         attributes.put( LAYER_ID, layerId );
         attributes.put( ORDERING, ordering );
         attributes.put( TINT_COLOR, tintColor );
+        attributes.put( BLEND_MODE, blendMode );
         attributes.put( CONTROLLER_ID, controllerId );
     }
 }
