@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.sprite.tile;
+package com.inari.firefly.renderer.sprite.tile;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,7 +27,7 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
-import com.inari.firefly.sprite.SpriteRenderable;
+import com.inari.firefly.renderer.sprite.SpriteRenderable;
 
 public final class ETile extends EntityComponent implements SpriteRenderable {
     

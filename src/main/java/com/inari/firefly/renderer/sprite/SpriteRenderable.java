@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.sprite;
+package com.inari.firefly.renderer.sprite;
 
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.system.view.LayerAware;

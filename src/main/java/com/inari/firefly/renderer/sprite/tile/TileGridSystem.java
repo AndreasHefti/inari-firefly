@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.sprite.tile;
+package com.inari.firefly.renderer.sprite.tile;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.renderer.sprite.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
@@ -28,7 +29,6 @@ import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
-import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.system.view.event.ViewEvent;

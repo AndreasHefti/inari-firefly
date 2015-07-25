@@ -13,65 +13,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.sprite;
+package com.inari.firefly.renderer.sprite;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
-public final class SpriteAsset extends Asset {
+public final class TextureAsset extends Asset {
     
-    public static final AttributeKey<Integer> TEXTURE_ID = new AttributeKey<Integer>( "textureId", Integer.class, SpriteAsset.class );
-    public static final AttributeKey<Rectangle> TEXTURE_REGION  = new AttributeKey<Rectangle>( "textureRegion", Rectangle.class, SpriteAsset.class );
+    public static final AttributeKey<String> RESOURCE_NAME = new AttributeKey<String>( "resourceName", String.class, TextureAsset.class );
+    public static final AttributeKey<Integer> TEXTURE_WIDTH = new AttributeKey<Integer>( "width", Integer.class, TextureAsset.class );
+    public static final AttributeKey<Integer> TEXTURE_HEIGHT = new AttributeKey<Integer>( "height", Integer.class, TextureAsset.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
         ASSET_GROUP,
-        TEXTURE_ID,
-        TEXTURE_REGION
+        RESOURCE_NAME,
+        TEXTURE_WIDTH,
+        TEXTURE_HEIGHT
     } ) );
     
-    private int[] textureId = new int[ 1 ];
-    private final Rectangle textureRegion;
+    private String resourceName;
+    private int width;
+    private int height;
     
-    SpriteAsset( int assetId ) {
+    TextureAsset( int assetId ) {
         super( assetId );
-        textureRegion = new Rectangle();
     }
     
     @Override
-    public final Class<SpriteAsset> getComponentType() {
-        return SpriteAsset.class;
+    public final Class<TextureAsset> getComponentType() {
+        return TextureAsset.class;
     }
 
-    @Override
-    protected final int[] dependsOn() {
-        return textureId;
+    public final String getResourceName() {
+        return resourceName;
     }
     
-    public final int getTextureId() {
-        return textureId[ 0 ];
-    }
-
-    public final void setTextureId( int textureId ) {
+    public final void setResourceName( String resourceName ) {
         checkNotAlreadyLoaded();
-        this.textureId[ 0 ] = textureId;
+        this.resourceName = resourceName;
     }
-
-
-    public final Rectangle getTextureRegion() {
-        return textureRegion;
+    
+    public final int getWidth() {
+        return width;
     }
-
-    public final void setTextureRegion( Rectangle textureRegion ) {
+    
+    public final void setWidth( int width ) {
         checkNotAlreadyLoaded();
-        this.textureRegion.x = textureRegion.x;
-        this.textureRegion.y = textureRegion.y;
-        this.textureRegion.width = textureRegion.height;
-        this.textureRegion.height = textureRegion.height;
+        this.width = width;
+    }
+    
+    public final int getHeight() {
+        return height;
+    }
+    
+    public final void setHeight( int height ) {
+        checkNotAlreadyLoaded();
+        this.height = height;
     }
 
     @Override
@@ -80,24 +81,21 @@ public final class SpriteAsset extends Asset {
         attributeKeys.addAll( ATTRIBUTE_KEYS );
         return super.attributeKeys( attributeKeys );
     }
-
+    
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        checkNotAlreadyLoaded();
         super.fromAttributes( attributes );
-        textureId[ 0 ] = attributes.getValue( TEXTURE_ID, textureId[ 0 ] );
-        
-        Rectangle textureRegion = attributes.getValue( TEXTURE_REGION );
-        if ( textureRegion != null ) {
-            setTextureRegion( textureRegion );
-        }
+        resourceName = attributes.getValue( RESOURCE_NAME, resourceName );
+        width = attributes.getValue( TEXTURE_WIDTH, width );
+        height = attributes.getValue( TEXTURE_HEIGHT, height );
     }
-
+    
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        attributes.put( TEXTURE_ID, textureId[ 0 ] );
-        attributes.put( TEXTURE_REGION, new Rectangle( textureRegion ) );
+        attributes.put( RESOURCE_NAME, resourceName );
+        attributes.put( TEXTURE_WIDTH, width );
+        attributes.put( TEXTURE_WIDTH, height );
     }
 
 }

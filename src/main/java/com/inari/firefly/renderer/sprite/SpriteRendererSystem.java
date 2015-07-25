@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.sprite;
+package com.inari.firefly.renderer.sprite;
 
 import java.util.Comparator;
 
@@ -23,14 +23,14 @@ import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.renderer.sprite.tile.ETile;
+import com.inari.firefly.renderer.sprite.tile.TileGridSystem;
+import com.inari.firefly.renderer.sprite.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
-import com.inari.firefly.sprite.tile.ETile;
-import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
-import com.inari.firefly.sprite.tile.TileGridSystem;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.ILowerSystemFacade;
 import com.inari.firefly.system.RenderEvent;

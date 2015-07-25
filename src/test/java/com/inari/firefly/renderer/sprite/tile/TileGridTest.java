@@ -1,4 +1,4 @@
-package com.inari.firefly.sprite.tile;
+package com.inari.firefly.renderer.sprite.tile;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,7 +11,8 @@ import org.junit.Test;
 import com.inari.commons.StringUtils;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
-import com.inari.firefly.sprite.tile.TileGrid.TileGridIterator;
+import com.inari.firefly.renderer.sprite.tile.TileGrid;
+import com.inari.firefly.renderer.sprite.tile.TileGrid.TileGridIterator;
 public class TileGridTest {
 
     @Test

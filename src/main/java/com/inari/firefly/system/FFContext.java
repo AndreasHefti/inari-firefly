@@ -13,9 +13,9 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.MovementSystem;
+import com.inari.firefly.renderer.sprite.SpriteRendererSystem;
+import com.inari.firefly.renderer.sprite.tile.TileGridSystem;
 import com.inari.firefly.sound.SoundSystem;
-import com.inari.firefly.sprite.SpriteRendererSystem;
-import com.inari.firefly.sprite.tile.TileGridSystem;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.system.view.ViewSystem;
 
