@@ -16,12 +16,11 @@
 package com.inari.firefly.entity;
 
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.IndexedAspect;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
+import com.inari.firefly.system.FFContext;
 
 
 public abstract class EntityController extends Controller implements EntityActivationListener {

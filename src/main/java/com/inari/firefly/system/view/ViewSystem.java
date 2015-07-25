@@ -36,7 +36,6 @@ import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.ILowerSystemFacade;
-import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.view.event.ViewEvent;
 
 public final class ViewSystem implements FFSystem, ComponentSystem, ComponentBuilderFactory {
