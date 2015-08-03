@@ -15,7 +15,6 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
-import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -25,7 +24,6 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.functional.Predicate;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.Disposable;
@@ -38,66 +36,48 @@ import com.inari.firefly.component.attr.ComponentKey;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFSystem;
+import com.inari.firefly.system.FFComponent;
 
-public final class EntitySystem implements FFSystem, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
-    
-    private static final int DEFAULT_CAPACITY = 1000;
-    private static final int DEFAULT_COMPONENT_TYPE_CAPACITY = 20;
+public final class EntitySystem implements FFComponent, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
 
     private IEventDispatcher eventDispatcher;
+    private EntityProvider entityProvider;
     
     final DynArray<Entity> activeEntities;
-    final DynArray<IndexedTypeSet> usedComponents;
-    
-    final ArrayDeque<Entity> inactiveEntities;
-    final DynArray<ArrayDeque<EntityComponent>> unusedComponents;
-
+    final DynArray<Entity> inactiveEntities;
+    final DynArray<IndexedTypeSet> components;
     
     EntitySystem() {
-        this( DEFAULT_CAPACITY );
-    }
-    
-    EntitySystem( int initialCapacity ) {
-        if ( initialCapacity < 0 ) {
-            initialCapacity = DEFAULT_CAPACITY;
-        }
-        
-        activeEntities = new DynArray<Entity>( initialCapacity );
-        usedComponents = new DynArray<IndexedTypeSet>( initialCapacity );
-        for ( int i = 0; i < usedComponents.capacity(); i++ ) {
-            usedComponents.set( i, new IndexedTypeSet( EntityComponent.class ) );
-        }
-
-        inactiveEntities = new ArrayDeque<Entity>();
-        int size = Indexer.getIndexedTypeSize( EntityComponent.class );
-        if ( size < DEFAULT_COMPONENT_TYPE_CAPACITY ) {
-            size = DEFAULT_COMPONENT_TYPE_CAPACITY;
-        }
-        unusedComponents = new DynArray<ArrayDeque<EntityComponent>>( size );
+        activeEntities = new DynArray<Entity>();
+        inactiveEntities = new DynArray<Entity>();
+        components = new DynArray<IndexedTypeSet>();
     }
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        entityProvider = context.getComponent( FFContext.ENTITY_CACHE );
+
+            Integer entityCapacity = context.getProperty( FFContext.System.Properties.ENTITY_MAP_CAPACITY );
+        Integer entityComponentSetCapacity = context.getProperty( FFContext.System.Properties.ENTITY_COMPONENT_SET_CAPACITY );
+        if ( entityCapacity != null ) {
+            activeEntities.ensureCapacity( entityCapacity );
+            inactiveEntities.ensureCapacity( entityCapacity );
+            components.ensureCapacity( entityCapacity );
+        }
     }
     
     @Override
     public void dispose( FFContext context ) {
+        eventDispatcher = null;
+        entityProvider = null;
+
         activeEntities.clear();
         inactiveEntities.clear();
-        usedComponents.clear();
-        unusedComponents.clear();
-    }
-
-    public final void initEmptyEntities( int number ) {
-        for ( int i = 0; i < number + 1; i++ ) {
-            inactiveEntities.push( new Entity( -1, this ) );
-        }
+        components.clear();
     }
     
     public final EntityBuilder createEntityBuilder() {
@@ -121,6 +101,10 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
     public final boolean isActive( int entityId ) {
         return activeEntities.get( entityId ) != null;
     }
+
+    public final boolean isRestored( int entityId ) {
+        return !( activeEntities.contains( entityId ) && inactiveEntities.contains( entityId ) );
+    }
     
     public final void activate( int entityId ) {
         activate( activeEntities.get( entityId ) );
@@ -132,7 +116,7 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
             return;
         }
         
-        inactiveEntities.add( entity );
+        inactiveEntities.set( entity.index(), entity );
         
         if ( eventDispatcher != null ) {
             eventDispatcher.notify( 
@@ -142,11 +126,14 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
     }
 
     public final void delete( int entityId ) {
-        if ( activeEntities.get( entityId ) != null ) {
+        if ( activeEntities.contains( entityId ) ) {
             deactivate( entityId );
         }
-        
-        restoreEntityComponents( entityId );
+
+        Entity entityToRestore = inactiveEntities.get( entityId );
+        IndexedTypeSet componentsToRestore = components.get( entityId );
+
+        entityProvider.dispose( entityToRestore, componentsToRestore );
     }
     
     public final void deleteAll( IntIterator iterator ) {
@@ -203,7 +190,8 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
             return;
         }
         int entityId = entity.index();
-        
+
+        // TODO this should go to builder
         IndexedAspect aspect = getEntityAspect( entityId );
         if ( aspect == null || !aspect.valid() ) {
             throw new IllegalStateException( 
@@ -222,34 +210,17 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
     }
     
     // ---- Components ------------------------------------------------
-    
-    public final void initEmptyComponents( Class<? extends EntityComponent> componentType, int number ) {
-        int componentTypeIndex = Indexer.getIndexForType( componentType, EntityComponent.class );
-        ArrayDeque<EntityComponent> components = (ArrayDeque<EntityComponent>) unusedComponents.get( componentTypeIndex );
-        if ( components == null ) {
-            components = new ArrayDeque<EntityComponent>();
-            unusedComponents.set( componentTypeIndex, components );
-        }
-        
-        for ( int i = 0; i < number + 1; i++ ) {
-            components.push( createComponent( componentType ) );
-        }
-    }
 
     public final <T extends EntityComponent> T getComponent( int entityId, Class<T> componentType ) {
-        return usedComponents.get( entityId ).get( componentType );
+        return components.get( entityId ).get( componentType );
     }
 
     public final <T extends EntityComponent> T getComponent( int entityId, int componentId ) {
-        return usedComponents.get( entityId ).get( componentId );
+        return components.get( entityId ).get( componentId );
     }
 
     public final IndexedTypeSet getComponents( int entityId ) {
-        if ( activeEntities.get( entityId ) == null ) {
-            return null;
-        }
-        
-        return usedComponents.get( entityId );
+        return components.get( entityId );
     }
     
     // ---- ComponentSystem implementation --------------------------------------
@@ -339,66 +310,6 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
         }
     }
     
-    // ---- Internal -----------------------------------------------------------
-    
-    private void restoreEntityComponents( int entityId ) {
-        IndexedTypeSet componentsOfEntity = getComponents( entityId );
-        if ( componentsOfEntity == null ) {
-            return;
-        }
-        
-        for ( int i = 0; i < componentsOfEntity.length(); i++ ) {
-            EntityComponent component = componentsOfEntity.get( i );
-            if ( component != null ) {
-                componentsOfEntity.remove( i );
-                ArrayDeque<EntityComponent> stack = unusedComponents.get( i );
-                stack.push( component );
-            }
-        }
-    }
-    
-    private <C extends EntityComponent> EntityComponent newComponent( Class<C> componentType ) {
-        int componentTypeIndex = Indexer.getIndexForType( componentType, EntityComponent.class );
-        
-        EntityComponent result = getUnused( componentTypeIndex );
-        if ( result != null ) {
-            return result;
-        }
-        
-        return createComponent( componentType );
-    }
-    
-    private <C extends EntityComponent> EntityComponent newComponent( Class<C> componentType, AttributeMap attributes ) {
-        EntityComponent newComponent = newComponent( componentType );
-        newComponent.fromAttributes( attributes );
-        return newComponent;
-    }
-    
-    private EntityComponent createComponent( Class<? extends EntityComponent> componentType ) {
-        try {
-            return componentType.newInstance();
-        } catch ( Exception e ) {
-            throw new ComponentCreationException( "Unknwon error while Component creation: " + componentType, e );
-        }
-    }
-    
-    EntityComponent getUnused( int componentTypeIndex ) {
-        ArrayDeque<EntityComponent> unusedStack = unusedComponents.get( componentTypeIndex );
-        if ( unusedStack.isEmpty() ) {
-            return null;
-        }
-        
-        return unusedStack.pop();
-    }
-    
-    void createComponents( IndexedTypeSet components, EntityAttributeMap attributes ) {
-        Set<Class<? extends EntityComponent>> componentTypes = ( (EntityAttributeMap) attributes ).getEntityComponentTypes();
-        for ( Class<? extends EntityComponent> componentType : componentTypes ) {
-            EntityComponent component = newComponent( componentType, attributes );
-            components.set( component );
-        }
-    }
-    
     // ---- Utilities --------------------------------------------------------
 
     private abstract class EntityIterator implements Iterator<Entity> {
@@ -478,19 +389,6 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
         }
     }
     
-    private final Entity createEntity( int componentId ) {
-        if ( componentId >= 0 ) {
-            return new Entity( componentId, this );
-        }
-        if ( inactiveEntities.isEmpty() ) {
-            return new Entity( -1, this );
-        }
-        
-        Entity entity = inactiveEntities.pop();
-        entity.restore();
-        return entity;
-    }
-    
     
     protected final class EntityBuilder extends BaseComponentBuilder<Entity> {
         
@@ -507,25 +405,22 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
         
         @Override
         public Entity build( int componentId ) {
-            Entity entity = createEntity( componentId );
+            Entity entity = entityProvider.getEntity( componentId );
+            if ( entity == null ) {
+                entity = new Entity( componentId, EntitySystem.this );
+            }
 
             if ( prefabComponents != null ) {
                 // if we have prefab components we use them
-                usedComponents.set( entity.index(), prefabComponents );
+                components.set( entity.index(), prefabComponents );
             } else {
-                // otherwise we get component which either gets unused or create new one
-                IndexedTypeSet components = getComponents( entity.index() );
-                if ( components == null ) {
-                    components = new IndexedTypeSet( EntityComponent.class );
-                    usedComponents.set( entity.index(), components );
-                }
-     
-                createComponents( components, (EntityAttributeMap) attributes );
+                IndexedTypeSet componentSet = entityProvider.getComponentTypeSet();
+                components.set( entity.index(), componentSet );
+                entityProvider.createComponents( componentSet, (EntityAttributeMap) attributes );
             }
             
             return entity;
         }
-
         
     }
 

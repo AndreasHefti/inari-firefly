@@ -109,7 +109,7 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         try {
             typeClass = (Class<C>) Class.forName( className );
         } catch ( Exception e ) {
-            throw new ComponentCreationException( "Failed to get class for name: " + className );
+            throw new ComponentCreationException( "Failed to getComponent class for name: " + className );
         }
         if ( componentId == null ) {
             try {

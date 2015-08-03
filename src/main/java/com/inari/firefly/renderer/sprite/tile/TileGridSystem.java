@@ -29,15 +29,15 @@ import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
-import com.inari.firefly.system.FFSystem;
+import com.inari.firefly.system.FFComponent;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.system.view.event.ViewEvent;
 import com.inari.firefly.system.view.event.ViewEvent.Type;
 import com.inari.firefly.system.view.event.ViewEventListener;
 
 public final class TileGridSystem 
-    implements 
-        FFSystem,
+    implements
+    FFComponent,
         ComponentBuilderFactory, 
         ViewEventListener,
         EntityActivationListener {
@@ -58,9 +58,9 @@ public final class TileGridSystem
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
-        entitySystem = context.get( FFContext.System.ENTITY_SYSTEM );
-        viewSystem = context.get( FFContext.System.VIEW_SYSTEM );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        entitySystem = context.getComponent( FFContext.System.ENTITY_SYSTEM );
+        viewSystem = context.getComponent( FFContext.System.VIEW_SYSTEM );
         
         eventDispatcher.register( EntityActivationEvent.class, this );
         eventDispatcher.register( ViewEvent.class, this );

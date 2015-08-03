@@ -31,13 +31,13 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.system.FFSystem;
+import com.inari.firefly.system.FFComponent;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 
 public final class AnimationSystem 
-    implements 
-        FFSystem, 
+    implements
+    FFComponent,
         ComponentSystem,
         ComponentBuilderFactory, 
         UpdateEventListener, 
@@ -53,7 +53,7 @@ public final class AnimationSystem
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         
         eventDispatcher.register( UpdateEvent.class, this );
         eventDispatcher.register( AnimationEvent.class, this );

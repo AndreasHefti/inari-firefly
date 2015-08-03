@@ -68,8 +68,8 @@ public final class FireFly {
 
     private void init( InitMap initMap ) {
         context = new FFContextImpl( initMap );
-        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
-        viewSystem = context.get( FFContext.System.VIEW_SYSTEM );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        viewSystem = context.getComponent( FFContext.System.VIEW_SYSTEM );
 
         if ( eventDispatcher == null ) {
             throw new FFInitException( "Missing IEventDispatcher instance from FFContext" );
@@ -85,7 +85,7 @@ public final class FireFly {
     }
     
     public final <T> T get( TypedKey<T> key ) {
-        return context.get( key );
+        return context.getComponent( key );
     }
     
     public final FFContext getContext() {

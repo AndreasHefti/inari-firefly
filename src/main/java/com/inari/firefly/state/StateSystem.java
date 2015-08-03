@@ -34,12 +34,12 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.state.event.StateChangeEvent;
-import com.inari.firefly.system.FFSystem;
+import com.inari.firefly.system.FFComponent;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.task.event.TaskEvent;
 
-public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderFactory, UpdateEventListener {
+public class StateSystem implements FFComponent, ComponentSystem, ComponentBuilderFactory, UpdateEventListener {
     
     private IEventDispatcher eventDispatcher;
     private FFContext context;
@@ -65,7 +65,7 @@ public class StateSystem implements FFSystem, ComponentSystem, ComponentBuilderF
         }
         this.context = context;
         
-        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         eventDispatcher.register( UpdateEvent.class, this );
     }
     

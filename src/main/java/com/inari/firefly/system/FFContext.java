@@ -11,6 +11,7 @@ import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.ComponentSystem.BuildType;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.entity.EntityProvider;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.MovementSystem;
 import com.inari.firefly.renderer.sprite.SpriteRendererSystem;
@@ -31,12 +32,18 @@ public interface FFContext {
      *  The class type of an specified implementation of the LOWER_SYSTEM_FACADE must be defined by initializing of the FFContext
      */
     public static final TypedKey<ILowerSystemFacade> LOWER_SYSTEM_FACADE = TypedKey.create( "FF_LOWER_SYSTEM_FACADE", ILowerSystemFacade.class );
-    
+
+    public static final TypedKey<EntityProvider> ENTITY_CACHE = TypedKey.create( "FF_ENTITY_CACHE", EntityProvider.class );
     
     /** The System defines global system keys for components that are essential to the system and must be initialized.
-     *  All this components can be get from the IFFContext system context if the context was once properly initialized.
+     *  All this components can be getComponent from the IFFContext system context if the context was once properly initialized.
      */
     public static interface System {
+
+        public static interface Properties {
+            public static final TypedKey<Integer> ENTITY_MAP_CAPACITY = TypedKey.create( "FF_ENTITY_MAP_CAPACITY", Integer.class );
+            public static final TypedKey<Integer> ENTITY_COMPONENT_SET_CAPACITY = TypedKey.create( "FF_ENTITY_COMPONENT_SET_CAPACITY", Integer.class );
+        }
 
         public static final TypedKey<ViewSystem> VIEW_SYSTEM = TypedKey.create( "FF_VIEW_SYSTEM", ViewSystem.class );
 
@@ -65,7 +72,9 @@ public interface FFContext {
     }
 
 
-    <T> T get( TypedKey<T> key );
+    <T> T getComponent( TypedKey<T> key );
+
+    <T> T getProperty( TypedKey<T> key );
     
     void fromAttributes( Attributes attributes, BuildType buildType );
     

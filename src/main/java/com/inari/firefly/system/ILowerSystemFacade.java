@@ -23,7 +23,7 @@ import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.view.event.ViewEventListener;
 import com.inari.firefly.system.view.View;
 
-public interface ILowerSystemFacade extends FFSystem, AssetEventListener, ViewEventListener, SoundEventListener {
+public interface ILowerSystemFacade extends FFComponent, AssetEventListener, ViewEventListener, SoundEventListener {
     
     void startRendering( View view );
     

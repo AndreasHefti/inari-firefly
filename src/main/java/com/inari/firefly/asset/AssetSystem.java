@@ -34,9 +34,9 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.system.FFSystem;
+import com.inari.firefly.system.FFComponent;
 
-public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBuilderFactory {
+public final class AssetSystem implements FFComponent, ComponentSystem, ComponentBuilderFactory {
     
     public static final String DEFAULT_GROUP_NAME = "FF_DEFAULT_ASSET_GROUP";
     
@@ -50,7 +50,7 @@ public final class AssetSystem implements FFSystem, ComponentSystem, ComponentBu
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
     }
 
     @Override

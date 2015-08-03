@@ -14,9 +14,9 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.FFSystem;
+import com.inari.firefly.system.FFComponent;
 
-public class EntityPrefabSystem implements FFSystem, ComponentSystem, ComponentBuilderFactory, Disposable {
+public class EntityPrefabSystem implements FFComponent, ComponentSystem, ComponentBuilderFactory, Disposable {
     
     private DynArray<EntityPrefab> prefabs;
     private DynArray<String> prefabNames;
@@ -81,8 +81,8 @@ public class EntityPrefabSystem implements FFSystem, ComponentSystem, ComponentB
         prefabComponents = new DynArray<IndexedTypeSet>();
         componentInstancePool = new DynArray<Stack<IndexedTypeSet>>();
         
-        entitySystem = context.get( FFContext.System.ENTITY_SYSTEM );
-        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        entitySystem = context.getComponent( FFContext.System.ENTITY_SYSTEM );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
     }
     
     @Override

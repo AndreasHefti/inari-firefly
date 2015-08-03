@@ -30,8 +30,8 @@ public abstract class EntityController extends Controller implements EntityActiv
     
     protected EntityController( int id, FFContext context ) {
         super( id );
-        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
-        entitySystem = context.get( FFContext.System.ENTITY_SYSTEM );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        entitySystem = context.getComponent( FFContext.System.ENTITY_SYSTEM );
         
         eventDispatcher.register( EntityActivationEvent.class, this );
     }

@@ -53,7 +53,7 @@ public class SpriteAnimationController extends EntityController {
     
     SpriteAnimationController( int id, FFContext context ) {
         super( id, context );
-        animationSystem = context.get( FFContext.System.ANIMATION_SYSTEM );
+        animationSystem = context.getComponent( FFContext.System.ANIMATION_SYSTEM );
     }
 
     public final int getSpriteAnimationId() {

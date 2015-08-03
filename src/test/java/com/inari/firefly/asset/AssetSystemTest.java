@@ -147,7 +147,7 @@ public class AssetSystemTest {
     @Test
     public void testCreateLoadDisposeAndDeleteSingleAsset() {
         FFContext ffContext = getTestFFContext();
-        IEventDispatcher eventDispatcher = ffContext.get( FFContext.EVENT_DISPATCHER );
+        IEventDispatcher eventDispatcher = ffContext.getComponent( FFContext.EVENT_DISPATCHER );
         AssetSystem service = new AssetSystem();
         service.init( ffContext );
         Attributes attrs = new Attributes();

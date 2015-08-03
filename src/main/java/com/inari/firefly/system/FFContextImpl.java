@@ -31,6 +31,7 @@ import com.inari.firefly.component.attr.Attributes;
 
 public class FFContextImpl implements FFContext {
 
+    private final Map<TypedKey<?>, Object> properties =  new LinkedHashMap<TypedKey<?>, Object>();
     private final Map<TypedKey<?>, Object> systemComponents = new LinkedHashMap<TypedKey<?>, Object>();
     private final Map<TypedKey<? extends ComponentSystem>, Set<Class<?>>> componentTypes = new LinkedHashMap<TypedKey<? extends ComponentSystem>, Set<Class<?>>>();
     
@@ -45,8 +46,13 @@ public class FFContextImpl implements FFContext {
     }
 
     @Override
-    public <T> T get( TypedKey<T> key ) {
+    public <T> T getComponent( TypedKey<T> key ) {
         return key.type().cast( systemComponents.get( key ) );
+    }
+
+    @Override
+    public <T> T getProperty( TypedKey<T> key ) {
+        return key.type().cast( properties.get( key ) );
     }
 
     public final void dispose() {
@@ -62,14 +68,14 @@ public class FFContextImpl implements FFContext {
     @Override
     public final void fromAttributes( Attributes attributes, BuildType buildType ) {
         for ( TypedKey<? extends ComponentSystem> key : componentTypes.keySet() ) {
-            get( key ).fromAttributes( attributes, buildType );
+            getComponent( key ).fromAttributes( attributes, buildType );
         }
     }
 
     @Override
     public final void toAttributes( Attributes attributes ) {
         for ( TypedKey<? extends ComponentSystem> key : componentTypes.keySet() ) {
-            get( key ).toAttributes( attributes );
+            getComponent( key ).toAttributes( attributes );
         }
     }
     
@@ -106,11 +112,13 @@ public class FFContextImpl implements FFContext {
     private void init( boolean skipCheck ) {
         
         for ( Object component : systemComponents.values() ) {
-            if ( component instanceof FFSystem ) {
-                ( (FFSystem) component ).init( this );
+            if ( component instanceof FFComponent ) {
+                ( (FFComponent) component ).init( this );
                 continue;
             }
         }
+
+        initDefaultProperties();
         
         if ( skipCheck ) {
             return;
@@ -118,11 +126,16 @@ public class FFContextImpl implements FFContext {
 //        checkCompleteness();
     }
 
+    private void initDefaultProperties() {
+        properties.put( System.Properties.ENTITY_MAP_CAPACITY, 1000 );
+        properties.put( System.Properties.ENTITY_COMPONENT_SET_CAPACITY, 20 );
+    }
+
 //    private void checkCompleteness() {
 //        for ( Field field : FFContext.System.class.getFields() ) {
 //            if ( Modifier.isStatic( field.getModifiers() ) && field.getType() == TypedKey.class ) {
 //                try {
-//                    Object key = field.get( null );
+//                    Object key = field.getComponent( null );
 //                    if ( !systemComponents.containsKey( key ) ) {
 //                        throw new FFInitException( "Missing Component after init: " + key );
 //                    }

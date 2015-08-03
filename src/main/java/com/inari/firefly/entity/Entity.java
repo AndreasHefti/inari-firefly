@@ -54,6 +54,9 @@ public final class Entity extends BaseIndexedObject {
     }
 
     public final boolean isActive() {
+        if ( indexedId < 0 ) {
+            return false;
+        }
         return provider.isActive( index() );
     }
     
@@ -68,10 +71,18 @@ public final class Entity extends BaseIndexedObject {
         
         return false;
     }
-    
-    public final void restore() {
-        provider.delete( index() );
-    } 
+
+    @Override
+    public final void dispose() {
+        if ( indexedId >= 0 ) {
+            provider.delete( index() );
+        }
+        super.dispose();
+    }
+
+    final void setId( int id ) {
+        indexedId = id;
+    }
 
     @Override
     public final String toString() {

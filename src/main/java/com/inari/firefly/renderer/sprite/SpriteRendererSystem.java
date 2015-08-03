@@ -31,12 +31,12 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
-import com.inari.firefly.system.FFSystem;
+import com.inari.firefly.system.FFComponent;
 import com.inari.firefly.system.ILowerSystemFacade;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 
-public final class SpriteRendererSystem implements FFSystem, EntityActivationListener, RenderEventListener {
+public final class SpriteRendererSystem implements FFComponent, EntityActivationListener, RenderEventListener {
     
     private IEventDispatcher eventDispatcher;
     private EntitySystem entitySystem;
@@ -51,10 +51,10 @@ public final class SpriteRendererSystem implements FFSystem, EntityActivationLis
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
-        entitySystem = context.get( FFContext.System.ENTITY_SYSTEM );
-        lowerSystemFacade = context.get( FFContext.LOWER_SYSTEM_FACADE );
-        tileGridSystem = context.get( FFContext.System.TILE_GRID_SYSTEM ); 
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        entitySystem = context.getComponent( FFContext.System.ENTITY_SYSTEM );
+        lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
+        tileGridSystem = context.getComponent( FFContext.System.TILE_GRID_SYSTEM );
 
         eventDispatcher.register( EntityActivationEvent.class, this );
         eventDispatcher.register( RenderEvent.class, this );
@@ -62,7 +62,7 @@ public final class SpriteRendererSystem implements FFSystem, EntityActivationLis
     
     @Override
     public final void dispose( FFContext context ) {
-        IEventDispatcher eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         eventDispatcher.unregister( EntityActivationEvent.class, this );
         eventDispatcher.unregister( RenderEvent.class, this );
         

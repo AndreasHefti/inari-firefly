@@ -21,9 +21,9 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.asset.event.AssetEventListener;
-import com.inari.firefly.system.FFSystem;
+import com.inari.firefly.system.FFComponent;
 
-public final class SoundSystem implements FFSystem, AssetEventListener {
+public final class SoundSystem implements FFComponent, AssetEventListener {
     
     private IEventDispatcher eventDispatcher;
     private final DynArray<Sound> sounds;
@@ -34,7 +34,7 @@ public final class SoundSystem implements FFSystem, AssetEventListener {
     
     @Override
     public final void init( FFContext context ) {
-        eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         eventDispatcher.register( AssetEvent.class, this );
     }
     

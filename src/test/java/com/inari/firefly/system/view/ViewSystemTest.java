@@ -15,9 +15,6 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextImpl;
 import com.inari.firefly.system.FFContextImpl.InitMap;
-import com.inari.firefly.system.view.Layer;
-import com.inari.firefly.system.view.View;
-import com.inari.firefly.system.view.ViewSystem;
 
 public class ViewSystemTest {
 
@@ -25,7 +22,7 @@ public class ViewSystemTest {
     public void testCreation() {
         Indexer.clear();
         FFContext context = createContext();
-        IEventDispatcher eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         ViewSystem viewSystem = new ViewSystem();
         viewSystem.init( context );
         Attributes attrs = new Attributes();
@@ -53,7 +50,7 @@ public class ViewSystemTest {
     public void testCreateViews() {
         Indexer.clear();
         FFContext context = createContext();
-        IEventDispatcher eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         ViewSystem viewSystem = new ViewSystem();
         viewSystem.init( context );
         Attributes attrs = new Attributes();
@@ -116,7 +113,7 @@ public class ViewSystemTest {
     public void testCreateLayersForBaseView() {
         Indexer.clear();
         FFContext context = createContext();
-        IEventDispatcher eventDispatcher = context.get( FFContext.EVENT_DISPATCHER );
+        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         ViewSystem viewSystem = new ViewSystem();
         viewSystem.init( context );
         Attributes attrs = new Attributes();

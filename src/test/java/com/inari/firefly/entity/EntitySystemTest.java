@@ -27,8 +27,8 @@ public class EntitySystemTest {
             attrs.toString()
         );
         assertEquals( "1000", String.valueOf( entitySystem.activeEntities.capacity() ) );
-        assertEquals( "1000", String.valueOf( entitySystem.usedComponents.capacity() ) );
-        assertEquals( "1000", String.valueOf( entitySystem.usedComponents.size() ) );
+        assertEquals( "1000", String.valueOf( entitySystem.components.capacity() ) );
+        assertEquals( "1000", String.valueOf( entitySystem.components.size() ) );
         
         
         entitySystem = new EntitySystem( 200 );
@@ -42,8 +42,8 @@ public class EntitySystemTest {
             attrs.toString()
         );
         assertEquals( "200", String.valueOf( entitySystem.activeEntities.capacity() ) );
-        assertEquals( "200", String.valueOf( entitySystem.usedComponents.capacity() ) );
-        assertEquals( "200", String.valueOf( entitySystem.usedComponents.size() ) );
+        assertEquals( "200", String.valueOf( entitySystem.components.capacity() ) );
+        assertEquals( "200", String.valueOf( entitySystem.components.size() ) );
     }
     
     @Test
