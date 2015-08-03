@@ -31,7 +31,7 @@ public class EntitySystemTest {
         assertEquals( "1000", String.valueOf( entitySystem.components.size() ) );
         
         
-        entitySystem = new EntitySystem( 200 );
+        entitySystem = new EntitySystem();
         entitySystem.init( testContext );
         
         attrs = new Attributes();

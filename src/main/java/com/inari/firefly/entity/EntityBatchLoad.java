@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.inari.firefly.Disposable;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.Loadable;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntitySystem.EntityBuilder;
+import com.inari.firefly.system.FFContext;
 
 public class EntityBatchLoad implements Loadable {
     
@@ -41,7 +41,7 @@ public class EntityBatchLoad implements Loadable {
         for ( AttributeMap entityAttributeMap : entityAttributes ) {
             entityBuilder.setAttributes( entityAttributeMap );
             Entity entity = entityBuilder.build();
-            entity.setActive( true );
+            entitySystem.activate( entity.getId() );
             entityIds[ index ] = entity.index();
             index++;
         }

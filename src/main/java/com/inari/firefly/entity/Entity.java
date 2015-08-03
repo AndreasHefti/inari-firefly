@@ -15,17 +15,24 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
-import com.inari.commons.lang.aspect.IndexedAspect;
-import com.inari.commons.lang.indexed.BaseIndexedObject;
-import com.inari.commons.lang.indexed.IndexedTypeSet;
+import com.inari.commons.lang.indexed.IndexedObject;
+import com.inari.commons.lang.indexed.Indexer;
 
-public final class Entity extends BaseIndexedObject {
+public final class Entity implements IndexedObject {
     
-    private final EntitySystem provider;
+    private int id;
+    
+    Entity() {
+        id = -1;
+    }
 
-    Entity( int entityId, EntitySystem provider ) {
-        super( entityId );
-        this.provider = provider;
+    Entity( int id ) {
+        if ( id < 0 ) {
+            this.id = Indexer.nextObjectIndex( indexedObjectType() );
+        } else {
+            this.id = id;
+            Indexer.registerIndex( indexedObjectType(), id );
+        }
     }
 
     @Override
@@ -34,64 +41,16 @@ public final class Entity extends BaseIndexedObject {
     }
     
     public final int getId() {
-        return indexedId;
-    }
-
-    public final IndexedAspect getAspect() {
-        return provider.getEntityAspect( indexedId );
+        return id;
     }
     
-    public final <T extends EntityComponent> T getComponent( Class<T> componentType ) {
-        return provider.getComponent( indexedId, componentType );
-    }
-    
-    public final <T extends EntityComponent> T getComponent( int componentTypeId ) {
-        return provider.getComponent( indexedId, componentTypeId );
-    }
-
-    public final IndexedTypeSet getComponents() {
-        return provider.getComponents( indexedId );
-    }
-
-    public final boolean isActive() {
-        if ( indexedId < 0 ) {
-            return false;
-        }
-        return provider.isActive( index() );
-    }
-    
-    public final boolean setActive( boolean activate ) {
-        if ( activate && !isActive() ) {
-            provider.activate( index() );
-            return isActive();
-        } else if ( !activate && isActive() ) {
-            provider.deactivate( index() );
-            return !isActive();
-        }
-        
-        return false;
-    }
-
-    @Override
-    public final void dispose() {
-        if ( indexedId >= 0 ) {
-            provider.delete( index() );
-        }
-        super.dispose();
-    }
-
     final void setId( int id ) {
-        indexedId = id;
+        this.id = id;
     }
 
     @Override
-    public final String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "Entity [indexedId=" ).append( index() ).append( ", isActive=" ).append( isActive() ).append( "]" );
-        if ( isActive() ) {
-            builder.append( "\n  Components [index=" ).append( provider.getComponents( index() )  ).append( "]" );
-        }
-        return builder.toString();
+    public final int index() {
+        return id;
     }
 
 }

@@ -19,13 +19,13 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.indexed.IndexedTypeAspectBuilder;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.event.MoveEvent;
 import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 
@@ -56,7 +56,7 @@ public final class MovementSystem implements FFComponent, UpdateEventListener {
     public final void update( UpdateEvent event ) {
         MoveEvent moveEvent = new MoveEvent();
         for ( Entity entity : entitySystem.entities( MOVEMENT_ASPECT ) ) {
-            IndexedTypeSet components = entity.getComponents();
+            IndexedTypeSet components = entitySystem.getComponents( entity.getId() );
             EMovement movement = components.get( EMovement.COMPONENT_TYPE );
             if ( !movement.isMoving() ) {
                 continue;

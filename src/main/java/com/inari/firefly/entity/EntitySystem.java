@@ -38,8 +38,8 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContext;
 
 public final class EntitySystem implements FFComponent, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
 
@@ -61,8 +61,7 @@ public final class EntitySystem implements FFComponent, ComponentSystem, Compone
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         entityProvider = context.getComponent( FFContext.ENTITY_CACHE );
 
-            Integer entityCapacity = context.getProperty( FFContext.System.Properties.ENTITY_MAP_CAPACITY );
-        Integer entityComponentSetCapacity = context.getProperty( FFContext.System.Properties.ENTITY_COMPONENT_SET_CAPACITY );
+        Integer entityCapacity = context.getProperty( FFContext.System.Properties.ENTITY_MAP_CAPACITY );
         if ( entityCapacity != null ) {
             activeEntities.ensureCapacity( entityCapacity );
             inactiveEntities.ensureCapacity( entityCapacity );
@@ -107,7 +106,20 @@ public final class EntitySystem implements FFComponent, ComponentSystem, Compone
     }
     
     public final void activate( int entityId ) {
-        activate( activeEntities.get( entityId ) );
+        Entity entity = activeEntities.get( entityId );
+        if ( entity == null || isActive( entity.getId() ) ) {
+            return;
+        }
+
+        inactiveEntities.remove( entity );
+        activeEntities.set( entity.index(), entity ) ;
+        
+        if ( eventDispatcher != null ) {
+            IndexedAspect aspect = getAspect( entityId );
+            eventDispatcher.notify( 
+                new EntityActivationEvent( entity.index(), aspect, Type.ENTITY_ACTIVATED ) 
+            );
+        }
     }
     
     public final void deactivate( int entityId ) {
@@ -120,7 +132,7 @@ public final class EntitySystem implements FFComponent, ComponentSystem, Compone
         
         if ( eventDispatcher != null ) {
             eventDispatcher.notify( 
-                new EntityActivationEvent( entityId, getEntityAspect( entityId ), Type.ENTITY_DEACTIVATED ) 
+                new EntityActivationEvent( entityId, getAspect( entityId ), Type.ENTITY_DEACTIVATED ) 
             );
         }
     }
@@ -152,7 +164,7 @@ public final class EntitySystem implements FFComponent, ComponentSystem, Compone
         return activeEntities.get( entityId );
     }
 
-    public final IndexedAspect getEntityAspect( int entityId ) {
+    public final IndexedAspect getAspect( int entityId ) {
         IndexedTypeSet components = getComponents( entityId );
         if ( components == null ) {
             return null;
@@ -184,32 +196,6 @@ public final class EntitySystem implements FFComponent, ComponentSystem, Compone
             }
         };
     }
-    
-    private final void activate( Entity entity ) {
-        if ( entity == null || entity.isActive() ) {
-            return;
-        }
-        int entityId = entity.index();
-
-        // TODO this should go to builder
-        IndexedAspect aspect = getEntityAspect( entityId );
-        if ( aspect == null || !aspect.valid() ) {
-            throw new IllegalStateException( 
-                String.format( "The Entity with id: %s has no or an empty Aspect. This makes no sense and an empty Entity cannot activated", entityId ) 
-            );
-        }
-        
-        inactiveEntities.remove( entity );
-        activeEntities.set( entity.index(), entity ) ;
-        
-        if ( eventDispatcher != null ) {
-            eventDispatcher.notify( 
-                new EntityActivationEvent( entity.index(), aspect, Type.ENTITY_ACTIVATED ) 
-            );
-        }
-    }
-    
-    // ---- Components ------------------------------------------------
 
     public final <T extends EntityComponent> T getComponent( int entityId, Class<T> componentType ) {
         return components.get( entityId ).get( componentType );
@@ -357,7 +343,7 @@ public final class EntitySystem implements FFComponent, ComponentSystem, Compone
             boolean foundNext = false;
             while ( !foundNext && delegate.hasNext() ) {
                 Entity next = delegate.next();
-                if ( next.getAspect().include( aspect ) ) {
+                if ( getAspect( next.getId() ).include( aspect ) ) {
                     foundNext = true;
                     current = next;
                 }
@@ -407,7 +393,7 @@ public final class EntitySystem implements FFComponent, ComponentSystem, Compone
         public Entity build( int componentId ) {
             Entity entity = entityProvider.getEntity( componentId );
             if ( entity == null ) {
-                entity = new Entity( componentId, EntitySystem.this );
+                entity = new Entity( componentId );
             }
 
             if ( prefabComponents != null ) {
@@ -417,6 +403,14 @@ public final class EntitySystem implements FFComponent, ComponentSystem, Compone
                 IndexedTypeSet componentSet = entityProvider.getComponentTypeSet();
                 components.set( entity.index(), componentSet );
                 entityProvider.createComponents( componentSet, (EntityAttributeMap) attributes );
+            }
+            
+            int entityId = entity.getId();
+            IndexedAspect aspect = getAspect( entity.getId() );
+            if ( aspect == null || !aspect.valid() ) {
+                throw new IllegalStateException( 
+                    String.format( "The Entity with id: %s has no or an empty Aspect. This makes no sense and an empty Entity cannot activated", entityId ) 
+                );
             }
             
             return entity;

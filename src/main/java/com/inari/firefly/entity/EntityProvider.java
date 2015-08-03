@@ -1,18 +1,17 @@
 package com.inari.firefly.entity;
 
 import java.util.ArrayDeque;
-import java.util.Iterator;
 import java.util.Set;
+
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFComponent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 
-public class EntityProvider implements FFComponent  {
+public final class EntityProvider implements FFComponent  {
 
     final ArrayDeque<Entity> disposedEntities;
     final ArrayDeque<IndexedTypeSet> disposedComponentSets;
@@ -27,7 +26,7 @@ public class EntityProvider implements FFComponent  {
     }
 
     @Override
-    public void init( FFContext context ) throws FFInitException {
+    public final void init( FFContext context ) throws FFInitException {
         Integer compSetCap = context.getProperty( FFContext.System.Properties.ENTITY_COMPONENT_SET_CAPACITY );
         if ( compSetCap != null ) {
             componentSetCapacity = compSetCap;
@@ -41,14 +40,18 @@ public class EntityProvider implements FFComponent  {
     }
 
     @Override
-    public void dispose( FFContext context ) {
+    public final void dispose( FFContext context ) {
         disposedEntities.clear();
         disposedComponentSets.clear();
         disposedComponents.clear();
     }
+    
+    public final Entity getEntity() {
+        return getEntity( -1 );
+    }
 
-    Entity getEntity( int entityId ) {
-        Entity result =disposedEntities.pop();
+    public final Entity getEntity( int entityId ) {
+        Entity result = disposedEntities.pop();
         if ( result != null ) {
             if ( entityId < 0 ) {
                 entityId = Indexer.nextObjectIndex( Entity.class );
@@ -58,13 +61,52 @@ public class EntityProvider implements FFComponent  {
 
         return result;
     }
+    
+    public <T extends EntityComponent> T getComponent( Class<T> componentType ) {
+        int componentTypeId = Indexer.getIndexForType( componentType, EntityComponent.class );
+        ArrayDeque<EntityComponent> componentsOfType = disposedComponents.get( componentTypeId );
+        EntityComponent result = componentsOfType.pop();
+        if ( result == null ) {
+            return null;
+        }
+        return componentType.cast( result );
+    }
+    
+    public final void createEntitiesForLaterUse( int number ) {
+        for ( int i = 0; i < number; i++ ) {
+            disposedEntities.add( new Entity() );
+        }
+    }
+    
+    public final void createComponentSetsForLaterUse( int number ) {
+        for ( int i = 0; i < number; i++ ) {
+            disposedComponentSets.add( 
+                new IndexedTypeSet( 
+                    EntityComponent.class, 
+                    componentSetCapacity 
+                ) 
+            );
+        }
+    }
+    
+    public final void createComponentsForLaterUse( int number, Class<? extends EntityComponent> componentType ) {
+        int componentTypeId = Indexer.getIndexForType( componentType, EntityComponent.class );
+        ArrayDeque<EntityComponent> componentsOfType = disposedComponents.get( componentTypeId );
+        if ( componentsOfType == null ) {
+            componentsOfType = new ArrayDeque<EntityComponent>();
+            disposedComponents.set( componentTypeId, componentsOfType );
+        }
+        
+        for ( int i = 0; i < number; i++ ) {
+            componentsOfType.add( newComponent( componentType ) );
+        }
+    }
 
-    IndexedTypeSet getComponentTypeSet() {
+    public IndexedTypeSet getComponentTypeSet() {
         return disposedComponentSets.pop();
     }
 
     void dispose( Entity entity, IndexedTypeSet components ) {
-        entity.dispose();
         disposedEntities.add( entity );
 
         for ( int i = 0; i < components.length(); i++ ) {
@@ -86,30 +128,16 @@ public class EntityProvider implements FFComponent  {
     void createComponents( IndexedTypeSet components, EntityAttributeMap attributes ) {
         Set<Class<? extends EntityComponent>> componentTypes = attributes.getEntityComponentTypes();
         for ( Class<? extends EntityComponent> componentType : componentTypes ) {
-            EntityComponent component = newComponent( componentType, attributes );
+            EntityComponent component = getComponent( componentType );
+            if ( component == null ) {
+                component = newComponent( componentType );
+            }
+            component.fromAttributes( attributes );
             components.set( component );
         }
     }
 
-    private <C extends EntityComponent> EntityComponent newComponent( Class<C> componentType ) {
-        int componentTypeIndex = Indexer.getIndexForType( componentType, EntityComponent.class );
-
-        ArrayDeque<EntityComponent> componentsOfType = disposedComponents.get( componentTypeIndex );
-        EntityComponent result = componentsOfType.pop();
-        if ( result != null ) {
-            return result;
-        }
-
-        return createComponent( componentType );
-    }
-
-    private <C extends EntityComponent> EntityComponent newComponent( Class<C> componentType, AttributeMap attributes ) {
-        EntityComponent newComponent = newComponent( componentType );
-        newComponent.fromAttributes( attributes );
-        return newComponent;
-    }
-
-    private EntityComponent createComponent( Class<? extends EntityComponent> componentType ) {
+    private EntityComponent newComponent( Class<? extends EntityComponent> componentType ) {
         try {
             return componentType.newInstance();
         } catch ( Exception e ) {

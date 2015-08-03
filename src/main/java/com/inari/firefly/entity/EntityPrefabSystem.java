@@ -1,5 +1,6 @@
 package com.inari.firefly.entity;
 
+import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
@@ -12,16 +13,15 @@ import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
+import com.inari.firefly.system.FFComponent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.FFComponent;
 
 public class EntityPrefabSystem implements FFComponent, ComponentSystem, ComponentBuilderFactory, Disposable {
     
     private DynArray<EntityPrefab> prefabs;
     private DynArray<String> prefabNames;
-    private DynArray<IndexedTypeSet> prefabComponents;
-    private DynArray<Stack<IndexedTypeSet>> componentInstancePool;
+    private DynArray<ArrayDeque<PreInstantiatedEntity>> instances;
     
     private EntitySystem entitySystem;
     private IEventDispatcher eventDispatcher;
@@ -31,6 +31,27 @@ public class EntityPrefabSystem implements FFComponent, ComponentSystem, Compone
     
     EntityPrefabSystem() {
         attributeMap = new EntityAttributeMap();
+    }
+    
+    @Override
+    public void init( FFContext context ) throws FFInitException {
+        prefabs = new DynArray<EntityPrefab>();
+        prefabNames = new DynArray<String>();
+        
+        entitySystem = context.getComponent( FFContext.System.ENTITY_SYSTEM );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+    }
+    
+    @Override
+    public void dispose( FFContext context ) {
+        for ( EntityPrefab prefab : prefabs ) {
+            prefab.dispose();
+        }
+        
+        prefabNames.clear();
+        
+        entitySystem = null;
+        eventDispatcher = null;
     }
     
     public final Iterator<String> getPrefabNames() {
@@ -74,40 +95,7 @@ public class EntityPrefabSystem implements FFComponent, ComponentSystem, Compone
         return newComponents;
     }
 
-    @Override
-    public void init( FFContext context ) throws FFInitException {
-        prefabs = new DynArray<EntityPrefab>();
-        prefabNames = new DynArray<String>();
-        prefabComponents = new DynArray<IndexedTypeSet>();
-        componentInstancePool = new DynArray<Stack<IndexedTypeSet>>();
-        
-        entitySystem = context.getComponent( FFContext.System.ENTITY_SYSTEM );
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-    }
     
-    @Override
-    public void dispose( FFContext context ) {
-        for ( EntityPrefab prefab : prefabs ) {
-            prefab.dispose();
-        }
-        
-        prefabNames.clear();
-        
-        for( IndexedTypeSet prefabComponent : prefabComponents ) {
-            prefabComponent.clear();
-        }
-        prefabComponents.clear();
-
-        for ( Stack<IndexedTypeSet> instanceStack : componentInstancePool ) {
-            for ( IndexedTypeSet instanceSet : instanceStack ) {
-                instanceSet.clear();
-            }
-        }
-        componentInstancePool.clear();
-        
-        entitySystem = null;
-        eventDispatcher = null;
-    }
     @Override
     public <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
         // TODO Auto-generated method stub
@@ -131,6 +119,18 @@ public class EntityPrefabSystem implements FFComponent, ComponentSystem, Compone
     @Override
     public void toAttributes( Attributes attributes ) {
         // TODO Auto-generated method stub
+        
+    }
+    
+    private final class PreInstantiatedEntity {
+        
+        final Entity entity;
+        final IndexedTypeSet components;
+        
+        private PreInstantiatedEntity( Entity entity, IndexedTypeSet components ) {
+            this.entity = entity;
+            this.components = components;
+        }
         
     }
     
