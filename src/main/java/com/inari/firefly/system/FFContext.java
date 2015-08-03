@@ -33,7 +33,7 @@ public interface FFContext {
      */
     public static final TypedKey<ILowerSystemFacade> LOWER_SYSTEM_FACADE = TypedKey.create( "FF_LOWER_SYSTEM_FACADE", ILowerSystemFacade.class );
 
-    public static final TypedKey<EntityProvider> ENTITY_CACHE = TypedKey.create( "FF_ENTITY_CACHE", EntityProvider.class );
+    public static final TypedKey<EntityProvider> ENTITY_PROVIDER = TypedKey.create( "FF_ENTITY_PROVIDER", EntityProvider.class );
     
     /** The System defines global system keys for components that are essential to the system and must be initialized.
      *  All this components can be getComponent from the IFFContext system context if the context was once properly initialized.

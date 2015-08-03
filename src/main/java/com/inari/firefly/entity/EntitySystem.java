@@ -59,7 +59,7 @@ public final class EntitySystem implements FFComponent, ComponentSystem, Compone
     @Override
     public void init( FFContext context ) {
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        entityProvider = context.getComponent( FFContext.ENTITY_CACHE );
+        entityProvider = context.getComponent( FFContext.ENTITY_PROVIDER );
 
         Integer entityCapacity = context.getProperty( FFContext.System.Properties.ENTITY_MAP_CAPACITY );
         if ( entityCapacity != null ) {
