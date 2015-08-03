@@ -33,10 +33,15 @@ public class EntityAttributeMap extends ComponentAttributeMap {
         super.setComponentKey( typeKey );
     }
 
-    public Set<Class<? extends Component>> getEntityComponentTypes() {
-        Set<Class<? extends Component>> componentTypes = new HashSet<Class<? extends Component>>();
+    @SuppressWarnings( "unchecked" )
+    public Set<Class<? extends EntityComponent>> getEntityComponentTypes() {
+        Set<Class<? extends EntityComponent>> componentTypes = new HashSet<Class<? extends EntityComponent>>();
         for ( AttributeKey<?> attrKey : attributes.keySet() ) {
-            componentTypes.add( attrKey.componentType() );
+            Class<? extends Component> componentType = attrKey.componentType();
+            if ( !EntityComponent.class.isAssignableFrom( componentType ) ) {
+                continue;
+            }
+            componentTypes.add( (Class<? extends EntityComponent>) componentType );
         }
         return componentTypes;
     }

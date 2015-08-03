@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.inari.firefly.EventDispatcherMock;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextImpl;
 import com.inari.firefly.system.FFContextImpl.InitMap;
 
@@ -26,9 +26,9 @@ public class EntitySystemTest {
             "ActiveEntitiesComponent(0)::ACTIVE_ENTITY_IDS:String=", 
             attrs.toString()
         );
-        assertEquals( "100", String.valueOf( entitySystem.activeEntities.capacity() ) );
-        assertEquals( "100", String.valueOf( entitySystem.usedComponents.capacity() ) );
-        assertEquals( "100", String.valueOf( entitySystem.usedComponents.size() ) );
+        assertEquals( "1000", String.valueOf( entitySystem.activeEntities.capacity() ) );
+        assertEquals( "1000", String.valueOf( entitySystem.usedComponents.capacity() ) );
+        assertEquals( "1000", String.valueOf( entitySystem.usedComponents.size() ) );
         
         
         entitySystem = new EntitySystem( 200 );

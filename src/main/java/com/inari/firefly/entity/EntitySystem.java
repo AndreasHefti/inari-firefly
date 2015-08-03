@@ -15,10 +15,10 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
+import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Stack;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.IntIterator;
@@ -29,7 +29,6 @@ import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.Disposable;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -42,20 +41,21 @@ import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 
 public final class EntitySystem implements FFSystem, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
     
-    private static final int DEFAULT_CAPACITY = 100;
-    private static final int DEFAULT_COMPONENT_TYPE_CAPACITY = 10;
+    private static final int DEFAULT_CAPACITY = 1000;
+    private static final int DEFAULT_COMPONENT_TYPE_CAPACITY = 20;
 
     private IEventDispatcher eventDispatcher;
     
-    protected final DynArray<Entity> activeEntities;
-    protected final DynArray<IndexedTypeSet> usedComponents;
+    final DynArray<Entity> activeEntities;
+    final DynArray<IndexedTypeSet> usedComponents;
     
-    protected final Stack<Entity> inactiveEntities;
-    protected final DynArray<Stack<EntityComponent>> unusedComponents;
+    final ArrayDeque<Entity> inactiveEntities;
+    final DynArray<ArrayDeque<EntityComponent>> unusedComponents;
 
     
     EntitySystem() {
@@ -73,12 +73,12 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
             usedComponents.set( i, new IndexedTypeSet( EntityComponent.class ) );
         }
 
-        inactiveEntities = new Stack<Entity>();
+        inactiveEntities = new ArrayDeque<Entity>();
         int size = Indexer.getIndexedTypeSize( EntityComponent.class );
         if ( size < DEFAULT_COMPONENT_TYPE_CAPACITY ) {
             size = DEFAULT_COMPONENT_TYPE_CAPACITY;
         }
-        unusedComponents = new DynArray<Stack<EntityComponent>>( size );
+        unusedComponents = new DynArray<ArrayDeque<EntityComponent>>( size );
     }
     
     @Override
@@ -205,7 +205,7 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
         int entityId = entity.index();
         
         IndexedAspect aspect = getEntityAspect( entityId );
-        if ( aspect == null || aspect.valid() ) {
+        if ( aspect == null || !aspect.valid() ) {
             throw new IllegalStateException( 
                 String.format( "The Entity with id: %s has no or an empty Aspect. This makes no sense and an empty Entity cannot activated", entityId ) 
             );
@@ -225,9 +225,9 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
     
     public final void initEmptyComponents( Class<? extends EntityComponent> componentType, int number ) {
         int componentTypeIndex = Indexer.getIndexForType( componentType, EntityComponent.class );
-        Stack<EntityComponent> components = (Stack<EntityComponent>) unusedComponents.get( componentTypeIndex );
+        ArrayDeque<EntityComponent> components = (ArrayDeque<EntityComponent>) unusedComponents.get( componentTypeIndex );
         if ( components == null ) {
-            components = new Stack<EntityComponent>();
+            components = new ArrayDeque<EntityComponent>();
             unusedComponents.set( componentTypeIndex, components );
         }
         
@@ -351,7 +351,7 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
             EntityComponent component = componentsOfEntity.get( i );
             if ( component != null ) {
                 componentsOfEntity.remove( i );
-                Stack<EntityComponent> stack = unusedComponents.get( i );
+                ArrayDeque<EntityComponent> stack = unusedComponents.get( i );
                 stack.push( component );
             }
         }
@@ -382,13 +382,21 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
         }
     }
     
-    private EntityComponent getUnused( int componentTypeIndex ) {
-        Stack<EntityComponent> unusedStack = unusedComponents.get( componentTypeIndex );
+    EntityComponent getUnused( int componentTypeIndex ) {
+        ArrayDeque<EntityComponent> unusedStack = unusedComponents.get( componentTypeIndex );
         if ( unusedStack.isEmpty() ) {
             return null;
         }
         
         return unusedStack.pop();
+    }
+    
+    void createComponents( IndexedTypeSet components, EntityAttributeMap attributes ) {
+        Set<Class<? extends EntityComponent>> componentTypes = ( (EntityAttributeMap) attributes ).getEntityComponentTypes();
+        for ( Class<? extends EntityComponent> componentType : componentTypes ) {
+            EntityComponent component = newComponent( componentType, attributes );
+            components.set( component );
+        }
     }
     
     // ---- Utilities --------------------------------------------------------
@@ -500,34 +508,25 @@ public final class EntitySystem implements FFSystem, ComponentSystem, ComponentB
         @Override
         public Entity build( int componentId ) {
             Entity entity = createEntity( componentId );
-            
-            IndexedTypeSet components;
-            components = getComponents( entity.index() );
-            if ( components == null ) {
-                components = new IndexedTypeSet( EntityComponent.class );
-                usedComponents.set( entity.index(), components );
-            }
-            
-            // if we have prefab components we set them first
+
             if ( prefabComponents != null ) {
-                for ( EntityComponent component : prefabComponents.<EntityComponent>getIterable() ) {
-                    components.set( component );
+                // if we have prefab components we use them
+                usedComponents.set( entity.index(), prefabComponents );
+            } else {
+                // otherwise we get component which either gets unused or create new one
+                IndexedTypeSet components = getComponents( entity.index() );
+                if ( components == null ) {
+                    components = new IndexedTypeSet( EntityComponent.class );
+                    usedComponents.set( entity.index(), components );
                 }
-            }
-            
-            Set<Class<? extends Component>> componentTypes = ( (EntityAttributeMap) attributes ).getEntityComponentTypes();
-            for ( Class<? extends Component> componentType : componentTypes ) {
-                if ( !EntityComponent.class.isAssignableFrom( componentType ) ) {
-                    continue;
-                }
-                
-                @SuppressWarnings( "unchecked" )
-                EntityComponent component = newComponent( (Class<? extends EntityComponent>) componentType, attributes );
-                components.set( component );
+     
+                createComponents( components, (EntityAttributeMap) attributes );
             }
             
             return entity;
         }
+
+        
     }
 
 }

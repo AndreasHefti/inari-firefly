@@ -155,20 +155,4 @@ public final class ETransform extends EntityComponent {
         attributes.put( ROTATION_YPOSITION, rotationYPos );
         attributes.put( ROTATION, rotation );
     }
-
-    public static final void addPosition( ETransform source, ETransform dest ) {
-        dest.xpos = dest.xpos + source.xpos;
-        dest.ypos = dest.ypos + source.ypos;
-    }
-    
-    public static final void copyFrom( ETransform source, ETransform dest ) {
-        dest.xpos = source.xpos;
-        dest.ypos = source.ypos;
-        dest.xscale = source.xscale;
-        dest.yscale = source.yscale;
-        dest.rotationXPos = source.rotationXPos;
-        dest.rotationYPos = source.rotationYPos;
-        dest.rotation = source.rotation;
-    }
-
 }
