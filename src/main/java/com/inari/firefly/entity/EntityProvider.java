@@ -3,6 +3,7 @@ package com.inari.firefly.entity;
 import java.util.ArrayDeque;
 import java.util.Set;
 
+import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
@@ -27,7 +28,7 @@ public final class EntityProvider implements FFComponent  {
 
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        Integer compSetCap = context.getProperty( FFContext.System.Properties.ENTITY_COMPONENT_SET_CAPACITY );
+        Integer compSetCap = context.getProperty( FFContext.Properties.ENTITY_COMPONENT_SET_CAPACITY );
         if ( compSetCap != null ) {
             componentSetCapacity = compSetCap;
         }
@@ -36,6 +37,16 @@ public final class EntityProvider implements FFComponent  {
 
         for ( int i = 0; i < disposedComponents.capacity(); i++ ) {
             disposedComponents.add( new ArrayDeque<EntityComponent>() );
+        }
+
+        Integer cacheSize = context.getProperty( FFContext.Properties.ENTITY_BEANS_CACHE_SIZE );
+        if ( cacheSize != null ) {
+            createEntitiesForLaterUse( cacheSize );
+            createComponentSetsForLaterUse( cacheSize );
+            for ( int i = 0; i < Indexer.getIndexedTypeSize( EntityComponent.class ); i++ ) {
+                Class<?> componentType = Indexer.<EntityComponent>getTypeForIndex( EntityComponent.class, i );
+                createComponentsForLaterUse( cacheSize, (Class<? extends EntityComponent>) componentType );
+            }
         }
     }
 

@@ -61,7 +61,7 @@ public final class EntitySystem implements FFComponent, ComponentSystem, Compone
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         entityProvider = context.getComponent( FFContext.ENTITY_PROVIDER );
 
-        Integer entityCapacity = context.getProperty( FFContext.System.Properties.ENTITY_MAP_CAPACITY );
+        Integer entityCapacity = context.getProperty( FFContext.Properties.ENTITY_MAP_CAPACITY );
         if ( entityCapacity != null ) {
             activeEntities.ensureCapacity( entityCapacity );
             inactiveEntities.ensureCapacity( entityCapacity );

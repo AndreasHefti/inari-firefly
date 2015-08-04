@@ -34,16 +34,17 @@ public interface FFContext {
     public static final TypedKey<ILowerSystemFacade> LOWER_SYSTEM_FACADE = TypedKey.create( "FF_LOWER_SYSTEM_FACADE", ILowerSystemFacade.class );
 
     public static final TypedKey<EntityProvider> ENTITY_PROVIDER = TypedKey.create( "FF_ENTITY_PROVIDER", EntityProvider.class );
-    
+
+    public static interface Properties {
+        public static final TypedKey<Integer> ENTITY_MAP_CAPACITY = TypedKey.create( "FF_ENTITY_MAP_CAPACITY", Integer.class );
+        public static final TypedKey<Integer> ENTITY_COMPONENT_SET_CAPACITY = TypedKey.create( "FF_ENTITY_COMPONENT_SET_CAPACITY", Integer.class );
+        public static final TypedKey<Integer> ENTITY_BEANS_CACHE_SIZE = TypedKey.create( "FF_ENTITY_BEANS_CACHE_SIZE", Integer.class );
+    }
+
     /** The System defines global system keys for components that are essential to the system and must be initialized.
      *  All this components can be getComponent from the IFFContext system context if the context was once properly initialized.
      */
-    public static interface System {
-
-        public static interface Properties {
-            public static final TypedKey<Integer> ENTITY_MAP_CAPACITY = TypedKey.create( "FF_ENTITY_MAP_CAPACITY", Integer.class );
-            public static final TypedKey<Integer> ENTITY_COMPONENT_SET_CAPACITY = TypedKey.create( "FF_ENTITY_COMPONENT_SET_CAPACITY", Integer.class );
-        }
+    public static interface Systems {
 
         public static final TypedKey<ViewSystem> VIEW_SYSTEM = TypedKey.create( "FF_VIEW_SYSTEM", ViewSystem.class );
 

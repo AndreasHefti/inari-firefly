@@ -59,8 +59,8 @@ public final class TileGridSystem
     @Override
     public void init( FFContext context ) {
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        entitySystem = context.getComponent( FFContext.System.ENTITY_SYSTEM );
-        viewSystem = context.getComponent( FFContext.System.VIEW_SYSTEM );
+        entitySystem = context.getComponent( FFContext.Systems.ENTITY_SYSTEM );
+        viewSystem = context.getComponent( FFContext.Systems.VIEW_SYSTEM );
         
         eventDispatcher.register( EntityActivationEvent.class, this );
         eventDispatcher.register( ViewEvent.class, this );

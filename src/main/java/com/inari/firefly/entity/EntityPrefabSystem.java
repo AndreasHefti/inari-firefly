@@ -12,16 +12,18 @@ import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
+import com.inari.firefly.entity.event.EntityPrefabActionEvent;
+import com.inari.firefly.entity.event.EntityPrefabActionListener;
 import com.inari.firefly.system.FFComponent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 
-public class EntityPrefabSystem implements FFComponent, ComponentSystem, ComponentBuilderFactory, Disposable {
+public class EntityPrefabSystem implements FFComponent, EntityPrefabActionListener, ComponentSystem, ComponentBuilderFactory, Disposable {
     
     private DynArray<EntityPrefab> prefabs;
     private DynArray<String> prefabNames;
     private DynArray<IndexedTypeSet> prefabComponents;
-    private DynArray<ArrayDeque<IndexedTypeSet>> instances;
+    private DynArray<ArrayDeque<IndexedTypeSet>> components;
     
     private EntitySystem entitySystem;
     private EntityProvider entityProvider;
@@ -40,9 +42,11 @@ public class EntityPrefabSystem implements FFComponent, ComponentSystem, Compone
         prefabNames = new DynArray<String>();
         prefabComponents = new DynArray<IndexedTypeSet>();
         
-        entitySystem = context.getComponent( FFContext.System.ENTITY_SYSTEM );
+        entitySystem = context.getComponent( FFContext.Systems.ENTITY_SYSTEM );
         entityProvider = context.getComponent( FFContext.ENTITY_PROVIDER );
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+
+        eventDispatcher.register( EntityPrefabActionEvent.class, this );
     }
     
     @Override
@@ -53,9 +57,22 @@ public class EntityPrefabSystem implements FFComponent, ComponentSystem, Compone
         
         prefabNames.clear();
         prefabComponents.clear();
-        
-        entitySystem = null;
-        eventDispatcher = null;
+
+        eventDispatcher.unregister( EntityPrefabActionEvent.class, this );
+    }
+
+    @Override
+    public void onPrefabAction( EntityPrefabActionEvent event ) {
+        switch ( event.type ) {
+            case CREATE_ENTITY: {
+                activateOne( event.prefabId, event.attributes );
+                break;
+            }
+            case CACHE_PREFABS: {
+                cacheComponents( event.prefabId, event.number );
+                break;
+            }
+        }
     }
     
     public final Iterator<String> getPrefabNames() {
@@ -66,25 +83,55 @@ public class EntityPrefabSystem implements FFComponent, ComponentSystem, Compone
         return prefabs.get( prefabNames.indexOf( prefabName ) );
     }
     
-    public final void preInstantiate( String prefabName, int number ) {
-        preInstantiate( prefabNames.indexOf( prefabName ), number );
+    public final void cacheComponents( String prefabName, int number ) {
+        cacheComponents( prefabNames.indexOf( prefabName ), number );
     }
     
-    public final void preInstantiate( int prefabId, int number ) {
+    public final void cacheComponents( int prefabId, int number ) {
         if ( !prefabs.contains( prefabId ) ) {
             return;
         }
         
-        ArrayDeque<IndexedTypeSet> instanceDeque = instances.get( prefabId );
+        ArrayDeque<IndexedTypeSet> instanceDeque = components.get( prefabId );
         if ( instanceDeque == null ) {
             instanceDeque = new ArrayDeque<IndexedTypeSet>();
-            instances.set( prefabId, instanceDeque );
+            components.set( prefabId, instanceDeque );
         }
         
         IndexedTypeSet prefabComponentSet = prefabComponents.get( prefabId );
         for ( int i = 0; i < number; i++ ) {
             instanceDeque.add( copyComponents( prefabComponentSet ) );
         }
+    }
+
+    public final Entity buildOne( int prefabId, EntityAttributeMap attributes ) {
+        return entitySystem.getEntityBuilder()
+            .setPrefabComponents( getComponents( prefabId ) )
+            .setAttributes( attributes )
+            .build();
+    }
+
+    public final Entity activateOne( int prefabId, EntityAttributeMap attributes ) {
+        Entity newEntity = buildOne( prefabId, attributes );
+        if ( newEntity != null ) {
+            entitySystem.activate( newEntity.getId() );
+        }
+
+        return newEntity;
+    }
+
+    private IndexedTypeSet getComponents( int prefabId ) {
+        ArrayDeque<IndexedTypeSet> componentsOfType = components.get( prefabId );
+        if ( componentsOfType == null ) {
+            return copyComponents( prefabComponents.get( prefabId ) );
+        }
+
+        IndexedTypeSet result = componentsOfType.pop();
+        if ( result == null ) {
+            result = copyComponents( prefabComponents.get( prefabId ) );
+        }
+
+        return result;
     }
     
     private IndexedTypeSet copyComponents( IndexedTypeSet prefabComponentSet ) {
@@ -124,7 +171,7 @@ public class EntityPrefabSystem implements FFComponent, ComponentSystem, Compone
         // TODO Auto-generated method stub
         
     }
-    
-    
+
+
 
 }

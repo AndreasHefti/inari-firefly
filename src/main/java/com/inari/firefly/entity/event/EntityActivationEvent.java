@@ -20,7 +20,7 @@ import com.inari.commons.lang.aspect.IndexedAspect;
 
 public final class EntityActivationEvent extends AspectedEvent<EntityActivationListener> {
     
-    public static enum Type {
+    public enum Type {
         ENTITY_ACTIVATED,
         ENTITY_DEACTIVATED
     }

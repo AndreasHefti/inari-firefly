@@ -52,9 +52,9 @@ public final class SpriteRendererSystem implements FFComponent, EntityActivation
     @Override
     public void init( FFContext context ) {
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        entitySystem = context.getComponent( FFContext.System.ENTITY_SYSTEM );
+        entitySystem = context.getComponent( FFContext.Systems.ENTITY_SYSTEM );
         lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
-        tileGridSystem = context.getComponent( FFContext.System.TILE_GRID_SYSTEM );
+        tileGridSystem = context.getComponent( FFContext.Systems.TILE_GRID_SYSTEM );
 
         eventDispatcher.register( EntityActivationEvent.class, this );
         eventDispatcher.register( RenderEvent.class, this );

@@ -48,16 +48,16 @@ public final class FireFly {
         InitMap initMap = new InitMap();
         initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcher.class );
         initMap.put( FFContext.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
-        initMap.put( FFContext.System.ASSET_SYSTEM, AssetSystem.class );
-        initMap.put( FFContext.System.STATE_SYSTEM, StateSystem.class );
-        initMap.put( FFContext.System.VIEW_SYSTEM, ViewSystem.class );
-        initMap.put( FFContext.System.ENTITY_SYSTEM, EntitySystem.class );
-        initMap.put( FFContext.System.SPRITE_RENDERER_SYSTEM, SpriteRendererSystem.class );
-        initMap.put( FFContext.System.TILE_GRID_SYSTEM, TileGridSystem.class );
-        initMap.put( FFContext.System.MOVEMENT_SYSTEM, MovementSystem.class );
-        initMap.put( FFContext.System.ENTITY_CONTROLLER_SYSTEM, ControllerSystem.class );
-        initMap.put( FFContext.System.ANIMATION_SYSTEM, AnimationSystem.class );
-        initMap.put( FFContext.System.SOUND_SYSTEM, SoundSystem.class );
+        initMap.put( FFContext.Systems.ASSET_SYSTEM, AssetSystem.class );
+        initMap.put( FFContext.Systems.STATE_SYSTEM, StateSystem.class );
+        initMap.put( FFContext.Systems.VIEW_SYSTEM, ViewSystem.class );
+        initMap.put( FFContext.Systems.ENTITY_SYSTEM, EntitySystem.class );
+        initMap.put( FFContext.Systems.SPRITE_RENDERER_SYSTEM, SpriteRendererSystem.class );
+        initMap.put( FFContext.Systems.TILE_GRID_SYSTEM, TileGridSystem.class );
+        initMap.put( FFContext.Systems.MOVEMENT_SYSTEM, MovementSystem.class );
+        initMap.put( FFContext.Systems.ENTITY_CONTROLLER_SYSTEM, ControllerSystem.class );
+        initMap.put( FFContext.Systems.ANIMATION_SYSTEM, AnimationSystem.class );
+        initMap.put( FFContext.Systems.SOUND_SYSTEM, SoundSystem.class );
 
         init( initMap );
     }
@@ -69,7 +69,7 @@ public final class FireFly {
     private void init( InitMap initMap ) {
         context = new FFContextImpl( initMap );
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        viewSystem = context.getComponent( FFContext.System.VIEW_SYSTEM );
+        viewSystem = context.getComponent( FFContext.Systems.VIEW_SYSTEM );
 
         if ( eventDispatcher == null ) {
             throw new FFInitException( "Missing IEventDispatcher instance from FFContext" );
