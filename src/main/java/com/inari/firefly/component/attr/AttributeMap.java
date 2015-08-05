@@ -22,6 +22,8 @@ public interface AttributeMap {
     
     void setComponentKey( ComponentKey typeKey );
 
+    boolean isEmpty();
+
     <A> A getValue( AttributeKey<A> key );
 
     <A> AttributeMap put( AttributeKey<A> key, A value );

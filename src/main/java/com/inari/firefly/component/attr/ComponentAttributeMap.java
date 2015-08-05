@@ -36,6 +36,11 @@ public class ComponentAttributeMap implements AttributeMap {
     public void setComponentKey( ComponentKey typeKey ) {
         this.typeKey = typeKey;
     }
+
+    @Override
+    public final boolean isEmpty() {
+        return attributes.isEmpty();
+    }
     
     @Override
     public final <A> A getValue( AttributeKey<A> key ) {

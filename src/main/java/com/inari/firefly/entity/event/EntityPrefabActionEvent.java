@@ -1,29 +1,34 @@
 package com.inari.firefly.entity.event;
 
 import com.inari.commons.event.Event;
+import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityAttributeMap;
 
-public class EntityPrefabActionEvent extends Event<EntityPrefabActionListener> {
+public abstract class EntityPrefabActionEvent extends Event<EntityPrefabActionListener> {
 
     public enum Type {
         CREATE_ENTITY,
-        CACHE_PREFABS
+        CACHE_PREFABS,
+        REBUILD_ENTITY
     }
 
     public final Type type;
     public final int prefabId;
     public final EntityAttributeMap attributes = new EntityAttributeMap();
-    public int number;
+    public final int entityId;
+    public final int number;
+    public final boolean activation;
 
-    public EntityPrefabActionEvent( Type type, int prefabId ) {
+    protected EntityPrefabActionEvent( Type type, int prefabId, int entityId, int number, boolean activation ) {
         this.type = type;
         this.prefabId = prefabId;
+        this.entityId = entityId;
+        this.number = number;
+        this.activation = activation;
     }
 
-    public EntityPrefabActionEvent( int number, int prefabId, Type type ) {
-        this.number = number;
-        this.prefabId = prefabId;
-        this.type = type;
+    public final AttributeMap getAttributes() {
+        return attributes;
     }
 
     @Override

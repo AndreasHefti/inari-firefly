@@ -21,7 +21,7 @@ import com.inari.firefly.component.attr.Attributes;
 
 public interface ComponentSystem {
     
-    public enum BuildType {
+    enum BuildType {
         CLEAR_OLD,
         OVERWRITE,
         MERGE_ATTRIBUTES

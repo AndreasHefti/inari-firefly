@@ -72,6 +72,10 @@ public class EntityPrefabSystem implements FFComponent, EntityPrefabActionListen
                 cacheComponents( event.prefabId, event.number );
                 break;
             }
+            case REBUILD_ENTITY: {
+                rebuildEntity( event.prefabId, event.entityId, event.attributes, event.activation );
+                break;
+            }
         }
     }
     
@@ -109,6 +113,26 @@ public class EntityPrefabSystem implements FFComponent, EntityPrefabActionListen
             .setPrefabComponents( getComponents( prefabId ) )
             .setAttributes( attributes )
             .build();
+    }
+
+    public final void rebuildEntity( int prefabId, int entityId, EntityAttributeMap attributes, boolean activation ) {
+        if ( activation ) {
+            entitySystem.deactivate( entityId );
+        }
+
+        IndexedTypeSet components = entitySystem.getComponents( entityId );
+        components.clear();
+        IndexedTypeSet newComponents = getComponents( prefabId );
+        if ( attributes != null && ! attributes.isEmpty() ) {
+            for( EntityComponent component : newComponents.<EntityComponent>getIterable() ) {
+                component.toAttributes( attributeMap );
+            }
+        }
+        entitySystem.components.set( entityId, newComponents );
+
+        if ( activation ) {
+            entitySystem.activate( entityId );
+        }
     }
 
     public final Entity activateOne( int prefabId, EntityAttributeMap attributes ) {
