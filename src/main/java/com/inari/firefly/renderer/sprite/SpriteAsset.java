@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.asset.Asset;
+import com.inari.firefly.asset.AssetTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
@@ -34,7 +35,7 @@ public final class SpriteAsset extends Asset {
         TEXTURE_REGION
     } ) );
     
-    private int[] textureId = new int[ 1 ];
+    private AssetTypeKey[] textureAssetKey = new AssetTypeKey[ 1 ];
     private final Rectangle textureRegion;
     
     SpriteAsset( int assetId ) {
@@ -48,17 +49,17 @@ public final class SpriteAsset extends Asset {
     }
 
     @Override
-    protected final int[] dependsOn() {
-        return textureId;
+    protected final AssetTypeKey[] dependsOn() {
+        return textureAssetKey;
     }
     
     public final int getTextureId() {
-        return textureId[ 0 ];
+        return textureAssetKey[ 0 ].id;
     }
 
     public final void setTextureId( int textureId ) {
         checkNotAlreadyLoaded();
-        this.textureId[ 0 ] = textureId;
+        this.textureAssetKey[ 0 ] = new AssetTypeKey( textureId, TextureAsset.class );
     }
 
 
@@ -85,7 +86,7 @@ public final class SpriteAsset extends Asset {
     public final void fromAttributes( AttributeMap attributes ) {
         checkNotAlreadyLoaded();
         super.fromAttributes( attributes );
-        textureId[ 0 ] = attributes.getValue( TEXTURE_ID, textureId[ 0 ] );
+        setTextureId( attributes.getValue( TEXTURE_ID, textureAssetKey[ 0 ].id ) );
         
         Rectangle textureRegion = attributes.getValue( TEXTURE_REGION );
         if ( textureRegion != null ) {
@@ -96,7 +97,7 @@ public final class SpriteAsset extends Asset {
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        attributes.put( TEXTURE_ID, textureId[ 0 ] );
+        attributes.put( TEXTURE_ID, textureAssetKey[ 0 ].id );
         attributes.put( TEXTURE_REGION, new Rectangle( textureRegion ) );
     }
 

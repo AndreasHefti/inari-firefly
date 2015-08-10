@@ -14,11 +14,11 @@ import org.junit.Test;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.EventDispatcherMock;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextImpl;
 import com.inari.firefly.system.FFContextImpl.InitMap;
 
@@ -51,10 +51,10 @@ public class AssetSystemTest {
         service.init( ffContext );
         
         try {
-            service.loadAsset( "group", "name" );
+            service.loadAsset( new AssetNameKey( "group", "name" ) );
             fail( "Expect IllegalArgumentException here" );
         } catch ( IllegalArgumentException iae ) {
-            assertEquals( "No Asset found for group: group name: name", iae.getMessage() );
+            assertEquals( "No Asset found for: AssetKey [group=group, name=name]", iae.getMessage() );
         }
         
         try {
@@ -65,10 +65,10 @@ public class AssetSystemTest {
         }
         
         try {
-            service.disposeAsset( "group", "name" );
+            service.disposeAsset( new AssetNameKey( "group", "name" ) );
             fail( "Expect IllegalArgumentException here" );
         } catch ( IllegalArgumentException iae ) {
-            assertEquals( "No Asset found for group: group name: name", iae.getMessage() );
+            assertEquals( "No Asset found for: AssetKey [group=group, name=name]", iae.getMessage() );
         }
         
         try {
@@ -79,10 +79,10 @@ public class AssetSystemTest {
         }
         
         try {
-            service.deleteAsset( "group", "name" );
+            service.deleteAsset( new AssetNameKey( "group", "name" ) );
             fail( "Expect IllegalArgumentException here" );
         } catch ( IllegalArgumentException iae ) {
-            assertEquals( "No Asset found for group: group name: name", iae.getMessage() );
+            assertEquals( "No Asset found for: AssetKey [group=group, name=name]", iae.getMessage() );
         }
         
         try {
@@ -170,8 +170,8 @@ public class AssetSystemTest {
             attrs.toString() 
         );
         
-        service.loadAsset( "group1", "asset1" );
-        assertTrue( service.isAssetLoaded( "group1", "asset1" ) );
+        service.loadAsset( new AssetNameKey( "group1", "asset1" ) );
+        assertTrue( service.isAssetLoaded( new AssetNameKey( "group1", "asset1" ) ) );
         attrs.clear();
         service.toAttributes( attrs );
         assertEquals( 
@@ -185,8 +185,8 @@ public class AssetSystemTest {
             eventDispatcher.toString() 
         );
         
-        service.disposeAsset( "group1", "asset1" );
-        assertFalse( service.isAssetLoaded( "group1", "asset1" ) );
+        service.disposeAsset( new AssetNameKey( "group1", "asset1" ) );
+        assertFalse( service.isAssetLoaded( new AssetNameKey( "group1", "asset1" ) ) );
         attrs.clear();
         service.toAttributes( attrs );
         assertEquals( 
@@ -197,7 +197,7 @@ public class AssetSystemTest {
             eventDispatcher.toString() 
         );
         
-        service.deleteAsset( "group1", "asset1" );
+        service.deleteAsset( new AssetNameKey( "group1", "asset1" ) );
         attrs.clear();
         service.toAttributes( attrs );
         assertEquals( 
@@ -289,11 +289,11 @@ public class AssetSystemTest {
         assertEquals( 
             "TestAsset(1)::name:String=asset2, group:String=group1 " +
             "TestAsset(2)::name:String=asset3, group:String=group1 " +
+            "TestAsset(3)::name:String=asset4, group:String=group2 " +
+            "TestAsset(4)::name:String=asset5, group:String=group3 " +
             "TestAsset2(1)::name:String=asset22, group:String=group1 " +
             "TestAsset2(2)::name:String=asset23, group:String=group1 " +
-            "TestAsset(3)::name:String=asset4, group:String=group2 " +
             "TestAsset2(3)::name:String=asset24, group:String=group2 " +
-            "TestAsset(4)::name:String=asset5, group:String=group3 " +
             "TestAsset2(4)::name:String=asset25, group:String=group3", 
             attrs.toString() 
         );

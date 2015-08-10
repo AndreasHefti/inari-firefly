@@ -31,11 +31,13 @@ public abstract class Asset extends NamedIndexedComponent implements DynamicAttr
     
     protected boolean loaded = false;
     protected String group;
+    protected final AssetTypeKey typeKey;
     
     private DynamicAttributeMap dynamicAttributeMap = new DynamicAttributeMap();
     
     protected Asset( int assetId ) {
         super( assetId );
+        typeKey = new AssetTypeKey( super.indexedId, getComponentType() );
     }
 
     public boolean isLoaded() {
@@ -48,6 +50,10 @@ public abstract class Asset extends NamedIndexedComponent implements DynamicAttr
     
     @Override
     public abstract Class<? extends Asset> getComponentType();
+    
+    public final AssetTypeKey getTypeKey() {
+        return typeKey;
+    }
 
     @Override
     public boolean hasDynamicAttributes() {
@@ -88,7 +94,7 @@ public abstract class Asset extends NamedIndexedComponent implements DynamicAttr
         return dynamicAttributeMap.attributeKeys( this, new HashSet<AttributeKey<?>>( attributeKeys ) );
     }
 
-    protected int[] dependsOn() {
+    protected AssetTypeKey[] dependsOn() {
         return null;
     }
     

@@ -3,7 +3,6 @@ package com.inari.firefly.entity;
 import java.util.ArrayDeque;
 import java.util.Set;
 
-import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
@@ -44,8 +43,8 @@ public final class EntityProvider implements FFComponent  {
             createEntitiesForLaterUse( cacheSize );
             createComponentSetsForLaterUse( cacheSize );
             for ( int i = 0; i < Indexer.getIndexedTypeSize( EntityComponent.class ); i++ ) {
-                Class<?> componentType = Indexer.<EntityComponent>getTypeForIndex( EntityComponent.class, i );
-                createComponentsForLaterUse( cacheSize, (Class<? extends EntityComponent>) componentType );
+                Class<? extends EntityComponent> componentType = Indexer.getTypeForIndex( EntityComponent.class, i );
+                createComponentsForLaterUse( cacheSize, componentType );
             }
         }
     }
@@ -120,6 +119,10 @@ public final class EntityProvider implements FFComponent  {
     void dispose( Entity entity, IndexedTypeSet components ) {
         disposedEntities.add( entity );
 
+        disposeComponentSet( components );
+    }
+
+    void disposeComponentSet( IndexedTypeSet components ) {
         for ( int i = 0; i < components.length(); i++ ) {
             EntityComponent component = components.get( i );
             if ( component != null ) {

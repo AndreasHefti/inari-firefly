@@ -22,6 +22,8 @@ import java.util.Set;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.UpdateEvent;
+import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.animation.event.AnimationEvent;
 import com.inari.firefly.animation.event.AnimationEventListener;
 import com.inari.firefly.component.Component;
@@ -32,8 +34,6 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.system.FFComponent;
-import com.inari.firefly.system.UpdateEvent;
-import com.inari.firefly.system.UpdateEventListener;
 
 public final class AnimationSystem 
     implements

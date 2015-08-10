@@ -1,6 +1,7 @@
 package com.inari.firefly.entity;
 
 import java.util.ArrayDeque;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -8,8 +9,10 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
+import com.inari.firefly.component.ComponentBuilderHelper;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.entity.event.EntityPrefabActionEvent;
@@ -17,6 +20,7 @@ import com.inari.firefly.entity.event.EntityPrefabActionListener;
 import com.inari.firefly.system.FFComponent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
+import com.inari.firefly.system.view.View;
 
 public class EntityPrefabSystem implements FFComponent, EntityPrefabActionListener, ComponentSystem, ComponentBuilderFactory, Disposable {
     
@@ -51,14 +55,41 @@ public class EntityPrefabSystem implements FFComponent, EntityPrefabActionListen
     
     @Override
     public void dispose( FFContext context ) {
-        for ( EntityPrefab prefab : prefabs ) {
-            prefab.dispose();
+        clear();
+        
+        eventDispatcher.unregister( EntityPrefabActionEvent.class, this );
+    }
+    
+    public final  void clear() {
+        for ( int i = 0; i < prefabs.capacity(); i++ ) {
+            EntityPrefab prefab = prefabs.get( i );
+            if ( prefab != null ) {
+                deletePrefab( i );
+            }
         }
         
+        prefabs.clear();
+        prefabComponents.clear();
         prefabNames.clear();
         prefabComponents.clear();
-
-        eventDispatcher.unregister( EntityPrefabActionEvent.class, this );
+    }
+    
+    public final void deletePrefab( String prefabName ) {
+        EntityPrefab prefab = getPrefab( prefabName );
+        if ( prefab == null ) {
+            return;
+        }
+        
+        deletePrefab( prefab );
+    }
+    
+    public final void deletePrefab( int prefabId ) {
+        EntityPrefab prefab = prefabs.get( prefabId );
+        if ( prefab == null ) {
+            return;
+        }
+        
+        deletePrefab( prefab );
     }
 
     @Override
@@ -168,34 +199,93 @@ public class EntityPrefabSystem implements FFComponent, EntityPrefabActionListen
         entityProvider.createComponents( newComponents, attributeMap );
         return newComponents;
     }
+    
+    private void deletePrefab( EntityPrefab prefab ) {
+        prefab.dispose();
+        entityProvider.disposeComponentSet( prefabComponents.get( prefab.index() ) );
+        ArrayDeque<IndexedTypeSet> componentsOfPrefab = components.get( prefab.index() );
+        for ( IndexedTypeSet componentSet : componentsOfPrefab ) {
+            entityProvider.disposeComponentSet( componentSet );
+        }
+    }
 
     
+    @SuppressWarnings( "unchecked" )
     @Override
-    public <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    @Override
-    public Set<Class<?>> supportedComponentTypes() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    @Override
-    public void fromAttributes( Attributes attributes ) {
-        // TODO Auto-generated method stub
+    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
+        if ( type == View.class ) {
+            return (ComponentBuilder<C>) getEntityPrefabBuilder();
+        }
         
+        throw new IllegalArgumentException( "Unsupported IComponent type for EntityPrefabSystem. Type: " + type );
     }
-    @Override
-    public void fromAttributes( Attributes attributes, BuildType buildType ) {
-        // TODO Auto-generated method stub
-        
-    }
-    @Override
-    public void toAttributes( Attributes attributes ) {
-        // TODO Auto-generated method stub
-        
+    
+    public final EntityPrefabBuilder getEntityPrefabBuilder() {
+        return new EntityPrefabBuilder( this );
     }
 
+    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
+    @Override
+    public final Set<Class<?>> supportedComponentTypes() {
+        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
+            SUPPORTED_COMPONENT_TYPES.add( EntityPrefab.class );
+        }
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+    
+    @Override
+    public final void fromAttributes( Attributes attributes ) {
+        fromAttributes( attributes, BuildType.CLEAR_OLD );
+    }
+    @Override
+    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
+        if ( buildType == BuildType.CLEAR_OLD ) {
+            clear();
+        }
+        
+        new ComponentBuilderHelper<EntityPrefab>() {
+            @Override
+            public EntityPrefab get( int id ) {
+                return prefabs.get( id );
+            }
+            @Override
+            public void delete( int id ) {
+                delete( id );
+            }
+        }.buildComponents( EntityPrefab.class, buildType, getEntityPrefabBuilder(), attributes );
+    }
+    
 
+    @Override
+    public final void toAttributes( Attributes attributes ) {
+        ComponentBuilderHelper.toAttributes( attributes, EntityPrefab.class, prefabs );
+    }
+
+    protected final class EntityPrefabBuilder extends BaseComponentBuilder<EntityPrefab> {
+        
+        private IndexedTypeSet components;
+
+        private EntityPrefabBuilder( EntityPrefabSystem system ) {
+            super( system, new EntityAttributeMap() );
+        }
+
+        @Override
+        public EntityPrefab build( int componentId ) {
+            components = entityProvider.getComponentTypeSet();
+            entityProvider.createComponents( components, (EntityAttributeMap) attributes );
+
+            EntityPrefab prefab = new EntityPrefab( componentId );
+            prefab.fromAttributes( attributes );
+            
+            checkName( prefab );
+            
+            int prefabId = prefab.index();
+            prefabs.set( prefabId, prefab );
+            prefabNames.set( prefabId, prefab.getName() );
+            prefabComponents.set( prefabId, components );
+            
+            return prefab;
+        }
+    }
 
 }

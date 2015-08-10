@@ -9,9 +9,9 @@ import org.junit.Test;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.EventDispatcherMock;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.system.FFContextImpl;
-import com.inari.firefly.system.UpdateEvent;
 
 public class AnimationSystemTest {
     

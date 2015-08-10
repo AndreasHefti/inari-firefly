@@ -16,6 +16,7 @@
 package com.inari.firefly.asset;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -24,7 +25,6 @@ import java.util.Set;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentBuilderHelper;
@@ -35,17 +35,20 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContext;
 
 public final class AssetSystem implements FFComponent, ComponentSystem, ComponentBuilderFactory {
     
     public static final String DEFAULT_GROUP_NAME = "FF_DEFAULT_ASSET_GROUP";
     
     private IEventDispatcher eventDispatcher;
-    private final Map<String, Map<String, Asset>> groupNameMapping;
+    private final Map<AssetNameKey, Asset> assets;
+    private final Map<AssetTypeKey, Asset> typeMapping;
     
     
     AssetSystem() {
-        groupNameMapping = new LinkedHashMap<String, Map<String, Asset>>();
+        assets = new LinkedHashMap<AssetNameKey, Asset>();
+        typeMapping = new LinkedHashMap<AssetTypeKey, Asset>();
     }
     
     @Override
@@ -56,6 +59,14 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
     @Override
     public final void dispose( FFContext context ) {
         clear();
+    }
+    
+    public final Asset getAsset( AssetNameKey key ) {
+        return assets.get( key );
+    }
+    
+    public final Asset getAsset( AssetTypeKey key ) {
+        return assets.get( key );
     }
 
     @Override
@@ -72,33 +83,33 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
         return new AssetBuilder<A>( this, assetType );
     }
     
-    public final void loadAsset( String group, String name ) {
-        Asset asset = getAsset( group, name );
-        
-        if ( asset.loaded ) {
-            return;
-        }
-        
+    public final void loadAsset( AssetNameKey key ) {
+        Asset asset = getAsset( key );
+        checkAsset( key, asset );
         loadAsset( asset );
     }
     
     public final void loadAssets( String group ) {
-        Map<String, Asset> nameMapping = getNameMappings( group );
-        
-        for ( Asset asset : nameMapping.values() ) {
+        checkGroup( group );
+        for ( AssetNameKey assetKey : getAssetKeysOfGroup( group ) ) {
+            Asset asset = assets.get( assetKey );
             if ( !asset.loaded ) {
                 loadAsset( asset );
             }
         }
     }
+
     
-    public final boolean isAssetLoaded( String group, String name ) {
-        Asset asset = getAsset( group, name );
+
+    public final boolean isAssetLoaded( AssetNameKey key ) {
+        Asset asset = getAsset( key );
+        checkAsset( key, asset );
         return asset.loaded;
     }
     
-    public final void disposeAsset( String group, String name ) {
-        Asset asset = getAsset( group, name );
+    public final void disposeAsset( AssetNameKey key ) {
+        Asset asset = getAsset( key );
+        checkAsset( key, asset );
         
         if ( !asset.loaded ) {
             return;
@@ -108,90 +119,72 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
     }
     
     public final void disposeAssets( String group ) {
-        Map<String, Asset> nameMapping = getNameMappings( group );
-        
-        for ( Asset asset : nameMapping.values() ) {
+        checkGroup( group );
+        for ( AssetNameKey assetKey : getAssetKeysOfGroup( group ) ) {
+            Asset asset = assets.get( assetKey );
             if ( asset.loaded ) {
                 disposeAsset( asset );
             }
         }
     }
     
-    public final void deleteAsset( String group, String name ) {
-        Asset asset = getAsset( group, name );
-        if ( asset.loaded ) {
-            Collection<Asset> alsoDisposedAssets = disposeAsset( asset );
-            if ( alsoDisposedAssets != null ) {
-                for ( Asset alsoDisposedAsset : alsoDisposedAssets ) {
-                    delete( alsoDisposedAsset.group, alsoDisposedAsset.getName() );
-                }
-            }
-        }
-        
-        delete( asset.group, asset.getName() );
+    public final void deleteAsset( AssetNameKey key ) {
+        Asset asset = getAsset( key );
+        checkAsset( key, asset );
+        deleteAsset( asset );
     }
-
+    
+    public final void deleteAsset( AssetTypeKey key ) {
+        Asset asset = getAsset( key );
+        checkAsset( key, asset );
+        deleteAsset( asset );
+    }
+    
     public final void deleteAssets( String group ) {
-        Map<String, Asset> nameMapping = getNameMappings( group );
-        
-        Collection<Asset> assetsToDeleteAlso = null;
-        for ( Asset asset : nameMapping.values() ) {
+        checkGroup( group );
+        Collection<AssetTypeKey> assetsToDeleteAlso = null;
+        for ( AssetNameKey key : getAssetKeysOfGroup( group ) ) {
+            Asset asset = assets.get( key );
             if ( asset.loaded ) {
-                Collection<Asset> alsoDisposedAssets = disposeAsset( asset );
+                Collection<AssetTypeKey> alsoDisposedAssets = disposeAsset( asset );
                 if ( assetsToDeleteAlso == null ) {
                     assetsToDeleteAlso = alsoDisposedAssets;
                 } else {
                     assetsToDeleteAlso.addAll( assetsToDeleteAlso );
                 }
             } 
-            delete( asset.group, asset.getName() );
+            delete( asset.typeKey );
         }
         
-        for ( Asset alsoDisposedAsset : assetsToDeleteAlso ) {
-            delete( alsoDisposedAsset.group, alsoDisposedAsset.getName() );
+        for ( AssetTypeKey key : assetsToDeleteAlso ) {
+            delete( key );
         }
     }
     
-    public final boolean hasAsset( String group, String name ) {
-        if ( !hasGroup( group ) ) {
-            return false;
-        }
-        
-        Map<String, Asset> assetOfGroup = groupNameMapping.get( group );
-        return assetOfGroup.containsKey( name );
+    public final boolean hasAsset( AssetNameKey key ) {
+        return assets.containsKey( key );
+    }
+    
+    public final boolean hasAsset( AssetTypeKey key ) {
+        return typeMapping.containsKey( key );
     }
     
     public final boolean hasGroup( String group ) {
-        return groupNameMapping.containsKey( group );
-    }
-    
-    private final void deleteAsset( int assetId ) {
-        Asset asset = getAsset( assetId );
-        if ( asset != null ) {
-            deleteAsset( asset.group, asset.getName() );
-        }
-    }
-
-    private final Asset getAsset( int componentId ) {
-        for ( Map<String, Asset> assetsOfGroup : groupNameMapping.values() ) {
-            for ( Asset asset : assetsOfGroup.values() ) {
-                if ( componentId == asset.index() ) {
-                    return asset;
-                }
+        for ( AssetNameKey key : assets.keySet() ) {
+            if ( key.group.equals( group ) ) {
+                return true;
             }
         }
-        
-        return null;
+        return false;
     }
     
     public final void clear() {
-        for ( Map<String, Asset> assetMap : groupNameMapping.values() ) {
-            for ( Asset asset : assetMap.values() ) {
-                disposeAsset( asset );
-            }
+        for ( Asset asset : assets.values() ) {
+            disposeAsset( asset );
         }
         
-        groupNameMapping.clear();
+        assets.clear();
+        typeMapping.clear();
     }
     
     private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
@@ -215,15 +208,15 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
             clear();
         }
         
-        for ( Class<? extends Asset> assetSubType : attributes.getAllSubTypes( Asset.class ) ) {
+        for ( final Class<? extends Asset> assetSubType : attributes.getAllSubTypes( Asset.class ) ) {
             new ComponentBuilderHelper<Asset>() {
                 @Override
                 public Asset get( int id ) {
-                    return getAsset( id );
+                    return getAsset( new AssetTypeKey( id, assetSubType ) );
                 }
                 @Override
                 public void delete( int id ) {
-                    deleteAsset( id );
+                    deleteAsset( new AssetTypeKey( id, assetSubType ) );
                 }
             }.buildComponents( Asset.class, buildType, (AssetBuilder<Asset>) getAssetBuilder( assetSubType ), attributes );
         }
@@ -231,26 +224,26 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
 
     @Override
     public final void toAttributes( Attributes attributes ) {
-        for ( Map<String, Asset> assetMap : groupNameMapping.values() ) {
-            for ( Asset asset : assetMap.values() ) {
-                ComponentBuilderHelper.toAttributes( attributes, asset.indexedObjectType(), asset );
+        for ( Asset asset : assets.values() ) {
+            ComponentBuilderHelper.toAttributes( attributes, asset.indexedObjectType(), asset );
+        }
+    }
+    
+    private Iterable<AssetNameKey> getAssetKeysOfGroup( String group ) {
+        Collection<AssetNameKey> assetsOfGroup = new ArrayList<AssetNameKey>();
+        for ( AssetNameKey key : assets.keySet() ) {
+            if ( key.group.equals( group ) ) {
+                assetsOfGroup.add( key );
             }
         }
+        return assetsOfGroup;
     }
-    
-    private Asset getAsset( String group, String name ) {
-        if ( !hasAsset( group, name ) ) {
-            throw new IllegalArgumentException( "No Asset found for group: " + group + " name: " + name );
-        }
-        
-        Map<String, Asset> nameMapping = groupNameMapping.get( group );
-        return nameMapping.get( name );
-    }
-    
-    private Collection<Asset> disposeAsset( Asset asset ) {
-        Collection<Asset> toDisposeFirst = findeAssetsToDisposeFirst( asset.index() );
+
+    private Collection<AssetTypeKey> disposeAsset( Asset asset ) {
+        Collection<AssetTypeKey> toDisposeFirst = findeAssetsToDisposeFirst( asset.typeKey );
         if ( !toDisposeFirst.isEmpty() ) {
-            for ( Asset toDispose : toDisposeFirst ) {
+            for ( AssetTypeKey key : toDisposeFirst ) {
+                Asset toDispose = typeMapping.get( key );
                 if ( toDispose.loaded ) {
                     dispose( toDispose );
                 }
@@ -261,17 +254,15 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
         return toDisposeFirst;
     }
     
-    private Collection<Asset> findeAssetsToDisposeFirst( int id ) {
-        Set<Asset> result = new HashSet<Asset>();
-        for ( Map<String, Asset> nameMapping : groupNameMapping.values() ) {
-            for ( Asset asset : nameMapping.values() ) {
-                int[] disposeFirst = asset.dependsOn();
-                if ( disposeFirst != null ) {
-                    for ( int i = 0; i < disposeFirst.length; i++ ) {
-                        if ( id == disposeFirst[ i ] ) {
-                            result.add( asset );
-                            break;
-                        }
+    private Collection<AssetTypeKey> findeAssetsToDisposeFirst( AssetTypeKey typeKey ) {
+        Set<AssetTypeKey> result = new HashSet<AssetTypeKey>();
+        for ( Asset asset : assets.values() ) {
+            AssetTypeKey[] disposeFirst = asset.dependsOn();
+            if ( disposeFirst != null ) {
+                for ( int i = 0; i < disposeFirst.length; i++ ) {
+                    if ( typeKey.equals( disposeFirst[ i ] ) ) {
+                        result.add( disposeFirst[ i ] );
+                        break;
                     }
                 }
             }
@@ -279,13 +270,27 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
         return result;
     }
     
-    private void delete( String group, String name ) {
-        Map<String, Asset> nameMapping = getNameMappings( group );
-        Asset deleted = nameMapping.remove( name );
-        eventDispatcher.notify( new AssetEvent( deleted, AssetEvent.Type.ASSET_DELETED ) );
-        if ( nameMapping.isEmpty() ) {
-            groupNameMapping.remove( group );
+    private void deleteAsset( Asset asset ) {
+        if ( asset.loaded ) {
+            Collection<AssetTypeKey> alsoDisposedAssets = disposeAsset( asset );
+            if ( alsoDisposedAssets != null ) {
+                for ( AssetTypeKey typeKey : alsoDisposedAssets ) {
+                    delete( typeKey );
+                }
+            }
         }
+        
+        delete( asset.typeKey );
+    }
+    
+    private void delete( AssetTypeKey assetKey ) {
+        Asset deleted = typeMapping.remove( assetKey );
+        if ( deleted == null ) {
+            return;
+        }
+        
+        assets.remove( new AssetNameKey( deleted.group, deleted.getName() ) );
+        eventDispatcher.notify( new AssetEvent( deleted, AssetEvent.Type.ASSET_DELETED ) );
     }
 
     private void dispose( Asset asset ) {
@@ -294,10 +299,10 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
     }
 
     private void loadAsset( Asset asset ) {
-        int[] loadFirst = asset.dependsOn();
+        AssetTypeKey[] loadFirst = asset.dependsOn();
         if ( loadFirst != null ) {
             for ( int i = 0; i < loadFirst.length; i++ ) {
-                Asset assetToLoadFirst = getAssetForId( asset.group, loadFirst[ i ] );
+                Asset assetToLoadFirst = typeMapping.get( loadFirst[ i ] );
                 if ( !assetToLoadFirst.loaded ) {
                     load( assetToLoadFirst );
                 }
@@ -312,45 +317,23 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
         asset.loaded = true;
     }
     
-    private Asset getAssetForId( String mostPossibleGroup, int id ) {
-        Map<String, Asset> forGroup = groupNameMapping.get( mostPossibleGroup );
-        if ( forGroup != null ) {
-            for ( Asset asset : forGroup.values() ) {
-                if ( asset.index() == id ) {
-                    return asset;
-                }
-            }
+    private void checkAsset( AssetTypeKey key, Asset asset ) {
+        if ( asset == null ) {
+            throw new IllegalArgumentException( "No Asset found for: " + key );
         }
-        
-        for ( Map<String, Asset> nameMapping : groupNameMapping.values() ) {
-            for ( Asset asset : nameMapping.values() ) {
-                if ( asset.index() == id ) {
-                    return asset;
-                }
-            }
-        }
-        
-        throw new IllegalArgumentException( "Unable to find Asset for id: " + id );
     }
     
-    private Map<String, Asset> getNameMappings( String group ) {
-        Map<String, Asset> nameMapping = groupNameMapping.get( group );
-        if ( nameMapping == null ) {
-            throw new IllegalArgumentException( "No group found: " + group  );
+    private void checkAsset( AssetNameKey key, Asset asset ) {
+        if ( asset == null ) {
+            throw new IllegalArgumentException( "No Asset found for: " + key );
         }
-        return nameMapping;
     }
-
-    private Map<String, Asset> getOrCreateNameMapForGroup( String group ) {
-        Map<String, Asset> result = groupNameMapping.get( group );
-        if ( result == null ) {
-            result = new LinkedHashMap<String, Asset>();
-            groupNameMapping.put( group, result );
+    
+    private void checkGroup( String group ) {
+        if ( !hasGroup( group ) ) {
+            throw new IllegalArgumentException( "No group found: " + group );
         }
-        
-        return result;
     }
-
     
     public final class AssetBuilder<A extends Asset> extends BaseComponentBuilder<A> {
         
@@ -380,13 +363,15 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
             if ( StringUtils.isBlank( asset.group ) ) {
                 asset.group = DEFAULT_GROUP_NAME;
             }
+            
+            AssetNameKey assetKey = new AssetNameKey( asset.group, asset.getName() );
 
-            if ( hasAsset( asset.group, asset.getName() ) ) {
+            if ( hasAsset( assetKey ) ) {
                 throw new ComponentCreationException( "There is already an Asset with name: " + asset.getName() + " registered for this AssetSystem" );
             }
 
-            Map<String, Asset> nameMapping = getOrCreateNameMapForGroup( asset.group );
-            nameMapping.put( asset.getName(), asset );
+            assets.put( assetKey, asset );
+            typeMapping.put( asset.typeKey, asset );
             
             eventDispatcher.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
             return asset;

@@ -415,7 +415,6 @@ public final class EntitySystem implements FFComponent, ComponentSystem, Compone
             
             return entity;
         }
-        
     }
 
 }

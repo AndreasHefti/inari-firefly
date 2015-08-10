@@ -18,11 +18,14 @@ package com.inari.firefly.component.build;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import com.inari.firefly.system.FFContext;
+import com.inari.commons.StringUtils;
 import com.inari.firefly.component.Component;
+import com.inari.firefly.component.NamedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
+import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFInitException;
 
 public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     
@@ -155,6 +158,12 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     protected C createInstance( Constructor<C> constructor, Object... paramValues ) throws Exception {
         return constructor.newInstance( paramValues );
     }
+    
+    protected final void checkName( NamedComponent component ) {
+        if ( StringUtils.isBlank( component.getName() ) ) {
+            throw new FFInitException( "Name is mandatory for component: " + component );
+        }
+     }
     
     private int getId() {
         int id = -1;

@@ -33,8 +33,8 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.ILowerSystemFacade;
 import com.inari.firefly.system.view.event.ViewEvent;
 
@@ -284,6 +284,8 @@ public final class ViewSystem implements FFComponent, ComponentSystem, Component
             public Layer build( int componentId ) {
                 Layer layer = new Layer( componentId );
                 layer.fromAttributes( attributes );
+                checkName( layer );
+                
                 int viewId = layer.getViewId();
                 View view = getView( viewId );
                 if ( view == null ) {
@@ -313,6 +315,7 @@ public final class ViewSystem implements FFComponent, ComponentSystem, Component
             public View build( int componentId ) {
                 View view = new View( componentId );
                 view.fromAttributes( attributes );
+                checkName( view );
                 views.set( view.index(), view );
                 eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_CREATED ) );
                 return view;

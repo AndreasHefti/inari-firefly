@@ -127,8 +127,8 @@ public class FFContextImpl implements FFContext {
     }
 
     private void initDefaultProperties() {
-        properties.put( Systems.Properties.ENTITY_MAP_CAPACITY, 1000 );
-        properties.put( Systems.Properties.ENTITY_COMPONENT_SET_CAPACITY, 20 );
+        properties.put( Properties.ENTITY_MAP_CAPACITY, 1000 );
+        properties.put( Properties.ENTITY_COMPONENT_SET_CAPACITY, 20 );
     }
 
 //    private void checkCompleteness() {
