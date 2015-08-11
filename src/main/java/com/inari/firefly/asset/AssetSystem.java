@@ -37,7 +37,7 @@ import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFComponent;
 import com.inari.firefly.system.FFContext;
 
-public final class AssetSystem implements FFComponent, ComponentSystem, ComponentBuilderFactory {
+public class AssetSystem implements FFComponent, ComponentSystem, ComponentBuilderFactory {
     
     public static final String DEFAULT_GROUP_NAME = "FF_DEFAULT_ASSET_GROUP";
     
@@ -68,6 +68,24 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
     public final Asset getAsset( AssetTypeKey key ) {
         return assets.get( key );
     }
+    
+    public final <A extends Asset> A getAsset( AssetNameKey assetKey, Class<A> assetType ) {
+        Asset asset = getAsset( assetKey );
+        if ( asset == null ) {
+            return null;
+        }
+        
+        return assetType.cast( asset );
+    }
+    
+    public final <A extends Asset> A getAsset( AssetTypeKey assetKey, Class<A> assetType ) {
+        Asset asset = getAsset( assetKey );
+        if ( asset == null ) {
+            return null;
+        }
+        
+        return assetType.cast( asset );
+    }
 
     @Override
     @SuppressWarnings( { "unchecked", "rawtypes" } )
@@ -91,7 +109,7 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
     
     public final void loadAssets( String group ) {
         checkGroup( group );
-        for ( AssetNameKey assetKey : getAssetKeysOfGroup( group ) ) {
+        for ( AssetNameKey assetKey : getAssetNameKeysOfGroup( group ) ) {
             Asset asset = assets.get( assetKey );
             if ( !asset.loaded ) {
                 loadAsset( asset );
@@ -99,7 +117,13 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
         }
     }
 
-    
+    public final AssetTypeKey getAssetTypeKey( AssetNameKey assetNameKey ) {
+        Asset asset = getAsset( assetNameKey );
+        if ( asset == null ) {
+            return null;
+        }
+        return asset.typeKey;
+    }
 
     public final boolean isAssetLoaded( AssetNameKey key ) {
         Asset asset = getAsset( key );
@@ -120,7 +144,7 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
     
     public final void disposeAssets( String group ) {
         checkGroup( group );
-        for ( AssetNameKey assetKey : getAssetKeysOfGroup( group ) ) {
+        for ( AssetNameKey assetKey : getAssetNameKeysOfGroup( group ) ) {
             Asset asset = assets.get( assetKey );
             if ( asset.loaded ) {
                 disposeAsset( asset );
@@ -143,7 +167,7 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
     public final void deleteAssets( String group ) {
         checkGroup( group );
         Collection<AssetTypeKey> assetsToDeleteAlso = null;
-        for ( AssetNameKey key : getAssetKeysOfGroup( group ) ) {
+        for ( AssetNameKey key : getAssetNameKeysOfGroup( group ) ) {
             Asset asset = assets.get( key );
             if ( asset.loaded ) {
                 Collection<AssetTypeKey> alsoDisposedAssets = disposeAsset( asset );
@@ -229,11 +253,21 @@ public final class AssetSystem implements FFComponent, ComponentSystem, Componen
         }
     }
     
-    private Iterable<AssetNameKey> getAssetKeysOfGroup( String group ) {
+    public final Collection<AssetNameKey> getAssetNameKeysOfGroup( String group ) {
         Collection<AssetNameKey> assetsOfGroup = new ArrayList<AssetNameKey>();
         for ( AssetNameKey key : assets.keySet() ) {
             if ( key.group.equals( group ) ) {
                 assetsOfGroup.add( key );
+            }
+        }
+        return assetsOfGroup;
+    }
+    
+    public final Collection<AssetTypeKey> getAssetTypeKeysOfGroup( String group ) {
+        Collection<AssetTypeKey> assetsOfGroup = new ArrayList<AssetTypeKey>();
+        for ( AssetNameKey key : assets.keySet() ) {
+            if ( key.group.equals( group ) ) {
+                assetsOfGroup.add( assets.get( key ).typeKey );
             }
         }
         return assetsOfGroup;

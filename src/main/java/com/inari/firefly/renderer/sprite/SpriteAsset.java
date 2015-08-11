@@ -30,7 +30,6 @@ public final class SpriteAsset extends Asset {
     public static final AttributeKey<Integer> TEXTURE_ID = new AttributeKey<Integer>( "textureId", Integer.class, SpriteAsset.class );
     public static final AttributeKey<Rectangle> TEXTURE_REGION  = new AttributeKey<Rectangle>( "textureRegion", Rectangle.class, SpriteAsset.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
-        ASSET_GROUP,
         TEXTURE_ID,
         TEXTURE_REGION
     } ) );
