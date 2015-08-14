@@ -27,6 +27,10 @@ public interface ComponentBuilder<C> {
     AttributeMap getAttributes();
     
     ComponentBuilder<C> setAttribute( AttributeKey<?> key, Object value );
+    ComponentBuilder<C> setAttribute( AttributeKey<Float> key, float value );
+    ComponentBuilder<C> setAttribute( AttributeKey<Integer> key, int value );
+    ComponentBuilder<C> setAttribute( AttributeKey<Long> key, long value );
+    ComponentBuilder<C> setAttribute( AttributeKey<Double> key, double value );
     
     C build();
     

@@ -60,9 +60,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         BLEND_MODE
     };
     
-    private int spriteId;
-    private int viewId;
-    private int layerId;
+    private int spriteId, viewId, layerId;
     
     private boolean multiPosition = false;
     private final Position gridPosition;
@@ -72,7 +70,8 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     private final RGBColor tintColor;
     private BlendMode blendMode;
 
-    protected ETile() {
+    public ETile() {
+        super();
         spriteId = -1;
         viewId = 0;
         layerId = 0;

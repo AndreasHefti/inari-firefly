@@ -1,6 +1,9 @@
 package com.inari.firefly.system.view;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
@@ -12,6 +15,7 @@ import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.EventDispatcherMock;
 import com.inari.firefly.LowerSystemFacadeMock;
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextImpl;
 import com.inari.firefly.system.FFContextImpl.InitMap;
@@ -31,8 +35,6 @@ public class ViewSystemTest {
         assertEquals( 
             "View(0)::" +
             "name:String=BASE_VIEW, " +
-            "order:Integer=-1, " +
-            "active:Boolean=true, " +
             "bounds:Rectangle=[x=0,y=0,width=100,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
@@ -44,6 +46,17 @@ public class ViewSystemTest {
             "TestEventDispatcher [events=[ViewEvent [eventType=VIEW_CREATED, view=0]]]", 
             eventDispatcher.toString() 
         );
+        
+        assertFalse( viewSystem.hasViewports() );
+        assertFalse( viewSystem.hasActiveViewports() );
+        assertFalse( viewSystem.isLayeringEnabled( ViewSystem.BASE_VIEW_ID ) );
+        assertFalse( viewSystem.hasLayer( ViewSystem.BASE_VIEW_ID, 0 ) );
+        
+        View baseView = viewSystem.getView( ViewSystem.BASE_VIEW_ID );
+        assertNotNull( baseView );
+        assertTrue( baseView.active );
+        assertTrue( baseView.isBase );
+        assertTrue( -1 == baseView.order );
     }
     
     @Test
@@ -56,15 +69,11 @@ public class ViewSystemTest {
         Attributes attrs = new Attributes();
         
         viewSystem.getViewBuilder()
-            .setAttribute( View.ORDER, 2 )
             .setAttribute( View.NAME, "Header" )
-            .setAttribute( View.ACTIVE, true )
             .setAttribute( View.BOUNDS, new Rectangle( 0, 0, 10, 100 ) )
             .setAttribute( View.WORLD_POSITION, new Position( 0, 0 ) )
             .buildAndNext( 1 )
-            .setAttribute( View.ORDER, 3 )
             .setAttribute( View.NAME, "Body" )
-            .setAttribute( View.ACTIVE, true )
             .setAttribute( View.BOUNDS, new Rectangle( 0, 10, 90, 100 ) )
             .setAttribute( View.WORLD_POSITION, new Position( 0, 0 ) )
             .build( 2 );
@@ -73,8 +82,6 @@ public class ViewSystemTest {
         assertEquals( 
             "View(0)::" +
             "name:String=BASE_VIEW, " +
-            "order:Integer=-1, " +
-            "active:Boolean=true, " +
             "bounds:Rectangle=[x=0,y=0,width=100,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
@@ -82,8 +89,6 @@ public class ViewSystemTest {
             "zoom:Float=1.0 " +
             "View(1)::" +
             "name:String=Header, " +
-            "order:Integer=2, " +
-            "active:Boolean=true, " +
             "bounds:Rectangle=[x=0,y=0,width=10,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
@@ -91,8 +96,6 @@ public class ViewSystemTest {
             "zoom:Float=1.0 " +
             "View(2)::" +
             "name:String=Body, " +
-            "order:Integer=3, " +
-            "active:Boolean=true, " +
             "bounds:Rectangle=[x=0,y=10,width=90,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
@@ -107,6 +110,26 @@ public class ViewSystemTest {
             "ViewEvent [eventType=VIEW_CREATED, view=2]]]", 
             eventDispatcher.toString() 
         );
+        
+        assertTrue( viewSystem.hasViewports() );
+        assertFalse( viewSystem.hasActiveViewports() );
+
+        
+        View view1 = viewSystem.getView( 1 );
+        assertNotNull( view1 );
+        assertFalse( view1.active );
+        assertFalse( view1.isBase );
+        assertTrue( 0 == view1.order );
+        assertFalse( viewSystem.isLayeringEnabled( view1.index() ) );
+        assertFalse( viewSystem.hasLayer( view1.index(), 0 ) );
+        
+        View view2 = viewSystem.getView( 2 );
+        assertNotNull( view2 );
+        assertFalse( view2.active );
+        assertFalse( view2.isBase );
+        assertTrue( 1 == view2.order );
+        assertFalse( viewSystem.isLayeringEnabled( view2.index() ) );
+        assertFalse( viewSystem.hasLayer( view2.index(), 0 ) );
     }
     
     @Test
@@ -145,8 +168,6 @@ public class ViewSystemTest {
         assertEquals( 
             "View(0)::" +
             "name:String=BASE_VIEW, " +
-            "order:Integer=-1, " +
-            "active:Boolean=true, " +
             "bounds:Rectangle=[x=0,y=0,width=100,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
@@ -175,8 +196,8 @@ public class ViewSystemTest {
                 .setAttribute( Layer.NAME, "Layer1" )
                 .build();
             fail( "Exception expected here" );
-        } catch ( IndexOutOfBoundsException e ) {
-            assertEquals( "Index: 100, Size: 1", e.getMessage() );
+        } catch ( ComponentCreationException e ) {
+            assertEquals( "The View with id: 100. dont exists.", e.getMessage() );
         }
     }
 

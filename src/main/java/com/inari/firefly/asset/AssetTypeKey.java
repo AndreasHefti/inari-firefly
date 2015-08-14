@@ -1,6 +1,6 @@
 package com.inari.firefly.asset;
 
-public class AssetTypeKey {
+public final class AssetTypeKey {
     
     public final int id;
     public final Class<? extends Asset> type;

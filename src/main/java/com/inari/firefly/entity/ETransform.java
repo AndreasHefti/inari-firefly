@@ -45,15 +45,21 @@ public final class ETransform extends EntityComponent {
         ROTATION
     };
     
-    private float xpos = 0;
-    private float ypos = 0;
+    private float xpos, ypos;
+    private float xscale, yscale;
+    private float rotationXPos, rotationYPos;
+    private float rotation;
     
-    private float xscale = 1;
-    private float yscale = 1;
-    
-    private float rotationXPos = 0;
-    private float rotationYPos = 0;
-    private float rotation = 0;
+    public ETransform() {
+        super();
+        xpos = 0;
+        ypos = 0;
+        xscale = 1;
+        yscale = 1;
+        rotationXPos = 0;
+        rotationYPos = 0;
+        rotation = 0;
+    }
     
     @Override
     public final Class<ETransform> getComponentType() {

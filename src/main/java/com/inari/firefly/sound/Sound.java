@@ -47,6 +47,7 @@ public final class Sound extends NamedIndexedComponent {
     Sound( int id, boolean streaming ) {
         super( id );
         this.streaming = streaming;
+        controllerId = -1;
     }
 
     public final boolean isStreaming() {

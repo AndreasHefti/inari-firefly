@@ -15,6 +15,8 @@
  ******************************************************************************/ 
 package com.inari.firefly.system;
 
+import java.util.Iterator;
+
 import com.inari.commons.event.EventDispatcher;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
@@ -23,6 +25,8 @@ import com.inari.commons.lang.TypedKey;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.entity.EntityPrefabSystem;
+import com.inari.firefly.entity.EntityProvider;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.MovementSystem;
 import com.inari.firefly.renderer.sprite.SpriteRendererSystem;
@@ -39,6 +43,7 @@ public final class FireFly {
     
     private IEventDispatcher eventDispatcher;
     private ViewSystem viewSystem;
+    private ILowerSystemFacade lowerSystemFacade;
 
     private final UpdateEvent updateEvent = new UpdateEvent();
     private final RenderEvent renderEvent = new RenderEvent();
@@ -48,10 +53,12 @@ public final class FireFly {
         InitMap initMap = new InitMap();
         initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcher.class );
         initMap.put( FFContext.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
+        initMap.put( FFContext.ENTITY_PROVIDER, EntityProvider.class );
         initMap.put( FFContext.Systems.ASSET_SYSTEM, AssetSystem.class );
         initMap.put( FFContext.Systems.STATE_SYSTEM, StateSystem.class );
         initMap.put( FFContext.Systems.VIEW_SYSTEM, ViewSystem.class );
         initMap.put( FFContext.Systems.ENTITY_SYSTEM, EntitySystem.class );
+        initMap.put( FFContext.Systems.ENTITY_PREFAB_SYSTEM, EntityPrefabSystem.class );
         initMap.put( FFContext.Systems.SPRITE_RENDERER_SYSTEM, SpriteRendererSystem.class );
         initMap.put( FFContext.Systems.TILE_GRID_SYSTEM, TileGridSystem.class );
         initMap.put( FFContext.Systems.MOVEMENT_SYSTEM, MovementSystem.class );
@@ -70,6 +77,7 @@ public final class FireFly {
         context = new FFContextImpl( initMap );
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         viewSystem = context.getComponent( FFContext.Systems.VIEW_SYSTEM );
+        lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
 
         if ( eventDispatcher == null ) {
             throw new FFInitException( "Missing IEventDispatcher instance from FFContext" );
@@ -109,24 +117,43 @@ public final class FireFly {
     public final void render() {
         // NOTE: for now there is no renderer that works with approximationTime so I skip the calculation so far.
         // TODO: implements the calculation of approximationTime and set it to the event.
-        for ( int i = 0; i < viewSystem.viewArrayLength(); i++ ) {
-            View view = viewSystem.getView( i );
-            if ( view == null || !view.isActive() ) {
-                continue;
-            }
+        if ( viewSystem.hasActiveViewports() ) {
+            Iterator<View> virtualViewIterator = viewSystem.activeViewportIterator();
+            while ( virtualViewIterator.hasNext() ) {
+                View virtualView = virtualViewIterator.next();
 
-            int viewId = view.index();
-            Rectangle bounds = view.getBounds();
-            Position worldPosition = view.getWorldPosition();
-            renderEvent.viewId = viewId;
+                int viewId = virtualView.index();
+                Rectangle bounds = virtualView.getBounds();
+                Position worldPosition = virtualView.getWorldPosition();
+                renderEvent.viewId = viewId;
+                renderEvent.clip.x = worldPosition.x;
+                renderEvent.clip.y = worldPosition.y;
+                renderEvent.clip.width = bounds.width;
+                renderEvent.clip.height = bounds.height;
+
+                lowerSystemFacade.startRendering( virtualView );
+                eventDispatcher.notify( renderEvent );
+                lowerSystemFacade.endRendering( virtualView );
+            }
+            
+            lowerSystemFacade.flush( viewSystem.activeViewportIterator() );
+        } else {
+            View baseView = viewSystem.getView( ViewSystem.BASE_VIEW_ID );
+            
+            Rectangle bounds = baseView.getBounds();
+            Position worldPosition = baseView.getWorldPosition();
+            renderEvent.viewId = ViewSystem.BASE_VIEW_ID;
             renderEvent.clip.x = worldPosition.x;
             renderEvent.clip.y = worldPosition.y;
             renderEvent.clip.width = bounds.width;
             renderEvent.clip.height = bounds.height;
-
+            
+            lowerSystemFacade.startRendering( baseView );
             eventDispatcher.notify( renderEvent );
+            lowerSystemFacade.endRendering( baseView );
+            
+            lowerSystemFacade.flush( null );
         }
-        eventDispatcher.notify( renderEvent );
     }
 
 }

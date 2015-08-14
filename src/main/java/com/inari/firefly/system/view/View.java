@@ -27,59 +27,52 @@ import com.inari.firefly.component.attr.AttributeMap;
 
 public class View extends NamedIndexedComponent {
     
-    public static final AttributeKey<Integer> ORDER = new AttributeKey<Integer>( "order", Integer.class, View.class );
-    public static final AttributeKey<Boolean> ACTIVE = new AttributeKey<Boolean>( "active", Boolean.class, View.class );
     public static final AttributeKey<Rectangle> BOUNDS = new AttributeKey<Rectangle>( "bounds", Rectangle.class, View.class );
     public static final AttributeKey<Position> WORLD_POSITION = new AttributeKey<Position>( "worldPosition", Position.class, View.class );
     public static final AttributeKey<RGBColor> CLEAR_COLOR = new AttributeKey<RGBColor>( "clearColor", RGBColor.class, View.class );
     public static final AttributeKey<Boolean> LAYERING_ENABLED = new AttributeKey<Boolean>( "layeringEnabled", Boolean.class, View.class );
     public static final AttributeKey<Float> ZOOM = new AttributeKey<Float>( "zoom", Float.class, View.class );
+    public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, View.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
-        ORDER,
-        ACTIVE,
         BOUNDS,
         WORLD_POSITION,
         CLEAR_COLOR,
         LAYERING_ENABLED,
-        ZOOM
+        ZOOM,
+        CONTROLLER_ID
     };
     
-    private boolean isBase = false;
+    boolean isBase = false;
+    int order;
+    boolean active = false;
     
-    private int order;
-    private boolean active = false;
-    private boolean layeringEnabled = false;
-    private final Rectangle bounds = new Rectangle();
-    private final Position worldPosition = new Position( 0, 0 );
-    private final RGBColor clearColor = new RGBColor( 0f, 0f, 0f, 1f );
-    private float zoom = 1;
+    private boolean layeringEnabled;
+    private final Rectangle bounds;
+    private final Position worldPosition;
+    private final RGBColor clearColor;
+    private float zoom;
+    private int controllerId;
     
     View( int viewId ) {
         super( viewId );
+        layeringEnabled = false;
+        bounds = new Rectangle( 0, 0, 1, 1);
+        worldPosition = new Position( 0, 0 );
+        clearColor = new RGBColor( 0f, 0f, 0f, 1f );
+        zoom = 1.0f;
+        controllerId = -1;
     }
-
+    
     public final int getOrder() {
         return order;
-    }
-
-    public final void setOrder( int order ) {
-        this.order = order;
     }
     
     public final boolean isActive() {
         return active;
     }
 
-    public final void setActive( boolean active ) {
-        this.active = active;
-    }
-
     public final boolean isBase() {
         return isBase;
-    }
-
-    final void setBase( boolean isBase ) {
-        this.isBase = isBase;
     }
 
     public final boolean isLayeringEnabled() {
@@ -128,7 +121,15 @@ public class View extends NamedIndexedComponent {
     public final void setZoom( float zoom ) {
         this.zoom = zoom;
     }
-    
+
+    public final int getControllerId() {
+        return controllerId;
+    }
+
+    public final void setControllerId( int controllerId ) {
+        this.controllerId = controllerId;
+    }
+
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
@@ -139,9 +140,6 @@ public class View extends NamedIndexedComponent {
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
-        
-        order = attributes.getValue( ORDER, order );
-        active = attributes.getValue( ACTIVE, active );
         
         Rectangle bounds = attributes.getValue( BOUNDS );
         if ( bounds != null ) {
@@ -158,18 +156,18 @@ public class View extends NamedIndexedComponent {
         
         layeringEnabled = attributes.getValue( LAYERING_ENABLED, layeringEnabled );
         zoom = attributes.getValue( ZOOM, zoom );
+        controllerId = attributes.getValue( CONTROLLER_ID, controllerId );
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         
-        attributes.put( ORDER, order );
-        attributes.put( ACTIVE, active );
         attributes.put( BOUNDS, new Rectangle( bounds ) );
         attributes.put( WORLD_POSITION, new Position( worldPosition ) );
         attributes.put( CLEAR_COLOR, new RGBColor( clearColor ) );
         attributes.put( LAYERING_ENABLED, layeringEnabled );
         attributes.put( ZOOM, zoom );
+        attributes.put( CONTROLLER_ID, controllerId );
     }
 }

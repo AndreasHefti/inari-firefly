@@ -67,6 +67,30 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         attributes.putUntyped( key, value );
         return this;
     }
+    
+    @Override
+    public final ComponentBuilder<C> setAttribute( AttributeKey<Float> key, float value ) {
+        attributes.put( key, value );
+        return this;
+    }
+    
+    @Override
+    public final ComponentBuilder<C> setAttribute( AttributeKey<Integer> key, int value ) {
+        attributes.put( key, value );
+        return this;
+    }
+    
+    @Override
+    public final ComponentBuilder<C> setAttribute( AttributeKey<Long> key, long value ) {
+        attributes.put( key, value );
+        return this;
+    }
+    
+    @Override
+    public final ComponentBuilder<C> setAttribute( AttributeKey<Double> key, double value ) {
+        attributes.put( key, value );
+        return this;
+    }
 
     @Override
     public C build() {
@@ -156,7 +180,17 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     }
     
     protected C createInstance( Constructor<C> constructor, Object... paramValues ) throws Exception {
-        return constructor.newInstance( paramValues );
+        boolean hasAccess = constructor.isAccessible();
+        if ( !hasAccess ) {
+            constructor.setAccessible( true );
+        }
+        
+        C newInstance = constructor.newInstance( paramValues );
+        
+        if ( !hasAccess ) {
+            constructor.setAccessible( false );
+        }
+        return newInstance;
     }
     
     protected final void checkName( NamedComponent component ) {

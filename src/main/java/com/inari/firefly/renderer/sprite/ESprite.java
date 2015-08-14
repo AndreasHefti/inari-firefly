@@ -55,7 +55,8 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     private BlendMode blendMode;
     private int controllerId;
     
-    ESprite() {
+    public ESprite() {
+        super();
         spriteId = -1;
         viewId = 0;
         layerId = 0;

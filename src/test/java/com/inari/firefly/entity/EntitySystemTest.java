@@ -26,9 +26,12 @@ public class EntitySystemTest {
             "ActiveEntitiesComponent(0)::ACTIVE_ENTITY_IDS:String=", 
             attrs.toString()
         );
-        assertEquals( "1000", String.valueOf( entitySystem.activeEntities.capacity() ) );
-        assertEquals( "1000", String.valueOf( entitySystem.components.capacity() ) );
-        assertEquals( "1000", String.valueOf( entitySystem.components.size() ) );
+        assertEquals( "1001", String.valueOf( entitySystem.activeEntities.capacity() ) );
+        assertEquals( "0", String.valueOf( entitySystem.activeEntities.size() ) );
+        assertEquals( "1001", String.valueOf( entitySystem.inactiveEntities.capacity() ) );
+        assertEquals( "0", String.valueOf( entitySystem.inactiveEntities.size() ) );
+        assertEquals( "1001", String.valueOf( entitySystem.components.capacity() ) );
+        assertEquals( "0", String.valueOf( entitySystem.components.size() ) );
         
         
         entitySystem = new EntitySystem();
@@ -41,9 +44,6 @@ public class EntitySystemTest {
             "ActiveEntitiesComponent(0)::ACTIVE_ENTITY_IDS:String=", 
             attrs.toString()
         );
-        assertEquals( "200", String.valueOf( entitySystem.activeEntities.capacity() ) );
-        assertEquals( "200", String.valueOf( entitySystem.components.capacity() ) );
-        assertEquals( "200", String.valueOf( entitySystem.components.size() ) );
     }
     
     @Test

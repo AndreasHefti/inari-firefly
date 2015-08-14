@@ -20,8 +20,6 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.renderer.sprite.tile.TileGrid.TileGridIterator;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
@@ -29,7 +27,9 @@ import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
+import com.inari.firefly.renderer.sprite.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.system.view.event.ViewEvent;
 import com.inari.firefly.system.view.event.ViewEvent.Type;
@@ -110,10 +110,10 @@ public final class TileGridSystem
             return tileGridOfViews.get( viewId );
         }
         
-        DynArray<TileGrid> tileGridsForView = tileGridOfViewsPerLayer.get( viewId );
-        if ( tileGridsForView == null ) {
+        if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
             return null;
         }
+        DynArray<TileGrid> tileGridsForView = tileGridOfViewsPerLayer.get( viewId );
         return tileGridsForView.get( layerId );
     }
     

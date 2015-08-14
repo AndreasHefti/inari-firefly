@@ -4,7 +4,7 @@ import com.inari.commons.event.Event;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityAttributeMap;
 
-public abstract class EntityPrefabActionEvent extends Event<EntityPrefabActionListener> {
+public final class EntityPrefabActionEvent extends Event<EntityPrefabActionListener> {
 
     public enum Type {
         CREATE_ENTITY,

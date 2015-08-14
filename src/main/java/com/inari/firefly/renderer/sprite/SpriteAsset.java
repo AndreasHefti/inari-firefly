@@ -24,6 +24,7 @@ import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.renderer.TextureAsset;
 
 public final class SpriteAsset extends Asset {
     
@@ -34,7 +35,7 @@ public final class SpriteAsset extends Asset {
         TEXTURE_REGION
     } ) );
     
-    private AssetTypeKey[] textureAssetKey = new AssetTypeKey[ 1 ];
+    private int textureId;
     private final Rectangle textureRegion;
     
     SpriteAsset( int assetId ) {
@@ -49,16 +50,16 @@ public final class SpriteAsset extends Asset {
 
     @Override
     protected final AssetTypeKey[] dependsOn() {
-        return textureAssetKey;
+        return new AssetTypeKey[] { new AssetTypeKey( textureId, TextureAsset.class ) };
     }
     
     public final int getTextureId() {
-        return textureAssetKey[ 0 ].id;
+        return textureId;
     }
 
     public final void setTextureId( int textureId ) {
         checkNotAlreadyLoaded();
-        this.textureAssetKey[ 0 ] = new AssetTypeKey( textureId, TextureAsset.class );
+        this.textureId = textureId;
     }
 
 
@@ -85,8 +86,8 @@ public final class SpriteAsset extends Asset {
     public final void fromAttributes( AttributeMap attributes ) {
         checkNotAlreadyLoaded();
         super.fromAttributes( attributes );
-        setTextureId( attributes.getValue( TEXTURE_ID, textureAssetKey[ 0 ].id ) );
         
+        textureId = attributes.getValue( TEXTURE_ID, textureId );
         Rectangle textureRegion = attributes.getValue( TEXTURE_REGION );
         if ( textureRegion != null ) {
             setTextureRegion( textureRegion );
@@ -96,7 +97,7 @@ public final class SpriteAsset extends Asset {
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        attributes.put( TEXTURE_ID, textureAssetKey[ 0 ].id );
+        attributes.put( TEXTURE_ID, textureId );
         attributes.put( TEXTURE_REGION, new Rectangle( textureRegion ) );
     }
 

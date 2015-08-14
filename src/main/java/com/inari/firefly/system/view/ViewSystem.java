@@ -17,6 +17,7 @@ package com.inari.firefly.system.view;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -47,9 +48,14 @@ public final class ViewSystem implements FFComponent, ComponentSystem, Component
     private final DynArray<View> views;
     private final DynArray<List<Layer>> layersOfView;
     
+    private final List<View> orderedViewports;
+    private final List<View> activeViewports;
+    
     ViewSystem() {
-        views = new DynArray<View>();
-        layersOfView = new DynArray<List<Layer>>();
+        views = new DynArray<View>( 20 );
+        orderedViewports = new ArrayList<View>( 20 );
+        activeViewports = new ArrayList<View>( 20 );
+        layersOfView = new DynArray<List<Layer>>( 20 );
     }
     
     @Override
@@ -63,17 +69,8 @@ public final class ViewSystem implements FFComponent, ComponentSystem, Component
             lowerSystemFacade.getScreenWidth(),
             lowerSystemFacade.getScreenHeight()
         );
-        getViewBuilder()
-            .setAttribute( View.NAME, "BASE_VIEW" )
-            .setAttribute( View.ACTIVE, true )
-            .setAttribute( View.ORDER, -1 )
-            .setAttribute( View.BOUNDS, screenBounds )
-            .build( BASE_VIEW_ID )
-            .setBase( true );
-    }
-
-    public final int viewArrayLength() {
-        return views.capacity();
+        ViewBuilder viewBuilder = getViewBuilder();
+        viewBuilder.buildBaseView( screenBounds );
     }
     
     @Override
@@ -89,19 +86,79 @@ public final class ViewSystem implements FFComponent, ComponentSystem, Component
         return views.get( viewId );
     }
     
+    public final Iterator<View> activeViewportIterator() {
+        return activeViewports.iterator();
+    }
+    
+    public final Collection<View> getActiveViewports() {
+        return Collections.unmodifiableCollection( activeViewports );
+    }
+    
+    public final Collection<View> getAllViewports() {
+        return Collections.unmodifiableCollection( orderedViewports );
+    }
+    
+    public final boolean hasViewports() {
+        return !orderedViewports.isEmpty();
+    }
+    
+    public final boolean hasActiveViewports() {
+        return !activeViewports.isEmpty();
+    }
+    
     public final void activateView( int viewId ) {
+        if ( viewId == BASE_VIEW_ID ) {
+            throw new IllegalArgumentException( "The baseView (Screen) has no activation" );
+        }
         View view = views.get( viewId );
         if ( view != null && !view.isActive() ) {
-            view.setActive( true );
+            view.active = true;
+            refreshActiveViewports();
             eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_ACTIVATED ) );
         }
     }
 
     public final void deactivateView( int viewId ) {
+        if ( viewId == BASE_VIEW_ID ) {
+            throw new IllegalArgumentException( "The baseView (Screen) has no activation" );
+        }
         View view = views.get( viewId );
         if ( view != null && view.isActive() ) {
-            view.setActive( false );
+            view.active = false;
+            refreshActiveViewports();
             eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_DISPOSED ) );
+        }
+    }
+    
+    public final void moveViewUp( int viewId ) {
+        if ( viewId == BASE_VIEW_ID ) {
+            throw new IllegalArgumentException( "The baseView (Screen) cannot change its order" );
+        }
+        
+        View view = views.get( viewId );
+        int index = orderedViewports.indexOf( view );
+        if ( index < orderedViewports.size() - 1 ) {
+            orderedViewports.remove( index );
+            index++;
+            orderedViewports.add( index, view );
+            reorder();
+            refreshActiveViewports();
+        }
+    }
+
+    public final void moveViewDown( int viewId ) {
+        if ( viewId == BASE_VIEW_ID ) {
+            throw new IllegalArgumentException( "The baseView (Screen) cannot change its order" );
+        }
+        
+        View view = views.get( viewId );
+        int index = orderedViewports.indexOf( view );
+        if ( index >= 1 ) {
+            orderedViewports.remove( index );
+            index--;
+            orderedViewports.add( index, view );
+            reorder();
+            refreshActiveViewports();
         }
     }
     
@@ -287,10 +344,10 @@ public final class ViewSystem implements FFComponent, ComponentSystem, Component
                 checkName( layer );
                 
                 int viewId = layer.getViewId();
-                View view = getView( viewId );
-                if ( view == null ) {
+                if ( !hasView( viewId ) ) {
                     throw new ComponentCreationException( "The View with id: " + viewId + ". dont exists." );
                 }
+                View view = getView( viewId );
                 if ( !view.isLayeringEnabled() ) {
                     throw new ComponentCreationException( "Layering is not enabled for view with id: " + viewId + ". Enable Layering for View first" );
                 }
@@ -309,18 +366,8 @@ public final class ViewSystem implements FFComponent, ComponentSystem, Component
         };
     }
 
-    public final ComponentBuilder<View> getViewBuilder() {
-        return new BaseComponentBuilder<View>( this ) {
-            @Override
-            public View build( int componentId ) {
-                View view = new View( componentId );
-                view.fromAttributes( attributes );
-                checkName( view );
-                views.set( view.index(), view );
-                eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_CREATED ) );
-                return view;
-            }
-        };
+    public final ViewBuilder getViewBuilder() {
+        return new ViewBuilder( this );
     }
 
     private void checkViewExists( int viewId ) {
@@ -379,6 +426,56 @@ public final class ViewSystem implements FFComponent, ComponentSystem, Component
         for ( List<Layer> layers : layersOfView ) {
             ComponentBuilderHelper.toAttributes( attributes, Layer.class, layers );
         }
+    }
+    
+    private void reorder() {
+        int order = 0;
+        for ( View viewport : orderedViewports ) {
+            viewport.order = order;
+            order++;
+        }
+    }
+    
+    private void refreshActiveViewports() {
+        activeViewports.clear();
+        for ( View viewport : orderedViewports ) {
+            if ( viewport.active ) {
+                activeViewports.add( viewport );
+            }
+        }
+    }
+    
+    
+    public final class ViewBuilder extends BaseComponentBuilder<View> {
+
+        protected ViewBuilder( ViewSystem viewSystem ) {
+            super( viewSystem );
+        }
+
+        @Override
+        public final View build( int componentId ) {
+            View view = new View( componentId );
+            view.fromAttributes( attributes );
+            
+            checkName( view );
+            views.set( view.index(), view );
+            if ( componentId != BASE_VIEW_ID ) {
+                view.order = orderedViewports.size();
+                orderedViewports.add( view );
+            }
+            eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_CREATED ) );
+            return view;
+        }
+        
+        void buildBaseView( Rectangle screenBounds ) {
+            setAttribute( View.NAME, "BASE_VIEW" );
+            setAttribute( View.BOUNDS, screenBounds );
+            View view = build( BASE_VIEW_ID );
+            view.isBase = true;
+            view.active = true;
+            view.order = -1;
+        }
+        
     }
 
 }

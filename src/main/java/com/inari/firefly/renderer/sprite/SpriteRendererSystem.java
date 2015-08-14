@@ -23,15 +23,15 @@ import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.renderer.sprite.tile.ETile;
-import com.inari.firefly.renderer.sprite.tile.TileGridSystem;
-import com.inari.firefly.renderer.sprite.tile.TileGrid.TileGridIterator;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
+import com.inari.firefly.renderer.sprite.tile.ETile;
+import com.inari.firefly.renderer.sprite.tile.TileGrid.TileGridIterator;
+import com.inari.firefly.renderer.sprite.tile.TileGridSystem;
 import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.ILowerSystemFacade;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
@@ -129,12 +129,15 @@ public final class SpriteRendererSystem implements FFComponent, EntityActivation
     }
 
     private final DynArray<IndexedTypeSet> getRenderablesOfView( int viewId, boolean createNew ) {
-        DynArray<IndexedTypeSet> renderableOfView = renderablesPerView.get( viewId );
-        if ( renderableOfView == null && createNew ) {
-            renderableOfView = new DynArray<IndexedTypeSet>();
+        if ( renderablesPerView.contains( viewId ) ) { 
+            return renderablesPerView.get( viewId );
+        } else if ( createNew ) {
+            DynArray<IndexedTypeSet> renderableOfView = new DynArray<IndexedTypeSet>();
             renderablesPerView.set( viewId, renderableOfView );
+            return renderableOfView;
         }
-        return renderableOfView;
+        
+        return null;
     }
     
     private static final Comparator<IndexedTypeSet> RENDERABLE_COMPARATOR = new Comparator<IndexedTypeSet>() {

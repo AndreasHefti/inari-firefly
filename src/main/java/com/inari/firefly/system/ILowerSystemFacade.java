@@ -15,13 +15,15 @@
  ******************************************************************************/ 
 package com.inari.firefly.system;
 
+import java.util.Iterator;
+
 import com.inari.firefly.asset.event.AssetEventListener;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.renderer.sprite.SpriteRenderable;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.event.SoundEventListener;
-import com.inari.firefly.system.view.event.ViewEventListener;
 import com.inari.firefly.system.view.View;
+import com.inari.firefly.system.view.event.ViewEventListener;
 
 public interface ILowerSystemFacade extends FFComponent, AssetEventListener, ViewEventListener, SoundEventListener {
     
@@ -33,7 +35,7 @@ public interface ILowerSystemFacade extends FFComponent, AssetEventListener, Vie
     
     void endRendering( View view );
     
-    void flush();
+    void flush( Iterator<View> virtualViews );
     
     void soundAttributesChanged( Sound sound );
     

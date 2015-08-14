@@ -40,10 +40,12 @@ public final class EMovement extends EntityComponent {
     };
     
     private final Vector2f velocityVector;
-    private int controllerId = -1;
+    private int controllerId;
 
-    EMovement() {
+    public EMovement() {
+        super();
         velocityVector = new Vector2f( 0, 0 );
+        controllerId = -1;
     }
 
     public final Vector2f getVelocityVector() {

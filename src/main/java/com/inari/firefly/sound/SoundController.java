@@ -16,10 +16,10 @@
 package com.inari.firefly.sound;
 
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.ILowerSystemFacade;
 
 public abstract class SoundController extends Controller implements SoundEventListener {
@@ -66,10 +66,7 @@ public abstract class SoundController extends Controller implements SoundEventLi
                 continue;
             }
             int soundId = componentIds.get( i );
-            Sound sound = soundSystem.getSound( soundId );
-            if ( sound != null && sound.getControllerId() == indexedId ) {
-                update( time, sound );
-            }
+            update( time, soundSystem.getSound( soundId ) );
         }
     }
 

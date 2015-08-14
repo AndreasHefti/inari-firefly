@@ -15,24 +15,16 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
-import com.inari.commons.lang.indexed.IndexedObject;
-import com.inari.commons.lang.indexed.Indexer;
+import com.inari.commons.lang.indexed.BaseIndexedObject;
 
-public final class Entity implements IndexedObject {
-    
-    private int id;
+public final class Entity extends BaseIndexedObject {
     
     Entity() {
-        id = -1;
+        super( false );
     }
 
     Entity( int id ) {
-        if ( id < 0 ) {
-            this.id = Indexer.nextObjectIndex( indexedObjectType() );
-        } else {
-            this.id = id;
-            Indexer.registerIndex( indexedObjectType(), id );
-        }
+        super( id );
     }
 
     @Override
@@ -41,16 +33,11 @@ public final class Entity implements IndexedObject {
     }
     
     public final int getId() {
-        return id;
+        return indexedId;
+    }
+
+    final void setId( int entityId ) {
+        setIndex( entityId );
     }
     
-    final void setId( int id ) {
-        this.id = id;
-    }
-
-    @Override
-    public final int index() {
-        return id;
-    }
-
 }

@@ -2,6 +2,7 @@ package com.inari.firefly;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.Asset;
@@ -104,7 +105,7 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
     }
 
     @Override
-    public void flush() {
+    public void flush( Iterator<View> virtualViews ) {
         // NOOP
     }
 

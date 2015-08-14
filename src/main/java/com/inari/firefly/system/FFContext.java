@@ -11,6 +11,7 @@ import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.ComponentSystem.BuildType;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.entity.EntityPrefabSystem;
 import com.inari.firefly.entity.EntityProvider;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.MovementSystem;
@@ -55,6 +56,8 @@ public interface FFContext {
         public static final TypedKey<AssetSystem> ASSET_SYSTEM = TypedKey.create( "FF_ASSET_SYSTEM", AssetSystem.class );
         
         public static final TypedKey<EntitySystem> ENTITY_SYSTEM = TypedKey.create( "FF_ENTITY_SYSTEM", EntitySystem.class );
+        
+        public static final TypedKey<EntityPrefabSystem> ENTITY_PREFAB_SYSTEM = TypedKey.create( "ENTITY_PREFAB_SYSTEM", EntityPrefabSystem.class );
         
         public static final TypedKey<ControllerSystem> ENTITY_CONTROLLER_SYSTEM = TypedKey.create( "FF_NTITY_CONTROLLER_SYSTEM", ControllerSystem.class );
         
