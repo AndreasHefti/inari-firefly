@@ -170,4 +170,5 @@ public class View extends NamedIndexedComponent {
         attributes.put( ZOOM, zoom );
         attributes.put( CONTROLLER_ID, controllerId );
     }
+
 }

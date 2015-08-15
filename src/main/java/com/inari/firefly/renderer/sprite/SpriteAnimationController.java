@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
+import com.inari.firefly.system.FFContext;
 
 public class SpriteAnimationController extends EntityController {
     
@@ -38,7 +38,7 @@ public class SpriteAnimationController extends EntityController {
         TINT_RED_ANIMATION_ID,
         TINT_GREEN_ANIMATION_ID,
         TINT_BLUE_ANIMATION_ID,
-        TINT_BLUE_ANIMATION_ID
+        TINT_ALPHA_ANIMATION_ID
     };
     
 

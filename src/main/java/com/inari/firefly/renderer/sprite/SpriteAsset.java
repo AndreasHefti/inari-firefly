@@ -100,5 +100,4 @@ public final class SpriteAsset extends Asset {
         attributes.put( TEXTURE_ID, textureId );
         attributes.put( TEXTURE_REGION, new Rectangle( textureRegion ) );
     }
-
 }

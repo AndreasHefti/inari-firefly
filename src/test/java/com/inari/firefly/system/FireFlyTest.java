@@ -22,15 +22,14 @@ public class FireFlyTest {
         assertEquals( 
             "View(0)::" +
                 "name:String=BASE_VIEW, " +
-                "order:Integer=-1, " +
-                "active:Boolean=true, " +
                 "bounds:Rectangle=[x=0,y=0,width=100,height=100], " +
                 "worldPosition:Position=[x=0,y=0], " +
                 "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
                 "layeringEnabled:Boolean=false, " +
-                "zoom:Float=1.0 " +
+                "zoom:Float=1.0, " +
+                "controllerId:Integer=-1 " +
             "ActiveEntitiesComponent(0)::" +
-                "ACTIVE_ENTITY_IDS:String=", 
+                "ACTIVE_ENTITY_IDS:String=",
             attrs.toString() 
         );
     }

@@ -1,5 +1,7 @@
 package com.inari.firefly;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.inari.commons.geom.Rectangle;
@@ -13,6 +15,7 @@ import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
+import com.inari.firefly.system.ILowerSystemFacade;
 
 public class SystemTests {
     
@@ -25,6 +28,7 @@ public class SystemTests {
         FFContext context = firefly.getContext();
         AssetSystem assetSystem = context.getComponent( FFContext.Systems.ASSET_SYSTEM );
         EntitySystem entitySystem = context.getComponent( FFContext.Systems.ENTITY_SYSTEM );
+        ILowerSystemFacade lowerSystemMock = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
         
         assetSystem
             .getAssetBuilder( TextureAsset.class )
@@ -47,13 +51,40 @@ public class SystemTests {
                 .setAttribute( ESprite.VIEW_ID, 0 )
             .build()
             ;
+        
+        assertEquals( 
+            "LowerSystemFacadeMock [" +
+            "loadedAssets=[], " +
+            "views=[BASE_VIEW], " +
+            "sounds=[], " +
+            "log=[]]", 
+            lowerSystemMock.toString() 
+        );
 
         assetSystem.loadAsset( TEXTURE_ASSET_KEY );
         assetSystem.loadAsset( SPRITE_ASSET_KEY );
         entitySystem.activate( entity.getId() );
         
+        assertEquals( 
+            "LowerSystemFacadeMock [" +
+            "loadedAssets=[boulderDashTextureAsset, spriteAsset], " +
+            "views=[BASE_VIEW], " +
+            "sounds=[], " +
+            "log=[]]", 
+            lowerSystemMock.toString() 
+        );
+        
         firefly.update();
         firefly.render();
+        
+        assertEquals( 
+            "LowerSystemFacadeMock [" +
+            "loadedAssets=[boulderDashTextureAsset, spriteAsset], " +
+            "views=[BASE_VIEW], " +
+            "sounds=[], " +
+            "log=[startRendering::View(BASE_VIEW), renderSprite::Sprite(0), endRendering::View(BASE_VIEW), flush]]", 
+            lowerSystemMock.toString() 
+        );
     }
 
 }
