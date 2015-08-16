@@ -137,6 +137,11 @@ public class ComponentAttributeMap implements AttributeMap {
     public void clear() {
         attributes.clear();
     }
+    
+    @Override
+    public final boolean contains( AttributeKey<?> key ) {
+        return attributes.containsKey( key );
+    }
 
     @Override
     public String toString() {

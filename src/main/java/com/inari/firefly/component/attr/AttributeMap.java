@@ -46,4 +46,6 @@ public interface AttributeMap {
 
     void clear();
 
+    boolean contains( AttributeKey<?> key );
+
 }

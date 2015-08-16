@@ -28,7 +28,7 @@ public abstract class SoundController extends Controller implements SoundEventLi
     protected ILowerSystemFacade lowerSystemFacade;
     protected IEventDispatcher eventDispatcher;
     
-    SoundController( int id, FFContext context ) {
+    protected SoundController( int id, FFContext context ) {
         super( id );
         soundSystem = context.getComponent( FFContext.Systems.SOUND_SYSTEM );
         lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );

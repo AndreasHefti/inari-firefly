@@ -7,8 +7,8 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.movement.MovementAnimationController;
 import com.inari.firefly.sound.SoundController;
+import com.inari.firefly.system.FFContext;
 
 public class ControllerSystemTest {
     
@@ -16,7 +16,7 @@ public class ControllerSystemTest {
     public void testGetComponentBuilder() {
         ControllerSystem controllerSystem = new ControllerSystem();
         
-        ComponentBuilder<MovementAnimationController> componentBuilder = controllerSystem.getComponentBuilder( MovementAnimationController.class );
+        ComponentBuilder<TestController> componentBuilder = controllerSystem.getComponentBuilder( ControllerSystemTest.TestController.class );
         assertNotNull( componentBuilder );
         assertEquals( 
             "com.inari.firefly.control.ControllerSystem$ControllerBuilder", 
@@ -39,6 +39,26 @@ public class ControllerSystemTest {
                 e.getMessage() 
             );
         }
+    }
+    
+    public class TestController extends Controller {
+
+        protected TestController( int id ) {
+            super( id );
+        }
+
+        @Override
+        public void dispose( FFContext context ) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void update( long time ) {
+            // TODO Auto-generated method stub
+            
+        }
+        
     }
 
 }

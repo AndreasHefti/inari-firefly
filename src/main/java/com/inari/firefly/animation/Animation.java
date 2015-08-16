@@ -31,8 +31,8 @@ public abstract class Animation extends NamedIndexedComponent {
         LOOPING,
     };
     
-    private long startTime;
-    private boolean looping;
+    protected long startTime;
+    protected boolean looping;
     protected boolean active;
     protected boolean finished;
 
