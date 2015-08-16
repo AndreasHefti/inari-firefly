@@ -28,8 +28,9 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.renderer.sprite.tile.TileGrid.TileGridIterator;
-import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.renderer.sprite.tile.TileGrid.TileRenderMode;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.system.view.event.ViewEvent;
 import com.inari.firefly.system.view.event.ViewEvent.Type;
@@ -37,7 +38,7 @@ import com.inari.firefly.system.view.event.ViewEventListener;
 
 public final class TileGridSystem 
     implements
-    FFComponent,
+        FFContextInitiable,
         ComponentBuilderFactory, 
         ViewEventListener,
         EntityActivationListener {
@@ -115,6 +116,15 @@ public final class TileGridSystem
         }
         DynArray<TileGrid> tileGridsForView = tileGridOfViewsPerLayer.get( viewId );
         return tileGridsForView.get( layerId );
+    }
+    
+    public final TileRenderMode getRenderMode( int viewId, int layerId ) {
+        TileGrid tileGrid = getTileGrid( viewId, layerId );
+        if ( tileGrid == null ) {
+            return TileRenderMode.FAST_RENDERING;
+        }
+        
+        return tileGrid.getRenderMode();
     }
     
     public final void deleteAllTileGrid( int viewId ) {
@@ -221,5 +231,4 @@ public final class TileGridSystem
         }
     }
 
-    
 }

@@ -17,7 +17,7 @@ package com.inari.firefly.system;
 
 import com.inari.firefly.Disposable;
 
-public interface FFComponent extends Disposable {
+public interface FFContextInitiable extends Disposable {
     
     void init( FFContext context ) throws FFInitException;
 

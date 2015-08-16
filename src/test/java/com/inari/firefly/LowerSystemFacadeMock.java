@@ -6,7 +6,6 @@ import java.util.Iterator;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.firefly.asset.event.AssetEvent;
-import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.renderer.sprite.SpriteRenderable;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.event.SoundEvent;
@@ -99,15 +98,15 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
     public void startRendering( View view ) {
         log.add( "startRendering::View(" + view.getName() + ")" );
     }
-
+    
     @Override
-    public void renderSprite( SpriteRenderable renderableSprite, ETransform transform ) {
-        log.add( "renderSprite::Sprite(" + renderableSprite.getSpriteId() + ")" );
+    public void renderSprite( SpriteRenderable spriteRenderable, float xpos, float ypos ) {
+        log.add( "renderSprite::Sprite(" + spriteRenderable.getSpriteId() + ")" );
     }
 
     @Override
-    public void renderSprite( SpriteRenderable renderableSprite, float xpos, float ypos ) {
-        log.add( "renderSprite::Sprite(" + renderableSprite.getSpriteId() + ")" );
+    public void renderSprite( SpriteRenderable spriteRenderable, float x, float y, float pivotx, float pivoty, float scalex, float scaley,float rotation ) {
+        log.add( "renderSprite::Sprite(" + spriteRenderable.getSpriteId() + ")" );
     }
 
     @Override

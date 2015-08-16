@@ -17,12 +17,12 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.entity.event.EntityPrefabActionEvent;
 import com.inari.firefly.entity.event.EntityPrefabActionListener;
-import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.view.View;
 
-public class EntityPrefabSystem implements FFComponent, EntityPrefabActionListener, ComponentSystem, ComponentBuilderFactory, Disposable {
+public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActionListener, ComponentSystem, ComponentBuilderFactory, Disposable {
     
     private DynArray<EntityPrefab> prefabs;
     private DynArray<String> prefabNames;

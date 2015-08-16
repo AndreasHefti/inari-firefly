@@ -25,14 +25,14 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 
 public final class ControllerSystem 
     implements
-        FFComponent,
+        FFContextInitiable,
         ComponentSystem,
         ComponentBuilderFactory,
         UpdateEventListener {

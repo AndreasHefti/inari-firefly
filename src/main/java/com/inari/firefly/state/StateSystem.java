@@ -36,10 +36,10 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.state.event.StateChangeEvent;
-import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.task.event.TaskEvent;
 
-public class StateSystem implements FFComponent, ComponentSystem, ComponentBuilderFactory, UpdateEventListener {
+public class StateSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory, UpdateEventListener {
     
     private IEventDispatcher eventDispatcher;
     private FFContext context;

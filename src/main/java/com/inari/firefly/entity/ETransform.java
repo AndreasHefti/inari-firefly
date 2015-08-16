@@ -23,6 +23,7 @@ import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.movement.EMovement;
 
 public final class ETransform extends EntityComponent {
     
@@ -30,35 +31,39 @@ public final class ETransform extends EntityComponent {
     
     public static final AttributeKey<Float> XPOSITION = new AttributeKey<Float>( "xpos", Float.class, ETransform.class );
     public static final AttributeKey<Float> YPOSITION = new AttributeKey<Float>( "ypos", Float.class, ETransform.class );
-    public static final AttributeKey<Float> XSCALE = new AttributeKey<Float>( "xscale", Float.class, ETransform.class );
-    public static final AttributeKey<Float> YSCALE = new AttributeKey<Float>( "yscale", Float.class, ETransform.class );
-    public static final AttributeKey<Float> ROTATION_XPOSITION = new AttributeKey<Float>( "rotationXPos", Float.class, ETransform.class );
-    public static final AttributeKey<Float> ROTATION_YPOSITION = new AttributeKey<Float>( "rotationYPos", Float.class, ETransform.class );
+    public static final AttributeKey<Float> PIVOT_X = new AttributeKey<Float>( "pivotx", Float.class, ETransform.class );
+    public static final AttributeKey<Float> PIVOT_Y = new AttributeKey<Float>( "pivoty", Float.class, ETransform.class );
+    public static final AttributeKey<Float> SCALE_X = new AttributeKey<Float>( "scalex", Float.class, ETransform.class );
+    public static final AttributeKey<Float> SCALE_Y = new AttributeKey<Float>( "scaley", Float.class, ETransform.class );
     public static final AttributeKey<Float> ROTATION = new AttributeKey<Float>( "rotation", Float.class, ETransform.class );
+    public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, EMovement.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         XPOSITION, 
         YPOSITION,
-        XSCALE,
-        YSCALE,
-        ROTATION_XPOSITION,
-        ROTATION_YPOSITION,
-        ROTATION
+        PIVOT_X,
+        PIVOT_X,
+        SCALE_X,
+        SCALE_X,
+        ROTATION,
+        CONTROLLER_ID
     };
     
     private float xpos, ypos;
-    private float xscale, yscale;
-    private float rotationXPos, rotationYPos;
+    private float pivotx, pivoty;
+    private float scalex, scaley;
     private float rotation;
+    private int controllerId;
     
     public ETransform() {
         super();
         xpos = 0;
         ypos = 0;
-        xscale = 1;
-        yscale = 1;
-        rotationXPos = 0;
-        rotationYPos = 0;
+        pivotx = 0;
+        pivoty = 0;
+        scalex = 1;
+        scaley = 1;
         rotation = 0;
+        controllerId = -1;
     }
     
     @Override
@@ -81,50 +86,54 @@ public final class ETransform extends EntityComponent {
     public final void setYpos( float ypos ) {
         this.ypos = ypos;
     }
-    
-    public final void move( Vector2f moveVector ) {
+
+    public final float getPivotx() {
+        return pivotx;
+    }
+
+    public final void setPivotx( float pivotx ) {
+        this.pivotx = pivotx;
+    }
+
+    public final float getPivoty() {
+        return pivoty;
+    }
+
+    public final void setPivoty( float pivoty ) {
+        this.pivoty = pivoty;
+    }
+
+    public final void move( Vector2f moveVector, boolean staticPivot ) {
         xpos += moveVector.dx;
         ypos += moveVector.dy;
+        if ( !staticPivot ) {
+            pivotx += moveVector.dx;
+            pivoty += moveVector.dy;
+        }
     }
     
     public final boolean hasScale() {
-        return ( xscale != 1 || yscale != 1 );
+        return ( scalex != 1 || scaley != 1 );
     }
 
-    public final float getXscale() {
-        return xscale;
+    public final float getScalex() {
+        return scalex;
     }
 
-    public final void setXscale( float xscale ) {
-        this.xscale = xscale;
+    public final void setScalex( float scalex ) {
+        this.scalex = scalex;
     }
 
-    public final float getYscale() {
-        return yscale;
+    public final float getScaley() {
+        return scaley;
     }
 
-    public final void setYscale( float yscale ) {
-        this.yscale = yscale;
+    public final void setScaley( float scaley ) {
+        this.scaley = scaley;
     }
     
     public final boolean hasRotation() {
         return rotation != 0;
-    }
-
-    public final float getRotationXPos() {
-        return rotationXPos;
-    }
-
-    public final void setRotationXPos( float rotationXPos ) {
-        this.rotationXPos = rotationXPos;
-    }
-
-    public final float getRotationYPos() {
-        return rotationYPos;
-    }
-
-    public final void setRotationYPos( float rotationYPos ) {
-        this.rotationYPos = rotationYPos;
     }
 
     public final float getRotation() {
@@ -133,6 +142,15 @@ public final class ETransform extends EntityComponent {
 
     public final void setRotation( float rotation ) {
         this.rotation = rotation;
+    }
+    
+    @Override
+    public final int getControllerId() {
+        return controllerId;
+    }
+
+    public final void setControllerId( int controllerId ) {
+        this.controllerId = controllerId;
     }
 
     @Override
@@ -144,21 +162,25 @@ public final class ETransform extends EntityComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         xpos = attributes.getValue( XPOSITION, xpos );
         ypos = attributes.getValue( YPOSITION, ypos );
-        xscale = attributes.getValue( XSCALE, xscale );
-        yscale = attributes.getValue( YSCALE, yscale );
-        rotationXPos = attributes.getValue( ROTATION_XPOSITION, rotationXPos );
-        rotationYPos = attributes.getValue( ROTATION_YPOSITION, rotationYPos );
+        pivotx = attributes.getValue( PIVOT_X, pivotx );
+        pivoty = attributes.getValue( PIVOT_Y, pivoty );
+        scalex = attributes.getValue( SCALE_X, scalex );
+        scaley = attributes.getValue( SCALE_Y, scaley );
+        
         rotation = attributes.getValue( ROTATION, rotation );
+        controllerId = attributes.getValue( CONTROLLER_ID, controllerId );
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( XPOSITION, xpos );
         attributes.put( YPOSITION, ypos );
-        attributes.put( XSCALE, xscale );
-        attributes.put( YSCALE, yscale );
-        attributes.put( ROTATION_XPOSITION, rotationXPos );
-        attributes.put( ROTATION_YPOSITION, rotationYPos );
+        attributes.put( PIVOT_X, pivotx );
+        attributes.put( PIVOT_Y, pivoty );
+        attributes.put( SCALE_X, scalex );
+        attributes.put( SCALE_Y, scalex );
         attributes.put( ROTATION, rotation );
+        attributes.put( CONTROLLER_ID, controllerId );
     }
+    
 }

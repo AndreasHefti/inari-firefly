@@ -29,7 +29,9 @@ import com.inari.firefly.entity.EntityPrefabSystem;
 import com.inari.firefly.entity.EntityProvider;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.MovementSystem;
-import com.inari.firefly.renderer.sprite.SpriteRendererSystem;
+import com.inari.firefly.renderer.sprite.SpriteViewRenderer;
+import com.inari.firefly.renderer.sprite.SpriteViewSystem;
+import com.inari.firefly.renderer.sprite.tile.TileGridRenderer;
 import com.inari.firefly.renderer.sprite.tile.TileGridSystem;
 import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.state.StateSystem;
@@ -59,12 +61,14 @@ public final class FireFly {
         initMap.put( FFContext.Systems.VIEW_SYSTEM, ViewSystem.class );
         initMap.put( FFContext.Systems.ENTITY_SYSTEM, EntitySystem.class );
         initMap.put( FFContext.Systems.ENTITY_PREFAB_SYSTEM, EntityPrefabSystem.class );
-        initMap.put( FFContext.Systems.SPRITE_RENDERER_SYSTEM, SpriteRendererSystem.class );
+        initMap.put( FFContext.Systems.SPRITE_VIEW_SYSTEM, SpriteViewSystem.class );
         initMap.put( FFContext.Systems.TILE_GRID_SYSTEM, TileGridSystem.class );
         initMap.put( FFContext.Systems.MOVEMENT_SYSTEM, MovementSystem.class );
         initMap.put( FFContext.Systems.ENTITY_CONTROLLER_SYSTEM, ControllerSystem.class );
         initMap.put( FFContext.Systems.ANIMATION_SYSTEM, AnimationSystem.class );
         initMap.put( FFContext.Systems.SOUND_SYSTEM, SoundSystem.class );
+        initMap.put( FFContext.Renderer.SPRITE_VIEW_RENDERER, SpriteViewRenderer.class );
+        initMap.put( FFContext.Renderer.TILE_GRID_RENDERER, TileGridRenderer.class );
 
         init( initMap );
     }

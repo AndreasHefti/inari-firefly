@@ -18,21 +18,20 @@ package com.inari.firefly.system;
 import java.util.Iterator;
 
 import com.inari.firefly.asset.event.AssetEventListener;
-import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.renderer.sprite.SpriteRenderable;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEventListener;
 
-public interface ILowerSystemFacade extends FFComponent, AssetEventListener, ViewEventListener, SoundEventListener {
+public interface ILowerSystemFacade extends FFContextInitiable, AssetEventListener, ViewEventListener, SoundEventListener {
     
     void startRendering( View view );
     
-    void renderSprite( SpriteRenderable renderableSprite, ETransform transform );
-    
     void renderSprite( SpriteRenderable renderableSprite, float xpos, float ypos );
     
+    void renderSprite( SpriteRenderable spriteRenderable, float x, float y, float pivotx, float pivoty, float scalex, float scaley, float rotation );
+
     void endRendering( View view );
     
     void flush( Iterator<View> virtualViews );

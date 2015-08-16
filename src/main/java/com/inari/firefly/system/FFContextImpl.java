@@ -112,8 +112,8 @@ public class FFContextImpl implements FFContext {
     private void init( boolean skipCheck ) {
         
         for ( Object component : systemComponents.values() ) {
-            if ( component instanceof FFComponent ) {
-                ( (FFComponent) component ).init( this );
+            if ( component instanceof FFContextInitiable ) {
+                ( (FFContextInitiable) component ).init( this );
                 continue;
             }
         }
@@ -150,21 +150,21 @@ public class FFContextImpl implements FFContext {
         
         private LinkedHashMap<TypedKey<?>, Class<?>> internalMap = new LinkedHashMap<TypedKey<?>, Class<?>>();
 
-        public Class<?> put( TypedKey<?> key, Class<?> type ) {
+        public <T> void put( TypedKey<T> key, Class<? extends T> type ) {
+            if ( internalMap.containsKey( key ) ) {
+                throw new FFInitException( "There is already a component for key: " + key + " registered to the context" );
+            }
             if ( !key.type().isAssignableFrom( type ) ) {
                 throw new FFInitException( "Invalid Component type mapping on FFContext init key: " + key + " within classType: " + type );
             }
             
-            return internalMap.put( key, type );
+            internalMap.put( key, type );
         }
 
         @Override
         public Iterator<Entry<TypedKey<?>, Class<?>>> iterator() {
             return internalMap.entrySet().iterator();
         }
-
     }
 
-    
-    
 }

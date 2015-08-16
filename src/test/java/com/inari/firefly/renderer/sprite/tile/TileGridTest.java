@@ -11,7 +11,6 @@ import org.junit.Test;
 import com.inari.commons.StringUtils;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
-import com.inari.firefly.renderer.sprite.tile.TileGrid;
 import com.inari.firefly.renderer.sprite.tile.TileGrid.TileGridIterator;
 public class TileGridTest {
 
@@ -32,7 +31,8 @@ public class TileGridTest {
                 + "cellHeight:Integer=0, "
                 + "worldXPos:Float=0.0, "
                 + "worldYPos:Float=0.0, "
-                + "spherical:Boolean=false",
+                + "spherical:Boolean=false, " 
+                + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
 
@@ -47,7 +47,8 @@ public class TileGridTest {
                 + "cellHeight:Integer=0, "
                 + "worldXPos:Float=0.0, "
                 + "worldYPos:Float=0.0, "
-                + "spherical:Boolean=false",
+                + "spherical:Boolean=false, " 
+                + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -75,7 +76,8 @@ public class TileGridTest {
                 + "cellHeight:Integer=0, "
                 + "worldXPos:Float=10.0, "
                 + "worldYPos:Float=10.0, "
-                + "spherical:Boolean=true",
+                + "spherical:Boolean=true, "
+                + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -108,7 +110,8 @@ public class TileGridTest {
             + "cellHeight:Integer=0, "
             + "worldXPos:Float=0.0, "
             + "worldYPos:Float=0.0, "
-            + "spherical:Boolean=false",
+            + "spherical:Boolean=false, "
+            + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -133,7 +136,8 @@ public class TileGridTest {
             + "cellHeight:Integer=0, "
             + "worldXPos:Float=0.0, "
             + "worldYPos:Float=0.0, "
-            + "spherical:Boolean=false",
+            + "spherical:Boolean=false, "
+            + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -158,7 +162,8 @@ public class TileGridTest {
             + "cellHeight:Integer=0, "
             + "worldXPos:Float=0.0, "
             + "worldYPos:Float=0.0, "
-            + "spherical:Boolean=false",
+            + "spherical:Boolean=false, "
+            + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -183,7 +188,8 @@ public class TileGridTest {
             + "cellHeight:Integer=0, "
             + "worldXPos:Float=0.0, "
             + "worldYPos:Float=0.0, "
-            + "spherical:Boolean=false",
+            + "spherical:Boolean=false, "
+            + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -230,7 +236,8 @@ public class TileGridTest {
                 + "cellHeight:Integer=0, "
                 + "worldXPos:Float=0.0, "
                 + "worldYPos:Float=0.0, "
-                + "spherical:Boolean=true",
+                + "spherical:Boolean=true, "
+                + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -253,7 +260,8 @@ public class TileGridTest {
                 + "cellHeight:Integer=0, "
                 + "worldXPos:Float=0.0, "
                 + "worldYPos:Float=0.0, "
-                + "spherical:Boolean=true",
+                + "spherical:Boolean=true, "
+                + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -276,7 +284,8 @@ public class TileGridTest {
                 + "cellHeight:Integer=0, "
                 + "worldXPos:Float=0.0, "
                 + "worldYPos:Float=0.0, "
-                + "spherical:Boolean=true",
+                + "spherical:Boolean=true, "
+                + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -299,7 +308,8 @@ public class TileGridTest {
                 + "cellHeight:Integer=0, "
                 + "worldXPos:Float=0.0, "
                 + "worldYPos:Float=0.0, "
-                + "spherical:Boolean=true",
+                + "spherical:Boolean=true, "
+                + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -322,7 +332,8 @@ public class TileGridTest {
                 + "cellHeight:Integer=0, "
                 + "worldXPos:Float=0.0, "
                 + "worldYPos:Float=0.0, "
-                + "spherical:Boolean=true",
+                + "spherical:Boolean=true, "
+                + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -353,7 +364,8 @@ public class TileGridTest {
             + "cellHeight:Integer=0, "
             + "worldXPos:Float=0.0, "
             + "worldYPos:Float=0.0, "
-            + "spherical:Boolean=false",
+            + "spherical:Boolean=false, "
+            + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -376,7 +388,8 @@ public class TileGridTest {
             + "cellHeight:Integer=0, "
             + "worldXPos:Float=0.0, "
             + "worldYPos:Float=0.0, "
-            + "spherical:Boolean=false",
+            + "spherical:Boolean=false, "
+            + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -399,7 +412,8 @@ public class TileGridTest {
             + "cellHeight:Integer=0, "
             + "worldXPos:Float=0.0, "
             + "worldYPos:Float=0.0, "
-            + "spherical:Boolean=false",
+            + "spherical:Boolean=false, "
+            + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -425,7 +439,8 @@ public class TileGridTest {
             + "cellHeight:Integer=0, "
             + "worldXPos:Float=0.0, "
             + "worldYPos:Float=0.0, "
-            + "spherical:Boolean=false",
+            + "spherical:Boolean=false, "
+            + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -451,7 +466,8 @@ public class TileGridTest {
             + "cellHeight:Integer=0, "
             + "worldXPos:Float=0.0, "
             + "worldYPos:Float=0.0, "
-            + "spherical:Boolean=false",
+            + "spherical:Boolean=false, "
+            + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -482,7 +498,8 @@ public class TileGridTest {
             + "cellHeight:Integer=0, "
             + "worldXPos:Float=0.0, "
             + "worldYPos:Float=0.0, "
-            + "spherical:Boolean=false",
+            + "spherical:Boolean=false, "
+            + "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(

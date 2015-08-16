@@ -40,20 +40,23 @@ public class SpriteAnimationController extends EntityController {
         TINT_BLUE_ANIMATION_ID,
         TINT_ALPHA_ANIMATION_ID
     };
-    
 
-    
     private final AnimationSystem animationSystem;
     
-    private int spriteAnimationId = -1;
-    private int tintRedAnimationId = -1;
-    private int tintGreenAnimationId = -1;
-    private int tintBlueAnimationId = -1;
-    private int tintAlphaAnimationId = -1;
+    private int spriteAnimationId, 
+                tintRedAnimationId, 
+                tintGreenAnimationId, 
+                tintBlueAnimationId, 
+                tintAlphaAnimationId = -1;
     
     SpriteAnimationController( int id, FFContext context ) {
         super( id, context );
         animationSystem = context.getComponent( FFContext.Systems.ANIMATION_SYSTEM );
+    }
+    
+    @Override
+    protected final int getControlledComponentTypeId() {
+        return ESprite.COMPONENT_TYPE;
     }
 
     public final int getSpriteAnimationId() {
@@ -125,11 +128,6 @@ public class SpriteAnimationController extends EntityController {
         attributes.put( TINT_BLUE_ANIMATION_ID, tintBlueAnimationId );
         attributes.put( TINT_ALPHA_ANIMATION_ID, tintAlphaAnimationId );
     } 
-
-    @Override
-    protected final int getControlledComponentTypeId() {
-        return ESprite.COMPONENT_TYPE;
-    }
 
     @Override
     protected final void update( long time, int entityId ) {

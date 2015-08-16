@@ -33,11 +33,11 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContextInitiable;
 
 public final class AnimationSystem 
     implements
-    FFComponent,
+    FFContextInitiable,
         ComponentSystem,
         ComponentBuilderFactory, 
         UpdateEventListener, 

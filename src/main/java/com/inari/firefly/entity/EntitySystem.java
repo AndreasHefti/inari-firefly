@@ -39,10 +39,10 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
-import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFContext;
 
-public final class EntitySystem implements FFComponent, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
+public final class EntitySystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
 
     private IEventDispatcher eventDispatcher;
     private EntityProvider entityProvider;

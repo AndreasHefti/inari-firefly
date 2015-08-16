@@ -15,7 +15,9 @@ import com.inari.firefly.entity.EntityPrefabSystem;
 import com.inari.firefly.entity.EntityProvider;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.MovementSystem;
-import com.inari.firefly.renderer.sprite.SpriteRendererSystem;
+import com.inari.firefly.renderer.sprite.SpriteViewRenderer;
+import com.inari.firefly.renderer.sprite.SpriteViewSystem;
+import com.inari.firefly.renderer.sprite.tile.TileGridRenderer;
 import com.inari.firefly.renderer.sprite.tile.TileGridSystem;
 import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.state.StateSystem;
@@ -23,7 +25,7 @@ import com.inari.firefly.system.view.ViewSystem;
 
 public interface FFContext {
     
-    /** The K^key for the event dispatcher service that provides the system wide event handling.
+    /** The Kkey for the event dispatcher service that provides the system wide event handling.
      *  Use the event dispatcher service to register listeners or fire certain events.
      *  For more information please have a look at the documentation of {@link IEventDispatcher}.
      */
@@ -63,7 +65,7 @@ public interface FFContext {
         
         public static final TypedKey<TileGridSystem> TILE_GRID_SYSTEM = TypedKey.create( "FF_TILE_GRID_SYSTEM", TileGridSystem.class ); 
         
-        public static final TypedKey<SpriteRendererSystem> SPRITE_RENDERER_SYSTEM = TypedKey.create( "FF_SPRITE_RENDERER_SYSTEM", SpriteRendererSystem.class ); 
+        public static final TypedKey<SpriteViewSystem> SPRITE_VIEW_SYSTEM = TypedKey.create( "FF_SPRITE_VIEW_SYSTEM", SpriteViewSystem.class ); 
 
         public static final TypedKey<StateSystem> STATE_SYSTEM = TypedKey.create( "FF_STATE_SYSTEM", StateSystem.class );
         
@@ -72,6 +74,14 @@ public interface FFContext {
         public static final TypedKey<MovementSystem> MOVEMENT_SYSTEM = TypedKey.create( "FF_MOVEMENT_SYSTEM", MovementSystem.class );
         
         public static final TypedKey<SoundSystem> SOUND_SYSTEM = TypedKey.create( "FF_SOUND_SYSTEM", SoundSystem.class );
+        
+    }
+    
+    public static interface Renderer {
+        
+        public static final TypedKey<SpriteViewRenderer> SPRITE_VIEW_RENDERER = TypedKey.create( "FF_SPRITE_VIEW_RENDERER", SpriteViewRenderer.class );
+        
+        public static final TypedKey<TileGridRenderer> TILE_GRID_RENDERER = TypedKey.create( "FF_TILE_GRID_RENDERER", TileGridRenderer.class );
         
     }
 

@@ -24,12 +24,12 @@ import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.event.MoveEvent;
-import com.inari.firefly.system.FFComponent;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 
-public final class MovementSystem implements FFComponent, UpdateEventListener {
+public final class MovementSystem implements FFContextInitiable, UpdateEventListener {
     
     private final static IndexedAspect MOVEMENT_ASPECT = IndexedTypeAspectBuilder.build( EntityComponent.class, EMovement.class );
 
@@ -63,7 +63,7 @@ public final class MovementSystem implements FFComponent, UpdateEventListener {
             }
             
             ETransform transform = components.get( ETransform.COMPONENT_TYPE );
-            transform.move( movement.getVelocityVector() );
+            transform.move( movement.getVelocityVector(), true );
             
             moveEvent.add( entity.getId() );
         }

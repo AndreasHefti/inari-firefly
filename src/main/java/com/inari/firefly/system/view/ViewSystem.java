@@ -34,12 +34,12 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.system.FFComponent;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.ILowerSystemFacade;
 import com.inari.firefly.system.view.event.ViewEvent;
 
-public final class ViewSystem implements FFComponent, ComponentSystem, ComponentBuilderFactory {
+public final class ViewSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory {
     
     public static final int BASE_VIEW_ID = 0;
 
