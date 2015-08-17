@@ -38,6 +38,10 @@ public abstract class Animation extends NamedIndexedComponent {
 
     Animation( int id ) {
         super( id );
+        startTime = -1;
+        looping = false;
+        active = false;
+        finished = false;
     }
 
     @Override
@@ -73,6 +77,12 @@ public abstract class Animation extends NamedIndexedComponent {
     public final boolean isFinished() {
         return finished;
     }
+    
+    public void update( long updateTime ) {
+        if ( !active && updateTime >= startTime ) {
+            active = true;
+        }
+    }
 
     @Override
     public Set<AttributeKey<?>> attributeKeys() {
@@ -94,6 +104,8 @@ public abstract class Animation extends NamedIndexedComponent {
         attributes.put( START_TIME, startTime );
         attributes.put( LOOPING, looping );
     }
+
+    
 
 
 }

@@ -21,9 +21,6 @@ import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.UpdateEvent;
-import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.animation.event.AnimationEvent;
 import com.inari.firefly.animation.event.AnimationEventListener;
 import com.inari.firefly.component.Component;
@@ -33,7 +30,10 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
+import com.inari.firefly.system.UpdateEvent;
+import com.inari.firefly.system.UpdateEventListener;
 
 public final class AnimationSystem 
     implements
@@ -120,9 +120,10 @@ public final class AnimationSystem
                 if ( animation.finished ) {
                     animations.remove( animation.index() );
                     animation.dispose();
-                } else if ( !animation.active && updateTime > animation.getStartTime() ) {
-                    animation.active = true;
+                    continue;
                 }
+
+                animation.update( updateTime );
             }
         }
     }
@@ -139,32 +140,32 @@ public final class AnimationSystem
         return type.cast( animation );
     }
 
-    public final float getValue( int animationId, long time, int componentId, float currentValue ) {
+    public final float getValue( int animationId, int componentId, float currentValue ) {
         if ( !isActive( animationId ) ) {
             return currentValue;
         }
 
         FloatAnimation animation = getAnimation( FloatAnimation.class, animationId );
-        return animation.getValue( time, componentId, currentValue );
+        return animation.getValue( componentId, currentValue );
     }
 
-    public final int getValue( int animationId, long time, int componentId, int currentValue ) {
+    public final int getValue( int animationId, int componentId, int currentValue ) {
         if ( !isActive( animationId ) ) {
             return currentValue;
         }
 
         IntAnimation animation = getAnimation( IntAnimation.class, animationId );
-        return animation.getValue( time, componentId, currentValue );
+        return animation.getValue( componentId, currentValue );
     }
 
-    public final <V> V getValue( int animationId, long time, int componentId, V currentValue ) {
+    public final <V> V getValue( int animationId, int componentId, V currentValue ) {
         if ( !isActive( animationId ) ) {
             return currentValue;
         }
 
         @SuppressWarnings( "unchecked" )
         ValueAnimation<V> animation = getAnimation( ValueAnimation.class, animationId );
-        return animation.getValue( time, componentId, currentValue );
+        return animation.getValue( componentId, currentValue );
     }
     
     public final void deleteAnimation( int animationId ) {

@@ -22,6 +22,6 @@ public abstract class FloatAnimation extends Animation {
         super( id );
     }
 
-    public abstract float getValue( long time, int componentId, float currentValue );
+    public abstract float getValue( int componentId, float currentValue );
 
 }

@@ -22,6 +22,6 @@ public abstract class ValueAnimation<V> extends Animation {
         super( id );
     }
     
-    public abstract V getValue( long time, int componentId, V currentValue );
+    public abstract V getValue( int componentId, V currentValue );
 
 }

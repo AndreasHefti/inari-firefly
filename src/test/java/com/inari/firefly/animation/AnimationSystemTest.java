@@ -8,10 +8,10 @@ import org.junit.Test;
 
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.EventDispatcherMock;
-import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextImpl;
+import com.inari.firefly.system.UpdateEvent;
 
 public class AnimationSystemTest {
     
@@ -84,11 +84,18 @@ public class AnimationSystemTest {
             "Animation{startTime=10, looping=false, active=false, finished=false}",
             animationSystem.getAnimation( 0 ).toString()
         );
+        
+        animationSystem.update( new UpdateEvent( 0, 9, 1, 9 ) );
+
+        assertEquals(
+            "Animation{startTime=10, looping=false, active=false, finished=false}",
+            animationSystem.getAnimation( 0 ).toString()
+        );
 
         animationSystem.update( new UpdateEvent( 0, 10, 1, 10 ) );
 
         assertEquals(
-            "Animation{startTime=10, looping=false, active=false, finished=false}",
+            "Animation{startTime=10, looping=false, active=true, finished=false}",
             animationSystem.getAnimation( 0 ).toString()
         );
 
@@ -101,7 +108,7 @@ public class AnimationSystemTest {
         );
 
         // the TestAnimation is finished just after the first getValue call
-        animationSystem.getValue( 0, 11, 0, 0f );
+        animationSystem.getValue( 0, 11, 0f );
 
         // now the Animation should be finished...
         assertEquals(

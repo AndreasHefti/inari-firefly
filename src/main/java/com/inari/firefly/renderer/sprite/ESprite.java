@@ -42,6 +42,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         SPRITE_ID,
         VIEW_ID,
         LAYER_ID, 
+        ORDERING,
         TINT_COLOR,
         BLEND_MODE,
         CONTROLLER_ID

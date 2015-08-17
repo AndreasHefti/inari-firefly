@@ -22,6 +22,6 @@ public abstract class IntAnimation extends Animation {
         super( id );
     }
 
-    public abstract int getValue( long time, int component, int currentValue );
+    public abstract int getValue( int component, int currentValue );
 
 }

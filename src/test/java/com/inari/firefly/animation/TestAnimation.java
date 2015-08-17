@@ -7,7 +7,7 @@ public class TestAnimation extends FloatAnimation {
     }
 
     @Override
-    public float getValue( long time, int componentId, float currentValue ) {
+    public float getValue( int componentId, float currentValue ) {
         finished = true;
         active = false;
         return currentValue;
