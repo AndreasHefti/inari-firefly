@@ -16,6 +16,7 @@
 package com.inari.firefly.state;
 
 import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.firefly.system.FFTimer;
 
 
 public abstract class StateChangeCondition extends NamedIndexedComponent {
@@ -34,6 +35,6 @@ public abstract class StateChangeCondition extends NamedIndexedComponent {
         return StateChangeCondition.class;
     }
 
-    public abstract boolean check( Workflow workflow, long update );
+    public abstract boolean check( Workflow workflow, final FFTimer timer );
     
 }

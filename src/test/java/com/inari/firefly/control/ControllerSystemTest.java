@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.sound.SoundController;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFTimer;
 
 public class ControllerSystemTest {
     
@@ -54,7 +55,7 @@ public class ControllerSystemTest {
         }
 
         @Override
-        public void update( long time ) {
+        public void update( final FFTimer timer ) {
             // TODO Auto-generated method stub
             
         }

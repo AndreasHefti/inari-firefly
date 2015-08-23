@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.EventDispatcherMock;
+import com.inari.firefly.TestTimer;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextImpl;
@@ -78,28 +79,35 @@ public class AnimationSystemTest {
             animationSystem.getAnimation( 0 ).toString()
         );
 
-        animationSystem.update( new UpdateEvent( 0, 1, 1, 1 ) );
+        TestTimer timer = new TestTimer();
+        UpdateEvent updateEvent = new UpdateEvent( timer );
+        
+        timer.tick();
+        animationSystem.update( updateEvent );
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",
             animationSystem.getAnimation( 0 ).toString()
         );
         
-        animationSystem.update( new UpdateEvent( 0, 9, 1, 9 ) );
+        timer.setTime( 9 );
+        animationSystem.update( updateEvent );
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",
             animationSystem.getAnimation( 0 ).toString()
         );
 
-        animationSystem.update( new UpdateEvent( 0, 10, 1, 10 ) );
+        timer.setTime( 10 );
+        animationSystem.update( updateEvent );
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=true, finished=false}",
             animationSystem.getAnimation( 0 ).toString()
         );
 
-        animationSystem.update( new UpdateEvent( 0, 11, 1, 11 ) );
+        timer.setTime( 11 );
+        animationSystem.update( updateEvent );
 
         // now the Animation should be active
         assertEquals(
@@ -117,7 +125,8 @@ public class AnimationSystemTest {
         );
 
         // ...and after next update be removed
-        animationSystem.update( new UpdateEvent( 0, 12, 1, 12 ) );
+        timer.setTime( 12 );
+        animationSystem.update( updateEvent );
         assertFalse( animationSystem.exists( 0 ) );
     }
 

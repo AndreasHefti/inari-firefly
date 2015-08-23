@@ -41,9 +41,5 @@ public abstract class EntityComponent implements Component, IndexedType {
     public final int index() {
         return index;
     }
-    
-    public int getControllerId() {
-        return -1;
-    }
 
 }

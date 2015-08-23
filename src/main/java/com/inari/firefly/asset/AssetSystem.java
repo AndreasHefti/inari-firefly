@@ -33,8 +33,8 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextInitiable;
 
 public class AssetSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory {
     
@@ -395,7 +395,7 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
             AssetNameKey assetKey = new AssetNameKey( asset.group, asset.getName() );
 
             if ( hasAsset( assetKey ) ) {
-                throw new ComponentCreationException( "There is already an Asset with name: " + asset.getName() + " registered for this AssetSystem" );
+                throw new ComponentCreationException( "There is already an Asset with key: " + asset + " registered for this AssetSystem" );
             }
 
             assets.put( assetKey, asset );

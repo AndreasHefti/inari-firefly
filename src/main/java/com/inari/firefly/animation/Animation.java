@@ -21,6 +21,7 @@ import java.util.Set;
 import com.inari.firefly.component.NamedIndexedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.FFTimer;
 
 public abstract class Animation extends NamedIndexedComponent {
     
@@ -78,9 +79,13 @@ public abstract class Animation extends NamedIndexedComponent {
         return finished;
     }
     
-    public void update( long updateTime ) {
-        if ( !active && updateTime >= startTime ) {
-            active = true;
+    protected void setActive() {
+        active = true;
+    }
+    
+    public void update( final FFTimer timer ) {
+        if ( !active && timer.getTime() >= startTime ) {
+            setActive();
         }
     }
 

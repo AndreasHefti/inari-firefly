@@ -47,13 +47,14 @@ public final class FireFly {
     private ViewSystem viewSystem;
     private ILowerSystemFacade lowerSystemFacade;
 
-    private final UpdateEvent updateEvent = new UpdateEvent();
-    private final RenderEvent renderEvent = new RenderEvent();
+    private final UpdateEvent updateEvent;
+    private final RenderEvent renderEvent;
 
 
     public FireFly( Class<? extends ILowerSystemFacade> lowerSystemFacadeType ) {
         InitMap initMap = new InitMap();
         initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcher.class );
+        initMap.put( FFContext.TIMER, DefaultFFTimerImpl.class );
         initMap.put( FFContext.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
         initMap.put( FFContext.ENTITY_PROVIDER, EntityProvider.class );
         initMap.put( FFContext.Systems.ASSET_SYSTEM, AssetSystem.class );
@@ -71,10 +72,17 @@ public final class FireFly {
         initMap.put( FFContext.Renderer.TILE_GRID_RENDERER, TileGridRenderer.class );
 
         init( initMap );
+        
+        updateEvent = new UpdateEvent( context.getComponent( FFContext.TIMER ) );
+        renderEvent = new RenderEvent();
     }
+
     
     public FireFly( InitMap initMap ) {
         init( initMap );
+        
+        updateEvent = new UpdateEvent( context.getComponent( FFContext.TIMER ) );
+        renderEvent = new RenderEvent();
     }
 
     private void init( InitMap initMap ) {
@@ -105,16 +113,8 @@ public final class FireFly {
     }
     
     public final void update() {
-        updateEvent.timeElapsed = 0;
-        if ( updateEvent.lastUpdateTime == 0 ) {
-            updateEvent.lastUpdateTime = System.nanoTime();
-        } else {
-            long currentTime = System.nanoTime();
-            updateEvent.timeElapsed = currentTime - updateEvent.lastUpdateTime;
-            updateEvent.lastUpdateTime = currentTime;
-        }
-
-        updateEvent.update++;
+        updateEvent.timer.tick();
+        //System.out.println( updateEvent );
         eventDispatcher.notify( updateEvent );
     }
     

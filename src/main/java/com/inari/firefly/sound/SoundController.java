@@ -20,6 +20,7 @@ import com.inari.firefly.control.Controller;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFTimer;
 import com.inari.firefly.system.ILowerSystemFacade;
 
 public abstract class SoundController extends Controller implements SoundEventListener {
@@ -60,17 +61,17 @@ public abstract class SoundController extends Controller implements SoundEventLi
     }
 
     @Override
-    public final void update( long time ) {
+    public final void update( final FFTimer timer ) {
         for ( int i = 0; i < componentIds.length(); i++ ) {
             if ( componentIds.isEmpty( i ) ) {
                 continue;
             }
             int soundId = componentIds.get( i );
-            update( time, soundSystem.getSound( soundId ) );
+            update( timer, soundSystem.getSound( soundId ) );
         }
     }
 
 
-    public abstract void update( long time, Sound sound );
+    public abstract void update(  final FFTimer timer , Sound sound );
 
 }

@@ -29,23 +29,25 @@ public final class StateChange extends NamedIndexedComponent {
     public static final AttributeKey<Integer> FORM_STATE_ID = new AttributeKey<Integer>( "fromStateId", Integer.class, StateChange.class );
     public static final AttributeKey<Integer> TO_STATE_ID = new AttributeKey<Integer>( "toStateId", Integer.class, StateChange.class );
     public static final AttributeKey<Integer> CONDITION_ID = new AttributeKey<Integer>( "conditionId", Integer.class, StateChange.class );
-    public static final AttributeKey<Integer> TASK_ID = new AttributeKey<Integer>( "taskId", Integer.class, StateChange.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         WORKFLOW_ID,
         FORM_STATE_ID,
         TO_STATE_ID,
         CONDITION_ID,
-        TASK_ID
     };
     
     private int fromStateId;
     private int toStateId;
     private int workflowId;
-    private int conditionId = -1;
-    private int taskId = -1;
+    private int conditionId;
+    private int taskId;
     
     protected StateChange( int stateChangeId ) {
         super( stateChangeId );
+        fromStateId = -1;
+        toStateId = -1;
+        workflowId = -1;
+        conditionId = -1;
     }
     
     public final int getFromStateId() {
@@ -103,7 +105,6 @@ public final class StateChange extends NamedIndexedComponent {
         toStateId = attributes.getValue( TO_STATE_ID, toStateId );
         workflowId = attributes.getValue( WORKFLOW_ID, workflowId );
         conditionId = attributes.getValue( CONDITION_ID, conditionId );
-        taskId = attributes.getValue( TASK_ID, taskId );
     }
 
     @Override
@@ -114,7 +115,6 @@ public final class StateChange extends NamedIndexedComponent {
         attributes.put( TO_STATE_ID, toStateId );
         attributes.put( WORKFLOW_ID, workflowId );
         attributes.put( CONDITION_ID, conditionId );
-        attributes.put( TASK_ID, taskId );
     }
 
 }

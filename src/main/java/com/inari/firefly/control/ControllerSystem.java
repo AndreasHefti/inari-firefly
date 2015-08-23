@@ -18,15 +18,17 @@ package com.inari.firefly.control;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentBuilderHelper;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 
@@ -47,10 +49,16 @@ public final class ControllerSystem
     @Override
     public void init( FFContext context ) {
         this.context = context;
+        
+        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        eventDispatcher.register( UpdateEvent.class, this );
     }
 
     @Override
     public final void dispose( FFContext context ) {
+        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        eventDispatcher.unregister( UpdateEvent.class, this );
+        
         clear();
     }
     
@@ -70,27 +78,26 @@ public final class ControllerSystem
     
     @Override
     public final void update( UpdateEvent event ) {
-        long updateTime = event.getUpdate();
         for ( int i = 0; i < controller.capacity(); i++ ) {
             Controller c = controller.get( i );
             if ( c != null ) {
-                c.update( updateTime );
+                c.update( event.timer );
             }
         }
     }
     
     @Override
-    @SuppressWarnings( "unchecked" )
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( Controller.class.isAssignableFrom( type ) ) {
-            return (ComponentBuilder<C>) getControllerBuilder();
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
+    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> controllerType ) {
+        if ( Controller.class.isAssignableFrom( controllerType ) ) {
+            return new ControllerBuilder( this, controllerType );
         }
         
-        throw new IllegalArgumentException( "Unsupported Component type for ControllerSystem Builder. Type: " + type );
+        throw new IllegalArgumentException( "Unsupported Component type for ControllerSystem Builder. Type: " + controllerType );
     }
     
-    public final ControllerBuilder getControllerBuilder() {
-        return new ControllerBuilder( this );
+    public final <C extends Controller> ControllerBuilder<C> getControllerBuilder( Class<C> controllerType ) {
+        return new ControllerBuilder<C>( this, controllerType );
     }
     
     private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
@@ -107,22 +114,24 @@ public final class ControllerSystem
         fromAttributes( attributes, BuildType.CLEAR_OLD );
     }
 
+    @SuppressWarnings( "unchecked" )
     @Override
     public final void fromAttributes( Attributes attributes, BuildType buildType ) {
         if ( buildType == BuildType.CLEAR_OLD ) {
             clear();
         }
-        
-        new ComponentBuilderHelper<Controller>() {
-            @Override
-            public Controller get( int id ) {
-                return controller.get( id );
-            }
-            @Override
-            public void delete( int id ) {
-                deleteController( id );
-            }
-        }.buildComponents( Controller.class, buildType, getControllerBuilder(), attributes );
+        for ( Class<? extends Controller> controllerSubType : attributes.getAllSubTypes( Controller.class ) ) {
+            new ComponentBuilderHelper<Controller>() {
+                @Override
+                public Controller get( int id ) {
+                    return controller.get( id );
+                }
+                @Override
+                public void delete( int id ) {
+                    deleteController( id );
+                }
+            }.buildComponents( Controller.class, buildType, (ControllerBuilder<Controller>) getControllerBuilder( controllerSubType ), attributes );
+        }
     }
 
     @Override
@@ -131,19 +140,26 @@ public final class ControllerSystem
     }
     
 
-    private final class ControllerBuilder extends BaseComponentBuilder<Controller> {
+    public final class ControllerBuilder<C extends Controller> extends BaseComponentBuilder<C> {
+        
+        private final Class<C> controllerType;
 
-        protected ControllerBuilder( ComponentBuilderFactory componentFactory ) {
+        protected ControllerBuilder( ComponentBuilderFactory componentFactory, Class<C> controllerType ) {
             super( componentFactory );
+            this.controllerType = controllerType;
         }
 
         @Override
-        public Controller build( int componentId ) {
-            Controller result = getInstance( context, componentId );
+        public C build( int componentId ) {
+            attributes.put( Component.INSTANCE_TYPE_NAME, controllerType.getName() );
+            C result = getInstance( context, componentId );
             result.fromAttributes( attributes );
             controller.set( result.index(), result );
             return result;
         }
     }
+
+
+    
 
 }

@@ -23,7 +23,6 @@ import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.movement.EMovement;
 
 public final class ETransform extends EntityComponent {
     
@@ -36,7 +35,7 @@ public final class ETransform extends EntityComponent {
     public static final AttributeKey<Float> SCALE_X = new AttributeKey<Float>( "scalex", Float.class, ETransform.class );
     public static final AttributeKey<Float> SCALE_Y = new AttributeKey<Float>( "scaley", Float.class, ETransform.class );
     public static final AttributeKey<Float> ROTATION = new AttributeKey<Float>( "rotation", Float.class, ETransform.class );
-    public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, EMovement.class );
+    public static final AttributeKey<Integer> PARENT_ID = new AttributeKey<Integer>( "parentId", Integer.class, ETransform.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         XPOSITION, 
         YPOSITION,
@@ -45,14 +44,14 @@ public final class ETransform extends EntityComponent {
         SCALE_X,
         SCALE_X,
         ROTATION,
-        CONTROLLER_ID
+        PARENT_ID
     };
     
     private float xpos, ypos;
     private float pivotx, pivoty;
     private float scalex, scaley;
     private float rotation;
-    private int controllerId;
+    private int parentId;
     
     public ETransform() {
         super();
@@ -63,7 +62,7 @@ public final class ETransform extends EntityComponent {
         scalex = 1;
         scaley = 1;
         rotation = 0;
-        controllerId = -1;
+        parentId = -1;
     }
     
     @Override
@@ -111,10 +110,6 @@ public final class ETransform extends EntityComponent {
             pivoty += moveVector.dy;
         }
     }
-    
-    public final boolean hasScale() {
-        return ( scalex != 1 || scaley != 1 );
-    }
 
     public final float getScalex() {
         return scalex;
@@ -131,10 +126,6 @@ public final class ETransform extends EntityComponent {
     public final void setScaley( float scaley ) {
         this.scaley = scaley;
     }
-    
-    public final boolean hasRotation() {
-        return rotation != 0;
-    }
 
     public final float getRotation() {
         return rotation;
@@ -143,14 +134,13 @@ public final class ETransform extends EntityComponent {
     public final void setRotation( float rotation ) {
         this.rotation = rotation;
     }
-    
-    @Override
-    public final int getControllerId() {
-        return controllerId;
+
+    public final int getParentId() {
+        return parentId;
     }
 
-    public final void setControllerId( int controllerId ) {
-        this.controllerId = controllerId;
+    public final void setParentId( int parentId ) {
+        this.parentId = parentId;
     }
 
     @Override
@@ -168,7 +158,7 @@ public final class ETransform extends EntityComponent {
         scaley = attributes.getValue( SCALE_Y, scaley );
         
         rotation = attributes.getValue( ROTATION, rotation );
-        controllerId = attributes.getValue( CONTROLLER_ID, controllerId );
+        parentId = attributes.getValue( PARENT_ID, parentId );
     }
 
     @Override
@@ -180,7 +170,7 @@ public final class ETransform extends EntityComponent {
         attributes.put( SCALE_X, scalex );
         attributes.put( SCALE_Y, scalex );
         attributes.put( ROTATION, rotation );
-        attributes.put( CONTROLLER_ID, controllerId );
+        attributes.put( PARENT_ID, parentId );
     }
     
 }

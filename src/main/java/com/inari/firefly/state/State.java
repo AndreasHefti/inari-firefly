@@ -15,12 +15,53 @@
  ******************************************************************************/ 
 package com.inari.firefly.state;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
 public final class State extends NamedIndexedComponent {
+    
+    public static final AttributeKey<Integer> WORKFLOW_ID = new AttributeKey<Integer>( "workflowId", Integer.class, State.class );
+    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+        WORKFLOW_ID
+    };
+    
+    private int workflowId;
 
     State( int stateId ) {
         super( stateId );
+    }
+
+    public final int getWorkflowId() {
+        return workflowId;
+    }
+
+    public final void setWorkflowId( int workflowId ) {
+        this.workflowId = workflowId;
+    }
+    
+    @Override
+    public final Set<AttributeKey<?>> attributeKeys() {
+        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
+        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return attributeKeys;
+    }
+
+    @Override
+    public final void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
+        
+        workflowId = attributes.getValue( WORKFLOW_ID, workflowId );
+    }
+
+    @Override
+    public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
+
+        attributes.put( WORKFLOW_ID, workflowId );
     }
     
 }

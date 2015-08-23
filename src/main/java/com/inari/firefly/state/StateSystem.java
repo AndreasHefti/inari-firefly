@@ -25,9 +25,6 @@ import java.util.Set;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.UpdateEvent;
-import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.component.ComponentBuilderHelper;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
@@ -36,7 +33,10 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.state.event.StateChangeEvent;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
+import com.inari.firefly.system.UpdateEvent;
+import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.task.event.TaskEvent;
 
 public class StateSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory, UpdateEventListener {
@@ -101,7 +101,8 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
     
     @Override
     public final void update( UpdateEvent event ) {
-        if ( event.getTimeElapsed() % updateStep != 0 ) {
+        long time = event.timer.getTime();
+        if ( time % updateStep != 0 ) {
             return;
         }
         
@@ -122,7 +123,7 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
                     continue;
                 }
                 
-                if ( condition.check( workflow, event.getTimeElapsed() ) ) {
+                if ( condition.check( workflow, event.timer ) ) {
                     workflow.setCurrentStateId( stateChange.getToStateId() );
                     int taskId = stateChange.getTaskId();
                     if ( taskId >= 0 ) {
@@ -242,8 +243,13 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
         return workflows.contains( workflowId );
     }
     
-    public final boolean hasState( int stateId ) {
-        return states.contains( stateId );
+    public final boolean hasState( int workflowId, int stateId ) {
+        State state = states.get( stateId );
+        if ( state == null ) {
+            return false;
+        }
+        
+        return workflowId == state.getWorkflowId();
     }
     
     public final boolean hasCondition( int conditionId ) {
@@ -453,11 +459,11 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
                 throw new ComponentCreationException( "The Workflow with id: " + workflowId + " does not exists." );
             }
             
-            if ( !hasState( fromStateId ) ) {
+            if ( !hasState( workflowId, fromStateId ) ) {
                 throw new ComponentCreationException( "The State with id: " + stateChange.getFromStateId() + " does not exists." );
             }
             
-            if ( !hasState( stateChange.getToStateId() ) ) {
+            if ( !hasState( workflowId, stateChange.getToStateId() ) ) {
                 throw new ComponentCreationException( "The State with id: " + stateChange.getToStateId() + " does not exists." );
             }
             
@@ -475,6 +481,6 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
             
             return stateChange;
         }
-    };
+    }
 
 }

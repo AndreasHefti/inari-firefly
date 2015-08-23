@@ -36,6 +36,10 @@ public abstract class NamedIndexedComponent extends BaseIndexedObject implements
     protected NamedIndexedComponent( int id ) {
         super( id );
     }
+    
+    public final int getId() {
+        return indexedId;
+    }
 
     @Override
     public Class<? extends Component> getComponentType() {

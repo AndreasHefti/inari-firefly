@@ -32,20 +32,16 @@ public final class EMovement extends EntityComponent {
     
     public static final AttributeKey<Float> VELOCITY_X = new AttributeKey<Float>( "dx", Float.class, EMovement.class );
     public static final AttributeKey<Float> VELOCITY_Y = new AttributeKey<Float>( "dy", Float.class, EMovement.class );
-    public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, EMovement.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         VELOCITY_X,
-        VELOCITY_Y,
-        CONTROLLER_ID,
+        VELOCITY_Y
     };
     
     private final Vector2f velocityVector;
-    private int controllerId;
 
     public EMovement() {
         super();
         velocityVector = new Vector2f( 0, 0 );
-        controllerId = -1;
     }
 
     public final Vector2f getVelocityVector() {
@@ -55,16 +51,7 @@ public final class EMovement extends EntityComponent {
     public final boolean isMoving() {
         return ( velocityVector.dx != 0 || velocityVector.dy != 0 );
     }
-
-    @Override
-    public final int getControllerId() {
-        return controllerId;
-    }
-
-    public final void setControllerId( int controllerId ) {
-        this.controllerId = controllerId;
-    }
-
+    
     @Override
     public final Class<? extends Component> getComponentType() {
         return EMovement.class;
@@ -79,14 +66,12 @@ public final class EMovement extends EntityComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         velocityVector.dx = attributes.getValue( VELOCITY_X, velocityVector.dx );
         velocityVector.dy = attributes.getValue( VELOCITY_Y, velocityVector.dy );
-        controllerId = attributes.getValue( CONTROLLER_ID, controllerId );
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( VELOCITY_X, velocityVector.dx );
         attributes.put( VELOCITY_Y, velocityVector.dy );
-        attributes.put( CONTROLLER_ID, controllerId );
     }
 
 }

@@ -18,14 +18,16 @@ package com.inari.firefly.control;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.firefly.system.FFTimer;
 
 public abstract class Controller extends NamedIndexedComponent implements Disposable {
-   
-    // TODO check if this is a proper init
-    protected IntBag componentIds = new IntBag( 10, -1 );
+    
+    protected final IntBag componentIds;
     
     protected Controller( int id ) {
         super( id );
+        // TODO check if this is a proper init
+        componentIds = new IntBag( 10, -1 );
     }
 
     @Override
@@ -46,6 +48,6 @@ public abstract class Controller extends NamedIndexedComponent implements Dispos
         componentIds.remove( componentId );
     }
     
-    public abstract void update( long time );
+    public abstract void update( final FFTimer timer );
 
 }

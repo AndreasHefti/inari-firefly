@@ -17,10 +17,13 @@ package com.inari.firefly.entity;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.aspect.IndexedAspect;
+import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.control.Controller;
+import com.inari.firefly.control.EController;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFTimer;
 
 
 public abstract class EntityController extends Controller implements EntityActivationListener {
@@ -40,12 +43,17 @@ public abstract class EntityController extends Controller implements EntityActiv
     public final void dispose( FFContext context ) {
         eventDispatcher.unregister( EntityActivationEvent.class, this );
     }
+    
+    @Override
+    public final boolean match( IndexedAspect aspect ) {
+        return aspect.contains( EController.COMPONENT_TYPE );
+    }
 
     @Override
     public final void onEntityActivationEvent( EntityActivationEvent event ) {
         switch ( event.eventType ) {
             case ENTITY_ACTIVATED: {
-                if ( hasControllerId( event.entityId, indexedId ) ) {
+                if ( hasControllerId( event.entityId ) ) {
                     componentIds.add( event.entityId );
                 }
                 break;
@@ -59,31 +67,37 @@ public abstract class EntityController extends Controller implements EntityActiv
     }
 
     @Override
-    public final void update( long time ) {
+    public final void update( final FFTimer timer ) {
         for ( int i = 0; i < componentIds.length(); i++ ) {
             int entityId = componentIds.get( i );
             if ( entityId >= 0 ) {
-                update( time, entityId );
+                update( timer );
             }
         }
     }
     
-    @Override
-    public final boolean match( IndexedAspect aspect ) {
-        return aspect.contains( getControlledComponentTypeId() );
-    }
-
-    protected abstract int getControlledComponentTypeId();
+    public abstract AttributeKey<?>[] getControlledAttribute();
     
-    protected abstract void update( long time, int entityId );
+    protected abstract void update( final FFTimer timer, int entityId );
     
-    private final boolean hasControllerId( int entityId, int controllerId ) {
-        EntityComponent component = entitySystem.getComponent( entityId, getControlledComponentTypeId() );
-        if ( component == null ) {
+    private final boolean hasControllerId( int entityId ) {
+        EController controllerComponent = entitySystem.getComponent( entityId, EController.COMPONENT_TYPE );
+        if ( controllerComponent == null ) {
             return false;
         }
         
-        return component.getControllerId() == controllerId;
+        int[] controllerIds = controllerComponent.getControllerIds();
+        if ( controllerIds == null ) {
+            return false;
+        }
+        
+        for ( int i = 0; i < controllerIds.length; i++ ) {
+            if ( controllerIds[ i ] == indexedId ) {
+                return true;
+            } 
+        }
+        
+        return false;
     }
 
 }

@@ -113,7 +113,6 @@ public final class AnimationSystem
 
     @Override
     public final void update( UpdateEvent event ) {
-        long updateTime = event.getTime();
         for ( int i = 0; i < animations.capacity(); i++ ) {
             Animation animation = animations.get( i );
             if ( animation != null ) {
@@ -123,7 +122,7 @@ public final class AnimationSystem
                     continue;
                 }
 
-                animation.update( updateTime );
+                animation.update( event.timer );
             }
         }
     }
