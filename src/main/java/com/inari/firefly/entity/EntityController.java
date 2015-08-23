@@ -71,7 +71,7 @@ public abstract class EntityController extends Controller implements EntityActiv
         for ( int i = 0; i < componentIds.length(); i++ ) {
             int entityId = componentIds.get( i );
             if ( entityId >= 0 ) {
-                update( timer );
+                update( timer, entityId );
             }
         }
     }
