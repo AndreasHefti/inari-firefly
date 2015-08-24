@@ -37,6 +37,8 @@ public interface FFContext {
     public static final TypedKey<ILowerSystemFacade> LOWER_SYSTEM_FACADE = TypedKey.create( "FF_LOWER_SYSTEM_FACADE", ILowerSystemFacade.class );
     
     public static final TypedKey<FFTimer> TIMER = TypedKey.create( "FF_TIMER", FFTimer.class );
+    
+    public static final TypedKey<Input> INPUT = TypedKey.create( "FF_INPUT", Input.class );
 
     public static final TypedKey<EntityProvider> ENTITY_PROVIDER = TypedKey.create( "FF_ENTITY_PROVIDER", EntityProvider.class );
 

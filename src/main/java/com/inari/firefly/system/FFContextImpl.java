@@ -150,7 +150,7 @@ public class FFContextImpl implements FFContext {
         
         private LinkedHashMap<TypedKey<?>, Class<?>> internalMap = new LinkedHashMap<TypedKey<?>, Class<?>>();
 
-        public <T> void put( TypedKey<T> key, Class<? extends T> type ) {
+        public <T> InitMap put( TypedKey<T> key, Class<? extends T> type ) {
             if ( internalMap.containsKey( key ) ) {
                 throw new FFInitException( "There is already a component for key: " + key + " registered to the context" );
             }
@@ -159,6 +159,8 @@ public class FFContextImpl implements FFContext {
             }
             
             internalMap.put( key, type );
+            
+            return this;
         }
 
         @Override

@@ -11,13 +11,11 @@ import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.ILowerSystemFacade;
-import com.inari.firefly.system.Input;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEvent;
 
 public class LowerSystemFacadeMock implements ILowerSystemFacade {
     
-    private static final Input INPUT = new Input() {};
     private final Collection<String> loadedAssets = new ArrayList<String>();
     private final Collection<String> views = new ArrayList<String>();
     private final Collection<String> sounds = new ArrayList<String>();
@@ -132,11 +130,6 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
     @Override
     public int getScreenHeight() {
         return 100;
-    }
-
-    @Override
-    public Input getInput() {
-        return INPUT;
     }
     
     public String loadedAssets() {

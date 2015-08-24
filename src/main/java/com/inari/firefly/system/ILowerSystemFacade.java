@@ -37,8 +37,6 @@ public interface ILowerSystemFacade extends FFContextInitiable, AssetEventListen
     void flush( Iterator<View> virtualViews );
     
     void soundAttributesChanged( Sound sound );
-    
-    Input getInput();
 
     int getScreenWidth();
 

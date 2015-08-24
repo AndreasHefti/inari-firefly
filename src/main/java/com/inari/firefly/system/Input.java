@@ -20,6 +20,17 @@ import com.inari.commons.geom.Vector2f;
 
 public abstract class Input {
     
+    public enum InputType {
+        UP,
+        RIGHT,
+        DOWN,
+        LEFT,
+        BUTTON_A,
+        BUTTON_B,
+        BUTTON_C,
+        BUTTON_D
+    }
+    
     public boolean up = false;
     public boolean right = false;
     public boolean down = false;
@@ -32,5 +43,9 @@ public abstract class Input {
     
     public final Vector2f acceleration = new Vector2f( 0f, 0f );
     public final Position pointerPosition = new Position( 0 ,0 );
+    
+    public abstract void update();
+    
+    public abstract void setKeyInput( InputType type, int keyCode );
 
 }

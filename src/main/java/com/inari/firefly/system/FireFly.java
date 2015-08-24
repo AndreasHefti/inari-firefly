@@ -51,10 +51,14 @@ public final class FireFly {
     private final RenderEvent renderEvent;
 
 
-    public FireFly( Class<? extends ILowerSystemFacade> lowerSystemFacadeType ) {
+    public FireFly( 
+        Class<? extends ILowerSystemFacade> lowerSystemFacadeType,
+        Class<? extends Input> input
+    ) {
         InitMap initMap = new InitMap();
         initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcher.class );
         initMap.put( FFContext.TIMER, DefaultFFTimerImpl.class );
+        initMap.put( FFContext.INPUT, input );
         initMap.put( FFContext.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
         initMap.put( FFContext.ENTITY_PROVIDER, EntityProvider.class );
         initMap.put( FFContext.Systems.ASSET_SYSTEM, AssetSystem.class );

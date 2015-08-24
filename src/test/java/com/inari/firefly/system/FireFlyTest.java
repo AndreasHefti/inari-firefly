@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
+import com.inari.firefly.InputMock;
 import com.inari.firefly.LowerSystemFacadeMock;
 import com.inari.firefly.component.attr.Attributes;
 
@@ -12,7 +13,7 @@ public class FireFlyTest {
     
     @Test
     public void testCreation() {
-        FireFly firefly = new FireFly( LowerSystemFacadeMock.class );
+        FireFly firefly = new FireFly( LowerSystemFacadeMock.class, InputMock.class );
         Attributes attrs = new Attributes();
         
         FFContext context = firefly.getContext();

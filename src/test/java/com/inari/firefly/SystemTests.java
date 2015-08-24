@@ -24,7 +24,7 @@ public class SystemTests {
     
     @Test
     public void createTextureAndSpriteAndOneEntity() {
-        FireFly firefly = new FireFly( LowerSystemFacadeMock.class );
+        FireFly firefly = new FireFly( LowerSystemFacadeMock.class, InputMock.class );
         FFContext context = firefly.getContext();
         AssetSystem assetSystem = context.getComponent( FFContext.Systems.ASSET_SYSTEM );
         EntitySystem entitySystem = context.getComponent( FFContext.Systems.ENTITY_SYSTEM );
