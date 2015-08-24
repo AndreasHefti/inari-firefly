@@ -40,7 +40,6 @@ public final class StateChange extends NamedIndexedComponent {
     private int toStateId;
     private int workflowId;
     private int conditionId;
-    private int taskId;
     
     protected StateChange( int stateChangeId ) {
         super( stateChangeId );
@@ -80,14 +79,6 @@ public final class StateChange extends NamedIndexedComponent {
     
     public final void setConditionId( int conditionId ) {
         this.conditionId = conditionId;
-    }
-
-    public final int getTaskId() {
-        return taskId;
-    }
-
-    public final void setTaskId( int taskId ) {
-        this.taskId = taskId;
     }
 
     @Override

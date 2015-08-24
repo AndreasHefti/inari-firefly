@@ -27,6 +27,8 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
+import com.inari.firefly.state.event.StateChangeEvent;
+import com.inari.firefly.state.event.StateChangeListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.UpdateEvent;
@@ -40,6 +42,8 @@ public final class ControllerSystem
         UpdateEventListener {
     
     private FFContext context;
+    private IEventDispatcher eventDispatcher;
+    
     private final DynArray<Controller> controller;
 
     ControllerSystem() {
@@ -50,13 +54,12 @@ public final class ControllerSystem
     public void init( FFContext context ) {
         this.context = context;
         
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         eventDispatcher.register( UpdateEvent.class, this );
     }
 
     @Override
     public final void dispose( FFContext context ) {
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         eventDispatcher.unregister( UpdateEvent.class, this );
         
         clear();
@@ -65,17 +68,17 @@ public final class ControllerSystem
     public final void deleteController( int id ) {
         Controller removed = controller.remove( id );
         if ( removed != null ) {
-            removed.dispose();
+            disposeController( removed );
         }
     }
 
     public final void clear() {
         for ( Controller c : controller ) {
-            c.dispose( context );
+            disposeController( c );
         }
         controller.clear();
     }
-    
+
     @Override
     public final void update( UpdateEvent event ) {
         for ( int i = 0; i < controller.capacity(); i++ ) {
@@ -139,6 +142,14 @@ public final class ControllerSystem
         ComponentBuilderHelper.toAttributes( attributes, Controller.class, controller );
     }
     
+    private final void disposeController( Controller c ) {
+        if ( c instanceof StateChangeListener ) {
+            eventDispatcher.unregister( StateChangeEvent.class, (StateChangeListener) c );
+        }
+        c.dispose( context );
+        c.dispose();
+    }
+    
 
     public final class ControllerBuilder<C extends Controller> extends BaseComponentBuilder<C> {
         
@@ -155,11 +166,11 @@ public final class ControllerSystem
             C result = getInstance( context, componentId );
             result.fromAttributes( attributes );
             controller.set( result.index(), result );
+            
+            postInit( result, context );
+            
             return result;
         }
     }
-
-
-    
 
 }

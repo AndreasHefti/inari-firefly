@@ -28,7 +28,10 @@ public final class StateChangeEvent extends Event<StateChangeListener> {
 
     @Override
     public final void notify( StateChangeListener listener ) {
-        listener.onStateChange( this );
+        int workflowId = listener.getWorkflowId();
+        if ( workflowId < 0 || workflowId == stateChange.getWorkflowId() ) {
+            listener.onStateChange( this );
+        }
     }
 
     @Override

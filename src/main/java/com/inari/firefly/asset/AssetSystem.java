@@ -40,7 +40,9 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
     
     public static final String DEFAULT_GROUP_NAME = "FF_DEFAULT_ASSET_GROUP";
     
+    private FFContext context;
     private IEventDispatcher eventDispatcher;
+    
     private final Map<AssetNameKey, Asset> assets;
     private final Map<AssetTypeKey, Asset> typeMapping;
     
@@ -52,6 +54,7 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
     
     @Override
     public void init( FFContext context ) {
+        this.context = context;
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
     }
 
@@ -400,6 +403,7 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
 
             assets.put( assetKey, asset );
             typeMapping.put( asset.typeKey, asset );
+            postInit( asset, context );
             
             eventDispatcher.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
             return asset;

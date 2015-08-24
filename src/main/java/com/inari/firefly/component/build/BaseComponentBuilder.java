@@ -24,7 +24,10 @@ import com.inari.firefly.component.NamedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
+import com.inari.firefly.state.event.StateChangeEvent;
+import com.inari.firefly.state.event.StateChangeListener;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
 
 public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
@@ -197,7 +200,16 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         if ( StringUtils.isBlank( component.getName() ) ) {
             throw new FFInitException( "Name is mandatory for component: " + component );
         }
-     }
+    }
+    
+    protected final void postInit( Component component, FFContext context ) {
+        if ( component instanceof FFContextInitiable ) {
+            ( (FFContextInitiable) component ).init( context );
+        }
+        if ( component instanceof StateChangeListener ) {
+            context.getComponent( FFContext.EVENT_DISPATCHER ).register( StateChangeEvent.class, (StateChangeListener) component );
+        }
+    }
     
     private int getId() {
         int id = -1;

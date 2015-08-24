@@ -17,6 +17,8 @@ package com.inari.firefly.state.event;
 
 public interface StateChangeListener {
 
+    int getWorkflowId();
+    
     void onStateChange( StateChangeEvent event );
     
 }

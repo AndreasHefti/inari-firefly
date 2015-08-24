@@ -21,12 +21,14 @@ import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
+import com.inari.firefly.state.event.StateChangeEvent;
+import com.inari.firefly.state.event.StateChangeListener;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.task.event.TaskEvent;
 import com.inari.firefly.task.event.TaskEventListener;
@@ -34,6 +36,8 @@ import com.inari.firefly.task.event.TaskEventListener;
 public final class TaskSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory, TaskEventListener {
     
     private FFContext context;
+    private IEventDispatcher eventDispatcher;
+    
     private final DynArray<Task> tasks;
     
     TaskSystem() {
@@ -43,15 +47,37 @@ public final class TaskSystem implements FFContextInitiable, ComponentSystem, Co
     @Override
     public final void init( FFContext context ) {
         this.context = context;
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         eventDispatcher.register( TaskEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         eventDispatcher.unregister( TaskEvent.class, this );
+        clear();
+    }
+
+    public final void clear() {
+        for ( Task task : tasks ) {
+            disposeTask( task );
+        }
+        
         tasks.clear();
+    }
+    
+    public final void removeTask( int taskId ) {
+        Task remove = tasks.remove( taskId );
+        if ( remove != null ) {
+            disposeTask( remove );
+        }
+    }
+
+    private void disposeTask( Task task ) {
+        if ( task instanceof StateChangeListener ) {
+            eventDispatcher.unregister( StateChangeEvent.class, (StateChangeListener) task );
+        }
+        task.dispose();
+        
     }
 
     @Override
@@ -128,13 +154,12 @@ public final class TaskSystem implements FFContextInitiable, ComponentSystem, Co
         public Task build( int componentId ) {
             Task result = getInstance( context, componentId );
             result.fromAttributes( attributes );
+            
+            tasks.set( result.getId(), result );
+            postInit( result, context );
+            
             return result;
         }
         
     }
-
-    
-
-    
-
 }

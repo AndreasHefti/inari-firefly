@@ -37,7 +37,6 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
-import com.inari.firefly.task.event.TaskEvent;
 
 public class StateSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory, UpdateEventListener {
     
@@ -125,10 +124,6 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
                 
                 if ( condition.check( workflow, event.timer ) ) {
                     workflow.setCurrentStateId( stateChange.getToStateId() );
-                    int taskId = stateChange.getTaskId();
-                    if ( taskId >= 0 ) {
-                        eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, taskId ) );
-                    }
                     eventDispatcher.notify( new StateChangeEvent( stateChange ) );
                 }
             }
@@ -433,6 +428,8 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
         public StateChangeCondition build( int componentId ) {
             StateChangeCondition result = getInstance( context, componentId );
             result.fromAttributes( attributes );
+            conditions.set( result.getId(), result );
+            postInit( result, context );
             return result;
         }
     }
