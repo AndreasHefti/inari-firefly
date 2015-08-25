@@ -1,10 +1,11 @@
-package com.inari.firefly.renderer.sprite.tile;
+package com.inari.firefly.renderer.tile;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Vector2f;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.renderer.BaseRenderer;
-import com.inari.firefly.renderer.sprite.tile.TileGrid.TileGridIterator;
+import com.inari.firefly.renderer.sprite.ESprite;
+import com.inari.firefly.renderer.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.RenderEvent;
@@ -55,22 +56,22 @@ public class TileGridRenderer extends BaseRenderer implements RenderEventListene
         Vector2f actualWorldPosition  = iterator.getWorldPosition();
         while( iterator.hasNext() ) {
             int entityId = iterator.next();
-            ETile cTile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
+            ESprite sprite = entitySystem.getComponent( entityId, ESprite.COMPONENT_TYPE );
             ETransform transform = entitySystem.getComponent( entityId, ETransform.COMPONENT_TYPE );
             
             transformCollector.set( transform );
             transformCollector.xpos += actualWorldPosition.dx;
             transformCollector.ypos += actualWorldPosition.dy;
             
-            render( cTile, transform );
+            render( sprite, transform );
         }
     }
 
     protected void renderTileGrid( TileGridIterator iterator ) {
         Vector2f actualWorldPosition  = iterator.getWorldPosition();
         while( iterator.hasNext() ) {
-            ETile cTile = entitySystem.getComponent( iterator.next(), ETile.COMPONENT_TYPE );
-            lowerSystemFacade.renderSprite( cTile, actualWorldPosition.dx, actualWorldPosition.dy );
+            ESprite sprite = entitySystem.getComponent( iterator.next(), ESprite.COMPONENT_TYPE );
+            lowerSystemFacade.renderSprite( sprite, actualWorldPosition.dx, actualWorldPosition.dy );
         }
     }
 

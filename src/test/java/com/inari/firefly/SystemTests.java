@@ -45,10 +45,10 @@ public class SystemTests {
           
         Entity entity = entitySystem
             .getEntityBuilder()
+                .setAttribute( ETransform.VIEW_ID, 0 )
                 .setAttribute( ETransform.XPOSITION, 0 )
                 .setAttribute( ETransform.XPOSITION, 0 )
                 .setAttribute( ESprite.SPRITE_ID, assetSystem.getAssetTypeKey( SPRITE_ASSET_KEY ).id )
-                .setAttribute( ESprite.VIEW_ID, 0 )
             .build()
             ;
         

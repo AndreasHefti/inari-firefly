@@ -18,7 +18,7 @@ package com.inari.firefly.system;
 import java.util.Iterator;
 
 import com.inari.firefly.asset.event.AssetEventListener;
-import com.inari.firefly.renderer.sprite.SpriteRenderable;
+import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.view.View;

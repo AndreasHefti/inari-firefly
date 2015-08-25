@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.firefly.asset.event.AssetEvent;
-import com.inari.firefly.renderer.sprite.SpriteRenderable;
+import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.system.FFContext;

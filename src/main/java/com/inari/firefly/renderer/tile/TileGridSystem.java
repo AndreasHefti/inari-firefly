@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.renderer.sprite.tile;
+package com.inari.firefly.renderer.tile;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
@@ -24,11 +24,12 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
+import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
-import com.inari.firefly.renderer.sprite.tile.TileGrid.TileGridIterator;
-import com.inari.firefly.renderer.sprite.tile.TileGrid.TileRenderMode;
+import com.inari.firefly.renderer.tile.TileGrid.TileGridIterator;
+import com.inari.firefly.renderer.tile.TileGrid.TileRenderMode;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.view.ViewSystem;
@@ -206,8 +207,9 @@ public final class TileGridSystem
     
     
     private final void registerEntity( int entityId, IndexedAspect entityAspect ) {
+        ETransform transform = entitySystem.getComponent( entityId, ETransform.COMPONENT_TYPE );
         ETile tile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
-        TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
+        TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
         if ( tile.isMultiPosition() ) {
             Position gridPosition = tile.getGridPosition();
             tileGrid.set( entityId, gridPosition.x, gridPosition.y );
@@ -219,8 +221,9 @@ public final class TileGridSystem
     }
     
     private final void unregisterEntity( int entityId, IndexedAspect entityAspect ) {
+        ETransform transform = entitySystem.getComponent( entityId, ETransform.COMPONENT_TYPE );
         ETile tile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
-        TileGrid tileGrid = getTileGrid( tile.getViewId(), tile.getLayerId() );
+        TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
         if ( tile.isMultiPosition() ) {
             Position gridPosition = tile.getGridPosition();
             tileGrid.reset( gridPosition.x, gridPosition.y );

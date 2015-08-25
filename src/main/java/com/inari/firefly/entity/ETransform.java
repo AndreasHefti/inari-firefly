@@ -28,6 +28,8 @@ public final class ETransform extends EntityComponent {
     
     public static final int COMPONENT_TYPE = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
     
+    public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, ETransform.class );
+    public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, ETransform.class );
     public static final AttributeKey<Float> XPOSITION = new AttributeKey<Float>( "xpos", Float.class, ETransform.class );
     public static final AttributeKey<Float> YPOSITION = new AttributeKey<Float>( "ypos", Float.class, ETransform.class );
     public static final AttributeKey<Float> PIVOT_X = new AttributeKey<Float>( "pivotx", Float.class, ETransform.class );
@@ -37,6 +39,8 @@ public final class ETransform extends EntityComponent {
     public static final AttributeKey<Float> ROTATION = new AttributeKey<Float>( "rotation", Float.class, ETransform.class );
     public static final AttributeKey<Integer> PARENT_ID = new AttributeKey<Integer>( "parentId", Integer.class, ETransform.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+        VIEW_ID,
+        LAYER_ID, 
         XPOSITION, 
         YPOSITION,
         PIVOT_X,
@@ -47,6 +51,7 @@ public final class ETransform extends EntityComponent {
         PARENT_ID
     };
     
+    private int viewId, layerId;
     private float xpos, ypos;
     private float pivotx, pivoty;
     private float scalex, scaley;
@@ -55,6 +60,8 @@ public final class ETransform extends EntityComponent {
     
     public ETransform() {
         super();
+        viewId = 0;
+        layerId = 0;
         xpos = 0;
         ypos = 0;
         pivotx = 0;
@@ -68,6 +75,22 @@ public final class ETransform extends EntityComponent {
     @Override
     public final Class<ETransform> getComponentType() {
         return ETransform.class;
+    }
+    
+    public final int getViewId() {
+        return viewId;
+    }
+
+    public final void setViewId( int viewId ) {
+        this.viewId = viewId;
+    }
+
+    public final int getLayerId() {
+        return layerId;
+    }
+
+    public final void setLayerId( int layerId ) {
+        this.layerId = layerId;
     }
 
     public final float getXpos() {
@@ -150,6 +173,8 @@ public final class ETransform extends EntityComponent {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
+        viewId = attributes.getValue( VIEW_ID, viewId );
+        layerId = attributes.getValue( LAYER_ID, layerId );
         xpos = attributes.getValue( XPOSITION, xpos );
         ypos = attributes.getValue( YPOSITION, ypos );
         pivotx = attributes.getValue( PIVOT_X, pivotx );
@@ -163,6 +188,8 @@ public final class ETransform extends EntityComponent {
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
+        attributes.put( VIEW_ID, viewId );
+        attributes.put( LAYER_ID, layerId );
         attributes.put( XPOSITION, xpos );
         attributes.put( YPOSITION, ypos );
         attributes.put( PIVOT_X, pivotx );

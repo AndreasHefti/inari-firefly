@@ -2,7 +2,6 @@ package com.inari.firefly.renderer;
 
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.renderer.sprite.SpriteRenderable;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;

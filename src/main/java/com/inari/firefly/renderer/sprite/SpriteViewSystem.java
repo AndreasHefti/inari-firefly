@@ -21,11 +21,14 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
-import com.inari.firefly.system.FFContextInitiable;
+import com.inari.firefly.renderer.SpriteRenderable;
+import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextInitiable;
 
 public final class SpriteViewSystem implements FFContextInitiable, EntityActivationListener {
     
@@ -55,15 +58,15 @@ public final class SpriteViewSystem implements FFContextInitiable, EntityActivat
     
     @Override
     public final boolean match( IndexedAspect aspect ) {
-        return aspect.contains( ESprite.COMPONENT_TYPE );
+        return aspect.contains( ESprite.COMPONENT_TYPE ) && !aspect.contains( ETile.COMPONENT_TYPE );
     }
     
     @Override
     public final void onEntityActivationEvent( EntityActivationEvent event ) {
         IndexedTypeSet components = entitySystem.getComponents( event.entityId );
-        ESprite sprite = components.get( ESprite.COMPONENT_TYPE );
-        int viewId = sprite.getViewId();
-        int layerId = sprite.getLayerId();
+        ETransform transform = components.get( ETransform.COMPONENT_TYPE );
+        int viewId = transform.getViewId();
+        int layerId = transform.getLayerId();
         switch ( event.eventType ) {
             case ENTITY_ACTIVATED: {
                 DynArray<IndexedTypeSet> renderablesOfView = getSprites( viewId, layerId, true );
