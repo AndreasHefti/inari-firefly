@@ -24,12 +24,14 @@ import com.inari.firefly.component.attr.AttributeMap;
 
 public final class Sound extends NamedIndexedComponent {
     
+    public static final AttributeKey<Integer> ASSET_ID = new AttributeKey<Integer>( "assetId", Integer.class, Sound.class );
     public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Sound.class );
     public static final AttributeKey<Float> VOLUME = new AttributeKey<Float>( "volume", Float.class, Sound.class );
     public static final AttributeKey<Float> PITCH = new AttributeKey<Float>( "pitch", Float.class, Sound.class );
     public static final AttributeKey<Float> PAN = new AttributeKey<Float>( "pan", Float.class, Sound.class );
     public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, Sound.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+        ASSET_ID,
         LOOPING,
         VOLUME,
         PITCH,
@@ -37,17 +39,26 @@ public final class Sound extends NamedIndexedComponent {
         CONTROLLER_ID
     };
     
+    private int assetId;
     private boolean looping;
-    float volume;
-    float pitch;
-    float pan;
+    private float volume;
+    private float pitch;
+    private float pan;
     private int controllerId;
-    private final boolean streaming;
+    boolean streaming;
+    long instanceId;
     
-    Sound( int id, boolean streaming ) {
+    Sound( int id ) {
         super( id );
-        this.streaming = streaming;
         controllerId = -1;
+    }
+
+    public final int getAssetId() {
+        return assetId;
+    }
+
+    final void setAssetId( int assetId ) {
+        this.assetId = assetId;
     }
 
     public final boolean isStreaming() {
@@ -68,7 +79,7 @@ public final class Sound extends NamedIndexedComponent {
         return looping;
     }
 
-    public final void setLooping( boolean looping ) {
+    final void setLooping( boolean looping ) {
         this.looping = looping;
     }
 
@@ -103,6 +114,10 @@ public final class Sound extends NamedIndexedComponent {
     public final void setControllerId( int controllerId ) {
         this.controllerId = controllerId;
     }
+    
+    public long getInstanceId() {
+        return instanceId;
+    }
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
@@ -115,6 +130,7 @@ public final class Sound extends NamedIndexedComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
+        assetId = attributes.getValue( ASSET_ID, assetId );
         looping = attributes.getValue( LOOPING, looping );
         volume = attributes.getValue( VOLUME, volume );
         pitch = attributes.getValue( PITCH, pitch );
@@ -126,12 +142,15 @@ public final class Sound extends NamedIndexedComponent {
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         
+        attributes.put( ASSET_ID, assetId );
         attributes.put( LOOPING, looping );
         attributes.put( VOLUME, volume );
         attributes.put( PITCH, pitch );
         attributes.put( PAN, pan );
         attributes.put( CONTROLLER_ID, controllerId );
     }
+
+    
 
     
 

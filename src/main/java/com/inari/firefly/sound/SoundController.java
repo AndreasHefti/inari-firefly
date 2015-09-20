@@ -45,15 +45,26 @@ public abstract class SoundController extends Controller implements SoundEventLi
 
     @Override
     public final void onSoundEvent( SoundEvent event ) {
+        Sound sound;
+        if ( event.name!= null ) {
+            sound = soundSystem.getSound( event.name );
+        } else {
+            sound = soundSystem.getSound( event.soundId );
+        }
+        
+        if ( sound == null ) {
+            return;
+        }
+       
         switch ( event.eventType ) {
             case PLAY_SOUND: {
-                if ( event.sound.getControllerId() == indexedId ) {
-                    componentIds.add( event.sound.index() );
+                if ( sound.getControllerId() == indexedId ) {
+                    componentIds.add( sound.index() );
                 }
                 break;
             } 
             case STOP_PLAYING: {
-                componentIds.remove( event.sound.index() );
+                componentIds.remove( sound.index() );
                 break;
             }
             default: {}

@@ -7,8 +7,6 @@ import java.util.Iterator;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.renderer.SpriteRenderable;
-import com.inari.firefly.sound.Sound;
-import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.ILowerSystemFacade;
 import com.inari.firefly.system.view.View;
@@ -30,14 +28,12 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
         
         eventDispatcher.register( AssetEvent.class, this );
         eventDispatcher.register( ViewEvent.class, this );
-        eventDispatcher.register( SoundEvent.class, this );
     }
     
     @Override
     public void dispose( FFContext context ) {
         eventDispatcher.unregister( AssetEvent.class, this );
         eventDispatcher.unregister( ViewEvent.class, this );
-        eventDispatcher.unregister( SoundEvent.class, this );
         
         clear();
     }
@@ -77,19 +73,36 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
             default: {}
         }
     }
-    
+
     @Override
-    public void onSoundEvent( SoundEvent event ) {
-        switch ( event.eventType ) {
-            case PLAY_SOUND: {
-                sounds.add( event.sound.getName() );
-                break;
-            }
-            case STOP_PLAYING: {
-                sounds.remove( event.sound );
-            }
-            default: {}
-        }
+    public long playSound( int soundId, boolean looping, float volume, float pitch, float pan ) {
+        log.add( "playSound" );
+        return soundId;
+    }
+
+    @Override
+    public void changeSound( int soundId, long instanceId, float volume, float pitch, float pan ) {
+        log.add( "changeSound" );
+    }
+
+    @Override
+    public void stopSound( int soundId, long instanceId ) {
+        log.add( "stopSound" );
+    }
+
+    @Override
+    public void playMusic( int soundId, boolean looping, float volume, float pan ) {
+        log.add( "playMusic" );
+    }
+
+    @Override
+    public void changeMusic( int soundId, float volume, float pan ) {
+        log.add( "changeMusic" );
+    }
+
+    @Override
+    public void stopMusic( int soundId ) {
+        log.add( "stopMusic" );
     }
 
     @Override
@@ -110,11 +123,6 @@ public class LowerSystemFacadeMock implements ILowerSystemFacade {
     @Override
     public void endRendering( View view ) {
         log.add( "endRendering::View(" + view.getName() + ")" );
-    }
-    
-    @Override
-    public void soundAttributesChanged( Sound sound ) {
-        log.add( "soundAttributesChanged::Sound(" + sound.getName() + ")" );
     }
 
     @Override

@@ -19,12 +19,10 @@ import java.util.Iterator;
 
 import com.inari.firefly.asset.event.AssetEventListener;
 import com.inari.firefly.renderer.SpriteRenderable;
-import com.inari.firefly.sound.Sound;
-import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEventListener;
 
-public interface ILowerSystemFacade extends FFContextInitiable, AssetEventListener, ViewEventListener, SoundEventListener {
+public interface ILowerSystemFacade extends FFContextInitiable, AssetEventListener, ViewEventListener {
     
     void startRendering( View view );
     
@@ -35,8 +33,18 @@ public interface ILowerSystemFacade extends FFContextInitiable, AssetEventListen
     void endRendering( View view );
     
     void flush( Iterator<View> virtualViews );
+
+    long playSound( int soundId, boolean looping, float volume, float pitch, float pan );
     
-    void soundAttributesChanged( Sound sound );
+    void changeSound( int soundId, long instanceId, float volume, float pitch, float pan );
+    
+    void stopSound( int soundId, long instanceId );
+    
+    void playMusic( int soundId, boolean looping, float volume, float pan );
+    
+    void changeMusic( int soundId, float volume, float pan );
+    
+    void stopMusic( int soundId );
 
     int getScreenWidth();
 

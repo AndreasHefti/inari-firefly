@@ -16,37 +16,33 @@
 package com.inari.firefly.sound.event;
 
 import com.inari.commons.event.Event;
-import com.inari.firefly.sound.Sound;
 
 public final class SoundEvent extends Event<SoundEventListener> {
     
     public enum Type {
         PLAY_SOUND,
-        STOP_PLAYING,
+        STOP_PLAYING
     }
     
-    public final Sound sound;
+    public final int soundId;
+    public final String name;
     public final Type eventType;
 
-    public SoundEvent( Sound sound, Type eventType ) {
-        this.sound = sound;
+    public SoundEvent( int soundId, Type eventType ) {
+        this.soundId = soundId;
+        this.name = null;
+        this.eventType = eventType;
+    }
+    
+    public SoundEvent( String name, Type eventType ) {
+        this.soundId = -1;
+        this.name = name;
         this.eventType = eventType;
     }
 
     @Override
     public final void notify( SoundEventListener listener ) {
         listener.onSoundEvent( this );
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "SoundEvent [eventType=" );
-        builder.append( eventType );
-        builder.append( ", soundId=" );
-        builder.append( sound.index() );
-        builder.append( "]" );
-        return builder.toString();
     }
 
 }
