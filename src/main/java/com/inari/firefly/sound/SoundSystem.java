@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.StringUtils;
+import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.asset.AssetTypeKey;
@@ -42,6 +43,8 @@ public final class SoundSystem
         ComponentBuilderFactory,
         SoundEventListener {
     
+    public static final TypedKey<SoundSystem> CONTEXT_KEY = TypedKey.create( "FF_SOUND_SYSTEM", SoundSystem.class );
+    
     private FFContext context;
     private AssetSystem assetSystem;
     private ILowerSystemFacade lowerSystemFacade;
@@ -55,7 +58,7 @@ public final class SoundSystem
     @Override
     public final void init( FFContext context ) {
         this.context = context;
-        assetSystem = context.getComponent( FFContext.Systems.ASSET_SYSTEM );
+        assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
         lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
         
         context.getComponent( FFContext.EVENT_DISPATCHER ).register( SoundEvent.class, this );

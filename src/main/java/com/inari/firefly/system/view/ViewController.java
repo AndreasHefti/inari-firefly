@@ -14,7 +14,7 @@ public abstract class ViewController extends Controller implements ViewEventList
     
     protected ViewController( int id, FFContext context ) {
         super( id );
-        viewSystem = context.getComponent( FFContext.Systems.VIEW_SYSTEM );
+        viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         
         eventDispatcher.register( ViewEvent.class, this );

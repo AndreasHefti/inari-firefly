@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.animation.event.AnimationEvent;
 import com.inari.firefly.animation.event.AnimationEventListener;
@@ -39,11 +40,13 @@ import com.inari.firefly.system.UpdateEventListener;
 
 public final class AnimationSystem 
     implements
-    FFContextInitiable,
+        FFContextInitiable,
         ComponentSystem,
         ComponentBuilderFactory, 
         UpdateEventListener, 
         AnimationEventListener {
+    
+    public static final TypedKey<AnimationSystem> CONTEXT_KEY = TypedKey.create( "FF_ANIMATION_SYSTEM", AnimationSystem.class );
     
     private FFContext context;
     private IEventDispatcher eventDispatcher;

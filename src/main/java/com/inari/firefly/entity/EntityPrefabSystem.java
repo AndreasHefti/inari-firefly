@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
@@ -17,12 +18,14 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.entity.event.EntityPrefabActionEvent;
 import com.inari.firefly.entity.event.EntityPrefabActionListener;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.view.View;
 
 public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActionListener, ComponentSystem, ComponentBuilderFactory, Disposable {
+    
+    public static final TypedKey<EntityPrefabSystem> CONTEXT_KEY = TypedKey.create( "ENTITY_PREFAB_SYSTEM", EntityPrefabSystem.class );
     
     private DynArray<EntityPrefab> prefabs;
     private DynArray<String> prefabNames;
@@ -46,7 +49,7 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
         prefabNames = new DynArray<String>();
         prefabComponents = new DynArray<IndexedTypeSet>();
         
-        entitySystem = context.getComponent( FFContext.Systems.ENTITY_SYSTEM );
+        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
         entityProvider = context.getComponent( FFContext.ENTITY_PROVIDER );
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
 

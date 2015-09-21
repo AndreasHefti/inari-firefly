@@ -24,6 +24,7 @@ import java.util.Set;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.lang.TypedKey;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentBuilderHelper;
@@ -37,6 +38,8 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 
 public class AssetSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory {
+    
+    public static final TypedKey<AssetSystem> CONTEXT_KEY = TypedKey.create( "FF_ASSET_SYSTEM", AssetSystem.class );
     
     public static final String DEFAULT_GROUP_NAME = "FF_DEFAULT_ASSET_GROUP";
     

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentBuilderHelper;
@@ -34,19 +35,21 @@ import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 
-public final class ControllerSystem 
+public final class ComponentControllerSystem 
     implements
         FFContextInitiable,
         ComponentSystem,
         ComponentBuilderFactory,
         UpdateEventListener {
     
+    public static final TypedKey<ComponentControllerSystem> CONTEXT_KEY = TypedKey.create( "FF_COMPONENT_CONTROLLER_SYSTEM", ComponentControllerSystem.class );
+    
     private FFContext context;
     private IEventDispatcher eventDispatcher;
     
     private final DynArray<Controller> controller;
 
-    ControllerSystem() {
+    ComponentControllerSystem() {
         controller = new DynArray<Controller>();
     }
     

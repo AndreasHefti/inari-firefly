@@ -24,11 +24,10 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.TypedKey;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.control.ComponentControllerSystem;
 import com.inari.firefly.entity.EntityPrefabSystem;
 import com.inari.firefly.entity.EntityProvider;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.movement.MovementSystem;
 import com.inari.firefly.renderer.sprite.SpriteViewRenderer;
 import com.inari.firefly.renderer.sprite.SpriteViewSystem;
 import com.inari.firefly.renderer.tile.TileGridRenderer;
@@ -61,19 +60,18 @@ public final class FireFly {
         initMap.put( FFContext.INPUT, input );
         initMap.put( FFContext.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
         initMap.put( FFContext.ENTITY_PROVIDER, EntityProvider.class );
-        initMap.put( FFContext.Systems.ASSET_SYSTEM, AssetSystem.class );
-        initMap.put( FFContext.Systems.STATE_SYSTEM, StateSystem.class );
-        initMap.put( FFContext.Systems.VIEW_SYSTEM, ViewSystem.class );
-        initMap.put( FFContext.Systems.ENTITY_SYSTEM, EntitySystem.class );
-        initMap.put( FFContext.Systems.ENTITY_PREFAB_SYSTEM, EntityPrefabSystem.class );
-        initMap.put( FFContext.Systems.SPRITE_VIEW_SYSTEM, SpriteViewSystem.class );
-        initMap.put( FFContext.Systems.TILE_GRID_SYSTEM, TileGridSystem.class );
-        initMap.put( FFContext.Systems.MOVEMENT_SYSTEM, MovementSystem.class );
-        initMap.put( FFContext.Systems.ENTITY_CONTROLLER_SYSTEM, ControllerSystem.class );
-        initMap.put( FFContext.Systems.ANIMATION_SYSTEM, AnimationSystem.class );
-        initMap.put( FFContext.Systems.SOUND_SYSTEM, SoundSystem.class );
-        initMap.put( FFContext.Renderer.SPRITE_VIEW_RENDERER, SpriteViewRenderer.class );
-        initMap.put( FFContext.Renderer.TILE_GRID_RENDERER, TileGridRenderer.class );
+        initMap.put( AssetSystem.CONTEXT_KEY, AssetSystem.class );
+        initMap.put( StateSystem.CONTEXT_KEY, StateSystem.class );
+        initMap.put( ViewSystem.CONTEXT_KEY, ViewSystem.class );
+        initMap.put( EntitySystem.CONTEXT_KEY, EntitySystem.class );
+        initMap.put( EntityPrefabSystem.CONTEXT_KEY, EntityPrefabSystem.class );
+        initMap.put( SpriteViewSystem.CONTEXT_KEY, SpriteViewSystem.class );
+        initMap.put( TileGridSystem.CONTEXT_KEY, TileGridSystem.class );
+        initMap.put( ComponentControllerSystem.CONTEXT_KEY, ComponentControllerSystem.class );
+        initMap.put( AnimationSystem.CONTEXT_KEY, AnimationSystem.class );
+        initMap.put( SoundSystem.CONTEXT_KEY, SoundSystem.class );
+        initMap.put( SpriteViewRenderer.CONTEXT_KEY, SpriteViewRenderer.class );
+        initMap.put( TileGridRenderer.CONTEXT_KEY, TileGridRenderer.class );
 
         init( initMap );
         
@@ -92,7 +90,7 @@ public final class FireFly {
     private void init( InitMap initMap ) {
         context = new FFContextImpl( initMap );
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        viewSystem = context.getComponent( FFContext.Systems.VIEW_SYSTEM );
+        viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
         lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
 
         if ( eventDispatcher == null ) {

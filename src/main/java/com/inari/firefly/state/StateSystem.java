@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.ComponentBuilderHelper;
@@ -39,6 +40,8 @@ import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 
 public class StateSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory, UpdateEventListener {
+    
+    public static final TypedKey<StateSystem> CONTEXT_KEY = TypedKey.create( "FF_STATE_SYSTEM", StateSystem.class );
     
     private IEventDispatcher eventDispatcher;
     private FFContext context;

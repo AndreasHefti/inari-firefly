@@ -18,6 +18,7 @@ package com.inari.firefly.renderer.tile;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.build.BaseComponentBuilder;
@@ -44,6 +45,8 @@ public final class TileGridSystem
         ViewEventListener,
         EntityActivationListener {
     
+    public static final TypedKey<TileGridSystem> CONTEXT_KEY = TypedKey.create( "FF_TILE_GRID_SYSTEM", TileGridSystem.class ); 
+    
     public static final int VOID_ENTITY_ID = -1;
     
     private IEventDispatcher eventDispatcher;
@@ -61,8 +64,8 @@ public final class TileGridSystem
     @Override
     public void init( FFContext context ) {
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        entitySystem = context.getComponent( FFContext.Systems.ENTITY_SYSTEM );
-        viewSystem = context.getComponent( FFContext.Systems.VIEW_SYSTEM );
+        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
         
         eventDispatcher.register( EntityActivationEvent.class, this );
         eventDispatcher.register( ViewEvent.class, this );

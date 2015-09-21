@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.IntIterator;
+import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.functional.Predicate;
 import com.inari.commons.lang.indexed.IndexedTypeAspect;
@@ -39,10 +40,12 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextInitiable;
 
 public final class EntitySystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
+    
+    public static final TypedKey<EntitySystem> CONTEXT_KEY = TypedKey.create( "FF_ENTITY_SYSTEM", EntitySystem.class );
 
     private IEventDispatcher eventDispatcher;
     private EntityProvider entityProvider;

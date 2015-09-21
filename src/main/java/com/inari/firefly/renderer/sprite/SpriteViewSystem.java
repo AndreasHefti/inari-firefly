@@ -18,6 +18,7 @@ package com.inari.firefly.renderer.sprite;
 import java.util.Comparator;
 
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
@@ -32,6 +33,8 @@ import com.inari.firefly.system.FFContextInitiable;
 
 public final class SpriteViewSystem implements FFContextInitiable, EntityActivationListener {
     
+    public static final TypedKey<SpriteViewSystem> CONTEXT_KEY = TypedKey.create( "FF_SPRITE_VIEW_SYSTEM", SpriteViewSystem.class ); 
+    
     private EntitySystem entitySystem;
 
     private final DynArray<DynArray<DynArray<IndexedTypeSet>>> spritesPerViewAndLayer;
@@ -42,7 +45,7 @@ public final class SpriteViewSystem implements FFContextInitiable, EntityActivat
     
     @Override
     public void init( FFContext context ) {
-        entitySystem = context.getComponent( FFContext.Systems.ENTITY_SYSTEM );
+        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
 
         IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         eventDispatcher.register( EntityActivationEvent.class, this );

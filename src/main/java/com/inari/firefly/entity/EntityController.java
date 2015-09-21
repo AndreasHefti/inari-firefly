@@ -17,6 +17,7 @@ package com.inari.firefly.entity;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.aspect.IndexedAspect;
+import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.EController;
@@ -30,11 +31,13 @@ public abstract class EntityController extends Controller implements EntityActiv
     
     protected IEventDispatcher eventDispatcher;
     protected EntitySystem entitySystem;
+    protected AnimationSystem animationSystem;
     
     protected EntityController( int id, FFContext context ) {
         super( id );
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        entitySystem = context.getComponent( FFContext.Systems.ENTITY_SYSTEM );
+        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        animationSystem = context.getComponent( AnimationSystem.CONTEXT_KEY );
         
         eventDispatcher.register( EntityActivationEvent.class, this );
     }
