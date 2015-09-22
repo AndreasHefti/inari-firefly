@@ -33,6 +33,7 @@ public final class Workflow extends NamedIndexedComponent {
 
     Workflow( int workflowId ) {
         super( workflowId );
+        currentStateId = -1;
     }
 
     public final int getCurrentStateId() {

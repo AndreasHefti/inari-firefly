@@ -20,7 +20,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
@@ -34,6 +36,8 @@ import com.inari.firefly.task.event.TaskEvent;
 import com.inari.firefly.task.event.TaskEventListener;
 
 public final class TaskSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory, TaskEventListener {
+    
+    public static final TypedKey<TaskSystem> CONTEXT_KEY = TypedKey.create( "FF_TASK_SYSTEM", TaskSystem.class );
     
     private FFContext context;
     private IEventDispatcher eventDispatcher;
@@ -101,17 +105,17 @@ public final class TaskSystem implements FFContextInitiable, ComponentSystem, Co
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
     public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( type == Task.class ) {
-            return (ComponentBuilder<C>) getTaskBuilder();
+        if ( !Task.class.isAssignableFrom( type ) ) {
+            throw new IllegalArgumentException( "The IComponentType is not a subtype of Task." + type );
         }
         
-        throw new IllegalArgumentException( "Unsupported IComponent type for StateSystem. Type: " + type );
+        return new TaskBuilder( this, type );
     }
     
-    public final TaskBuilder getTaskBuilder() {
-        return new TaskBuilder( this );
+    public final <T extends Task> TaskBuilder<T> getTaskBuilder( Class<T> taskType ) {
+        return new TaskBuilder<T>( this, taskType );
     }
 
     private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
@@ -139,20 +143,25 @@ public final class TaskSystem implements FFContextInitiable, ComponentSystem, Co
         
     }
     
-    private final class TaskBuilder extends BaseComponentBuilder<Task> {
+    public final class TaskBuilder<T extends Task> extends BaseComponentBuilder<T> {
+        
+        private final Class<T> taskType;
 
-        protected TaskBuilder( ComponentBuilderFactory componentFactory ) {
+        protected TaskBuilder( ComponentBuilderFactory componentFactory, Class<T> taskType ) {
             super( componentFactory );
+            this.taskType = taskType;
         }
         
         @Override
-        protected Task createInstance( Constructor<Task> constructor, Object... paramValues ) throws Exception {
+        protected T createInstance( Constructor<T> constructor, Object... paramValues ) throws Exception {
             return constructor.newInstance( paramValues );
         }
 
         @Override
-        public Task build( int componentId ) {
-            Task result = getInstance( context, componentId );
+        public T build( int componentId ) {
+            attributes.put( Component.INSTANCE_TYPE_NAME, taskType.getName() );
+            
+            T result = getInstance( context, componentId );
             result.fromAttributes( attributes );
             
             tasks.set( result.getId(), result );

@@ -23,7 +23,7 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
 
-public final class StateChange extends NamedIndexedComponent {
+public final class StateChange extends NamedIndexedComponent implements IStateChange {
     
     public static final AttributeKey<Integer> WORKFLOW_ID = new AttributeKey<Integer>( "workflowId", Integer.class, StateChange.class );
     public static final AttributeKey<Integer> FORM_STATE_ID = new AttributeKey<Integer>( "fromStateId", Integer.class, StateChange.class );
@@ -49,6 +49,7 @@ public final class StateChange extends NamedIndexedComponent {
         conditionId = -1;
     }
     
+    @Override
     public final int getFromStateId() {
         return fromStateId;
     }
@@ -57,6 +58,7 @@ public final class StateChange extends NamedIndexedComponent {
         this.fromStateId = fromStateId;
     }
     
+    @Override
     public final int getToStateId() {
         return toStateId;
     }
@@ -65,6 +67,7 @@ public final class StateChange extends NamedIndexedComponent {
         this.toStateId = toStateId;
     }
     
+    @Override
     public final int getWorkflowId() {
         return workflowId;
     }
@@ -73,6 +76,7 @@ public final class StateChange extends NamedIndexedComponent {
         this.workflowId = workflowId;
     }
     
+    @Override
     public final int getConditionId() {
         return conditionId;
     }

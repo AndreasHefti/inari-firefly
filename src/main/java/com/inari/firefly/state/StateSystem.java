@@ -26,6 +26,7 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentBuilderHelper;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
@@ -38,6 +39,7 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
+import com.inari.firefly.task.event.TaskEvent;
 
 public class StateSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory, UpdateEventListener {
     
@@ -51,9 +53,9 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
     private final DynArray<Collection<StateChange>> stateChangesForState;
     private final DynArray<StateChangeCondition> conditions;
     
-    private int updateStep = 10;
+    private int updateStep = 1;
 
-    public StateSystem(  ) {
+    public StateSystem() {
         workflows = new DynArray<Workflow>( Indexer.getIndexedObjectSize( Workflow.class ) );
         states = new DynArray<State>( Indexer.getIndexedObjectSize( State.class ) );
         stateChangesForState = new DynArray<Collection<StateChange>>( Indexer.getIndexedObjectSize( State.class ) );
@@ -101,10 +103,27 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
         conditions.clear();
     }
     
+    public void initWorkflow( int workflowId, final int initState ) {
+        final Workflow workflow = workflows.get( workflowId );
+        if ( workflow == null ) {
+            return;
+        }
+        
+        IStateChange adHocStateChange = new IStateChange() {
+            @Override public int getId() { return -1; }
+            @Override public int getFromStateId() { return workflow.getCurrentStateId(); }
+            @Override public int getToStateId() { return initState; }
+            @Override public int getWorkflowId() { return workflow.getId(); }
+            @Override public int getConditionId() { return -1; }
+        };
+        
+        changeState( workflow, adHocStateChange );
+    }
+    
     @Override
     public final void update( UpdateEvent event ) {
-        long time = event.timer.getTime();
-        if ( time % updateStep != 0 ) {
+        long update = event.timer.getUpdate();
+        if ( update % updateStep != 0 ) {
             return;
         }
         
@@ -126,11 +145,28 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
                 }
                 
                 if ( condition.check( workflow, event.timer ) ) {
-                    workflow.setCurrentStateId( stateChange.getToStateId() );
-                    eventDispatcher.notify( new StateChangeEvent( stateChange ) );
+                    changeState( workflow, stateChange );
                 }
             }
         }
+    }
+
+    private void changeState( Workflow workflow, IStateChange stateChange ) {
+        int currentStateId = workflow.getCurrentStateId();
+        if ( currentStateId >= 0 ) {
+            State currentState = states.get( currentStateId );
+            if ( currentState.getDisposeTaskId() >= 0 ) {
+                eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, currentState.getDisposeTaskId() ) );
+            }
+        }
+        
+        State newState = states.get( stateChange.getToStateId() );
+        if ( newState.getInitTaskId() >= 0 ) {
+            eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, newState.getInitTaskId() ) );
+        }
+        
+        workflow.setCurrentStateId( newState.getId() );
+        eventDispatcher.notify( new StateChangeEvent( stateChange ) );
     }
     
     public final boolean deleteWorkflow( String name ) {
@@ -171,6 +207,10 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
         
         deleteAllStates( indexedId );
         workflow.dispose();
+    }
+    
+    public final State getState( int stateId ) {
+        return states.get( stateId );
     }
     
     public final State getCurrentState( int workflowId ) {
@@ -265,7 +305,7 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
     public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
         if ( type == Workflow.class ) {
             return (ComponentBuilder<C>) getWorkflowBuilder();
@@ -275,8 +315,8 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
             return (ComponentBuilder<C>) getStateBuilder();
         }
         
-        if ( type == StateChangeCondition.class ) {
-            return (ComponentBuilder<C>) getStateChangeConditionBuilder();
+        if ( StateChangeCondition.class.isAssignableFrom( type ) ) {
+            return new StateChangeConditionBuilder( this, type );
         }
         
         if ( type == StateChange.class ) {
@@ -318,8 +358,8 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
         };
     }
     
-    public final StateChangeConditionBuilder getStateChangeConditionBuilder() {
-        return new StateChangeConditionBuilder( this );
+    public final <C extends StateChangeCondition> StateChangeConditionBuilder<C> getStateChangeConditionBuilder( Class<C> type ) {
+        return new StateChangeConditionBuilder<C>( this, type );
     }
     
     public final ComponentBuilder<StateChange> getStateChangeBuilder() {
@@ -343,6 +383,7 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
         fromAttributes( attributes, BuildType.CLEAR_OLD );
     }
 
+    @SuppressWarnings( "unchecked" )
     @Override
     public final void fromAttributes( Attributes attributes, BuildType buildType ) {
         if ( buildType == BuildType.CLEAR_OLD ) {
@@ -371,16 +412,23 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
             }
         }.buildComponents( State.class, buildType, getStateBuilder(), attributes );
         
-        new ComponentBuilderHelper<StateChangeCondition>() {
-            @Override
-            public StateChangeCondition get( int id ) {
-                return conditions.get( id );
-            }
-            @Override
-            public void delete( int id ) {
-                deleteCondition( id );
-            }
-        }.buildComponents( StateChangeCondition.class, buildType, getStateChangeConditionBuilder(), attributes );
+        for ( Class<? extends StateChangeCondition> subType : attributes.getAllSubTypes( StateChangeCondition.class ) ) {
+            new ComponentBuilderHelper<StateChangeCondition>() {
+                @Override
+                public StateChangeCondition get( int id ) {
+                    return conditions.get( id );
+                }
+                @Override
+                public void delete( int id ) {
+                    deleteCondition( id );
+                }
+            }.buildComponents( 
+                StateChangeCondition.class, 
+                buildType, 
+                (StateChangeConditionBuilder<StateChangeCondition>) getStateChangeConditionBuilder( subType ), 
+                attributes 
+            );
+        }
         
         new ComponentBuilderHelper<StateChange>() {
             @Override
@@ -416,20 +464,25 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
         }
     }
     
-    private final class StateChangeConditionBuilder extends BaseComponentBuilder<StateChangeCondition> {
+    public final class StateChangeConditionBuilder<C extends StateChangeCondition> extends BaseComponentBuilder<C> {
         
-        private StateChangeConditionBuilder( StateSystem system ) {
+        private final Class<C> type;
+        
+        private StateChangeConditionBuilder( StateSystem system, Class<C> type ) {
             super( system );
+            this.type = type;
         }
         
         @Override
-        protected StateChangeCondition createInstance( Constructor<StateChangeCondition> constructor, Object... paramValues ) throws Exception {
+        protected C createInstance( Constructor<C> constructor, Object... paramValues ) throws Exception {
             return constructor.newInstance( paramValues );
         }
 
         @Override
-        public StateChangeCondition build( int componentId ) {
-            StateChangeCondition result = getInstance( context, componentId );
+        public C build( int componentId ) {
+            attributes.put( Component.INSTANCE_TYPE_NAME, type.getName() );
+            
+            C result = getInstance( context, componentId );
             result.fromAttributes( attributes );
             conditions.set( result.getId(), result );
             postInit( result, context );
@@ -472,15 +525,19 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
                 throw new ComponentCreationException( "The StateChangeCondition with id: " + conditionId + " does not exists." );
             }
             
-            Collection<StateChange> stateChanges = stateChangesForState.get( fromStateId );
-            if ( stateChanges == null ) {
+            Collection<StateChange> stateChanges;
+            if ( !stateChangesForState.contains( fromStateId ) ) {
                 stateChanges = new ArrayList<StateChange>();
                 stateChangesForState.set( fromStateId, stateChanges );
+            } else {
+                stateChanges = stateChangesForState.get( fromStateId );
             }
             stateChanges.add( stateChange );
             
             return stateChange;
         }
     }
+
+    
 
 }

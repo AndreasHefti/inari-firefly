@@ -44,13 +44,14 @@ public final class ETransform extends EntityComponent {
         XPOSITION, 
         YPOSITION,
         PIVOT_X,
-        PIVOT_X,
+        PIVOT_Y,
         SCALE_X,
-        SCALE_X,
+        SCALE_Y,
         ROTATION,
         PARENT_ID
     };
     
+    // TODO use Position for x/y values!?!?
     private int viewId, layerId;
     private float xpos, ypos;
     private float pivotx, pivoty;

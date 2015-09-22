@@ -95,7 +95,7 @@ public final class TextureAsset extends Asset {
         super.toAttributes( attributes );
         attributes.put( RESOURCE_NAME, resourceName );
         attributes.put( TEXTURE_WIDTH, width );
-        attributes.put( TEXTURE_WIDTH, height );
+        attributes.put( TEXTURE_HEIGHT, height );
     }
 
 }

@@ -417,6 +417,7 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
             inactiveEntities.set( entity.getId(), entity );
             return entity;
         }
+        
     }
 
 }

@@ -71,7 +71,7 @@ public final class SpriteAsset extends Asset {
         checkNotAlreadyLoaded();
         this.textureRegion.x = textureRegion.x;
         this.textureRegion.y = textureRegion.y;
-        this.textureRegion.width = textureRegion.height;
+        this.textureRegion.width = textureRegion.width;
         this.textureRegion.height = textureRegion.height;
     }
 

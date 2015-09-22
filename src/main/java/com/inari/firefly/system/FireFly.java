@@ -37,6 +37,7 @@ import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.system.FFContextImpl.InitMap;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
+import com.inari.firefly.task.TaskSystem;
 
 public final class FireFly {
     
@@ -72,6 +73,7 @@ public final class FireFly {
         initMap.put( SoundSystem.CONTEXT_KEY, SoundSystem.class );
         initMap.put( SpriteViewRenderer.CONTEXT_KEY, SpriteViewRenderer.class );
         initMap.put( TileGridRenderer.CONTEXT_KEY, TileGridRenderer.class );
+        initMap.put( TaskSystem.CONTEXT_KEY, TaskSystem.class );
 
         init( initMap );
         

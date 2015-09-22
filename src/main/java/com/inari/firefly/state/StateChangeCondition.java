@@ -16,13 +16,17 @@
 package com.inari.firefly.state;
 
 import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFTimer;
 
 
 public abstract class StateChangeCondition extends NamedIndexedComponent {
     
-    protected StateChangeCondition( int stateChangeConditionId ) {
+    protected FFContext context;
+    
+    protected StateChangeCondition( int stateChangeConditionId, FFContext context ) {
         super( stateChangeConditionId );
+        this.context = context;
     }
 
     @Override
