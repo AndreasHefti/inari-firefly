@@ -18,38 +18,43 @@ package com.inari.firefly.state;
 import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.StringUtils;
 import com.inari.firefly.component.NamedIndexedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.FFInitException;
 
 
-public final class StateChange extends NamedIndexedComponent implements IStateChange {
+public final class StateChange extends NamedIndexedComponent {
     
     public static final AttributeKey<Integer> WORKFLOW_ID = new AttributeKey<Integer>( "workflowId", Integer.class, StateChange.class );
     public static final AttributeKey<Integer> FORM_STATE_ID = new AttributeKey<Integer>( "fromStateId", Integer.class, StateChange.class );
     public static final AttributeKey<Integer> TO_STATE_ID = new AttributeKey<Integer>( "toStateId", Integer.class, StateChange.class );
-    public static final AttributeKey<Integer> CONDITION_ID = new AttributeKey<Integer>( "conditionId", Integer.class, StateChange.class );
+    public static final AttributeKey<String> CONDITION_TYPE_NAME = new AttributeKey<String>( "conditionTypeName", String.class, StateChange.class );
+    public static final AttributeKey<Integer> TASK_ID = new AttributeKey<Integer>( "taskId", Integer.class, StateChange.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         WORKFLOW_ID,
         FORM_STATE_ID,
         TO_STATE_ID,
-        CONDITION_ID,
+        CONDITION_TYPE_NAME,
+        TASK_ID
     };
     
     private int fromStateId;
     private int toStateId;
     private int workflowId;
-    private int conditionId;
+    private StateChangeCondition condition;
+    private int taskId;
     
     protected StateChange( int stateChangeId ) {
         super( stateChangeId );
         fromStateId = -1;
         toStateId = -1;
         workflowId = -1;
-        conditionId = -1;
+        condition = null;
+        taskId = -1;
     }
     
-    @Override
     public final int getFromStateId() {
         return fromStateId;
     }
@@ -58,7 +63,6 @@ public final class StateChange extends NamedIndexedComponent implements IStateCh
         this.fromStateId = fromStateId;
     }
     
-    @Override
     public final int getToStateId() {
         return toStateId;
     }
@@ -67,7 +71,6 @@ public final class StateChange extends NamedIndexedComponent implements IStateCh
         this.toStateId = toStateId;
     }
     
-    @Override
     public final int getWorkflowId() {
         return workflowId;
     }
@@ -75,14 +78,21 @@ public final class StateChange extends NamedIndexedComponent implements IStateCh
     public final void setWorkflowId( int workflowId ) {
         this.workflowId = workflowId;
     }
-    
-    @Override
-    public final int getConditionId() {
-        return conditionId;
+
+    public final StateChangeCondition getCondition() {
+        return condition;
     }
-    
-    public final void setConditionId( int conditionId ) {
-        this.conditionId = conditionId;
+
+    public final void setCondition( StateChangeCondition condition ) {
+        this.condition = condition;
+    }
+
+    public final int getTaskId() {
+        return taskId;
+    }
+
+    public final void setTaskId( int taskId ) {
+        this.taskId = taskId;
     }
 
     @Override
@@ -99,7 +109,17 @@ public final class StateChange extends NamedIndexedComponent implements IStateCh
         fromStateId = attributes.getValue( FORM_STATE_ID, fromStateId );
         toStateId = attributes.getValue( TO_STATE_ID, toStateId );
         workflowId = attributes.getValue( WORKFLOW_ID, workflowId );
-        conditionId = attributes.getValue( CONDITION_ID, conditionId );
+        
+        String conditionTypeName = attributes.getValue( CONDITION_TYPE_NAME );
+        if ( !StringUtils.isBlank( conditionTypeName ) ) {
+            try {
+                condition = (StateChangeCondition) Class.forName( conditionTypeName ).newInstance();
+            } catch ( Exception  e ) {
+                throw new FFInitException( "Failed to get Condition form type: " + conditionTypeName, e );
+            }
+        }
+        
+        taskId = attributes.getValue( TASK_ID, taskId );
     }
 
     @Override
@@ -109,7 +129,10 @@ public final class StateChange extends NamedIndexedComponent implements IStateCh
         attributes.put( FORM_STATE_ID, fromStateId );
         attributes.put( TO_STATE_ID, toStateId );
         attributes.put( WORKFLOW_ID, workflowId );
-        attributes.put( CONDITION_ID, conditionId );
+        if ( condition != null ) {
+            attributes.put( CONDITION_TYPE_NAME, condition.getClass().getName() );
+        }
+        attributes.put( TASK_ID, taskId );
     }
 
 }

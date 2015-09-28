@@ -110,6 +110,30 @@ public final class TileGridSystem
         return getTileGrid( viewId, layerId ) != null;
     }
     
+    public final TileGrid getTileGrid( String viewName ) {
+        int viewId = viewSystem.getViewId( viewName );
+        if ( viewId < 0 ) {
+            return null;
+        }
+        
+        return getTileGrid( viewId );
+    }
+    
+    public final TileGrid getTileGrid( String viewName, String layerName ) {
+        int viewId = viewSystem.getViewId( viewName );
+        int layerId = viewSystem.getLayerId( layerName );
+        if ( viewId < 0 || layerId < 0 ) {
+            return null;
+        }
+        
+        
+        return getTileGrid( viewId, layerId );
+    }
+    
+    public final TileGrid getTileGrid( int viewId ) {
+        return getTileGrid( viewId, 0 );
+    }
+    
     public final TileGrid getTileGrid( int viewId, int layerId ) {
         if ( layerId < 0 ) {
             return tileGridOfViews.get( viewId );

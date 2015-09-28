@@ -66,7 +66,7 @@ public class TileGridRenderer extends BaseRenderer implements RenderEventListene
             transformCollector.xpos += actualWorldPosition.dx;
             transformCollector.ypos += actualWorldPosition.dy;
             
-            render( sprite, transform );
+            render( sprite, transform.getParentId() );
         }
     }
 

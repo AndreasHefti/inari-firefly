@@ -89,6 +89,16 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
         return views.get( viewId );
     }
     
+    public final int getViewId( String viewName ) {
+        for ( View view : views ) {
+            if ( viewName.equals( view.getName() ) ) {
+                return view.getId();
+            }
+        }
+        
+        return -1;
+    }
+    
     public final Iterator<View> activeViewportIterator() {
         return activeViewports.iterator();
     }
@@ -197,6 +207,18 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
         }
         
         return null;
+    }
+    
+    public final int getLayerId( String layerName ) {
+        for ( List<Layer> layers : layersOfView ) {
+            for ( Layer layer : layers ) {
+                if ( layerName.equals( layer.getName() ) ) {
+                    return layer.getId();
+                }
+            }
+        }
+        
+        return -1;
     }
     
     public final Layer getLayer( int viewId, int layerId ) {
@@ -332,41 +354,7 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
     }
 
     public final ComponentBuilder<Layer> getLayerBuilder() {
-        return new BaseComponentBuilder<Layer>( this ) {
-            
-
-            @SuppressWarnings( "unused" )
-            public ComponentBuilder<Layer> setAttribute( AttributeKey<Integer> key, View value ) {
-                return super.setAttribute( key, value.index() );
-            }
-
-            @Override
-            public Layer build( int componentId ) {
-                Layer layer = new Layer( componentId );
-                layer.fromAttributes( attributes );
-                checkName( layer );
-                
-                int viewId = layer.getViewId();
-                if ( !hasView( viewId ) ) {
-                    throw new ComponentCreationException( "The View with id: " + viewId + ". dont exists." );
-                }
-                View view = getView( viewId );
-                if ( !view.isLayeringEnabled() ) {
-                    throw new ComponentCreationException( "Layering is not enabled for view with id: " + viewId + ". Enable Layering for View first" );
-                }
-                
-                List<Layer> layers;
-                if ( !layersOfView.contains( viewId ) ) {
-                    layers = new ArrayList<Layer>();
-                    layersOfView.set( viewId, layers );
-                } else {
-                    layers = layersOfView.get( viewId );
-                }
-             
-                layers.add( layer );
-                return layer;
-            }
-        };
+        return new LayerBuilder( this );
     }
 
     public final ViewBuilder getViewBuilder() {
@@ -471,8 +459,8 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
         }
         
         void buildBaseView( Rectangle screenBounds ) {
-            setAttribute( View.NAME, "BASE_VIEW" );
-            setAttribute( View.BOUNDS, screenBounds );
+            set( View.NAME, "BASE_VIEW" );
+            set( View.BOUNDS, screenBounds );
             View view = build( BASE_VIEW_ID );
             view.isBase = true;
             view.active = true;
@@ -480,5 +468,44 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
         }
         
     }
+    
+    public final class LayerBuilder extends BaseComponentBuilder<Layer> {
+
+        protected LayerBuilder( ComponentBuilderFactory componentFactory ) {
+            super( componentFactory );
+        }
+
+        public ComponentBuilder<Layer> setAttribute( AttributeKey<Integer> key, View value ) {
+            return super.set( key, value.index() );
+        }
+
+        @Override
+        public Layer build( int componentId ) {
+            Layer layer = new Layer( componentId );
+            layer.fromAttributes( attributes );
+            checkName( layer );
+            
+            int viewId = layer.getViewId();
+            if ( !hasView( viewId ) ) {
+                throw new ComponentCreationException( "The View with id: " + viewId + ". dont exists." );
+            }
+            View view = getView( viewId );
+            if ( !view.isLayeringEnabled() ) {
+                throw new ComponentCreationException( "Layering is not enabled for view with id: " + viewId + ". Enable Layering for View first" );
+            }
+            
+            List<Layer> layers;
+            if ( !layersOfView.contains( viewId ) ) {
+                layers = new ArrayList<Layer>();
+                layersOfView.set( viewId, layers );
+            } else {
+                layers = layersOfView.get( viewId );
+            }
+         
+            layers.add( layer );
+            return layer;
+        }
+    };
+
 
 }

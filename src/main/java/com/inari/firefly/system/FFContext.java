@@ -37,6 +37,8 @@ public interface FFContext {
 
 
     <T> T getComponent( TypedKey<T> key );
+    
+    <T> void putComponent( TypedKey<T> key, T component );
 
     <T> T getProperty( TypedKey<T> key );
     
@@ -45,5 +47,9 @@ public interface FFContext {
     void toAttributes( Attributes attributes );
     
     Map<TypedKey<? extends ComponentSystem>, Set<Class<?>>> getComponentTypes();
+
+    int getScreenWidth();
+    
+    int getScreenHeight();
 
 }

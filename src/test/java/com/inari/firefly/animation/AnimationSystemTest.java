@@ -43,9 +43,9 @@ public class AnimationSystemTest {
         animationSystem.init( ffContext );
 
         animationSystem.getAnimationBuilder( TestAnimation.class )
-            .setAttribute( Animation.NAME, "testAnimation" )
-            .setAttribute( Animation.START_TIME, 10l )
-            .setAttribute( Animation.LOOPING, false )
+            .set( Animation.NAME, "testAnimation" )
+            .set( Animation.START_TIME, 10l )
+            .set( Animation.LOOPING, false )
             .build( 0 );
 
         Attributes attrs = new Attributes();
@@ -69,9 +69,9 @@ public class AnimationSystemTest {
         animationSystem.init( ffContext );
 
         animationSystem.getAnimationBuilder( TestAnimation.class )
-            .setAttribute( Animation.NAME, "testAnimation" )
-            .setAttribute( Animation.START_TIME, 10l )
-            .setAttribute( Animation.LOOPING, false )
+            .set( Animation.NAME, "testAnimation" )
+            .set( Animation.START_TIME, 10l )
+            .set( Animation.LOOPING, false )
             .build( 0 );
 
         assertEquals(

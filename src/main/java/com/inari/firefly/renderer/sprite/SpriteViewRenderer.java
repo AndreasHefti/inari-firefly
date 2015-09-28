@@ -49,7 +49,7 @@ public final class SpriteViewRenderer extends BaseRenderer implements RenderEven
             ETransform transform = components.get( ETransform.COMPONENT_TYPE );
             transformCollector.set( transform );
             
-            render( sprite, transform );
+            render( sprite, transform.getParentId() );
         }
     }
 

@@ -104,8 +104,8 @@ public class AssetSystemTest {
         
         ComponentBuilder<TestAsset> assetBuilder = service.getAssetBuilder( TestAsset.class );
         assetBuilder
-            .setAttribute( TestAsset.NAME, "asset1" )
-            .setAttribute( TestAsset.ASSET_GROUP,"group1" )
+            .set( TestAsset.NAME, "asset1" )
+            .set( TestAsset.ASSET_GROUP,"group1" )
             .build( 0 );
         
         service.toAttributes( attrs );
@@ -116,20 +116,20 @@ public class AssetSystemTest {
         
         attrs.clear();
         assetBuilder
-            .setAttribute( TestAsset.NAME, "asset2" )
-            .setAttribute( TestAsset.ASSET_GROUP,"group1" )
+            .set( TestAsset.NAME, "asset2" )
+            .set( TestAsset.ASSET_GROUP,"group1" )
             .build( 1 );
         assetBuilder
-            .setAttribute( TestAsset.NAME, "asset3" )
-            .setAttribute( TestAsset.ASSET_GROUP,"group1" )
+            .set( TestAsset.NAME, "asset3" )
+            .set( TestAsset.ASSET_GROUP,"group1" )
             .build( 2 );
         assetBuilder
-            .setAttribute( TestAsset.NAME, "asset4" )
-            .setAttribute( TestAsset.ASSET_GROUP,"group2" )
+            .set( TestAsset.NAME, "asset4" )
+            .set( TestAsset.ASSET_GROUP,"group2" )
             .build( 3 );
         assetBuilder
-            .setAttribute( TestAsset.NAME, "asset5" )
-            .setAttribute( TestAsset.ASSET_GROUP,"group3" )
+            .set( TestAsset.NAME, "asset5" )
+            .set( TestAsset.ASSET_GROUP,"group3" )
             .build( 4 );
         
         service.toAttributes( attrs );
@@ -154,8 +154,8 @@ public class AssetSystemTest {
         
         service
             .getAssetBuilder( TestAsset.class )
-                .setAttribute( TestAsset.NAME, "asset1" )
-                .setAttribute( TestAsset.ASSET_GROUP,"group1" )
+                .set( TestAsset.NAME, "asset1" )
+                .set( TestAsset.ASSET_GROUP,"group1" )
             .build();
         
         assertEquals( 
@@ -222,14 +222,14 @@ public class AssetSystemTest {
         Attributes attrs = new Attributes();
         
         service.getAssetBuilder( TestAsset.class )
-            .setAttribute( Asset.NAME, "asset2" )
-            .setAttribute( Asset.ASSET_GROUP,"group1" )
+            .set( Asset.NAME, "asset2" )
+            .set( Asset.ASSET_GROUP,"group1" )
             .buildAndNext( 1 );
         
         try {
             service.getAssetBuilder( TestAsset.class )
-                .setAttribute( Asset.NAME, "asset2" )
-                .setAttribute( Asset.ASSET_GROUP,"group3" )
+                .set( Asset.NAME, "asset2" )
+                .set( Asset.ASSET_GROUP,"group3" )
                 .buildAndNext( 1 );
             fail( "Exception expected here" );
         } catch ( Exception e ) {
@@ -259,30 +259,30 @@ public class AssetSystemTest {
         Attributes attrs = new Attributes();
         
         service.getAssetBuilder( TestAsset.class )
-            .setAttribute( Asset.NAME, "asset2" )
-            .setAttribute( Asset.ASSET_GROUP,"group1" )
+            .set( Asset.NAME, "asset2" )
+            .set( Asset.ASSET_GROUP,"group1" )
             .buildAndNext( 1 )
-            .setAttribute( Asset.NAME, "asset3" )
-            .setAttribute( Asset.ASSET_GROUP,"group1" )
+            .set( Asset.NAME, "asset3" )
+            .set( Asset.ASSET_GROUP,"group1" )
             .buildAndNext( 2 )
-            .setAttribute( Asset.NAME, "asset4" )
-            .setAttribute( Asset.ASSET_GROUP,"group2" )
+            .set( Asset.NAME, "asset4" )
+            .set( Asset.ASSET_GROUP,"group2" )
             .buildAndNext( 3 )
-            .setAttribute( Asset.NAME, "asset5" )
-            .setAttribute( Asset.ASSET_GROUP,"group3" )
+            .set( Asset.NAME, "asset5" )
+            .set( Asset.ASSET_GROUP,"group3" )
             .build( 4 );
         service.getAssetBuilder( TestAsset2.class )
-            .setAttribute( Asset.NAME, "asset22" )
-            .setAttribute( Asset.ASSET_GROUP,"group1" )
+            .set( Asset.NAME, "asset22" )
+            .set( Asset.ASSET_GROUP,"group1" )
             .buildAndNext( 1 )
-            .setAttribute( Asset.NAME, "asset23" )
-            .setAttribute( Asset.ASSET_GROUP,"group1" )
+            .set( Asset.NAME, "asset23" )
+            .set( Asset.ASSET_GROUP,"group1" )
             .buildAndNext( 2 )
-            .setAttribute( Asset.NAME, "asset24" )
-            .setAttribute( Asset.ASSET_GROUP,"group2" )
+            .set( Asset.NAME, "asset24" )
+            .set( Asset.ASSET_GROUP,"group2" )
             .buildAndNext( 3 )
-            .setAttribute( Asset.NAME, "asset25" )
-            .setAttribute( Asset.ASSET_GROUP,"group3" )
+            .set( Asset.NAME, "asset25" )
+            .set( Asset.ASSET_GROUP,"group3" )
             .build( 4 );
         
         service.toAttributes( attrs );

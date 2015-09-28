@@ -16,13 +16,13 @@
 package com.inari.firefly.state.event;
 
 import com.inari.commons.event.Event;
-import com.inari.firefly.state.IStateChange;
+import com.inari.firefly.state.StateChange;
 
 public final class StateChangeEvent extends Event<StateChangeListener> {
     
-    public final IStateChange stateChange;
+    public final StateChange stateChange;
     
-    public StateChangeEvent( IStateChange stateChange ) {
+    public StateChangeEvent( StateChange stateChange ) {
         this.stateChange = stateChange;
     }
 

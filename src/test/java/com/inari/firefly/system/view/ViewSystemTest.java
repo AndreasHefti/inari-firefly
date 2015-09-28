@@ -70,13 +70,13 @@ public class ViewSystemTest {
         Attributes attrs = new Attributes();
         
         viewSystem.getViewBuilder()
-            .setAttribute( View.NAME, "Header" )
-            .setAttribute( View.BOUNDS, new Rectangle( 0, 0, 10, 100 ) )
-            .setAttribute( View.WORLD_POSITION, new Position( 0, 0 ) )
+            .set( View.NAME, "Header" )
+            .set( View.BOUNDS, new Rectangle( 0, 0, 10, 100 ) )
+            .set( View.WORLD_POSITION, new Position( 0, 0 ) )
             .buildAndNext( 1 )
-            .setAttribute( View.NAME, "Body" )
-            .setAttribute( View.BOUNDS, new Rectangle( 0, 10, 90, 100 ) )
-            .setAttribute( View.WORLD_POSITION, new Position( 0, 0 ) )
+            .set( View.NAME, "Body" )
+            .set( View.BOUNDS, new Rectangle( 0, 10, 90, 100 ) )
+            .set( View.WORLD_POSITION, new Position( 0, 0 ) )
             .build( 2 );
         
         viewSystem.toAttributes( attrs );
@@ -147,8 +147,8 @@ public class ViewSystemTest {
         
         try {
             viewSystem.getLayerBuilder()
-                .setAttribute( Layer.VIEW_ID, ViewSystem.BASE_VIEW_ID )
-                .setAttribute( Layer.NAME, "Layer1" )
+                .set( Layer.VIEW_ID, ViewSystem.BASE_VIEW_ID )
+                .set( Layer.NAME, "Layer1" )
                 .build();
             fail( "Exception expected here because base view has layering not enabled" );
         } catch ( Exception e ) {
@@ -158,14 +158,14 @@ public class ViewSystemTest {
         viewSystem.getView( ViewSystem.BASE_VIEW_ID ).setLayeringEnabled( true );
         
         viewSystem.getLayerBuilder()
-            .setAttribute( Layer.VIEW_ID, ViewSystem.BASE_VIEW_ID )
-            .setAttribute( Layer.NAME, "Layer1" )
+            .set( Layer.VIEW_ID, ViewSystem.BASE_VIEW_ID )
+            .set( Layer.NAME, "Layer1" )
             .buildAndNext()
-            .setAttribute( Layer.VIEW_ID, ViewSystem.BASE_VIEW_ID )
-            .setAttribute( Layer.NAME, "Layer2" )
+            .set( Layer.VIEW_ID, ViewSystem.BASE_VIEW_ID )
+            .set( Layer.NAME, "Layer2" )
             .buildAndNext()
-            .setAttribute( Layer.VIEW_ID, ViewSystem.BASE_VIEW_ID )
-            .setAttribute( Layer.NAME, "Layer3" )
+            .set( Layer.VIEW_ID, ViewSystem.BASE_VIEW_ID )
+            .set( Layer.NAME, "Layer3" )
             .build();
         
         viewSystem.toAttributes( attrs );
@@ -197,8 +197,8 @@ public class ViewSystemTest {
         // try to build a layer for an inexistent view
         try {
             viewSystem.getLayerBuilder()
-                .setAttribute( Layer.VIEW_ID, 100 )
-                .setAttribute( Layer.NAME, "Layer1" )
+                .set( Layer.VIEW_ID, 100 )
+                .set( Layer.NAME, "Layer1" )
                 .build();
             fail( "Exception expected here" );
         } catch ( ComponentCreationException e ) {

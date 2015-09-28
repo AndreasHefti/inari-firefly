@@ -22,14 +22,13 @@ import java.util.Set;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.Disposable;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.state.event.StateChangeEvent;
-import com.inari.firefly.state.event.StateChangeListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.task.event.TaskEvent;
@@ -69,7 +68,21 @@ public final class TaskSystem implements FFContextInitiable, ComponentSystem, Co
         tasks.clear();
     }
     
-    public final void removeTask( int taskId ) {
+    public final int getTaskId( String taskName ) {
+        for ( int i = 0; i < tasks.capacity(); i++ ) {
+            if ( !tasks.contains( i ) ) {
+                continue;
+            }
+            Task task = tasks.get( i );
+            if ( task.getName().equals( taskName ) ) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+    
+    public final void deleteTask( int taskId ) {
         Task remove = tasks.remove( taskId );
         if ( remove != null ) {
             disposeTask( remove );
@@ -77,11 +90,10 @@ public final class TaskSystem implements FFContextInitiable, ComponentSystem, Co
     }
 
     private void disposeTask( Task task ) {
-        if ( task instanceof StateChangeListener ) {
-            eventDispatcher.unregister( StateChangeEvent.class, (StateChangeListener) task );
+        if ( task instanceof Disposable ) {
+            ( (Disposable) task ).dispose( context );
         }
         task.dispose();
-        
     }
 
     @Override
@@ -91,7 +103,7 @@ public final class TaskSystem implements FFContextInitiable, ComponentSystem, Co
                 Task task = tasks.get( taskEvent.taskId );
                 if ( task != null ) {
                     task.run( context );
-                    if ( task.removeAfterRun() ) {
+                    if ( task.removeAfterRun() && tasks.contains( taskEvent.taskId ) ) {
                         tasks.remove( taskEvent.taskId );
                     }
                 }
@@ -171,4 +183,5 @@ public final class TaskSystem implements FFContextInitiable, ComponentSystem, Co
         }
         
     }
+    
 }

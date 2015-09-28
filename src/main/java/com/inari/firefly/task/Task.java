@@ -18,14 +18,14 @@ package com.inari.firefly.task;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.component.NamedIndexedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.FFContext;
 
 public abstract class Task extends NamedIndexedComponent {
 
-    public static final AttributeKey<Boolean> REMOVE_AFTER_RUN = new AttributeKey<Boolean>( "workflowId", Boolean.class, Task.class );
+    public static final AttributeKey<Boolean> REMOVE_AFTER_RUN = new AttributeKey<Boolean>( "removeAfterRun", Boolean.class, Task.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         REMOVE_AFTER_RUN
     };

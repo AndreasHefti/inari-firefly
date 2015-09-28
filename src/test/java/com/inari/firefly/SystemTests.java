@@ -32,23 +32,23 @@ public class SystemTests {
         
         assetSystem
             .getAssetBuilder( TextureAsset.class )
-                .setAttribute( TextureAsset.NAME, TEXTURE_ASSET_KEY.name )
-                .setAttribute( TextureAsset.ASSET_GROUP, TEXTURE_ASSET_KEY.group )
-                .setAttribute( TextureAsset.RESOURCE_NAME, "origTiles.png" )
+                .set( TextureAsset.NAME, TEXTURE_ASSET_KEY.name )
+                .set( TextureAsset.ASSET_GROUP, TEXTURE_ASSET_KEY.group )
+                .set( TextureAsset.RESOURCE_NAME, "origTiles.png" )
             .buildAndNext( SpriteAsset.class )
-                .setAttribute( SpriteAsset.NAME, SPRITE_ASSET_KEY.name )
-                .setAttribute( SpriteAsset.ASSET_GROUP, SPRITE_ASSET_KEY.group )
-                .setAttribute( SpriteAsset.TEXTURE_ID, assetSystem.getAssetTypeKey( TEXTURE_ASSET_KEY ).id )
-                .setAttribute( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, 32, 32 ) )
+                .set( SpriteAsset.NAME, SPRITE_ASSET_KEY.name )
+                .set( SpriteAsset.ASSET_GROUP, SPRITE_ASSET_KEY.group )
+                .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetTypeKey( TEXTURE_ASSET_KEY ).id )
+                .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, 32, 32 ) )
             .build()
             ;
           
         Entity entity = entitySystem
             .getEntityBuilder()
-                .setAttribute( ETransform.VIEW_ID, 0 )
-                .setAttribute( ETransform.XPOSITION, 0 )
-                .setAttribute( ETransform.XPOSITION, 0 )
-                .setAttribute( ESprite.SPRITE_ID, assetSystem.getAssetTypeKey( SPRITE_ASSET_KEY ).id )
+                .set( ETransform.VIEW_ID, 0 )
+                .set( ETransform.XPOSITION, 0 )
+                .set( ETransform.XPOSITION, 0 )
+                .set( ESprite.SPRITE_ID, assetSystem.getAssetTypeKey( SPRITE_ASSET_KEY ).id )
             .build()
             ;
         

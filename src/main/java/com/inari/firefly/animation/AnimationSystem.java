@@ -102,20 +102,28 @@ public final class AnimationSystem
     }
 
     public final boolean exists( int animationId ) {
-        return ( animations.get( animationId ) != null );
+        if ( animationId < 0 ) {
+            return false;
+        }
+        return animations.contains( animationId );
     }
 
     public final boolean isActive( int animationId ) {
-        if ( animationId < 0 ) {
+        if ( !exists( animationId ) ) {
             return false;
         }
 
         Animation animation = animations.get( animationId );
-        if ( animation == null ) {
-            return false;
+        return animation.isActive();
+    }
+    
+    public boolean isFinished( int animationId ) {
+        if ( !exists( animationId ) ) {
+            return true;
         }
 
-        return animation.isActive();
+        Animation animation = animations.get( animationId );
+        return animation.isFinished();
     }
 
     @Override
@@ -136,6 +144,21 @@ public final class AnimationSystem
     
     public final Animation getAnimation( int animationId ) {
         return animations.get( animationId );
+    }
+    
+    public final int getAnimationId( String animationName ) {
+        for ( int i = 0; i < animations.capacity(); i++ ) {
+            if ( !animations.contains( i ) ) {
+                continue;
+            }
+            
+            Animation anim = animations.get( i );
+            if ( animationName.equals( anim.getName() ) ) {
+                return anim.getId();
+            }
+        }
+        
+        return -1;
     }
     
     public final <A extends Animation> A getAnimation( Class<A> type, int animationId ) {

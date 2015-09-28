@@ -46,12 +46,17 @@ public class FFContextImpl implements FFContext {
     }
 
     @Override
-    public <T> T getComponent( TypedKey<T> key ) {
+    public final <T> T getComponent( TypedKey<T> key ) {
         return key.type().cast( systemComponents.get( key ) );
+    }
+    
+    @Override
+    public final <T> void putComponent( TypedKey<T> key, T component ) {
+        systemComponents.put( key, component );
     }
 
     @Override
-    public <T> T getProperty( TypedKey<T> key ) {
+    public final <T> T getProperty( TypedKey<T> key ) {
         return key.type().cast( properties.get( key ) );
     }
 
@@ -82,6 +87,18 @@ public class FFContextImpl implements FFContext {
     @Override
     public final Map<TypedKey<? extends ComponentSystem>, Set<Class<?>>> getComponentTypes() {
         return new HashMap<TypedKey<? extends ComponentSystem>, Set<Class<?>>>( componentTypes );
+    }
+    
+    @Override
+    public final int getScreenWidth() {
+        ILowerSystemFacade facade = getComponent( FFContext.LOWER_SYSTEM_FACADE );
+        return facade.getScreenWidth();
+    }
+
+    @Override
+    public final int getScreenHeight() {
+        ILowerSystemFacade facade = getComponent( FFContext.LOWER_SYSTEM_FACADE );
+        return facade.getScreenHeight();
     }
 
     @SuppressWarnings( "unchecked" )

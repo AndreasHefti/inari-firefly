@@ -66,31 +66,31 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     }
 
     @Override
-    public final ComponentBuilder<C> setAttribute( AttributeKey<?> key, Object value ) {
+    public final ComponentBuilder<C> set( AttributeKey<?> key, Object value ) {
         attributes.putUntyped( key, value );
         return this;
     }
     
     @Override
-    public final ComponentBuilder<C> setAttribute( AttributeKey<Float> key, float value ) {
+    public final ComponentBuilder<C> set( AttributeKey<Float> key, float value ) {
         attributes.put( key, value );
         return this;
     }
     
     @Override
-    public final ComponentBuilder<C> setAttribute( AttributeKey<Integer> key, int value ) {
+    public final ComponentBuilder<C> set( AttributeKey<Integer> key, int value ) {
         attributes.put( key, value );
         return this;
     }
     
     @Override
-    public final ComponentBuilder<C> setAttribute( AttributeKey<Long> key, long value ) {
+    public final ComponentBuilder<C> set( AttributeKey<Long> key, long value ) {
         attributes.put( key, value );
         return this;
     }
     
     @Override
-    public final ComponentBuilder<C> setAttribute( AttributeKey<Double> key, double value ) {
+    public final ComponentBuilder<C> set( AttributeKey<Double> key, double value ) {
         attributes.put( key, value );
         return this;
     }

@@ -20,10 +20,14 @@ public abstract class BaseRenderer implements FFContextInitiable {
         entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
     }
     
-    protected final void render( SpriteRenderable sprite, ETransform transform ) {
+    protected final void render( SpriteRenderable sprite ) {
+        render( sprite, -1 );
+    }
+    
+    protected final void render( SpriteRenderable sprite, int parentId ) {
         
-        if ( transform.getParentId() >= 0 ) {
-            collectTransformData( transform.getParentId() );
+        if ( parentId >= 0 ) {
+            collectTransformData( parentId );
         }
         
         if ( transformCollector.scalex != 1 || transformCollector.scaley != 1 || transformCollector.rotation != 0 ) {

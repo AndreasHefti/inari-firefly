@@ -300,7 +300,7 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
             if ( disposeFirst != null ) {
                 for ( int i = 0; i < disposeFirst.length; i++ ) {
                     if ( typeKey.equals( disposeFirst[ i ] ) ) {
-                        result.add( disposeFirst[ i ] );
+                        result.add( asset.typeKey );
                         break;
                     }
                 }
