@@ -71,7 +71,7 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
     }
     
     public final Asset getAsset( AssetTypeKey key ) {
-        return assets.get( key );
+        return typeMapping.get( key );
     }
     
     public final <A extends Asset> A getAsset( AssetNameKey assetKey, Class<A> assetType ) {
@@ -99,11 +99,15 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
             throw new IllegalArgumentException( "The IComponentType is not a subtype of Asset." + type );
         }
         
-        return new AssetBuilder( this, type );
+        return new AssetBuilder( this, type, false );
     }
 
     public final <A extends Asset> AssetBuilder<A> getAssetBuilder( Class<A> assetType ) {
-        return new AssetBuilder<A>( this, assetType );
+        return new AssetBuilder<A>( this, assetType, false );
+    }
+    
+    public final <A extends Asset> AssetBuilder<A> getAssetBuilderWithAutoLoad( Class<A> assetType ) {
+        return new AssetBuilder<A>( this, assetType, true );
     }
     
     public final void loadAsset( AssetNameKey key ) {
@@ -196,6 +200,19 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
     
     public final boolean hasAsset( AssetTypeKey key ) {
         return typeMapping.containsKey( key );
+    }
+    
+    public final int getAssetId( AssetNameKey key ) {
+        AssetTypeKey assetTypeKey = getAssetTypeKey( key );
+        if ( assetTypeKey == null ) {
+            return -1;
+        }
+        
+        return assetTypeKey.id;
+    }
+    
+    public final int getAssetId( String group, String name ) {
+        return getAssetId( new AssetNameKey( group, name ) );
     }
     
     public final boolean hasGroup( String group ) {
@@ -377,10 +394,12 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
     public final class AssetBuilder<A extends Asset> extends BaseComponentBuilder<A> {
         
         private final Class<A> assetType;
+        private final boolean autoLoad;
         
-        private AssetBuilder( AssetSystem system, Class<A> assetType ) {
+        private AssetBuilder( AssetSystem system, Class<A> assetType, boolean autoLoad ) {
             super( system );
             this.assetType = assetType;
+            this.autoLoad = autoLoad;
         }
 
         @Override
@@ -401,7 +420,7 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
             AssetNameKey assetKey = new AssetNameKey( asset.group, asset.getName() );
 
             if ( hasAsset( assetKey ) ) {
-                throw new ComponentCreationException( "There is already an Asset with key: " + asset + " registered for this AssetSystem" );
+                throw new ComponentCreationException( "There is already an Asset with key: " + assetKey + " registered for this AssetSystem" );
             }
 
             assets.put( assetKey, asset );
@@ -409,6 +428,11 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
             postInit( asset, context );
             
             eventDispatcher.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
+            
+            if ( autoLoad ) {
+                load( asset );
+            }
+            
             return asset;
         }
     }

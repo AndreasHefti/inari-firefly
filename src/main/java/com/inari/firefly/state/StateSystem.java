@@ -35,6 +35,7 @@ import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
+import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.task.event.TaskEvent;
@@ -102,20 +103,28 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
             return;
         }
         
+        int startStateId = -1;
+        String startStateName = workflow.getStartStateName();
+        for ( State state : states ) {
+            if ( startStateName.equals( state.getName() ) && workflow.index() == state.getWorkflowId() ) {
+                startStateId = state.getId();
+            }
+        }
+        
+        if ( startStateId < 0 ) {
+            throw new FFInitException( "Failed to find startState: " + startStateId + " for workflow: " + workflow.getName() );
+        }
+        
         int initTaskId = workflow.getInitTaskId();
         if ( initTaskId >= 0 ) {
             eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, initTaskId ) );
         }
         
-        workflow.activate();
+        workflow.activate( startStateId );
     }
     
     @Override
     public final void update( UpdateEvent event ) {
-        long update = event.timer.getUpdate();
-        if ( update % updateStep != 0 ) {
-            return;
-        }
         
         for ( Workflow workflow : workflows ) {
             if ( !workflow.isActive() ) {
@@ -123,6 +132,9 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
             }
             
             int currentStateId = workflow.getCurrentStateId();
+            if ( !stateChangesForState.contains( currentStateId ) ) {
+                return;
+            }
             Collection<StateChange> stateChanges = stateChangesForState.get( currentStateId );
             
             for ( StateChange stateChange : stateChanges ) {

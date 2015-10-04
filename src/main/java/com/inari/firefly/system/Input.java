@@ -15,37 +15,54 @@
  ******************************************************************************/ 
 package com.inari.firefly.system;
 
-import com.inari.commons.geom.Position;
-import com.inari.commons.geom.Vector2f;
+import com.inari.commons.lang.TypedKey;
+
 
 public abstract class Input {
     
-    public enum InputType {
+    public static final TypedKey<Input> CONTEXT_KEY = TypedKey.create( "InputHandler", Input.class );
+    
+    public enum ButtonType {
         UP,
         RIGHT,
         DOWN,
         LEFT,
+        
+        FIRE_1,
+        FIRE_2,
+        
         BUTTON_A,
         BUTTON_B,
         BUTTON_C,
-        BUTTON_D
+        BUTTON_D,
+        
+        BUTTON_0,
+        BUTTON_1,
+        BUTTON_2,
+        BUTTON_3,
+        BUTTON_4,
+        BUTTON_5,
+        BUTTON_6,
+        BUTTON_7,
+        BUTTON_8,
+        BUTTON_9
     }
     
-    public boolean up = false;
-    public boolean right = false;
-    public boolean down = false;
-    public boolean left = false;
+    public enum InputType {
+        MOUSE_LEFT,
+        MOUSE_MIDDLE,
+        MOUSE_RIGHT,
+        TOUCH
+    }
     
-    public boolean buttonA = false;
-    public boolean buttonB = false;
-    public boolean buttonC = false;
-    public boolean buttonD = false;
+    public abstract void mapKeyInput( ButtonType buttonType, int keyCode );
     
-    public final Vector2f acceleration = new Vector2f( 0f, 0f );
-    public final Position pointerPosition = new Position( 0 ,0 );
+    public abstract void mapInputType( ButtonType buttonType, InputType inputType );
     
-    public abstract void update();
+    public abstract boolean isPressed( ButtonType buttonType );
     
-    public abstract void setKeyInput( InputType type, int keyCode );
+    public abstract int getXpos();
+    
+    public abstract int getYpos();
 
 }

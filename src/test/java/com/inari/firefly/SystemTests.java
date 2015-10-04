@@ -15,7 +15,7 @@ import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
-import com.inari.firefly.system.ILowerSystemFacade;
+import com.inari.firefly.system.LowerSystemFacade;
 
 public class SystemTests {
     
@@ -28,7 +28,7 @@ public class SystemTests {
         FFContext context = firefly.getContext();
         AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
         EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-        ILowerSystemFacade lowerSystemMock = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
+        LowerSystemFacade lowerSystemMock = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
         
         assetSystem
             .getAssetBuilder( TextureAsset.class )

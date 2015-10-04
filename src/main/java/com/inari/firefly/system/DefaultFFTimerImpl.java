@@ -13,7 +13,6 @@ public final class DefaultFFTimerImpl extends FFTimer {
             lastUpdateTime = currentTime;
             
         }
-        update++;
     }
 
 }

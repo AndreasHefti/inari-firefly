@@ -91,13 +91,13 @@ public class FFContextImpl implements FFContext {
     
     @Override
     public final int getScreenWidth() {
-        ILowerSystemFacade facade = getComponent( FFContext.LOWER_SYSTEM_FACADE );
+        LowerSystemFacade facade = getComponent( FFContext.LOWER_SYSTEM_FACADE );
         return facade.getScreenWidth();
     }
 
     @Override
     public final int getScreenHeight() {
-        ILowerSystemFacade facade = getComponent( FFContext.LOWER_SYSTEM_FACADE );
+        LowerSystemFacade facade = getComponent( FFContext.LOWER_SYSTEM_FACADE );
         return facade.getScreenHeight();
     }
 

@@ -34,7 +34,7 @@ import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
-import com.inari.firefly.system.ILowerSystemFacade;
+import com.inari.firefly.system.LowerSystemFacade;
 
 public final class SoundSystem 
     implements 
@@ -47,7 +47,7 @@ public final class SoundSystem
     
     private FFContext context;
     private AssetSystem assetSystem;
-    private ILowerSystemFacade lowerSystemFacade;
+    private LowerSystemFacade lowerSystemFacade;
     
     private final DynArray<Sound> sounds;
 
@@ -197,7 +197,7 @@ public final class SoundSystem
 
         @Override
         public Sound build( int componentId ) {
-            Sound result = getInstance( context, componentId );
+            Sound result = new Sound( componentId );
             result.fromAttributes( attributes );
             
             SoundAsset asset = assetSystem.getAsset( new AssetTypeKey( result.getAssetId(), SoundAsset.class ), SoundAsset.class );

@@ -103,6 +103,7 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     @Override
     public final ComponentBuilder<C> buildAndNext() {
         build( getId() );
+        attributes.clear();
         return this;
     }
 
@@ -115,6 +116,7 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     @Override
     public final ComponentBuilder<C> buildAndNext( int componentId ) {
         build( componentId );
+        attributes.clear();
         return this;
     }
 
@@ -132,7 +134,7 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     protected C getInstance( FFContext context, Integer componentId ) {
         String className = attributes.getValue( Component.INSTANCE_TYPE_NAME );
         if ( className == null ) {
-            throw new ComponentCreationException( "Missing mandatory attribute " + Component.INSTANCE_TYPE_NAME + " for StateChangeCondition" );
+            throw new ComponentCreationException( "Missing mandatory attribute " + Component.INSTANCE_TYPE_NAME + " for Component creation" );
         }
         
         Class<C> typeClass = null;

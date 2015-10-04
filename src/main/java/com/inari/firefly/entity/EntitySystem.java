@@ -83,10 +83,6 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
         components.clear();
     }
     
-    public final EntityBuilder createEntityBuilder() {
-        return new EntityBuilder( this );
-    }
-    
     @Override
     @SuppressWarnings( "unchecked" )
     public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
@@ -98,7 +94,11 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
     }
     
     public final EntityBuilder getEntityBuilder() {
-        return new EntityBuilder( this );
+        return new EntityBuilder( this, false );
+    }
+    
+    public final EntityBuilder getEntityBuilderWithAutoActivation() {
+        return new EntityBuilder( this, true );
     }
 
     public final boolean isActive( int entityId ) {
@@ -382,9 +382,11 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
     public final class EntityBuilder extends BaseComponentBuilder<Entity> {
         
         private IndexedTypeSet prefabComponents;
+        private final boolean autoActivate;
 
-        private EntityBuilder( EntitySystem system ) {
+        private EntityBuilder( EntitySystem system, boolean autoActivate ) {
             super( system, new EntityAttributeMap() );
+            this.autoActivate = autoActivate;
         }
         
         public EntityBuilder setPrefabComponents( IndexedTypeSet prefabComponents ) {
@@ -415,6 +417,11 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
             }
             
             inactiveEntities.set( entity.getId(), entity );
+            
+            if ( autoActivate ) {
+                activate( entity.index() );
+            }
+            
             return entity;
         }
         

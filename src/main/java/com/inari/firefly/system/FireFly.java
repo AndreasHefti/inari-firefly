@@ -45,14 +45,14 @@ public final class FireFly {
     
     private IEventDispatcher eventDispatcher;
     private ViewSystem viewSystem;
-    private ILowerSystemFacade lowerSystemFacade;
+    private LowerSystemFacade lowerSystemFacade;
 
     private final UpdateEvent updateEvent;
     private final RenderEvent renderEvent;
 
 
     public FireFly( 
-        Class<? extends ILowerSystemFacade> lowerSystemFacadeType,
+        Class<? extends LowerSystemFacade> lowerSystemFacadeType,
         Class<? extends Input> input
     ) {
         InitMap initMap = new InitMap();

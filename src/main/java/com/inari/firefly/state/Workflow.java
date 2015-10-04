@@ -24,20 +24,20 @@ import com.inari.firefly.component.attr.AttributeMap;
 
 public final class Workflow extends NamedIndexedComponent {
     
-    public static final AttributeKey<Integer> START_STATE_ID = new AttributeKey<Integer>( "startStateId", Integer.class, Workflow.class );
+    public static final AttributeKey<String> START_STATE_NAME = new AttributeKey<String>( "startStateName", String.class, Workflow.class );
     public static final AttributeKey<Integer> INIT_TASK_ID = new AttributeKey<Integer>( "initTaskId", Integer.class, Workflow.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
-        START_STATE_ID,
+        START_STATE_NAME,
         INIT_TASK_ID
     };
     
-    private int startStateId;
+    private String startStateName;
     private int initTaskId;
     private int currentStateId;
 
     Workflow( int workflowId ) {
         super( workflowId );
-        startStateId = -1;
+        startStateName = null;
         initTaskId = -1;
         currentStateId = -1;
     }
@@ -46,7 +46,7 @@ public final class Workflow extends NamedIndexedComponent {
         return currentStateId >= 0;
     }
     
-    public final void activate() {
+    final void activate( int startStateId ) {
         currentStateId = startStateId;
     }
 
@@ -58,12 +58,12 @@ public final class Workflow extends NamedIndexedComponent {
         this.currentStateId = currentStateId;
     }
 
-    public final int getStartStateId() {
-        return startStateId;
+    public final String getStartStateName() {
+        return startStateName;
     }
 
-    public final void setStartStateId( int startStateId ) {
-        this.startStateId = startStateId;
+    public final void setStartStateName( String startStateName ) {
+        this.startStateName = startStateName;
     }
 
     public final int getInitTaskId() {
@@ -84,14 +84,14 @@ public final class Workflow extends NamedIndexedComponent {
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
-        startStateId = attributes.getValue( START_STATE_ID, startStateId );
+        startStateName = attributes.getValue( START_STATE_NAME, startStateName );
         initTaskId = attributes.getValue( INIT_TASK_ID, initTaskId );
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        attributes.put( START_STATE_ID, startStateId );
+        attributes.put( START_STATE_NAME, startStateName );
         attributes.put( INIT_TASK_ID, initTaskId );
     }
 

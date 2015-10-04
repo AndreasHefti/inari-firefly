@@ -35,7 +35,7 @@ public class EntityBatchLoad implements Loadable {
 
     @Override
     public Disposable load( FFContext context ) {
-        EntityBuilder entityBuilder = entitySystem.createEntityBuilder();
+        EntityBuilder entityBuilder = entitySystem.getEntityBuilder();
         final int[] entityIds = new int[ entityAttributes.size() ];
         int index = 0;
         for ( AttributeMap entityAttributeMap : entityAttributes ) {

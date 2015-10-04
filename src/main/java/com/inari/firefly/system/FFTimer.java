@@ -2,13 +2,12 @@ package com.inari.firefly.system;
 
 public abstract class FFTimer {
     
-    protected long lastUpdateTime, time, timeElapsed, update;
+    protected long lastUpdateTime, time, timeElapsed;
     
     protected FFTimer() {
         lastUpdateTime = 0;
         time = 0;
         timeElapsed = 0;
-        update = 0;
     }
 
     public final long getLastUpdateTime() {
@@ -23,11 +22,11 @@ public abstract class FFTimer {
         return timeElapsed;
     }
 
-    public final long getUpdate() {
-        return update;
-    }
-    
     protected abstract void tick();
+    
+    public final UpdateScheduler createUpdateScheduler( int resolution ) {
+        return new UpdateScheduler( resolution );
+    }
 
     @Override
     public String toString() {
@@ -38,10 +37,48 @@ public abstract class FFTimer {
         builder.append( time );
         builder.append( ", timeElapsed=" );
         builder.append( timeElapsed );
-        builder.append( ", update=" );
-        builder.append( update );
         builder.append( "]" );
         return builder.toString();
+    }
+
+    public final class UpdateScheduler {
+        
+        private final int resolution;
+        private long lastUpdate = -1;
+        private long tick = 0;
+        
+        private UpdateScheduler( int resolution ) {
+            this.resolution = resolution;
+        }
+        
+        public final int getResolution() {
+            return resolution;
+        }
+
+        public final long getTick() {
+            return tick;
+        }
+
+        public final boolean needsUpdate() {
+            if ( lastUpdate < 0 ) {
+                lastUpdate = lastUpdateTime;
+                return true;
+            }
+            
+            if ( lastUpdateTime - lastUpdate >= resolution ) {
+                lastUpdate = lastUpdateTime;
+                tick++;
+                return true;
+            }
+            
+            return false;
+        }
+        
+        public final void reset() {
+            lastUpdate = -1;
+            tick = 0;
+        }
+
     }
 
 }

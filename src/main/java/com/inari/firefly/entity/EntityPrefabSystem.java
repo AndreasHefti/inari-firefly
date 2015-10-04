@@ -141,6 +141,12 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
             instanceDeque.add( copyComponents( prefabComponentSet ) );
         }
     }
+    
+    public final Entity buildOne( int prefabId ) {
+        return entitySystem.getEntityBuilder()
+            .setPrefabComponents( getComponents( prefabId ) )
+            .build();
+    }
 
     public final Entity buildOne( int prefabId, EntityAttributeMap attributes ) {
         return entitySystem.getEntityBuilder()

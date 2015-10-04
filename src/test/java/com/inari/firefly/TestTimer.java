@@ -9,14 +9,12 @@ public class TestTimer extends FFTimer {
         lastUpdateTime++;
         time++;
         timeElapsed++;
-        update++;
     }
 
     public void setTime( long time ) {
         lastUpdateTime = time;
         this.time = time;
         timeElapsed = time;
-        update = time;
     }
     
     

@@ -28,8 +28,13 @@ public abstract class DynamicAttribueMapper {
 
     public static <T> void addDynamicAttribute( String name, Class<T> valueType, Class<? extends DynamicAttributedComponent> componentType ) {
         AttributeKey<T> dynAttributeKey = new AttributeKey<T>( name, valueType, componentType );
-        Set<AttributeKey<?>> attributeSet = getOrCreateDynAttributeSetForType( componentType );
-        attributeSet.add( dynAttributeKey );
+        addDynamicAttribute( dynAttributeKey );
+    }
+
+    public static <T> void addDynamicAttribute( AttributeKey<T> attributeKey ) {
+        @SuppressWarnings( "unchecked" )
+        Set<AttributeKey<?>> attributeSet = getOrCreateDynAttributeSetForType( (Class<? extends DynamicAttributedComponent>) attributeKey.componentType() );
+        attributeSet.add( attributeKey );
     }
     
     public static boolean hasDynamicAttributes( Class<? extends DynamicAttributedComponent> componentType ) {

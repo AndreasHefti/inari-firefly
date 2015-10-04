@@ -5,13 +5,35 @@ import com.inari.firefly.system.Input;
 public class InputMock extends Input {
 
     @Override
-    public void update() {
+    public void mapKeyInput( ButtonType buttonType, int keyCode ) {
         // TODO Auto-generated method stub
+        
     }
 
     @Override
-    public void setKeyInput( InputType type, int keyCode ) {
+    public void mapInputType( ButtonType buttonType, InputType inputType ) {
         // TODO Auto-generated method stub
+        
     }
+
+    @Override
+    public boolean isPressed( ButtonType buttonType ) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public int getXpos() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getYpos() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    
 
 }

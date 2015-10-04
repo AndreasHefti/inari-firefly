@@ -5,11 +5,11 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.ILowerSystemFacade;
+import com.inari.firefly.system.LowerSystemFacade;
 
 public abstract class BaseRenderer implements FFContextInitiable {
     
-    protected ILowerSystemFacade lowerSystemFacade;
+    protected LowerSystemFacade lowerSystemFacade;
     protected EntitySystem entitySystem;
     
     protected final TransformDataCollector transformCollector = new TransformDataCollector();
