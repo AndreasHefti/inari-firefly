@@ -52,4 +52,6 @@ public interface FFContext {
     
     int getScreenHeight();
 
+    void dispose();
+
 }

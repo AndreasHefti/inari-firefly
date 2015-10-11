@@ -7,8 +7,8 @@ import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
 
 public final class EntityProvider implements FFContextInitiable  {
@@ -138,10 +138,12 @@ public final class EntityProvider implements FFContextInitiable  {
         for ( int i = 0; i < components.length(); i++ ) {
             EntityComponent component = components.get( i );
             if ( component != null ) {
-                ArrayDeque<EntityComponent> componentsOfType = disposedComponents.get( i );
-                if ( componentsOfType == null ) {
+                ArrayDeque<EntityComponent> componentsOfType;
+                if ( !disposedComponents.contains( i ) ) {
                     componentsOfType = new ArrayDeque<EntityComponent>();
                     disposedComponents.set( i, componentsOfType );
+                } else {
+                    componentsOfType = disposedComponents.get( i );
                 }
                 componentsOfType.add( component );
             }

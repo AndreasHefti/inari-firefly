@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import com.inari.commons.StringUtils;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.NamedComponent;
+import com.inari.firefly.component.attr.Attribute;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
@@ -92,6 +93,14 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     @Override
     public final ComponentBuilder<C> set( AttributeKey<Double> key, double value ) {
         attributes.put( key, value );
+        return this;
+    }
+    
+    @Override
+    public final ComponentBuilder<C> set( Attribute... attributes ) {
+        for ( Attribute attribute : attributes ) {
+            this.attributes.putUntyped( attribute.getKey(), attribute.getValue() );
+        }
         return this;
     }
 

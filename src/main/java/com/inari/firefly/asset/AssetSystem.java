@@ -116,8 +116,17 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
         loadAsset( asset );
     }
     
+    public final void loadAsset( AssetTypeKey key ) {
+        Asset asset = getAsset( key );
+        checkAsset( key, asset );
+        loadAsset( asset );
+    }
+    
     public final void loadAssets( String group ) {
-        checkGroup( group );
+        if ( !hasGroup( group ) ) {
+            return;
+        }
+        
         for ( AssetNameKey assetKey : getAssetNameKeysOfGroup( group ) ) {
             Asset asset = assets.get( assetKey );
             if ( !asset.loaded ) {
@@ -142,7 +151,22 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
     
     public final void disposeAsset( AssetNameKey key ) {
         Asset asset = getAsset( key );
-        checkAsset( key, asset );
+        if ( asset == null ) {
+            return;
+        }
+        
+        if ( !asset.loaded ) {
+            return;
+        }
+        
+        disposeAsset( asset );
+    }
+    
+    public final void disposeAsset( AssetTypeKey key ) {
+        Asset asset = getAsset( key );
+        if ( asset == null ) {
+            return;
+        }
         
         if ( !asset.loaded ) {
             return;
@@ -152,7 +176,10 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
     }
     
     public final void disposeAssets( String group ) {
-        checkGroup( group );
+        if ( !hasGroup( group ) ) {
+            return;
+        }
+        
         for ( AssetNameKey assetKey : getAssetNameKeysOfGroup( group ) ) {
             Asset asset = assets.get( assetKey );
             if ( asset.loaded ) {
@@ -163,18 +190,25 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
     
     public final void deleteAsset( AssetNameKey key ) {
         Asset asset = getAsset( key );
-        checkAsset( key, asset );
+        if ( asset == null ) {
+            return;
+        }
         deleteAsset( asset );
     }
     
     public final void deleteAsset( AssetTypeKey key ) {
         Asset asset = getAsset( key );
-        checkAsset( key, asset );
+        if ( asset == null ) {
+            return;
+        }
         deleteAsset( asset );
     }
     
     public final void deleteAssets( String group ) {
-        checkGroup( group );
+        if ( !hasGroup( group ) ) {
+            return;
+        }
+        
         Collection<AssetTypeKey> assetsToDeleteAlso = null;
         for ( AssetNameKey key : getAssetNameKeysOfGroup( group ) ) {
             Asset asset = assets.get( key );
@@ -382,12 +416,6 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
     private void checkAsset( AssetNameKey key, Asset asset ) {
         if ( asset == null ) {
             throw new IllegalArgumentException( "No Asset found for: " + key );
-        }
-    }
-    
-    private void checkGroup( String group ) {
-        if ( !hasGroup( group ) ) {
-            throw new IllegalArgumentException( "No group found: " + group );
         }
     }
     

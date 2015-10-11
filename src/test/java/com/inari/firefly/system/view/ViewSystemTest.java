@@ -56,7 +56,7 @@ public class ViewSystemTest {
         View baseView = viewSystem.getView( ViewSystem.BASE_VIEW_ID );
         assertNotNull( baseView );
         assertTrue( baseView.active );
-        assertTrue( baseView.isBase );
+        assertTrue( baseView.isBase() );
         assertTrue( -1 == baseView.order );
     }
     
@@ -122,7 +122,7 @@ public class ViewSystemTest {
         View view1 = viewSystem.getView( 1 );
         assertNotNull( view1 );
         assertFalse( view1.active );
-        assertFalse( view1.isBase );
+        assertFalse( view1.isBase() );
         assertTrue( 0 == view1.order );
         assertFalse( viewSystem.isLayeringEnabled( view1.index() ) );
         assertFalse( viewSystem.hasLayer( view1.index(), 0 ) );
@@ -130,7 +130,7 @@ public class ViewSystemTest {
         View view2 = viewSystem.getView( 2 );
         assertNotNull( view2 );
         assertFalse( view2.active );
-        assertFalse( view2.isBase );
+        assertFalse( view2.isBase() );
         assertTrue( 1 == view2.order );
         assertFalse( viewSystem.isLayeringEnabled( view2.index() ) );
         assertFalse( viewSystem.hasLayer( view2.index(), 0 ) );

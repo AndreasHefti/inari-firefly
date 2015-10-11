@@ -16,7 +16,7 @@
 package com.inari.firefly.entity;
 
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.commons.lang.aspect.IndexedAspect;
+import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.control.Controller;
@@ -48,7 +48,7 @@ public abstract class EntityController extends Controller implements EntityActiv
     }
     
     @Override
-    public final boolean match( IndexedAspect aspect ) {
+    public final boolean match( AspectBitSet aspect ) {
         return aspect.contains( EController.COMPONENT_TYPE );
     }
 

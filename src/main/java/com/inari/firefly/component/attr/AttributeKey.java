@@ -55,6 +55,10 @@ public final class AttributeKey<T> {
     public int hashCode() {
         return hashCode;
     }
+    
+    public final Attribute value( T value ) {
+        return new Attribute( this, value );
+    }
 
     @Override
     public boolean equals( Object obj ) {

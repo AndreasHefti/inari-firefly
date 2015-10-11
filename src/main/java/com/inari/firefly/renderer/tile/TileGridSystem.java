@@ -19,7 +19,7 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.TypedKey;
-import com.inari.commons.lang.aspect.IndexedAspect;
+import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
@@ -54,11 +54,9 @@ public final class TileGridSystem
     private ViewSystem viewSystem;
     
     private final DynArray<DynArray<TileGrid>> tileGridOfViewsPerLayer;
-    private final DynArray<TileGrid> tileGridOfViews;
     
     public TileGridSystem() {
         tileGridOfViewsPerLayer = new DynArray<DynArray<TileGrid>>();
-        tileGridOfViews = new DynArray<TileGrid>();
     }
     
     @Override
@@ -77,7 +75,6 @@ public final class TileGridSystem
         eventDispatcher.unregister( ViewEvent.class, this );
         
         tileGridOfViewsPerLayer.clear();
-        tileGridOfViews.clear();
     }
 
     @Override
@@ -102,7 +99,7 @@ public final class TileGridSystem
     }
 
     @Override
-    public final boolean match( IndexedAspect aspect ) {
+    public final boolean match( AspectBitSet aspect ) {
         return aspect.contains( ETile.COMPONENT_TYPE );
     }
     
@@ -135,10 +132,6 @@ public final class TileGridSystem
     }
     
     public final TileGrid getTileGrid( int viewId, int layerId ) {
-        if ( layerId < 0 ) {
-            return tileGridOfViews.get( viewId );
-        }
-        
         if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
             return null;
         }
@@ -156,18 +149,21 @@ public final class TileGridSystem
     }
     
     public final void deleteAllTileGrid( int viewId ) {
-        tileGridOfViews.remove( viewId );
-        tileGridOfViewsPerLayer.remove( viewId );
+        if ( tileGridOfViewsPerLayer.contains( viewId ) ) {
+            tileGridOfViewsPerLayer.remove( viewId );
+        }
     }
     
     public final void deleteTileGrid( int viewId, int layerId ) {
-        if ( layerId < 0 ) {
-            tileGridOfViews.remove( viewId );
+        if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
+            return;
+        }
+        DynArray<TileGrid> tileGridsForView = tileGridOfViewsPerLayer.get( viewId );
+        if ( tileGridsForView == null ) {
             return;
         }
         
-        DynArray<TileGrid> tileGridsForView = tileGridOfViewsPerLayer.get( viewId );
-        if ( tileGridsForView == null ) {
+        if ( !tileGridOfViewsPerLayer.contains( layerId ) ) {
             return;
         }
         tileGridsForView.remove( layerId );
@@ -196,58 +192,55 @@ public final class TileGridSystem
         return new BaseComponentBuilder<TileGrid>( this ) {
             @Override
             public TileGrid build( int componentId ) {
-                TileGrid tileGrid = new TileGrid();
+                TileGrid tileGrid = new TileGrid( componentId );
                 tileGrid.fromAttributes( attributes );
                 int viewId = tileGrid.getViewId();
                 int layerId = tileGrid.getLayerId();
                 if ( viewId < 0 ) {
-                    throw new ComponentCreationException( "Missing viewId for TileGrid component. TileGrid must have a viewId" );
+                    viewId = 0;
                 } 
+                if ( layerId < 0 ) {
+                    layerId = 0;
+                }
                 
                 if ( viewSystem.getView( viewId ) == null ) {
                     throw new ComponentCreationException( "The viewId: " + viewId + " doesn't exist as a View in ViewSystem. Create the view first" );
                 }
+
+                if ( layerId > 0 && !viewSystem.hasLayer( viewId, layerId ) ) {
+                    throw new ComponentCreationException( "The Layer with id: " + layerId + " doesn't exists. Create the Layer first." );
+                }
                 
-                if ( layerId >= 0 ) {
-                    if ( !viewSystem.isLayeringEnabled( viewId ) ) {
-                        throw new ComponentCreationException( "Layering is not enabled for the View: " + viewId );
-                    }
-                    
-                    if ( !viewSystem.hasLayer( viewId, layerId ) ) {
-                        throw new ComponentCreationException( "The Layer with id: " + layerId + " doesn't exists. Create the Layer first." );
-                    }
-                    
-                    DynArray<TileGrid> perLayer = tileGridOfViewsPerLayer.get( viewId );
-                    if ( perLayer == null ) {
-                        perLayer = new DynArray<TileGrid>();
-                        tileGridOfViewsPerLayer.set( viewId, perLayer );
-                    }
-                    perLayer.set( layerId, tileGrid );
-                    return tileGrid;
-                } 
+                DynArray<TileGrid> perLayer;
+                if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
+                    perLayer = new DynArray<TileGrid>();
+                    tileGridOfViewsPerLayer.set( viewId, perLayer );
+                } else {
+                    perLayer = tileGridOfViewsPerLayer.get( viewId );
+                }
                 
-                tileGridOfViews.set( viewId, tileGrid );
+                perLayer.set( layerId, tileGrid );
                 return tileGrid;
             }
         };
     }
     
     
-    private final void registerEntity( int entityId, IndexedAspect entityAspect ) {
+    private final void registerEntity( int entityId, AspectBitSet entityAspect ) {
         ETransform transform = entitySystem.getComponent( entityId, ETransform.COMPONENT_TYPE );
         ETile tile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
         TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
         if ( tile.isMultiPosition() ) {
-            Position gridPosition = tile.getGridPosition();
-            tileGrid.set( entityId, gridPosition.x, gridPosition.y );
-        } else {
             for ( Position gridPosition : tile.getGridPositions() ) {
                 tileGrid.set( entityId, gridPosition.x, gridPosition.y );
             }
+        } else {
+            Position gridPosition = tile.getGridPosition();
+            tileGrid.set( entityId, gridPosition.x, gridPosition.y );
         }
     }
     
-    private final void unregisterEntity( int entityId, IndexedAspect entityAspect ) {
+    private final void unregisterEntity( int entityId, AspectBitSet entityAspect ) {
         ETransform transform = entitySystem.getComponent( entityId, ETransform.COMPONENT_TYPE );
         ETile tile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
         TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );

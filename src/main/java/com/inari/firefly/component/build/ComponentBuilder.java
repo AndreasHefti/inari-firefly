@@ -15,6 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.component.build;
 
+import com.inari.firefly.component.attr.Attribute;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
@@ -31,6 +32,7 @@ public interface ComponentBuilder<C> {
     ComponentBuilder<C> set( AttributeKey<Integer> key, int value );
     ComponentBuilder<C> set( AttributeKey<Long> key, long value );
     ComponentBuilder<C> set( AttributeKey<Double> key, double value );
+    ComponentBuilder<C> set( Attribute... attributes );
     
     C build();
     

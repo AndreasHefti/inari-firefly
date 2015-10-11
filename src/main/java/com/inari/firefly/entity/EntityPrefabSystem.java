@@ -48,6 +48,7 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
         prefabs = new DynArray<EntityPrefab>();
         prefabNames = new DynArray<String>();
         prefabComponents = new DynArray<IndexedTypeSet>();
+        components = new DynArray<ArrayDeque<IndexedTypeSet>>();
         
         entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
         entityProvider = context.getComponent( FFContext.ENTITY_PROVIDER );
@@ -74,7 +75,7 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
         prefabs.clear();
         prefabComponents.clear();
         prefabNames.clear();
-        prefabComponents.clear();
+        components.clear();
     }
     
     public final void deletePrefab( String prefabName ) {
@@ -118,7 +119,11 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
     }
     
     public final EntityPrefab getPrefab( String prefabName ) {
-        return prefabs.get( prefabNames.indexOf( prefabName ) );
+        int prefabId = prefabNames.indexOf( prefabName );
+        if ( prefabId < 0 ) {
+            return null;
+        }
+        return prefabs.get( prefabId );
     }
     
     public final void cacheComponents( String prefabName, int number ) {
@@ -130,10 +135,12 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
             return;
         }
         
-        ArrayDeque<IndexedTypeSet> instanceDeque = components.get( prefabId );
-        if ( instanceDeque == null ) {
+        ArrayDeque<IndexedTypeSet> instanceDeque;
+        if ( !components.contains( prefabId ) ) {
             instanceDeque = new ArrayDeque<IndexedTypeSet>();
             components.set( prefabId, instanceDeque );
+        } else {
+            instanceDeque = components.get( prefabId );
         }
         
         IndexedTypeSet prefabComponentSet = prefabComponents.get( prefabId );
@@ -210,12 +217,15 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
     }
     
     private void deletePrefab( EntityPrefab prefab ) {
-        prefab.dispose();
-        entityProvider.disposeComponentSet( prefabComponents.get( prefab.index() ) );
+        int prefabId = prefab.index();
+        
+        entityProvider.disposeComponentSet( prefabComponents.get( prefabId ) );
         ArrayDeque<IndexedTypeSet> componentsOfPrefab = components.get( prefab.index() );
         for ( IndexedTypeSet componentSet : componentsOfPrefab ) {
             entityProvider.disposeComponentSet( componentSet );
         }
+        prefabComponents.remove( prefabId );
+        prefab.dispose();
     }
 
     
@@ -270,7 +280,7 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
         ComponentBuilderHelper.toAttributes( attributes, EntityPrefab.class, prefabs );
     }
 
-    protected final class EntityPrefabBuilder extends BaseComponentBuilder<EntityPrefab> {
+    public final class EntityPrefabBuilder extends BaseComponentBuilder<EntityPrefab> {
         
         private IndexedTypeSet components;
 
@@ -296,5 +306,4 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
             return prefab;
         }
     }
-
 }

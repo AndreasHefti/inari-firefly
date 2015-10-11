@@ -18,6 +18,7 @@ package com.inari.firefly.control;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.StringUtils;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
@@ -35,21 +36,21 @@ import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 
-public final class ComponentControllerSystem 
+public final class ControllerSystem 
     implements
         FFContextInitiable,
         ComponentSystem,
         ComponentBuilderFactory,
         UpdateEventListener {
     
-    public static final TypedKey<ComponentControllerSystem> CONTEXT_KEY = TypedKey.create( "FF_COMPONENT_CONTROLLER_SYSTEM", ComponentControllerSystem.class );
+    public static final TypedKey<ControllerSystem> CONTEXT_KEY = TypedKey.create( "FF_COMPONENT_CONTROLLER_SYSTEM", ControllerSystem.class );
     
     private FFContext context;
     private IEventDispatcher eventDispatcher;
     
     private final DynArray<Controller> controller;
 
-    ComponentControllerSystem() {
+    ControllerSystem() {
         controller = new DynArray<Controller>();
     }
     
@@ -69,10 +70,32 @@ public final class ComponentControllerSystem
     }
     
     public final void deleteController( int id ) {
+        if ( id < 0 ) {
+            return;
+        }
+        
         Controller removed = controller.remove( id );
         if ( removed != null ) {
             disposeController( removed );
         }
+    }
+    
+    public final void deleteController( String name ) {
+        deleteController( getControllerId( name ) );
+    }
+
+    public final int getControllerId( String name ) {
+        if ( StringUtils.isBlank( name ) ) {
+            return -1;
+        }
+        
+        for ( Controller c : controller ) {
+            if ( name.equals( c.getName() ) ) {
+                return c.getId();
+            }
+        }
+        
+        return -1;
     }
 
     public final void clear() {

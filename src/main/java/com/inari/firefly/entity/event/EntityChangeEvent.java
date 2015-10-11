@@ -16,7 +16,7 @@
 package com.inari.firefly.entity.event;
 
 import com.inari.commons.event.AspectedEvent;
-import com.inari.commons.lang.aspect.IndexedAspect;
+import com.inari.commons.lang.aspect.AspectBitSet;
 
 @Deprecated // check if this is really useful
 public abstract class EntityChangeEvent extends AspectedEvent<EntityChangeListener> {
@@ -29,10 +29,10 @@ public abstract class EntityChangeEvent extends AspectedEvent<EntityChangeListen
     
     public final int entityId;
     public final int componentId;
-    public final IndexedAspect aspect;
+    public final AspectBitSet aspect;
     public final Type type;
     
-    public EntityChangeEvent( int entityId, int componentId, IndexedAspect aspect, Type type ) {
+    public EntityChangeEvent( int entityId, int componentId, AspectBitSet aspect, Type type ) {
         this.entityId = entityId;
         this.componentId = componentId;
         this.aspect = aspect;
@@ -40,7 +40,7 @@ public abstract class EntityChangeEvent extends AspectedEvent<EntityChangeListen
     }
 
     @Override
-    public IndexedAspect getAspect() {
+    public AspectBitSet getAspect() {
         return aspect;
     }
 

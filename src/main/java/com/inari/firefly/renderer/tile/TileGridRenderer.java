@@ -1,7 +1,6 @@
 package com.inari.firefly.renderer.tile;
 
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.TypedKey;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.renderer.BaseRenderer;
@@ -56,25 +55,23 @@ public class TileGridRenderer extends BaseRenderer implements RenderEventListene
     }
     
     protected void renderTileGridAllData( TileGridIterator iterator ) {
-        Vector2f actualWorldPosition  = iterator.getWorldPosition();
         while( iterator.hasNext() ) {
             int entityId = iterator.next();
             ESprite sprite = entitySystem.getComponent( entityId, ESprite.COMPONENT_TYPE );
             ETransform transform = entitySystem.getComponent( entityId, ETransform.COMPONENT_TYPE );
             
             transformCollector.set( transform );
-            transformCollector.xpos += actualWorldPosition.dx;
-            transformCollector.ypos += actualWorldPosition.dy;
+            transformCollector.xpos += iterator.getWorldXPos();
+            transformCollector.ypos += iterator.getWorldYPos();
             
             render( sprite, transform.getParentId() );
         }
     }
 
     protected void renderTileGrid( TileGridIterator iterator ) {
-        Vector2f actualWorldPosition  = iterator.getWorldPosition();
         while( iterator.hasNext() ) {
             ESprite sprite = entitySystem.getComponent( iterator.next(), ESprite.COMPONENT_TYPE );
-            lowerSystemFacade.renderSprite( sprite, actualWorldPosition.dx, actualWorldPosition.dy );
+            lowerSystemFacade.renderSprite( sprite, iterator.getWorldXPos(), iterator.getWorldYPos() );
         }
     }
 

@@ -241,7 +241,10 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
             return false;
         }
         
-        checkViewExists( viewId );
+        if ( !isLayeringEnabled( viewId ) ) {
+            return false;
+        }
+        
         List<Layer> layers = layersOfView.get( viewId );
         if ( layers.size() <= index ) {
             return false;
@@ -257,7 +260,10 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
             return false;
         }
         
-        checkViewExists( viewId );
+        if ( !isLayeringEnabled( viewId ) ) {
+            return false;
+        }
+        
         List<Layer> layers = layersOfView.get( viewId );
         if ( index >= layers.size() - 1 ) {
             return false;
@@ -269,7 +275,6 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
     }
 
     public final void deleteLayers( int viewId ) {
-        checkViewExists( viewId );
         if ( !isLayeringEnabled( viewId ) ) {
             return;
         }
@@ -312,7 +317,9 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
     }
     
     public final boolean isLayeringEnabled( int viewId ) {
-        checkViewExists( viewId );
+        if ( !views.contains( viewId ) ) {
+            return false;
+        }
         return getView( viewId ).isLayeringEnabled();
     }
     
@@ -358,13 +365,11 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
     }
 
     public final ViewBuilder getViewBuilder() {
-        return new ViewBuilder( this );
+        return new ViewBuilder( this, false );
     }
-
-    private void checkViewExists( int viewId ) {
-        if ( !hasView( viewId ) ) {
-            throw new IllegalArgumentException( "View with id: " + viewId + " doesn't exist." );
-        }
+    
+    public final ViewBuilder getViewBuilderWithAutoActivation() {
+        return new ViewBuilder( this, true );
     }
     
     private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
@@ -438,9 +443,12 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
     
     
     public final class ViewBuilder extends BaseComponentBuilder<View> {
+        
+        private final boolean autoActivation;
 
-        protected ViewBuilder( ViewSystem viewSystem ) {
+        protected ViewBuilder( ViewSystem viewSystem, boolean autoActivation ) {
             super( viewSystem );
+            this.autoActivation = autoActivation;
         }
 
         @Override
@@ -455,6 +463,11 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
                 orderedViewports.add( view );
             }
             eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_CREATED ) );
+            
+            if ( autoActivation ) {
+                activateView( view.index() );
+            }
+            
             return view;
         }
         
@@ -462,7 +475,6 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
             set( View.NAME, "BASE_VIEW" );
             set( View.BOUNDS, screenBounds );
             View view = build( BASE_VIEW_ID );
-            view.isBase = true;
             view.active = true;
             view.order = -1;
         }

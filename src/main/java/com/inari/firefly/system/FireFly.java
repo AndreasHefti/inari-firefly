@@ -22,9 +22,10 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.TypedKey;
+import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.ComponentControllerSystem;
+import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntityPrefabSystem;
 import com.inari.firefly.entity.EntityProvider;
 import com.inari.firefly.entity.EntitySystem;
@@ -61,6 +62,7 @@ public final class FireFly {
         initMap.put( FFContext.INPUT, input );
         initMap.put( FFContext.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
         initMap.put( FFContext.ENTITY_PROVIDER, EntityProvider.class );
+        initMap.put( ActionSystem.CONTEXT_KEY, ActionSystem.class );
         initMap.put( AssetSystem.CONTEXT_KEY, AssetSystem.class );
         initMap.put( StateSystem.CONTEXT_KEY, StateSystem.class );
         initMap.put( ViewSystem.CONTEXT_KEY, ViewSystem.class );
@@ -68,7 +70,7 @@ public final class FireFly {
         initMap.put( EntityPrefabSystem.CONTEXT_KEY, EntityPrefabSystem.class );
         initMap.put( SpriteViewSystem.CONTEXT_KEY, SpriteViewSystem.class );
         initMap.put( TileGridSystem.CONTEXT_KEY, TileGridSystem.class );
-        initMap.put( ComponentControllerSystem.CONTEXT_KEY, ComponentControllerSystem.class );
+        initMap.put( ControllerSystem.CONTEXT_KEY, ControllerSystem.class );
         initMap.put( AnimationSystem.CONTEXT_KEY, AnimationSystem.class );
         initMap.put( SoundSystem.CONTEXT_KEY, SoundSystem.class );
         initMap.put( SpriteViewRenderer.CONTEXT_KEY, SpriteViewRenderer.class );
@@ -118,7 +120,6 @@ public final class FireFly {
     
     public final void update() {
         updateEvent.timer.tick();
-        //System.out.println( updateEvent );
         eventDispatcher.notify( updateEvent );
     }
     

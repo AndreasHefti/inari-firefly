@@ -6,50 +6,71 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.inari.commons.StringUtils;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
-import com.inari.firefly.renderer.tile.TileGrid;
 import com.inari.firefly.renderer.tile.TileGrid.TileGridIterator;
 public class TileGridTest {
+    
+    @Before
+    public void init() {
+        Indexer.clear();
+    }
 
     @Test
     public void testCreation() {
-        TileGrid grid1 = new TileGrid();
-        TileGrid grid2 = new TileGrid( 1, 1, 10, 10 );
-        TileGrid grid3 = new TileGrid( 1, 1, 10, 10, 10, 10, true );
+        TileGrid grid1 = new TileGrid( 0 );
+        TileGrid grid2 = new TileGrid( 1 );
+        grid2.setViewId( 123 );
+        grid2.setLayerId( 1 );
+        grid2.setWidth( 10 );
+        grid2.setHeight( 10 );
+        TileGrid grid3 = new TileGrid( 2 );
+        grid3.setViewId( 123 );
+        grid3.setLayerId( 1 );
+        grid3.setWidth( 10 );
+        grid3.setHeight( 10 );
+        grid3.setWorldXPos( 10f );
+        grid3.setWorldYPos( 10f );
+        grid3.setSpherical( true );
+        
         AttributeMap attrs = new ComponentAttributeMap();
+        
 
         grid1.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=-1, "
-                + "layerId:Integer=-1,"
-                + " width:Integer=0, "
-                + "height:Integer=0, "
-                + "cellWidth:Integer=0, "
-                + "cellHeight:Integer=0, "
-                + "worldXPos:Float=0.0, "
-                + "worldYPos:Float=0.0, "
-                + "spherical:Boolean=false, " 
-                + "renderMode:TileRenderMode=FULL_RENDERING",
+            "name:String=null, " +
+            "viewId:Integer=-1, " +
+            "layerId:Integer=-1, " +
+            "width:Integer=0, " +
+            "height:Integer=0, " +
+            "cellWidth:Integer=0, " +
+            "cellHeight:Integer=0, " +
+            "worldXPos:Float=0.0, " +
+            "worldYPos:Float=0.0, " +
+            "spherical:Boolean=false, " +
+            "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
 
         attrs.clear();
         grid2.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
-                + "layerId:Integer=1, "
-                + "width:Integer=10, "
-                + "height:Integer=10, "
-                + "cellWidth:Integer=0, "
-                + "cellHeight:Integer=0, "
-                + "worldXPos:Float=0.0, "
-                + "worldYPos:Float=0.0, "
-                + "spherical:Boolean=false, " 
-                + "renderMode:TileRenderMode=FULL_RENDERING",
+            "name:String=null, " +
+            "viewId:Integer=123, " +
+            "layerId:Integer=1, " +
+            "width:Integer=10, " +
+            "height:Integer=10, " +
+            "cellWidth:Integer=0, " +
+            "cellHeight:Integer=0, " +
+            "worldXPos:Float=0.0, " +
+            "worldYPos:Float=0.0, " +
+            "spherical:Boolean=false, " +
+            "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -69,16 +90,17 @@ public class TileGridTest {
         attrs.clear();
         grid3.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
-                + "layerId:Integer=1, "
-                + "width:Integer=10, "
-                + "height:Integer=10, "
-                + "cellWidth:Integer=0, "
-                + "cellHeight:Integer=0, "
-                + "worldXPos:Float=10.0, "
-                + "worldYPos:Float=10.0, "
-                + "spherical:Boolean=true, "
-                + "renderMode:TileRenderMode=FULL_RENDERING",
+            "name:String=null, " +
+            "viewId:Integer=123, " +
+            "layerId:Integer=1, " +
+            "width:Integer=10, " +
+            "height:Integer=10, " +
+            "cellWidth:Integer=0, " +
+            "cellHeight:Integer=0, " +
+            "worldXPos:Float=10.0, " +
+            "worldYPos:Float=10.0, " +
+            "spherical:Boolean=true, " +
+            "renderMode:TileRenderMode=FULL_RENDERING",
             attrs.toString()
         );
         assertEquals(
@@ -98,12 +120,17 @@ public class TileGridTest {
     
     @Test
     public void testSetReset() {
-        TileGrid grid = new TileGrid( 1, 1, 3, 3 );
+        TileGrid grid = new TileGrid( 1 );
+        grid.setViewId( 1 );
+        grid.setLayerId( 1 );
+        grid.setWidth( 3 );
+        grid.setHeight( 3 );
         AttributeMap attrs = new ComponentAttributeMap();
 
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+            "name:String=null, "
+            + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
             + "height:Integer=3, "
@@ -129,7 +156,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+            "name:String=null, "
+            + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
             + "height:Integer=3, "
@@ -155,7 +183,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+            "name:String=null, "
+            + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
             + "height:Integer=3, "
@@ -181,7 +210,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+            "name:String=null, "
+            + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
             + "height:Integer=3, "
@@ -222,14 +252,19 @@ public class TileGridTest {
     
     @Test
     public void testSphericalSetReset() {
-        TileGrid grid = new TileGrid( 1, 1, 3, 3 );
+        TileGrid grid = new TileGrid( 1 );
+        grid.setViewId( 1 );
+        grid.setLayerId( 1 );
+        grid.setWidth( 3 );
+        grid.setHeight( 3 );
         grid.setSpherical( true );
         AttributeMap attrs = new ComponentAttributeMap();
 
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+                "name:String=null, "
+                        + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
                 + "width:Integer=3, "
                 + "height:Integer=3, "
@@ -253,7 +288,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+                "name:String=null, "
+                        + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
                 + "width:Integer=3, "
                 + "height:Integer=3, "
@@ -277,7 +313,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+                "name:String=null, "
+                        + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
                 + "width:Integer=3, "
                 + "height:Integer=3, "
@@ -301,7 +338,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+                "name:String=null, "
+                        + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
                 + "width:Integer=3, "
                 + "height:Integer=3, "
@@ -325,7 +363,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+                "name:String=null, "
+                        + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
                 + "width:Integer=3, "
                 + "height:Integer=3, "
@@ -347,7 +386,11 @@ public class TileGridTest {
     
     @Test
     public void testResize() {
-        TileGrid grid = new TileGrid( 1, 1, 3, 3 );
+        TileGrid grid = new TileGrid( 1 );
+        grid.setViewId( 1 );
+        grid.setLayerId( 1 );
+        grid.setWidth( 3 );
+        grid.setHeight( 3 );
         AttributeMap attrs = new ComponentAttributeMap();
 
         grid.set( 100, 0, 0 );
@@ -357,7 +400,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+                "name:String=null, "
+                        + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
             + "height:Integer=3, "
@@ -381,7 +425,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+                "name:String=null, "
+                        + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=5, "
             + "height:Integer=3, "
@@ -405,7 +450,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+                "name:String=null, "
+                        + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=5, "
             + "height:Integer=5, "
@@ -432,7 +478,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+                "name:String=null, "
+                        + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=5, "
             + "height:Integer=5, "
@@ -459,7 +506,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+                "name:String=null, "
+                        + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
             + "height:Integer=3, "
@@ -481,7 +529,11 @@ public class TileGridTest {
     
     @Test
     public void testIterator() {
-        TileGrid grid = new TileGrid( 1, 1, 3, 3 );
+        TileGrid grid = new TileGrid( 1 );
+        grid.setViewId( 1 );
+        grid.setLayerId( 1 );
+        grid.setWidth( 3 );
+        grid.setHeight( 3 );
         AttributeMap attrs = new ComponentAttributeMap();
 
         grid.set( 100, 0, 0 );
@@ -491,7 +543,8 @@ public class TileGridTest {
         attrs.clear();
         grid.toAttributes( attrs );
         assertEquals(
-            "viewId:Integer=1, "
+                "name:String=null, "
+                        + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
             + "height:Integer=3, "

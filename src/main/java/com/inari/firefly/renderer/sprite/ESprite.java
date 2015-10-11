@@ -116,7 +116,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( SPRITE_ID, spriteId );
         attributes.put( ORDERING, ordering );
-        attributes.put( TINT_COLOR, tintColor );
+        attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
         attributes.put( BLEND_MODE, blendMode );
     }
 }

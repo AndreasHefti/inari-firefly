@@ -35,6 +35,7 @@ public abstract class NamedIndexedComponent extends BaseIndexedObject implements
     
     protected NamedIndexedComponent( int id ) {
         super( id );
+        name = null;
     }
     
     public final int getId() {

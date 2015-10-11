@@ -66,12 +66,12 @@ public final class SoundSystem
     
     @Override
     public final void dispose( FFContext context ) {
-        clearSounds();
+        clear();
         
         context.getComponent( FFContext.EVENT_DISPATCHER ).unregister( SoundEvent.class, this );
     }
 
-    private void clearSounds() {
+    public final void clear() {
         for ( Sound sound : sounds ) {
             sound.dispose();
         }
@@ -86,7 +86,7 @@ public final class SoundSystem
         
         sound.dispose();
     }
-    
+
     public final Sound getSound( int soundId ) {
         return sounds.get( soundId );
     }
@@ -103,6 +103,14 @@ public final class SoundSystem
         }
         
         return null;
+    }
+    
+    public int getSoundId( String soundName ) {
+        Sound sound = getSound( soundName );
+        if ( sound == null ) {
+            return -1;
+        }
+        return sound.getId();
     }
 
     @Override
@@ -169,7 +177,7 @@ public final class SoundSystem
     @Override
     public final void fromAttributes( Attributes attributes, BuildType buildType ) {
         if ( buildType == BuildType.CLEAR_OLD ) {
-            clearSounds();
+            clear();
         }
 
         new ComponentBuilderHelper<Sound>() {

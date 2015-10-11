@@ -67,8 +67,24 @@ public final class ETile extends EntityComponent {
         }
     }
 
-    public final Position getGridPosition() {
+    public final int getGridXPos() {
+        return gridPosition.x;
+    }
+    
+    public final void setGridXPos( int pos ) {
+        gridPosition.x = pos;
+    }
+    
+    final Position getGridPosition() {
         return gridPosition;
+    }
+    
+    public final int getGridYPos() {
+        return gridPosition.y;
+    }
+    
+    public final void setGridYPos( int pos ) {
+        gridPosition.y = pos;
     }
 
     public final DynArray<Position> getGridPositions() {

@@ -15,7 +15,7 @@ public class ControllerSystemTest {
     
     @Test
     public void testGetComponentBuilder() {
-        ComponentControllerSystem controllerSystem = new ComponentControllerSystem();
+        ControllerSystem controllerSystem = new ControllerSystem();
         
         ComponentBuilder<TestController> componentBuilder = controllerSystem.getComponentBuilder( ControllerSystemTest.TestController.class );
         assertNotNull( componentBuilder );

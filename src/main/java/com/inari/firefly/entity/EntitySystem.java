@@ -22,9 +22,9 @@ import java.util.Set;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.TypedKey;
-import com.inari.commons.lang.aspect.IndexedAspect;
+import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.functional.Predicate;
-import com.inari.commons.lang.indexed.IndexedTypeAspect;
+import com.inari.commons.lang.indexed.IndexedTypeAspectSet;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
@@ -118,7 +118,7 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
         activeEntities.set( entityId, entity ) ;
         
         if ( eventDispatcher != null ) {
-            IndexedAspect aspect = getAspect( entityId );
+            AspectBitSet aspect = getAspect( entityId );
             eventDispatcher.notify( 
                 new EntityActivationEvent( entity.index(), aspect, Type.ENTITY_ACTIVATED ) 
             );
@@ -167,7 +167,7 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
         return activeEntities.get( entityId );
     }
 
-    public final IndexedAspect getAspect( int entityId ) {
+    public final AspectBitSet getAspect( int entityId ) {
         IndexedTypeSet components = getComponents( entityId );
         if ( components == null ) {
             return null;
@@ -181,7 +181,7 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
         return activeEntities.iterator();
     }
 
-    public final Iterable<Entity> entities( final IndexedAspect aspect ) {
+    public final Iterable<Entity> entities( final AspectBitSet aspect ) {
         return new Iterable<Entity>() {
             @Override
             public final Iterator<Entity> iterator() {
@@ -332,9 +332,9 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
     
     private final class AspectedEntityIterator extends EntityIterator {
         
-        private final IndexedAspect aspect;
+        private final AspectBitSet aspect;
         
-        public AspectedEntityIterator( IndexedAspect aspect ) {
+        public AspectedEntityIterator( AspectBitSet aspect ) {
             super( activeEntities.iterator() );
             this.aspect = aspect;
             findNext();
@@ -398,7 +398,7 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
         public Entity build( int componentId ) {
             Entity entity = entityProvider.getEntity( componentId );
             
-            IndexedTypeAspect aspectToCheck;
+            IndexedTypeAspectSet aspectToCheck;
             if ( prefabComponents != null ) {
                 // if we have prefab components we use them
                 components.set( entity.index(), prefabComponents );

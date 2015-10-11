@@ -60,6 +60,7 @@ public class FFContextImpl implements FFContext {
         return key.type().cast( properties.get( key ) );
     }
 
+    @Override
     public final void dispose() {
         for ( Object component : systemComponents.values() ) {
             if ( component instanceof Disposable ) {

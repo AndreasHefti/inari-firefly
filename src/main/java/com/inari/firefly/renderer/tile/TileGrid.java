@@ -16,45 +16,44 @@
 package com.inari.firefly.renderer.tile;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.IntIterator;
-import com.inari.firefly.component.Component;
+import com.inari.firefly.component.NamedIndexedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
-public final class TileGrid implements Component {
+public final class TileGrid extends NamedIndexedComponent {
     
     public enum TileRenderMode {
         FULL_RENDERING,
         FAST_RENDERING
     }
     
-    public static final AttributeKey<Integer> ATTRIBUTE_VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, TileGrid.class );
-    public static final AttributeKey<Integer> ATTRIBUTE_LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, TileGrid.class );
-    public static final AttributeKey<Integer> ATTRIBUTE_WIDTH = new AttributeKey<Integer>( "width", Integer.class, TileGrid.class );
-    public static final AttributeKey<Integer> ATTRIBUTE_HEIGHT = new AttributeKey<Integer>( "height", Integer.class, TileGrid.class );
-    public static final AttributeKey<Integer> ATTRIBUTE_CELL_WIDTH = new AttributeKey<Integer>( "cellWidth", Integer.class, TileGrid.class );
-    public static final AttributeKey<Integer> ATTRIBUTE_CELL_HEIGHT = new AttributeKey<Integer>( "cellHeight", Integer.class, TileGrid.class );
-    public static final AttributeKey<Float> ATTRIBUTE_WORLD_XPOS = new AttributeKey<Float>( "worldXPos", Float.class, TileGrid.class );
-    public static final AttributeKey<Float> ATTRIBUTE_WORLD_YPOS = new AttributeKey<Float>( "worldYPos", Float.class, TileGrid.class );
-    public static final AttributeKey<Boolean> ATTRIBUTE_SPHERICAL = new AttributeKey<Boolean>( "spherical", Boolean.class, TileGrid.class );
-    public static final AttributeKey<TileRenderMode> ATTRIBUTE_RENDER_MODE = new AttributeKey<TileRenderMode>( "renderMode", TileRenderMode.class, TileGrid.class );
+    public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, TileGrid.class );
+    public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, TileGrid.class );
+    public static final AttributeKey<Integer> WIDTH = new AttributeKey<Integer>( "width", Integer.class, TileGrid.class );
+    public static final AttributeKey<Integer> HEIGHT = new AttributeKey<Integer>( "height", Integer.class, TileGrid.class );
+    public static final AttributeKey<Integer> CELL_WIDTH = new AttributeKey<Integer>( "cellWidth", Integer.class, TileGrid.class );
+    public static final AttributeKey<Integer> CELL_HEIGHT = new AttributeKey<Integer>( "cellHeight", Integer.class, TileGrid.class );
+    public static final AttributeKey<Float> WORLD_XPOS = new AttributeKey<Float>( "worldXPos", Float.class, TileGrid.class );
+    public static final AttributeKey<Float> WORLD_YPOS = new AttributeKey<Float>( "worldYPos", Float.class, TileGrid.class );
+    public static final AttributeKey<Boolean> SPHERICAL = new AttributeKey<Boolean>( "spherical", Boolean.class, TileGrid.class );
+    public static final AttributeKey<TileRenderMode> RENDER_MODE = new AttributeKey<TileRenderMode>( "renderMode", TileRenderMode.class, TileGrid.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
-        ATTRIBUTE_VIEW_ID,
-        ATTRIBUTE_LAYER_ID,
-        ATTRIBUTE_WIDTH,
-        ATTRIBUTE_HEIGHT,
-        ATTRIBUTE_CELL_WIDTH,
-        ATTRIBUTE_CELL_HEIGHT,
-        ATTRIBUTE_WORLD_XPOS,
-        ATTRIBUTE_WORLD_YPOS,
-        ATTRIBUTE_SPHERICAL,
-        ATTRIBUTE_RENDER_MODE
+        VIEW_ID,
+        LAYER_ID,
+        WIDTH,
+        HEIGHT,
+        CELL_WIDTH,
+        CELL_HEIGHT,
+        WORLD_XPOS,
+        WORLD_YPOS,
+        SPHERICAL,
+        RENDER_MODE
     };
     
     public final static int NULL_VALUE = -1;
@@ -73,9 +72,10 @@ public final class TileGrid implements Component {
     
     protected int[][] grid;
     
-    TileGrid() {
-        viewId = -1;
-        layerId = -1;
+    protected TileGrid( int id ) {
+        super( id );
+        viewId = 0;
+        layerId = 0;
         width = 0;
         height = 0;
         cellWidth = 0;
@@ -83,32 +83,6 @@ public final class TileGrid implements Component {
         worldXPos = 0;
         worldYPos = 0;
         spherical = false;
-        renderMode = TileRenderMode.FULL_RENDERING;
-        createGrid();
-    }
-    
-    @Deprecated
-    TileGrid( int viewId, int layerId, int width, int height ) {
-        this.viewId = viewId;
-        this.layerId = layerId;
-        this.width = width;
-        this.height = height;
-        this.worldXPos = 0;
-        this.worldYPos = 0;
-        this.spherical = false;
-        renderMode = TileRenderMode.FULL_RENDERING;
-        createGrid();
-    }
-    
-    @Deprecated
-    TileGrid( int viewId, int layerId, int width, int height, int worldXpos, int worldYPos, boolean spherical ) {
-        this.viewId = viewId;
-        this.layerId = layerId;
-        this.width = width;
-        this.height = height;
-        this.worldXPos = worldXpos;
-        this.worldYPos = worldYPos;
-        this.spherical = spherical;
         renderMode = TileRenderMode.FULL_RENDERING;
         createGrid();
     }
@@ -202,36 +176,42 @@ public final class TileGrid implements Component {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
+        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return attributeKeys;
     }
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        viewId = attributes.getValue( ATTRIBUTE_VIEW_ID, viewId );
-        layerId = attributes.getValue( ATTRIBUTE_LAYER_ID, layerId );
-        width = attributes.getValue( ATTRIBUTE_WIDTH, width );
-        height = attributes.getValue( ATTRIBUTE_HEIGHT, height );
-        cellWidth = attributes.getValue( ATTRIBUTE_CELL_WIDTH, cellWidth );
-        cellHeight = attributes.getValue( ATTRIBUTE_CELL_HEIGHT, cellHeight );
-        worldXPos = attributes.getValue( ATTRIBUTE_WORLD_XPOS, worldXPos );
-        worldYPos = attributes.getValue( ATTRIBUTE_WORLD_YPOS, worldYPos );
-        spherical = attributes.getValue( ATTRIBUTE_SPHERICAL, spherical );
-        renderMode = attributes.getValue( ATTRIBUTE_RENDER_MODE, renderMode );
+        super.fromAttributes( attributes );
+        
+        viewId = attributes.getValue( VIEW_ID, viewId );
+        layerId = attributes.getValue( LAYER_ID, layerId );
+        width = attributes.getValue( WIDTH, width );
+        height = attributes.getValue( HEIGHT, height );
+        cellWidth = attributes.getValue( CELL_WIDTH, cellWidth );
+        cellHeight = attributes.getValue( CELL_HEIGHT, cellHeight );
+        worldXPos = attributes.getValue( WORLD_XPOS, worldXPos );
+        worldYPos = attributes.getValue( WORLD_YPOS, worldYPos );
+        spherical = attributes.getValue( SPHERICAL, spherical );
+        renderMode = attributes.getValue( RENDER_MODE, renderMode );
         createGrid();
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
-        attributes.put( ATTRIBUTE_VIEW_ID, viewId );
-        attributes.put( ATTRIBUTE_LAYER_ID, layerId );
-        attributes.put( ATTRIBUTE_WIDTH, width );
-        attributes.put( ATTRIBUTE_HEIGHT, height );
-        attributes.put( ATTRIBUTE_CELL_WIDTH, cellWidth );
-        attributes.put( ATTRIBUTE_CELL_HEIGHT, cellHeight );
-        attributes.put( ATTRIBUTE_WORLD_XPOS, worldXPos );
-        attributes.put( ATTRIBUTE_WORLD_YPOS, worldXPos );
-        attributes.put( ATTRIBUTE_SPHERICAL, spherical );
-        attributes.put( ATTRIBUTE_RENDER_MODE, renderMode );
+        super.toAttributes( attributes );
+        
+        attributes.put( VIEW_ID, viewId );
+        attributes.put( LAYER_ID, layerId );
+        attributes.put( WIDTH, width );
+        attributes.put( HEIGHT, height );
+        attributes.put( CELL_WIDTH, cellWidth );
+        attributes.put( CELL_HEIGHT, cellHeight );
+        attributes.put( WORLD_XPOS, worldXPos );
+        attributes.put( WORLD_YPOS, worldXPos );
+        attributes.put( SPHERICAL, spherical );
+        attributes.put( RENDER_MODE, renderMode );
     }
     
     public final int get( int xpos, int ypos ) {
@@ -309,7 +289,7 @@ public final class TileGrid implements Component {
             }
         }
         
-        if ( old != null ) {
+        if ( old != null && old.length > 0 && old[ 0 ].length > 0 ) {
             int lowerHeight = ( old.length < height )? old.length : height;
             int lowerWidth = ( old[ 0 ].length < width )? old[ 0 ].length : width;
             for ( int y = 0; y < lowerHeight; y++ ) {
@@ -338,12 +318,17 @@ public final class TileGrid implements Component {
         @Override
         public final int next() {
             int result = grid[ clip.y ][ clip.x ];
+            calcWorldPosition();
             findNext();
             return result;
         }
 
-        public final Vector2f getWorldPosition() {
-            return worldPosition;
+        public final float getWorldXPos() {
+            return worldPosition.dx;
+        }
+        
+        public final float getWorldYPos() {
+            return worldPosition.dy;
         }
 
         private void findNext() {
@@ -351,7 +336,6 @@ public final class TileGrid implements Component {
             while ( clip.y < clip.height ) {
                 while( clip.x < clip.width ) {
                     if ( grid[ clip.y ][ clip.x ] != NULL_VALUE ) {
-                        calcWorldPosition();
                         return;
                     }
                     clip.x++;

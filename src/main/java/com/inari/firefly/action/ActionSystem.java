@@ -3,6 +3,7 @@ package com.inari.firefly.action;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.action.event.ActionEvent;
 import com.inari.firefly.action.event.ActionEventListener;
@@ -23,6 +24,8 @@ public final class ActionSystem
         ComponentSystem,
         ComponentBuilderFactory,
         ActionEventListener {
+    
+    public static final TypedKey<ActionSystem> CONTEXT_KEY = TypedKey.create( "FF_ACTION_SYSTEM", ActionSystem.class );
     
     private FFContext context;
     

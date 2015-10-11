@@ -42,7 +42,6 @@ public class View extends NamedIndexedComponent {
         CONTROLLER_ID
     };
     
-    boolean isBase = false;
     int order;
     boolean active = false;
     
@@ -72,7 +71,7 @@ public class View extends NamedIndexedComponent {
     }
 
     public final boolean isBase() {
-        return isBase;
+        return ( index() == ViewSystem.BASE_VIEW_ID );
     }
 
     public final boolean isLayeringEnabled() {

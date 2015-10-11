@@ -50,7 +50,14 @@ public final class Sound extends NamedIndexedComponent {
     
     Sound( int id ) {
         super( id );
+        assetId = -1;
+        looping = false;
+        volume = 10;
+        pitch = 1;
+        pan = 0;
         controllerId = -1;
+        streaming = false;
+        instanceId = -1;
     }
 
     public final int getAssetId() {

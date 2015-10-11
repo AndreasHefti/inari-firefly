@@ -44,11 +44,13 @@ public abstract class FFTimer {
     public final class UpdateScheduler {
         
         private final int resolution;
+        private final long delayMillis;
         private long lastUpdate = -1;
         private long tick = 0;
         
         private UpdateScheduler( int resolution ) {
             this.resolution = resolution;
+            delayMillis =  1000 / resolution;
         }
         
         public final int getResolution() {
@@ -65,7 +67,7 @@ public abstract class FFTimer {
                 return true;
             }
             
-            if ( lastUpdateTime - lastUpdate >= resolution ) {
+            if ( lastUpdateTime - lastUpdate >= delayMillis ) {
                 lastUpdate = lastUpdateTime;
                 tick++;
                 return true;

@@ -7,7 +7,7 @@ public final class ActionEvent extends Event<ActionEventListener> {
     public int actionId;
     public int entityId;
     
-    private ActionEvent( int actionId, int entityId ) {
+    public ActionEvent( int actionId, int entityId ) {
         super();
         this.actionId = actionId;
         this.entityId = entityId;

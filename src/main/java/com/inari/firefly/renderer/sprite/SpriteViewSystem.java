@@ -19,7 +19,7 @@ import java.util.Comparator;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
-import com.inari.commons.lang.aspect.IndexedAspect;
+import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.entity.ETransform;
@@ -60,7 +60,7 @@ public final class SpriteViewSystem implements FFContextInitiable, EntityActivat
     }
     
     @Override
-    public final boolean match( IndexedAspect aspect ) {
+    public final boolean match( AspectBitSet aspect ) {
         return aspect.contains( ESprite.COMPONENT_TYPE ) && !aspect.contains( ETile.COMPONENT_TYPE );
     }
     
