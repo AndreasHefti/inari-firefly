@@ -245,12 +245,12 @@ public final class TileGridSystem
         ETile tile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
         TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
         if ( tile.isMultiPosition() ) {
-            Position gridPosition = tile.getGridPosition();
-            tileGrid.reset( gridPosition.x, gridPosition.y );
-        } else {
             for ( Position gridPosition : tile.getGridPositions() ) {
                 tileGrid.reset( gridPosition.x, gridPosition.y );
             }
+        } else {
+            Position gridPosition = tile.getGridPosition();
+            tileGrid.reset( gridPosition.x, gridPosition.y );
         }
     }
 

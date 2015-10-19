@@ -16,6 +16,7 @@
 package com.inari.firefly.system;
 
 import java.util.Iterator;
+import java.util.Random;
 
 import com.inari.commons.event.EventDispatcher;
 import com.inari.commons.event.IEventDispatcher;
@@ -41,6 +42,8 @@ import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.TaskSystem;
 
 public final class FireFly {
+    
+    public static final Random RANDOM = new Random();
     
     private FFContextImpl context;
     

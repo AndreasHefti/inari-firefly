@@ -69,12 +69,23 @@ public final class ControllerSystem
         clear();
     }
     
-    public final void deleteController( int id ) {
-        if ( id < 0 ) {
+    public final Controller getController( int controllerId ) {
+        if ( !controller.contains( controllerId ) ) {
+            return null;
+        }
+        return controller.get( controllerId );
+    }
+    
+    public final void deleteController( int controllerId ) {
+        if ( controllerId < 0 ) {
             return;
         }
         
-        Controller removed = controller.remove( id );
+        if ( !controller.contains( controllerId ) ) {
+            return;
+        }
+        
+        Controller removed = controller.remove( controllerId );
         if ( removed != null ) {
             disposeController( removed );
         }
@@ -110,7 +121,7 @@ public final class ControllerSystem
         for ( int i = 0; i < controller.capacity(); i++ ) {
             Controller c = controller.get( i );
             if ( c != null ) {
-                c.update( event.timer );
+                c.processUpdate( event.timer );
             }
         }
     }

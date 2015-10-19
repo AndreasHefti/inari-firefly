@@ -24,7 +24,7 @@ public abstract class FFTimer {
 
     protected abstract void tick();
     
-    public final UpdateScheduler createUpdateScheduler( int resolution ) {
+    public final UpdateScheduler createUpdateScheduler( float resolution ) {
         return new UpdateScheduler( resolution );
     }
 
@@ -43,17 +43,17 @@ public abstract class FFTimer {
 
     public final class UpdateScheduler {
         
-        private final int resolution;
+        private final float resolution;
         private final long delayMillis;
         private long lastUpdate = -1;
         private long tick = 0;
         
-        private UpdateScheduler( int resolution ) {
+        private UpdateScheduler( float resolution ) {
             this.resolution = resolution;
-            delayMillis =  1000 / resolution;
+            delayMillis = (long) ( 1000 / resolution );
         }
         
-        public final int getResolution() {
+        public final float getResolution() {
             return resolution;
         }
 

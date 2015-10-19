@@ -29,6 +29,7 @@ public final class Sound extends NamedIndexedComponent {
     public static final AttributeKey<Float> VOLUME = new AttributeKey<Float>( "volume", Float.class, Sound.class );
     public static final AttributeKey<Float> PITCH = new AttributeKey<Float>( "pitch", Float.class, Sound.class );
     public static final AttributeKey<Float> PAN = new AttributeKey<Float>( "pan", Float.class, Sound.class );
+    public static final AttributeKey<Integer> CHANEL = new AttributeKey<Integer>( "chanel", Integer.class, Sound.class );
     public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, Sound.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         ASSET_ID,
@@ -47,17 +48,19 @@ public final class Sound extends NamedIndexedComponent {
     private int controllerId;
     boolean streaming;
     long instanceId;
+    int chanel;
     
     Sound( int id ) {
         super( id );
         assetId = -1;
         looping = false;
-        volume = 10;
+        volume = 1;
         pitch = 1;
         pan = 0;
         controllerId = -1;
         streaming = false;
         instanceId = -1;
+        chanel = 0;
     }
 
     public final int getAssetId() {
@@ -121,7 +124,15 @@ public final class Sound extends NamedIndexedComponent {
     public final void setControllerId( int controllerId ) {
         this.controllerId = controllerId;
     }
-    
+
+    public final int getChanel() {
+        return chanel;
+    }
+
+    public final void setChanel( int chanel ) {
+        this.chanel = chanel;
+    }
+
     public long getInstanceId() {
         return instanceId;
     }
@@ -143,6 +154,7 @@ public final class Sound extends NamedIndexedComponent {
         pitch = attributes.getValue( PITCH, pitch );
         pan = attributes.getValue( PAN, pan );
         controllerId = attributes.getValue( CONTROLLER_ID, controllerId );
+        chanel = attributes.getValue( CHANEL, chanel );
     }
 
     @Override
@@ -155,6 +167,7 @@ public final class Sound extends NamedIndexedComponent {
         attributes.put( PITCH, pitch );
         attributes.put( PAN, pan );
         attributes.put( CONTROLLER_ID, controllerId );
+        attributes.put( CHANEL, chanel );
     }
 
     

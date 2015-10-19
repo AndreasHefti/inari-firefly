@@ -34,7 +34,7 @@ public interface LowerSystemFacade extends FFContextInitiable, AssetEventListene
     
     void flush( Iterator<View> virtualViews );
 
-    long playSound( int soundId, boolean looping, float volume, float pitch, float pan );
+    long playSound( int soundId, int chanel, boolean looping, float volume, float pitch, float pan );
     
     void changeSound( int soundId, long instanceId, float volume, float pitch, float pan );
     

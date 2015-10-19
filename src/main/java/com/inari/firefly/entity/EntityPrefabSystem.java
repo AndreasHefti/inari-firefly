@@ -88,6 +88,10 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
     }
     
     public final void deletePrefab( int prefabId ) {
+        if ( !prefabs.contains( prefabId ) ) {
+            return;
+        }
+        
         EntityPrefab prefab = prefabs.get( prefabId );
         if ( prefab == null ) {
             return;

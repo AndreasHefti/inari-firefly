@@ -200,6 +200,26 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
         return states.get( stateId );
     }
     
+    public final int getStateId( String workflowName, String stateName ) {
+        int workflowId = getWorkflowId( workflowName );
+        if ( workflowId < 0 ) {
+            return -1;
+        }
+        
+        for ( int i = 0; i < states.capacity(); i++ ) {
+            if ( !states.contains( i ) ) {
+                continue;
+            }
+            
+            State state = states.get( i );
+            if ( state.getWorkflowId() == workflowId && stateName.equals( state.getName() ) ) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+    
     public final int getStateId( String stateName ) {
         for ( int i = 0; i < states.capacity(); i++ ) {
             if ( !states.contains( i ) ) {

@@ -129,9 +129,21 @@ public final class SoundSystem
         switch ( event.eventType ) {
             case PLAY_SOUND : {
                 if ( sound.streaming ) {
-                    lowerSystemFacade.playMusic( sound.getAssetId(), sound.isLooping(), sound.getVolume(), sound.getPan() );
+                    lowerSystemFacade.playMusic( 
+                        sound.getAssetId(), 
+                        sound.isLooping(), 
+                        sound.getVolume(), 
+                        sound.getPan() 
+                    );
                 } else {
-                    sound.instanceId = lowerSystemFacade.playSound( sound.getAssetId(), sound.isLooping(), sound.getVolume(), sound.getPitch(), sound.getPan() );
+                    sound.instanceId = lowerSystemFacade.playSound( 
+                        sound.getAssetId(), 
+                        sound.getChanel(), 
+                        sound.isLooping(), 
+                        sound.getVolume(), 
+                        sound.getPitch(), 
+                        sound.getPan() 
+                    );
                 } 
                 break;
             }

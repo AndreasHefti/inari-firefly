@@ -15,19 +15,44 @@
  ******************************************************************************/ 
 package com.inari.firefly.control;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.FFTimer.UpdateScheduler;
 
 public abstract class Controller extends NamedIndexedComponent implements Disposable {
     
+    public static final AttributeKey<Float> UPDATE_RESOLUTION = new AttributeKey<Float>( "updateResolution", Float.class, Controller.class );
+    
+    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+        UPDATE_RESOLUTION
+    };
+    
+    private float updateResolution;
+    
+    private UpdateScheduler updateScheduler;
     protected final IntBag componentIds;
     
     protected Controller( int id ) {
         super( id );
         // TODO check if this is a proper init
         componentIds = new IntBag( 10, -1 );
+        updateResolution = -1;
+        updateScheduler = null;
+    }
+
+    public final float getUpdateResolution() {
+        return updateResolution;
+    }
+
+    public final void setUpdateResolution( float updateResolution ) {
+        this.updateResolution = updateResolution;
     }
 
     @Override
@@ -46,6 +71,41 @@ public abstract class Controller extends NamedIndexedComponent implements Dispos
     
     public final void removeComponentId( int componentId ) {
         componentIds.remove( componentId );
+    }
+    
+    @Override
+    public Set<AttributeKey<?>> attributeKeys() {
+        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
+        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return attributeKeys;
+    }
+
+    @Override
+    public void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
+        
+        updateResolution = attributes.getValue( UPDATE_RESOLUTION, updateResolution );
+    }
+
+    @Override
+    public void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
+        
+        attributes.put( UPDATE_RESOLUTION, updateResolution );
+    }
+    
+    final void processUpdate( final FFTimer timer ) {
+        if ( updateResolution >= 0 ) {
+            if ( updateScheduler == null ) {
+                updateScheduler = timer.createUpdateScheduler( updateResolution );
+            }
+            if ( updateScheduler.needsUpdate() ) {
+                update( timer );
+            }
+            return;
+        }
+        
+        update( timer );
     }
     
     public abstract void update( final FFTimer timer );

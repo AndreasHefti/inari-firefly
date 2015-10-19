@@ -144,6 +144,10 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
         if ( activeEntities.contains( entityId ) ) {
             deactivate( entityId );
         }
+        
+        if ( !inactiveEntities.contains( entityId ) ) {
+            return;
+        }
 
         Entity entityToRestore = inactiveEntities.get( entityId );
         IndexedTypeSet componentsToRestore = components.get( entityId );

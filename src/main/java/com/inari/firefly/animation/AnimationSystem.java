@@ -198,6 +198,10 @@ public final class AnimationSystem
     }
     
     public final void deleteAnimation( int animationId ) {
+        if ( !animations.contains( animationId ) ) {
+            return;
+        }
+        
         disposeAnimation( animations.remove( animationId ) );
     }
     
@@ -288,7 +292,7 @@ public final class AnimationSystem
         @Override
         public A build( int componentId ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, animationType.getName() );
-            A animation = getInstance( componentId );
+            A animation = getInstance( context, componentId );
             
             animation.fromAttributes( attributes );
             

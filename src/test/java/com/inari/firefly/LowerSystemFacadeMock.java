@@ -75,7 +75,7 @@ public class LowerSystemFacadeMock implements LowerSystemFacade {
     }
 
     @Override
-    public long playSound( int soundId, boolean looping, float volume, float pitch, float pan ) {
+    public long playSound( int soundId, int chanel, boolean looping, float volume, float pitch, float pan ) {
         log.add( "playSound" );
         return soundId;
     }

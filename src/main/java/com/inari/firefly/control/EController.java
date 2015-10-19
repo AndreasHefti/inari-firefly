@@ -14,7 +14,7 @@ public class EController extends EntityComponent {
     
     public static final int COMPONENT_TYPE = Indexer.getIndexForType( EController.class, EntityComponent.class );
     
-    public static final AttributeKey<int[]> CONTROLLER_IDS = new AttributeKey<int[]>( "xpos", int[].class, EController.class );
+    public static final AttributeKey<int[]> CONTROLLER_IDS = new AttributeKey<int[]>( "controllerIds", int[].class, EController.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         CONTROLLER_IDS
     };
