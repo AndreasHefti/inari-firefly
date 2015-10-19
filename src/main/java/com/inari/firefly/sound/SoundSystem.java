@@ -138,7 +138,7 @@ public final class SoundSystem
                 } else {
                     sound.instanceId = lowerSystemFacade.playSound( 
                         sound.getAssetId(), 
-                        sound.getChanel(), 
+                        sound.getChannel(), 
                         sound.isLooping(), 
                         sound.getVolume(), 
                         sound.getPitch(), 
