@@ -89,18 +89,7 @@ public abstract class EntityController extends Controller implements EntityActiv
             return false;
         }
         
-        int[] controllerIds = controllerComponent.getControllerIds();
-        if ( controllerIds == null ) {
-            return false;
-        }
-        
-        for ( int i = 0; i < controllerIds.length; i++ ) {
-            if ( controllerIds[ i ] == indexedId ) {
-                return true;
-            } 
-        }
-        
-        return false;
+        return controllerComponent.controlledBy( indexedId );
     }
 
 }

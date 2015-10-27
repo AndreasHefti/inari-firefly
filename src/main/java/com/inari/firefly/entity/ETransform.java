@@ -60,6 +60,11 @@ public final class ETransform extends EntityComponent {
     
     public ETransform() {
         super();
+        resetAttributes();
+    }
+
+    @Override
+    public final void resetAttributes() {
         viewId = 0;
         layerId = 0;
         xpos = 0;

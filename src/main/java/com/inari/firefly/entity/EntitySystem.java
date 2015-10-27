@@ -149,8 +149,8 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
             return;
         }
 
-        Entity entityToRestore = inactiveEntities.get( entityId );
-        IndexedTypeSet componentsToRestore = components.get( entityId );
+        Entity entityToRestore = inactiveEntities.remove( entityId );
+        IndexedTypeSet componentsToRestore = components.remove( entityId );
 
         entityProvider.dispose( entityToRestore, componentsToRestore );
     }

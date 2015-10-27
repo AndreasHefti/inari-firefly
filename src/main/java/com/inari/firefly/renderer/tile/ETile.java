@@ -41,14 +41,21 @@ public final class ETile extends EntityComponent {
         GRID_POSITIONS,
     };
     
-    private boolean multiPosition = false;
-    private final Position gridPosition;
-    private final DynArray<Position> gridPositions;
+    private boolean multiPosition;
+    private final Position gridPosition = new Position();
+    private final DynArray<Position> gridPositions = new DynArray<Position>();
 
     public ETile() {
         super();
-        gridPosition = new Position();
-        gridPositions = new DynArray<Position>();
+        resetAttributes();
+    }
+
+    @Override
+    public final void resetAttributes() {
+        setGridXPos( 0 );
+        setGridYPos( 0 );
+        gridPositions.clear();
+        multiPosition = false;
     }
     
     @Override

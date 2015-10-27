@@ -92,7 +92,7 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
             return;
         }
         
-        EntityPrefab prefab = prefabs.get( prefabId );
+        EntityPrefab prefab = prefabs.remove( prefabId );
         if ( prefab == null ) {
             return;
         }
@@ -197,7 +197,7 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
 
     private IndexedTypeSet getComponents( int prefabId ) {
         ArrayDeque<IndexedTypeSet> componentsOfType = components.get( prefabId );
-        if ( componentsOfType == null ) {
+        if ( componentsOfType == null || componentsOfType.isEmpty() ) {
             return copyComponents( prefabComponents.get( prefabId ) );
         }
 
@@ -228,6 +228,8 @@ public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActio
         for ( IndexedTypeSet componentSet : componentsOfPrefab ) {
             entityProvider.disposeComponentSet( componentSet );
         }
+        
+        componentsOfPrefab.clear();
         prefabComponents.remove( prefabId );
         prefab.dispose();
     }

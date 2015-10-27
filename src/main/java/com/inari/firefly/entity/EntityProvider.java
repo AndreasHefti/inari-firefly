@@ -124,7 +124,11 @@ public final class EntityProvider implements FFContextInitiable  {
             return new IndexedTypeSet( EntityComponent.class, componentSetCapacity );
         }
         
-        return disposedComponentSets.pop();
+        IndexedTypeSet result = disposedComponentSets.pop();
+        if ( result.size() != 0 ) {
+            throw new IllegalStateException( "NOTE: this can happen but never should happen. It seem that there is a other reference to this IndexedTypeSet: " + result );
+        }
+        return result;
     }
 
     void dispose( Entity entity, IndexedTypeSet components ) {
@@ -138,6 +142,7 @@ public final class EntityProvider implements FFContextInitiable  {
         for ( int i = 0; i < components.length(); i++ ) {
             EntityComponent component = components.get( i );
             if ( component != null ) {
+                component.resetAttributes();
                 ArrayDeque<EntityComponent> componentsOfType;
                 if ( !disposedComponents.contains( i ) ) {
                     componentsOfType = new ArrayDeque<EntityComponent>();

@@ -139,6 +139,7 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         return getInstance( null, componentId );
     }
     
+    // TODO find better handling
     @SuppressWarnings( "unchecked" )
     protected C getInstance( FFContext context, Integer componentId ) {
         String className = attributes.getValue( Component.INSTANCE_TYPE_NAME );
@@ -155,7 +156,13 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         if ( componentId == null ) {
             try {
                 Constructor<C> constructor = typeClass.getDeclaredConstructor();
-                return createInstance( constructor );
+                boolean accessible = constructor.isAccessible();
+                if ( !accessible ) {
+                    constructor.setAccessible( true );
+                }
+                C instance = createInstance( constructor );
+                constructor.setAccessible( accessible );
+                return instance;
             } catch ( InvocationTargetException ite ) {
                 throw new ComponentCreationException( "Error while constructing: " + typeClass, ite.getCause() );
             } catch ( Throwable t ) {
@@ -164,7 +171,13 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
                 }
                 try {
                     Constructor<C> constructor = typeClass.getDeclaredConstructor( FFContext.class );
-                    return createInstance( constructor, context );
+                    boolean accessible = constructor.isAccessible();
+                    if ( !accessible ) {
+                        constructor.setAccessible( true );
+                    }
+                    C instance = createInstance( constructor, context );
+                    constructor.setAccessible( accessible );
+                    return instance;
                 } catch ( InvocationTargetException ite ) {
                     throw new ComponentCreationException( "Error while constructing: " + typeClass, ite.getCause() );
                 } catch ( Throwable tt ) { 
@@ -174,7 +187,13 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         } else {
             try {
                 Constructor<C> constructor = typeClass.getDeclaredConstructor( int.class );
-                return createInstance( constructor, componentId );
+                boolean accessible = constructor.isAccessible();
+                if ( !accessible ) {
+                    constructor.setAccessible( true );
+                }
+                C instance = createInstance( constructor, componentId );
+                constructor.setAccessible( accessible );
+                return instance;
             } catch ( InvocationTargetException ite ) {
                 throw new ComponentCreationException( "Error while constructing: " + typeClass, ite.getCause() );
             } catch ( Throwable t ) {
@@ -183,7 +202,13 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
                 }
                 try {
                     Constructor<C> constructor = typeClass.getDeclaredConstructor( int.class, FFContext.class );
-                    return createInstance( constructor, componentId, context );
+                    boolean accessible = constructor.isAccessible();
+                    if ( !accessible ) {
+                        constructor.setAccessible( true );
+                    }
+                    C instance = createInstance( constructor, componentId, context );
+                    constructor.setAccessible( accessible );
+                    return instance;
                 } catch ( InvocationTargetException ite ) {
                     throw new ComponentCreationException( "Error while constructing: " + typeClass, ite.getCause() );
                 } catch ( Throwable tt ) { 

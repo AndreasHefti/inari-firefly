@@ -26,10 +26,18 @@ public final class TaskEvent extends Event<TaskEventListener> {
     
     public final Type eventType;
     public final int taskId;
+    public final String taskName;
 
     public TaskEvent( Type eventType, int taskId ) {
         this.eventType = eventType;
         this.taskId = taskId;
+        taskName = null; 
+    }
+    
+    public TaskEvent( Type eventType, String taskName ) {
+        this.eventType = eventType;
+        this.taskName = taskName;
+        taskId = -1; 
     }
 
     @Override

@@ -29,7 +29,6 @@ import com.inari.firefly.system.FFTimer.UpdateScheduler;
 public abstract class Controller extends NamedIndexedComponent implements Disposable {
     
     public static final AttributeKey<Float> UPDATE_RESOLUTION = new AttributeKey<Float>( "updateResolution", Float.class, Controller.class );
-    
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         UPDATE_RESOLUTION
     };

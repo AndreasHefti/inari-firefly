@@ -28,6 +28,7 @@ public final class TextureAsset extends Asset {
     public static final AttributeKey<String> RESOURCE_NAME = new AttributeKey<String>( "resourceName", String.class, TextureAsset.class );
     public static final AttributeKey<Integer> TEXTURE_WIDTH = new AttributeKey<Integer>( "width", Integer.class, TextureAsset.class );
     public static final AttributeKey<Integer> TEXTURE_HEIGHT = new AttributeKey<Integer>( "height", Integer.class, TextureAsset.class );
+    
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
         ASSET_GROUP,
         RESOURCE_NAME,

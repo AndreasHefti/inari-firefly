@@ -41,5 +41,7 @@ public abstract class EntityComponent implements Component, IndexedType {
     public final int index() {
         return index;
     }
+    
+    public abstract void resetAttributes();
 
 }

@@ -23,6 +23,11 @@ public class EController extends EntityComponent {
     
     public EController() {
         super();
+        resetAttributes();
+    }
+
+    @Override
+    public final void resetAttributes() {
         controllerIds = null;
     }
 
@@ -32,6 +37,20 @@ public class EController extends EntityComponent {
 
     public final void setControllerIds( int[] controllerIds ) {
         this.controllerIds = controllerIds;
+    }
+    
+    public final boolean controlledBy( int controllerId ) {
+        if ( controllerIds == null ) {
+            return false;
+        }
+        
+        for ( int i = 0; i < controllerIds.length; i++ ) {
+            if ( controllerIds[ i ] == controllerId ) {
+                return true;
+            } 
+        }
+        
+        return false;
     }
 
     @Override

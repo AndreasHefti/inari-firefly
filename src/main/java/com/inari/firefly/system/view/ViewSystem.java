@@ -99,6 +99,10 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
         return -1;
     }
     
+    public final View getView( String viewName ) {
+        return getView( getViewId( viewName ) );
+    };
+    
     public final Iterator<View> activeViewportIterator() {
         return activeViewports.iterator();
     }
@@ -517,7 +521,7 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
             layers.add( layer );
             return layer;
         }
-    };
+    }
 
 
 }
