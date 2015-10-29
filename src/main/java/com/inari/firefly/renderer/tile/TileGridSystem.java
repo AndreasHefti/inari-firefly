@@ -246,11 +246,11 @@ public final class TileGridSystem
         TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
         if ( tile.isMultiPosition() ) {
             for ( Position gridPosition : tile.getGridPositions() ) {
-                tileGrid.reset( gridPosition.x, gridPosition.y );
+                tileGrid.resetIfMatch( entityId, gridPosition.x, gridPosition.y );
             }
         } else {
             Position gridPosition = tile.getGridPosition();
-            tileGrid.reset( gridPosition.x, gridPosition.y );
+            tileGrid.resetIfMatch( entityId, gridPosition.x, gridPosition.y );
         }
     }
 

@@ -21,7 +21,6 @@ import java.util.Set;
 
 import com.inari.commons.geom.Position;
 import com.inari.commons.lang.indexed.Indexer;
-import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -43,7 +42,7 @@ public final class ETile extends EntityComponent {
     
     private boolean multiPosition;
     private final Position gridPosition = new Position();
-    private final DynArray<Position> gridPositions = new DynArray<Position>();
+    private final Set<Position> gridPositions = new HashSet<Position>();
 
     public ETile() {
         super();
@@ -94,7 +93,7 @@ public final class ETile extends EntityComponent {
         gridPosition.y = pos;
     }
 
-    public final DynArray<Position> getGridPositions() {
+    public final Set<Position> getGridPositions() {
         return gridPositions;
     }
 
@@ -113,7 +112,7 @@ public final class ETile extends EntityComponent {
             if ( positions != null ) {
                 gridPositions.clear();
                 for ( int j = 0; j < positions.length; j++ ) {
-                    gridPositions.set( j, new Position( positions[ j ][ 0 ], positions[ j ][ 1 ] ) );
+                    gridPositions.add( new Position( positions[ j ][ 0 ], positions[ j ][ 1 ] ) );
                 }
             }
         } else {

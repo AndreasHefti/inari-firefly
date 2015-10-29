@@ -240,6 +240,16 @@ public final class TileGrid extends NamedIndexedComponent {
         return old;
     }
     
+    public final void resetIfMatch( int entityId, int xpos, int ypos ) {
+        if ( spherical ) {
+            xpos = xpos % width;
+            ypos = ypos % height;
+        }
+        if ( grid[ ypos ][ xpos ] == entityId ) {
+            grid[ ypos ][ xpos ] = NULL_VALUE;
+        }
+    }
+    
     public final int getNeighbour( int xpos, int ypos, Direction direction) {
         return getNeighbour( xpos, ypos, direction, 1, 1 );
     }
