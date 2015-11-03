@@ -45,8 +45,8 @@ public final class SpriteViewRenderer extends BaseRenderer implements RenderEven
                 continue;
             }
             
-            ESprite sprite = components.get( ESprite.COMPONENT_TYPE );
-            ETransform transform = components.get( ETransform.COMPONENT_TYPE );
+            ESprite sprite = components.get( COMPONENT_ID_ESPRITE );
+            ETransform transform = components.get( COMPONENT_ID_ETRANSFORM );
             transformCollector.set( transform );
             
             render( sprite, transform.getParentId() );

@@ -4,15 +4,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 
 public class EController extends EntityComponent {
-    
-    public static final int COMPONENT_TYPE = Indexer.getIndexForType( EController.class, EntityComponent.class );
     
     public static final AttributeKey<int[]> CONTROLLER_IDS = new AttributeKey<int[]>( "controllerIds", int[].class, EController.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 

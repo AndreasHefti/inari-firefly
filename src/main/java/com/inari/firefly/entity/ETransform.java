@@ -20,13 +20,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Vector2f;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
 public final class ETransform extends EntityComponent {
-    
-    public static final int COMPONENT_TYPE = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
     
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, ETransform.class );
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, ETransform.class );

@@ -133,6 +133,9 @@ public final class FireFly {
             Iterator<View> virtualViewIterator = viewSystem.activeViewportIterator();
             while ( virtualViewIterator.hasNext() ) {
                 View virtualView = virtualViewIterator.next();
+                if ( !virtualView.isActive() ) {
+                    continue;
+                }
 
                 int viewId = virtualView.index();
                 Rectangle bounds = virtualView.getBounds();

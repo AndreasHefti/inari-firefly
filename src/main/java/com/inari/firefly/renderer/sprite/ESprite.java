@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.graphics.RGBColor;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -28,8 +27,6 @@ import com.inari.firefly.renderer.BlendMode;
 import com.inari.firefly.renderer.SpriteRenderable;
 
 public final class ESprite extends EntityComponent implements SpriteRenderable {
-    
-    public static final int COMPONENT_TYPE = Indexer.getIndexForType( ESprite.class, EntityComponent.class );
 
     public static final AttributeKey<Integer> SPRITE_ID = new AttributeKey<Integer>( "spriteId", Integer.class, ESprite.class );
     

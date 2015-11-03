@@ -29,8 +29,8 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.state.event.StateChangeEvent;
-import com.inari.firefly.state.event.StateChangeListener;
+import com.inari.firefly.state.event.WorkflowEvent;
+import com.inari.firefly.state.event.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.UpdateEvent;
@@ -180,8 +180,8 @@ public final class ControllerSystem
     }
     
     private final void disposeController( Controller c ) {
-        if ( c instanceof StateChangeListener ) {
-            eventDispatcher.unregister( StateChangeEvent.class, (StateChangeListener) c );
+        if ( c instanceof WorkflowEventListener ) {
+            eventDispatcher.unregister( WorkflowEvent.class, (WorkflowEventListener) c );
         }
         c.dispose( context );
         c.dispose();

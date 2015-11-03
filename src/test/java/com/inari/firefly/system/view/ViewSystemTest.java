@@ -38,9 +38,11 @@ public class ViewSystemTest {
             "bounds:Rectangle=[x=0,y=0,width=100,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
+            "tintColor:RGBColor:ESprite=[r=1.0,g=1.0,b=1.0,a=1.0], " +
+            "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
-            "controllerId:Integer=-1", 
+            "controllerId:int[]=null", 
             attrs.toString() 
         );
         assertEquals( 
@@ -86,25 +88,31 @@ public class ViewSystemTest {
             "bounds:Rectangle=[x=0,y=0,width=100,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
+            "tintColor:RGBColor:ESprite=[r=1.0,g=1.0,b=1.0,a=1.0], " +
+            "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
-            "controllerId:Integer=-1 " +
+            "controllerId:int[]=null " +
             "View(1)::" +
             "name:String=Header, " +
             "bounds:Rectangle=[x=0,y=0,width=10,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
+            "tintColor:RGBColor:ESprite=[r=1.0,g=1.0,b=1.0,a=1.0], " +
+            "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
-            "controllerId:Integer=-1 " +
+            "controllerId:int[]=null " +
             "View(2)::" +
             "name:String=Body, " +
             "bounds:Rectangle=[x=0,y=10,width=90,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
+            "tintColor:RGBColor:ESprite=[r=1.0,g=1.0,b=1.0,a=1.0], " +
+            "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
-            "controllerId:Integer=-1", 
+            "controllerId:int[]=null", 
             attrs.toString() 
         );
         assertEquals( 
@@ -175,9 +183,11 @@ public class ViewSystemTest {
             "bounds:Rectangle=[x=0,y=0,width=100,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
             "clearColor:RGBColor=[r=0.0,g=0.0,b=0.0,a=1.0], " +
+            "tintColor:RGBColor:ESprite=[r=1.0,g=1.0,b=1.0,a=1.0], " +
+            "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=true, " +
             "zoom:Float=1.0, " +
-            "controllerId:Integer=-1 " +
+            "controllerId:int[]=null " +
             "Layer(1)::" +
             "name:String=Layer1, " +
             "viewId:Integer=0 " +

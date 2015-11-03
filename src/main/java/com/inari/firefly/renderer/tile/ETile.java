@@ -20,14 +20,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Position;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 
 public final class ETile extends EntityComponent {
-    
-    public static final int COMPONENT_TYPE = Indexer.getIndexForType( ETile.class, EntityComponent.class );
     
     public static final AttributeKey<Boolean> MULTI_POSITION = new AttributeKey<Boolean>( "multiPosition", Boolean.class, ETile.class );
     public static final AttributeKey<Integer> GRID_X_POSITION = new AttributeKey<Integer>( "gridXPosition", Integer.class, ETile.class );

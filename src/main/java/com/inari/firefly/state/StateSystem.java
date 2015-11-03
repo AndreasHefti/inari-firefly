@@ -33,6 +33,8 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
+import com.inari.firefly.state.event.WorkflowEvent;
+import com.inari.firefly.state.event.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
@@ -40,7 +42,13 @@ import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.task.event.TaskEvent;
 
-public class StateSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory, UpdateEventListener {
+public class StateSystem 
+    implements 
+        FFContextInitiable, 
+        ComponentSystem, 
+        ComponentBuilderFactory, 
+        UpdateEventListener,
+        WorkflowEventListener {
     
     public static final TypedKey<StateSystem> CONTEXT_KEY = TypedKey.create( "FF_STATE_SYSTEM", StateSystem.class );
     
@@ -68,11 +76,13 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
         
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         eventDispatcher.register( UpdateEvent.class, this );
+        eventDispatcher.register( WorkflowEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
         eventDispatcher.unregister( UpdateEvent.class, this );
+        eventDispatcher.unregister( WorkflowEvent.class, this );
         
         clear();
         context = null;
@@ -124,6 +134,21 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
     }
     
     @Override
+    public void onEvent( WorkflowEvent event ) {
+        switch ( event.type ) {
+            case STATE_CHANGE: {
+                Workflow workflow = ( event.workflowName != null )? getWorkflow( event.workflowName ): getWorkflow( event.workflowId );
+                StateChange stateChange = ( event.stateChangeName != null )? getStateChange( event.stateChangeName ): getStateChange( event.stateChangeId );
+                if ( workflow != null && stateChange != null ) {
+                    doStateChange( workflow, stateChange );
+                }
+                break;
+            }
+            default: {}
+        }
+    }
+
+    @Override
     public final void update( UpdateEvent event ) {
         
         for ( Workflow workflow : workflows ) {
@@ -144,16 +169,20 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
                 }
                 
                 if ( condition.check( context, workflow, event.timer ) ) {
-                    int taskId = stateChange.getTaskId();
-                    if ( taskId >= 0 ) {
-                        eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, taskId ) );
-                    }
-                    
-                    workflow.setCurrentStateId( stateChange.getToStateId() );
+                    doStateChange( workflow, stateChange );
                     break;
                 }
             }
         }
+    }
+
+    private void doStateChange( Workflow workflow, StateChange stateChange ) {
+        int taskId = stateChange.getTaskId();
+        if ( taskId >= 0 ) {
+            eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, taskId ) );
+        }
+        
+        workflow.setCurrentStateId( stateChange.getToStateId() );
     }
     
     public final boolean deleteWorkflow( String name ) {
@@ -165,10 +194,17 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
         deleteWorkflow( workflow.index() );
         return true;
     }
+    
+    public final Workflow getWorkflow( int workflowId ) {
+        return workflows.get( workflowId );
+    }
 
     public final Workflow getWorkflow( String name ) {
+        if ( name == null ) {
+            return null;
+        }
         for ( Workflow workflow : workflows ) {
-            if ( workflow.getName().equals( name ) ) {
+            if ( name.equals( workflow.getName() ) ) {
                 return workflow;
             }
         }
@@ -277,6 +313,34 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
             stateChanges.clear();
         }
         state.dispose();
+    }
+    
+    public final StateChange getStateChange( int workflowId, String stateChangeName ) {
+        if ( stateChangeName == null ) {
+            return null;
+        }
+        for ( Collection<StateChange> stateChanges : stateChangesForState ) {
+            for ( StateChange stateChange : stateChanges ) {
+                if ( stateChange.getWorkflowId() == workflowId && stateChangeName.equals( stateChange.getName() ) ) {
+                    return stateChange;
+                }
+            }
+        }
+        return null;
+    }
+    
+    public final StateChange getStateChange( String stateChangeName ) {
+        if ( stateChangeName == null ) {
+            return null;
+        }
+        for ( Collection<StateChange> stateChanges : stateChangesForState ) {
+            for ( StateChange stateChange : stateChanges ) {
+                if ( stateChangeName.equals( stateChange.getName() ) ) {
+                    return stateChange;
+                }
+            }
+        }
+        return null;
     }
     
     public final StateChange getStateChange( int id ) {
@@ -427,8 +491,6 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
         }.buildComponents( StateChange.class, buildType, getStateChangeBuilder(), attributes );
     }
 
-    
-
     @Override
     public final void toAttributes( Attributes attributes ) {
         ComponentBuilderHelper.toAttributes( attributes, Workflow.class, workflows );
@@ -481,6 +543,5 @@ public class StateSystem implements FFContextInitiable, ComponentSystem, Compone
             return stateChange;
         }
     }
-
 
 }

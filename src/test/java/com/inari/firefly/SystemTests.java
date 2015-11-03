@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.entity.ETransform;
@@ -24,6 +25,7 @@ public class SystemTests {
     
     @Test
     public void createTextureAndSpriteAndOneEntity() {
+        Indexer.clear();
         FireFly firefly = new FireFly( LowerSystemFacadeMock.class, InputMock.class );
         FFContext context = firefly.getContext();
         AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );

@@ -44,8 +44,8 @@ public class TileGridTest {
         grid1.toAttributes( attrs );
         assertEquals(
             "name:String=null, " +
-            "viewId:Integer=-1, " +
-            "layerId:Integer=-1, " +
+            "viewId:Integer=0, " +
+            "layerId:Integer=0, " +
             "width:Integer=0, " +
             "height:Integer=0, " +
             "cellWidth:Integer=0, " +

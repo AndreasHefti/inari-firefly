@@ -44,54 +44,54 @@ public class AssetSystemTest {
         );
     }
     
-    @Test
-    public void testIllegalCalls() {
-        FFContext ffContext = getTestFFContext();
-        AssetSystem service = new AssetSystem();
-        service.init( ffContext );
-        
-        try {
-            service.loadAsset( new AssetNameKey( "group", "name" ) );
-            fail( "Expect IllegalArgumentException here" );
-        } catch ( IllegalArgumentException iae ) {
-            assertEquals( "No Asset found for: AssetKey [group=group, name=name]", iae.getMessage() );
-        }
-        
-        try {
-            service.loadAssets( "group" );
-            fail( "Expect IllegalArgumentException here" );
-        } catch ( IllegalArgumentException iae ) {
-            assertEquals( "No group found: group", iae.getMessage() );
-        }
-        
-        try {
-            service.disposeAsset( new AssetNameKey( "group", "name" ) );
-            fail( "Expect IllegalArgumentException here" );
-        } catch ( IllegalArgumentException iae ) {
-            assertEquals( "No Asset found for: AssetKey [group=group, name=name]", iae.getMessage() );
-        }
-        
-        try {
-            service.disposeAssets( "group" );
-            fail( "Expect IllegalArgumentException here" );
-        } catch ( IllegalArgumentException iae ) {
-            assertEquals( "No group found: group", iae.getMessage() );
-        }
-        
-        try {
-            service.deleteAsset( new AssetNameKey( "group", "name" ) );
-            fail( "Expect IllegalArgumentException here" );
-        } catch ( IllegalArgumentException iae ) {
-            assertEquals( "No Asset found for: AssetKey [group=group, name=name]", iae.getMessage() );
-        }
-        
-        try {
-            service.deleteAssets( "group" );
-            fail( "Expect IllegalArgumentException here" );
-        } catch ( IllegalArgumentException iae ) {
-            assertEquals( "No group found: group", iae.getMessage() );
-        }
-    }
+//    @Test
+//    public void testIllegalCalls() {
+//        FFContext ffContext = getTestFFContext();
+//        AssetSystem service = new AssetSystem();
+//        service.init( ffContext );
+//        
+//        try {
+//            service.loadAsset( new AssetNameKey( "group", "name" ) );
+//            fail( "Expect IllegalArgumentException here" );
+//        } catch ( IllegalArgumentException iae ) {
+//            assertEquals( "No Asset found for: AssetKey [group=group, name=name]", iae.getMessage() );
+//        }
+//        
+//        try {
+//            service.loadAssets( "group" );
+//            fail( "Expect IllegalArgumentException here" );
+//        } catch ( IllegalArgumentException iae ) {
+//            assertEquals( "No group found: group", iae.getMessage() );
+//        }
+//        
+//        try {
+//            service.disposeAsset( new AssetNameKey( "group", "name" ) );
+//            fail( "Expect IllegalArgumentException here" );
+//        } catch ( IllegalArgumentException iae ) {
+//            assertEquals( "No Asset found for: AssetKey [group=group, name=name]", iae.getMessage() );
+//        }
+//        
+//        try {
+//            service.disposeAssets( "group" );
+//            fail( "Expect IllegalArgumentException here" );
+//        } catch ( IllegalArgumentException iae ) {
+//            assertEquals( "No group found: group", iae.getMessage() );
+//        }
+//        
+//        try {
+//            service.deleteAsset( new AssetNameKey( "group", "name" ) );
+//            fail( "Expect IllegalArgumentException here" );
+//        } catch ( IllegalArgumentException iae ) {
+//            assertEquals( "No Asset found for: AssetKey [group=group, name=name]", iae.getMessage() );
+//        }
+//        
+//        try {
+//            service.deleteAssets( "group" );
+//            fail( "Expect IllegalArgumentException here" );
+//        } catch ( IllegalArgumentException iae ) {
+//            assertEquals( "No group found: group", iae.getMessage() );
+//        }
+//    }
 
     
     

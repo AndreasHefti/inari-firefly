@@ -34,6 +34,7 @@ import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
+import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.LowerSystemFacade;
 
 public final class SoundSystem 
@@ -217,6 +218,10 @@ public final class SoundSystem
 
         @Override
         public Sound build( int componentId ) {
+            if ( componentId >= 0 && sounds.contains( componentId ) ) {
+                throw new FFInitException( "Sound with id: " + componentId + " already exists: " + sounds.get( componentId ).getName() );
+            }
+            
             Sound result = new Sound( componentId );
             result.fromAttributes( attributes );
             

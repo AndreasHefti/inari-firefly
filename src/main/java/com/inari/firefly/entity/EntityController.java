@@ -17,17 +17,23 @@ package com.inari.firefly.entity;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.EController;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
+import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFTimer;
 
 
 public abstract class EntityController extends Controller implements EntityActivationListener {
+    
+    protected final int COMPONENT_ID_ECONTROLLER = Indexer.getIndexForType( EController.class, EntityComponent.class );
+    protected final int COMPONENT_ID_ETRANSFORM = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
+    protected final int COMPONENT_ID_ESPRITE = Indexer.getIndexForType( ESprite.class, EntityComponent.class );
     
     protected IEventDispatcher eventDispatcher;
     protected EntitySystem entitySystem;
@@ -49,7 +55,7 @@ public abstract class EntityController extends Controller implements EntityActiv
     
     @Override
     public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( EController.COMPONENT_TYPE );
+        return aspect.contains( COMPONENT_ID_ECONTROLLER );
     }
 
     @Override
@@ -84,7 +90,7 @@ public abstract class EntityController extends Controller implements EntityActiv
     protected abstract void update( final FFTimer timer, int entityId );
     
     private final boolean hasControllerId( int entityId ) {
-        EController controllerComponent = entitySystem.getComponent( entityId, EController.COMPONENT_TYPE );
+        EController controllerComponent = entitySystem.getComponent( entityId, COMPONENT_ID_ECONTROLLER );
         if ( controllerComponent == null ) {
             return false;
         }

@@ -62,7 +62,7 @@ public final class TaskSystem implements FFContextInitiable, ComponentSystem, Co
 
     public final void clear() {
         for ( Task task : tasks ) {
-            disposeTask( task );
+            deleteTask( task );
         }
         
         tasks.clear();
@@ -85,11 +85,11 @@ public final class TaskSystem implements FFContextInitiable, ComponentSystem, Co
     public final void deleteTask( int taskId ) {
         Task remove = tasks.remove( taskId );
         if ( remove != null ) {
-            disposeTask( remove );
+            deleteTask( remove );
         }
     }
 
-    private void disposeTask( Task task ) {
+    private void deleteTask( Task task ) {
         if ( task instanceof Disposable ) {
             ( (Disposable) task ).dispose( context );
         }
@@ -100,7 +100,12 @@ public final class TaskSystem implements FFContextInitiable, ComponentSystem, Co
     public final void onTaskEvent( TaskEvent taskEvent ) {
         switch ( taskEvent.eventType ) {
             case RUN_TASK: {
-                Task task = tasks.get( taskEvent.taskId );
+                Task task;
+                if ( taskEvent.taskName != null ) {
+                    task = tasks.get( getTaskId( taskEvent.taskName ) );
+                } else {
+                    task = tasks.get( taskEvent.taskId );
+                }
                 if ( task != null ) {
                     task.run( context );
                     if ( task.removeAfterRun() && tasks.contains( taskEvent.taskId ) ) {

@@ -182,10 +182,17 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
     public final void deleteView( int viewId ) {
         View view = views.remove( viewId );
         if ( view != null ) {
+            view.active = false;
+            orderedViewports.remove( view );
+            activeViewports.remove( view );
             disableLayering( viewId );
             eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_DELETED ) );
             view.dispose();
         }
+    }
+    
+    public final void deleteView( String viewName ) {
+        deleteView( getViewId( viewName ) );
     }
     
     public final void clear() {
@@ -522,6 +529,5 @@ public final class ViewSystem implements FFContextInitiable, ComponentSystem, Co
             return layer;
         }
     }
-
 
 }

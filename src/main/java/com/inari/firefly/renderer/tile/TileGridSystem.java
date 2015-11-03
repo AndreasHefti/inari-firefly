@@ -20,12 +20,14 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
@@ -44,6 +46,9 @@ public final class TileGridSystem
         ComponentBuilderFactory, 
         ViewEventListener,
         EntityActivationListener {
+    
+    private final int COMPONENT_ID_ETRANSFORM = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
+    private final int COMPONENT_ID_ETILE = Indexer.getIndexForType( ETile.class, EntityComponent.class );
     
     public static final TypedKey<TileGridSystem> CONTEXT_KEY = TypedKey.create( "FF_TILE_GRID_SYSTEM", TileGridSystem.class ); 
     
@@ -100,7 +105,7 @@ public final class TileGridSystem
 
     @Override
     public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( ETile.COMPONENT_TYPE );
+        return aspect.contains( COMPONENT_ID_ETILE );
     }
     
     public final boolean hasTileGrid( int viewId, int layerId ) {
@@ -227,8 +232,8 @@ public final class TileGridSystem
     
     
     private final void registerEntity( int entityId, AspectBitSet entityAspect ) {
-        ETransform transform = entitySystem.getComponent( entityId, ETransform.COMPONENT_TYPE );
-        ETile tile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
+        ETransform transform = entitySystem.getComponent( entityId, COMPONENT_ID_ETRANSFORM );
+        ETile tile = entitySystem.getComponent( entityId, COMPONENT_ID_ETILE );
         TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
         if ( tile.isMultiPosition() ) {
             for ( Position gridPosition : tile.getGridPositions() ) {
@@ -241,8 +246,8 @@ public final class TileGridSystem
     }
     
     private final void unregisterEntity( int entityId, AspectBitSet entityAspect ) {
-        ETransform transform = entitySystem.getComponent( entityId, ETransform.COMPONENT_TYPE );
-        ETile tile = entitySystem.getComponent( entityId, ETile.COMPONENT_TYPE );
+        ETransform transform = entitySystem.getComponent( entityId, COMPONENT_ID_ETRANSFORM );
+        ETile tile = entitySystem.getComponent( entityId, COMPONENT_ID_ETILE );
         TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
         if ( tile.isMultiPosition() ) {
             for ( Position gridPosition : tile.getGridPositions() ) {

@@ -25,8 +25,8 @@ import com.inari.firefly.component.attr.Attribute;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
-import com.inari.firefly.state.event.StateChangeEvent;
-import com.inari.firefly.state.event.StateChangeListener;
+import com.inari.firefly.state.event.WorkflowEvent;
+import com.inari.firefly.state.event.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
@@ -242,8 +242,8 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         if ( component instanceof FFContextInitiable ) {
             ( (FFContextInitiable) component ).init( context );
         }
-        if ( component instanceof StateChangeListener ) {
-            context.getComponent( FFContext.EVENT_DISPATCHER ).register( StateChangeEvent.class, (StateChangeListener) component );
+        if ( component instanceof WorkflowEventListener ) {
+            context.getComponent( FFContext.EVENT_DISPATCHER ).register( WorkflowEvent.class, (WorkflowEventListener) component );
         }
     }
     

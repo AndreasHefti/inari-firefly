@@ -134,6 +134,14 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
             }
         }
     }
+    
+    public final Collection<AssetNameKey> getNameKeys() {
+        return assets.keySet();
+    }
+    
+    public final Collection<AssetTypeKey> getTypeKeys() {
+        return typeMapping.keySet();
+    }
 
     public final AssetTypeKey getAssetTypeKey( AssetNameKey assetNameKey ) {
         Asset asset = getAsset( assetNameKey );
@@ -210,7 +218,8 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
         }
         
         Collection<AssetTypeKey> assetsToDeleteAlso = null;
-        for ( AssetNameKey key : getAssetNameKeysOfGroup( group ) ) {
+        Collection<AssetNameKey> assetNameKeysOfGroup = getAssetNameKeysOfGroup( group );
+        for ( AssetNameKey key : assetNameKeysOfGroup ) {
             Asset asset = assets.get( key );
             if ( asset.loaded ) {
                 Collection<AssetTypeKey> alsoDisposedAssets = disposeAsset( asset );
@@ -223,8 +232,10 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
             delete( asset.typeKey );
         }
         
-        for ( AssetTypeKey key : assetsToDeleteAlso ) {
-            delete( key );
+        if ( assetsToDeleteAlso != null ) {
+            for ( AssetTypeKey key : assetsToDeleteAlso ) {
+                delete( key );
+            }
         }
     }
     
@@ -381,6 +392,7 @@ public class AssetSystem implements FFContextInitiable, ComponentSystem, Compone
         
         assets.remove( new AssetNameKey( deleted.group, deleted.getName() ) );
         eventDispatcher.notify( new AssetEvent( deleted, AssetEvent.Type.ASSET_DELETED ) );
+        deleted.dispose();
     }
 
     private void dispose( Asset asset ) {
