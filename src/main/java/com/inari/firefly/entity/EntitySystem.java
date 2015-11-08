@@ -155,6 +155,13 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
         entityProvider.dispose( entityToRestore, componentsToRestore );
     }
     
+    public final void delete( String entityName ) {
+        int entityId = getEntityId( entityName );
+        if ( entityId >= 0 ) {
+            delete( entityId );
+        }
+    }
+    
     public final void deleteAll( IntIterator iterator ) {
         while( iterator.hasNext() ) {
             delete( iterator.next() );
@@ -169,6 +176,25 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
 
     public final Entity getEntity( int entityId ) {
         return activeEntities.get( entityId );
+    }
+    
+    public final int getEntityId( String name ) {
+        if ( name == null ) {
+            return -1;
+        }
+        
+        for ( Entity activeEntity : activeEntities ) {
+            if ( name.equals( activeEntity.getName() ) ) {
+                return activeEntity.getId();
+            }
+        }
+        for ( Entity inactiveEntity : inactiveEntities ) {
+            if ( name.equals( inactiveEntity.getName() ) ) {
+                return inactiveEntity.getId();
+            }
+        }
+        
+        return -1;
     }
 
     public final AspectBitSet getAspect( int entityId ) {
@@ -243,8 +269,8 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
         }
         
         EntityBuilder entityBuilder = getEntityBuilder();
-        for ( AttributeMap attrsOfView : attributes.getAllOfType( Entity.class ) ) {
-            int entityId = attrsOfView.getComponentKey().getId();
+        for ( AttributeMap entityAttrs : attributes.getAllOfType( Entity.class ) ) {
+            int entityId = entityAttrs.getComponentKey().getId();
             if ( buildType == BuildType.MERGE_ATTRIBUTES ) {
                 IndexedTypeSet componentsOfEntity = getComponents( entityId );
                 if ( componentsOfEntity != null ) {
@@ -256,7 +282,7 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
                 delete( entityId );
             }
             entityBuilder
-                .setAttributes( attrsOfView )
+                .setAttributes( entityAttrs )
                 .buildAndNext()
                 .clear();
         }
@@ -300,6 +326,10 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
         IndexedTypeSet components = getComponents( entity.getId() );
         for ( EntityComponent component : components.<EntityComponent>getIterable() ) {
             component.toAttributes( attributeMap );
+        }
+        
+        if ( entity.getName() != null ) {
+            attributeMap.put( Entity.NAME, entity.getName() );
         }
     }
     
@@ -402,6 +432,10 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
         public Entity build( int componentId ) {
             Entity entity = entityProvider.getEntity( componentId );
             
+            if ( attributes.contains( Entity.NAME ) ) {
+                entity.setName( attributes.getValue( Entity.NAME ) );
+            }
+            
             IndexedTypeAspectSet aspectToCheck;
             if ( prefabComponents != null ) {
                 // if we have prefab components we use them
@@ -413,7 +447,7 @@ public final class EntitySystem implements FFContextInitiable, ComponentSystem, 
                 entityProvider.createComponents( componentSet, (EntityAttributeMap) attributes );
                 aspectToCheck = componentSet.getAspect();
             }
-            
+
             if ( aspectToCheck == null || !aspectToCheck.valid() ) {
                 throw new IllegalStateException( 
                     String.format( "The Entity %s has no or an empty Aspect. This makes no sense and an empty Entity cannot activated", entity ) 
