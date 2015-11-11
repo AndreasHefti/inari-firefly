@@ -76,6 +76,22 @@ public final class ControllerSystem
         return controller.get( controllerId );
     }
     
+    public final <T extends Controller> T getControllerAs( int controllerId, Class<T> controllerType ) {
+        Controller c = getController( controllerId );
+        if ( c == null ) {
+            return null;
+        }
+        return controllerType.cast( c );
+    }
+    
+    public final <T extends Controller> T getControllerAs( String controllerName, Class<T> controllerType ) {
+        Controller c = getController( getControllerId( controllerName ) );
+        if ( c == null ) {
+            return null;
+        }
+        return controllerType.cast( c );
+    }
+    
     public final void deleteController( int controllerId ) {
         if ( controllerId < 0 ) {
             return;
@@ -209,5 +225,6 @@ public final class ControllerSystem
             return result;
         }
     }
+
 
 }
