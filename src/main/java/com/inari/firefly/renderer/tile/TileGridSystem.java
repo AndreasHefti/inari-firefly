@@ -112,24 +112,19 @@ public final class TileGridSystem
         return getTileGrid( viewId, layerId ) != null;
     }
     
-    public final TileGrid getTileGrid( String viewName ) {
-        int viewId = viewSystem.getViewId( viewName );
-        if ( viewId < 0 ) {
-            return null;
+    public final TileGrid getTileGrid( String tileGridName ) {
+        for ( int i = 0; i < tileGridOfViewsPerLayer.capacity(); i++ ) {
+            if ( tileGridOfViewsPerLayer.contains( i ) ) {
+                DynArray<TileGrid> tileGrids = tileGridOfViewsPerLayer.get( i );
+                for ( int j = 0; j < tileGrids.capacity(); j++ ) {
+                    TileGrid tileGrid = tileGrids.get( j );
+                    if ( tileGrid != null && tileGrid.getName().equals(  tileGridName ) ) {
+                        return tileGrid;
+                    }
+                }
+            }
         }
-        
-        return getTileGrid( viewId );
-    }
-    
-    public final TileGrid getTileGrid( String viewName, String layerName ) {
-        int viewId = viewSystem.getViewId( viewName );
-        int layerId = viewSystem.getLayerId( layerName );
-        if ( viewId < 0 || layerId < 0 ) {
-            return null;
-        }
-        
-        
-        return getTileGrid( viewId, layerId );
+        return null;
     }
     
     public final TileGrid getTileGrid( int viewId ) {
