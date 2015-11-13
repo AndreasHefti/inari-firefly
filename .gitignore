@@ -19,3 +19,4 @@ target/*
 
 # Mac
 .DS_Store
+/target/

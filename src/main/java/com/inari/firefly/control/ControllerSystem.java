@@ -32,15 +32,12 @@ import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.state.event.WorkflowEvent;
 import com.inari.firefly.state.event.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 
 public final class ControllerSystem 
     implements
-        FFContextInitiable,
         ComponentSystem,
-        ComponentBuilderFactory,
         UpdateEventListener {
     
     public static final TypedKey<ControllerSystem> CONTEXT_KEY = TypedKey.create( "FF_COMPONENT_CONTROLLER_SYSTEM", ControllerSystem.class );

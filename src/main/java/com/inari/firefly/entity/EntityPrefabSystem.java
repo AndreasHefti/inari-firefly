@@ -9,21 +9,18 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.component.ComponentBuilderHelper;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.entity.event.EntityPrefabActionEvent;
 import com.inari.firefly.entity.event.EntityPrefabActionListener;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.view.View;
 
-public class EntityPrefabSystem implements FFContextInitiable, EntityPrefabActionListener, ComponentSystem, ComponentBuilderFactory, Disposable {
+public class EntityPrefabSystem implements EntityPrefabActionListener, ComponentSystem  {
     
     public static final TypedKey<EntityPrefabSystem> CONTEXT_KEY = TypedKey.create( "ENTITY_PREFAB_SYSTEM", EntityPrefabSystem.class );
     

@@ -32,12 +32,10 @@ import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 
-public class AssetSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory {
+public class AssetSystem implements ComponentSystem {
     
     public static final TypedKey<AssetSystem> CONTEXT_KEY = TypedKey.create( "FF_ASSET_SYSTEM", AssetSystem.class );
     

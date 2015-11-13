@@ -28,7 +28,6 @@ import com.inari.commons.lang.indexed.IndexedTypeAspectSet;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -37,13 +36,11 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.attr.ComponentKey;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 
-public final class EntitySystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory, Disposable, Iterable<Entity> {
+public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
     
     public static final TypedKey<EntitySystem> CONTEXT_KEY = TypedKey.create( "FF_ENTITY_SYSTEM", EntitySystem.class );
 

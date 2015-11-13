@@ -31,12 +31,10 @@ import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.state.event.WorkflowEvent;
 import com.inari.firefly.state.event.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
@@ -44,9 +42,7 @@ import com.inari.firefly.task.event.TaskEvent;
 
 public class StateSystem 
     implements 
-        FFContextInitiable, 
-        ComponentSystem, 
-        ComponentBuilderFactory, 
+        ComponentSystem,
         UpdateEventListener,
         WorkflowEventListener {
     

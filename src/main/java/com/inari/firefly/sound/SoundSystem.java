@@ -33,15 +33,12 @@ import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.LowerSystemFacade;
 
 public final class SoundSystem 
     implements 
-        FFContextInitiable, 
         ComponentSystem,
-        ComponentBuilderFactory,
         SoundEventListener {
     
     public static final TypedKey<SoundSystem> CONTEXT_KEY = TypedKey.create( "FF_SOUND_SYSTEM", SoundSystem.class );

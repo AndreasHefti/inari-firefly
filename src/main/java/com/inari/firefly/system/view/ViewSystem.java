@@ -36,11 +36,10 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.LowerSystemFacade;
 import com.inari.firefly.system.view.event.ViewEvent;
 
-public final class ViewSystem implements FFContextInitiable, ComponentSystem, ComponentBuilderFactory {
+public final class ViewSystem implements ComponentSystem {
     
     public static final TypedKey<ViewSystem> CONTEXT_KEY = TypedKey.create( "FF_VIEW_SYSTEM", ViewSystem.class );
     

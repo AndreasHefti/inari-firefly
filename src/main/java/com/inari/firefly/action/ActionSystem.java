@@ -15,14 +15,11 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
 
 public final class ActionSystem 
     implements
-        FFContextInitiable,
         ComponentSystem,
-        ComponentBuilderFactory,
         ActionEventListener {
     
     public static final TypedKey<ActionSystem> CONTEXT_KEY = TypedKey.create( "FF_ACTION_SYSTEM", ActionSystem.class );

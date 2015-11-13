@@ -18,8 +18,10 @@ package com.inari.firefly.component;
 import java.util.Set;
 
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.component.build.ComponentBuilderFactory;
+import com.inari.firefly.system.FFContextInitiable;
 
-public interface ComponentSystem {
+public interface ComponentSystem extends FFContextInitiable, ComponentBuilderFactory {
     
     enum BuildType {
         CLEAR_OLD,
