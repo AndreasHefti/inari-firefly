@@ -49,14 +49,14 @@ public final class FireFly {
     
     private IEventDispatcher eventDispatcher;
     private ViewSystem viewSystem;
-    private LowerSystemFacade lowerSystemFacade;
+    private FFSystemInterface lowerSystemFacade;
 
     private final UpdateEvent updateEvent;
     private final RenderEvent renderEvent;
 
 
     public FireFly( 
-        Class<? extends LowerSystemFacade> lowerSystemFacadeType,
+        Class<? extends FFSystemInterface> lowerSystemFacadeType,
         Class<? extends Input> input
     ) {
         InitMap initMap = new InitMap();

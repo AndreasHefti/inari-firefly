@@ -21,7 +21,7 @@ public interface FFContext {
     /** The key for the interface to lower system that must be implements for a specified context like lwjgl, libGDX, Processing...
      *  The class type of an specified implementation of the LOWER_SYSTEM_FACADE must be defined by initializing of the FFContext
      */
-    public static final TypedKey<LowerSystemFacade> LOWER_SYSTEM_FACADE = TypedKey.create( "FF_LOWER_SYSTEM_FACADE", LowerSystemFacade.class );
+    public static final TypedKey<FFSystemInterface> LOWER_SYSTEM_FACADE = TypedKey.create( "FF_LOWER_SYSTEM_FACADE", FFSystemInterface.class );
     
     public static final TypedKey<FFTimer> TIMER = TypedKey.create( "FF_TIMER", FFTimer.class );
     

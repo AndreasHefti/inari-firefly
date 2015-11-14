@@ -36,7 +36,7 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.LowerSystemFacade;
+import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.view.event.ViewEvent;
 
 public final class ViewSystem implements ComponentSystem {
@@ -65,7 +65,7 @@ public final class ViewSystem implements ComponentSystem {
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
 
         // create the base view that is the screen
-        LowerSystemFacade lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
+        FFSystemInterface lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
         Rectangle screenBounds = new Rectangle(
             0, 0,
             lowerSystemFacade.getScreenWidth(),

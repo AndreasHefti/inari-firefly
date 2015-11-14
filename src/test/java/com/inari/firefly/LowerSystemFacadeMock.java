@@ -8,11 +8,11 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.LowerSystemFacade;
+import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEvent;
 
-public class LowerSystemFacadeMock implements LowerSystemFacade {
+public class LowerSystemFacadeMock implements FFSystemInterface {
     
     private final Collection<String> loadedAssets = new ArrayList<String>();
     private final Collection<String> views = new ArrayList<String>();

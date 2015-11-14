@@ -8,14 +8,14 @@ import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.LowerSystemFacade;
+import com.inari.firefly.system.FFSystemInterface;
 
 public abstract class BaseRenderer implements FFContextInitiable {
     
     protected final int COMPONENT_ID_ETRANSFORM = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
     protected final int COMPONENT_ID_ESPRITE = Indexer.getIndexForType( ESprite.class, EntityComponent.class );
     
-    protected LowerSystemFacade lowerSystemFacade;
+    protected FFSystemInterface lowerSystemFacade;
     protected EntitySystem entitySystem;
 
     protected final TransformDataCollector transformCollector = new TransformDataCollector();

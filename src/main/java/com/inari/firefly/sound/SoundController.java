@@ -21,12 +21,12 @@ import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFTimer;
-import com.inari.firefly.system.LowerSystemFacade;
+import com.inari.firefly.system.FFSystemInterface;
 
 public abstract class SoundController extends Controller implements SoundEventListener {
 
     protected SoundSystem soundSystem;
-    protected LowerSystemFacade lowerSystemFacade;
+    protected FFSystemInterface lowerSystemFacade;
     protected IEventDispatcher eventDispatcher;
     
     protected SoundController( int id, FFContext context ) {

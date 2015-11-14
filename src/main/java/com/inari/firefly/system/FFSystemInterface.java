@@ -22,7 +22,7 @@ import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEventListener;
 
-public interface LowerSystemFacade extends FFContextInitiable, AssetEventListener, ViewEventListener {
+public interface FFSystemInterface extends FFContextInitiable, AssetEventListener, ViewEventListener {
     
     void startRendering( View view );
     

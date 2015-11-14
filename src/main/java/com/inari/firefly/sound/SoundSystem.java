@@ -34,7 +34,7 @@ import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.LowerSystemFacade;
+import com.inari.firefly.system.FFSystemInterface;
 
 public final class SoundSystem 
     implements 
@@ -45,7 +45,7 @@ public final class SoundSystem
     
     private FFContext context;
     private AssetSystem assetSystem;
-    private LowerSystemFacade lowerSystemFacade;
+    private FFSystemInterface lowerSystemFacade;
     
     private final DynArray<Sound> sounds;
 
