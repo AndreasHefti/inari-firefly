@@ -11,6 +11,8 @@ import com.inari.firefly.entity.EntityComponent;
 
 public class EController extends EntityComponent {
     
+    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( EController.class );
+    
     public static final AttributeKey<int[]> CONTROLLER_IDS = new AttributeKey<int[]>( "controllerIds", int[].class, EController.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         CONTROLLER_IDS
@@ -19,7 +21,7 @@ public class EController extends EntityComponent {
     private int[] controllerIds;
     
     public EController() {
-        super();
+        super( TYPE_KEY );
         resetAttributes();
     }
 

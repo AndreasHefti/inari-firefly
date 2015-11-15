@@ -19,6 +19,8 @@ import com.inari.commons.event.Event;
 
 public final class WorkflowEvent extends Event<WorkflowEventListener> {
     
+    public static final EventTypeKey TYPE_KEY = createTypeKey( WorkflowEvent.class );
+    
     public enum Type {
         STATE_CHANGE
     }
@@ -32,6 +34,7 @@ public final class WorkflowEvent extends Event<WorkflowEventListener> {
     public final String stateChangeName;
     
     public WorkflowEvent( int workflowId, int stateChangeId, Type type ) {
+        super( TYPE_KEY );
         this.workflowId = workflowId;
         this.workflowName = null;
         this.stateChangeId = stateChangeId;
@@ -40,6 +43,7 @@ public final class WorkflowEvent extends Event<WorkflowEventListener> {
     }
     
     public WorkflowEvent( String workflowName, String stateChangeName, Type type ) {
+        super( TYPE_KEY );
         this.workflowId = -1;
         this.workflowName = workflowName;
         this.stateChangeId = -1;

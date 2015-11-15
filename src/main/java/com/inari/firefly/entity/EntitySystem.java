@@ -24,6 +24,7 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.functional.Predicate;
+import com.inari.commons.lang.indexed.Indexed;
 import com.inari.commons.lang.indexed.IndexedTypeAspectSet;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
@@ -233,6 +234,10 @@ public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
 
     public final <T extends EntityComponent> T getComponent( int entityId, int componentId ) {
         return components.get( entityId ).get( componentId );
+    }
+    
+    public final <T extends EntityComponent> T getComponent( int entityId, Indexed indexed ) {
+        return getComponent( entityId, indexed.index() );
     }
 
     public final IndexedTypeSet getComponents( int entityId ) {

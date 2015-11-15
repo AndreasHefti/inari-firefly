@@ -20,6 +20,8 @@ import com.inari.firefly.asset.Asset;
 
 public final class AssetEvent extends Event<AssetEventListener> {
     
+    public static final EventTypeKey TYPE_KEY = createTypeKey( AssetEvent.class );
+    
     public static enum Type {
         ASSET_CREATED,
         ASSET_LOADED,
@@ -32,6 +34,7 @@ public final class AssetEvent extends Event<AssetEventListener> {
     public final Type eventType;
 
     public AssetEvent( Asset asset, Type eventType ) {
+        super( TYPE_KEY );
         this.asset = asset;
         assetType = asset.indexedObjectType();
         this.eventType = eventType;

@@ -40,7 +40,7 @@ public final class Entity extends BaseIndexedObject {
     }
     
     public final int getId() {
-        return indexedId;
+        return index;
     }
 
     final void setId( int entityId ) {

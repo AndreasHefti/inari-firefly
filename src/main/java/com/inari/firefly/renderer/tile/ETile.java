@@ -26,6 +26,8 @@ import com.inari.firefly.entity.EntityComponent;
 
 public final class ETile extends EntityComponent {
     
+    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( ETile.class );
+    
     public static final AttributeKey<Boolean> MULTI_POSITION = new AttributeKey<Boolean>( "multiPosition", Boolean.class, ETile.class );
     public static final AttributeKey<Integer> GRID_X_POSITION = new AttributeKey<Integer>( "gridXPosition", Integer.class, ETile.class );
     public static final AttributeKey<Integer> GRID_Y_POSITION = new AttributeKey<Integer>( "gridYPosition", Integer.class, ETile.class );
@@ -42,7 +44,7 @@ public final class ETile extends EntityComponent {
     private final Set<Position> gridPositions = new HashSet<Position>();
 
     public ETile() {
-        super();
+        super( TYPE_KEY );
         resetAttributes();
     }
 

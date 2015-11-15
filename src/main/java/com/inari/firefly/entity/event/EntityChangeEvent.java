@@ -21,6 +21,8 @@ import com.inari.commons.lang.aspect.AspectBitSet;
 @Deprecated // check if this is really useful
 public abstract class EntityChangeEvent extends AspectedEvent<EntityChangeListener> {
     
+    public static final EventTypeKey TYPE_KEY = createTypeKey( EntityChangeEvent.class );
+    
     public enum Type {
         COMPONENT_ADDED,
         COMPONENT_CHANGED,
@@ -33,6 +35,7 @@ public abstract class EntityChangeEvent extends AspectedEvent<EntityChangeListen
     public final Type type;
     
     public EntityChangeEvent( int entityId, int componentId, AspectBitSet aspect, Type type ) {
+        super( TYPE_KEY );
         this.entityId = entityId;
         this.componentId = componentId;
         this.aspect = aspect;

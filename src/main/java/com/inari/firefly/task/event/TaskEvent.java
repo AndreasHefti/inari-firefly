@@ -19,6 +19,8 @@ import com.inari.commons.event.Event;
 
 public final class TaskEvent extends Event<TaskEventListener> {
     
+    public static final EventTypeKey TYPE_KEY = createTypeKey( TaskEvent.class );
+    
     public enum Type {
         RUN_TASK,
         REMOVE_TASK
@@ -29,12 +31,14 @@ public final class TaskEvent extends Event<TaskEventListener> {
     public final String taskName;
 
     public TaskEvent( Type eventType, int taskId ) {
+        super( TYPE_KEY );
         this.eventType = eventType;
         this.taskId = taskId;
         taskName = null; 
     }
     
     public TaskEvent( Type eventType, String taskName ) {
+        super( TYPE_KEY );
         this.eventType = eventType;
         this.taskName = taskName;
         taskId = -1; 

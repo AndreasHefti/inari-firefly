@@ -19,6 +19,8 @@ import com.inari.commons.event.Event;
 
 public final class SoundEvent extends Event<SoundEventListener> {
     
+    public static final EventTypeKey TYPE_KEY = createTypeKey( SoundEvent.class );
+    
     public enum Type {
         PLAY_SOUND,
         STOP_PLAYING
@@ -29,12 +31,14 @@ public final class SoundEvent extends Event<SoundEventListener> {
     public final Type eventType;
 
     public SoundEvent( int soundId, Type eventType ) {
+        super( TYPE_KEY );
         this.soundId = soundId;
         this.name = null;
         this.eventType = eventType;
     }
     
     public SoundEvent( String name, Type eventType ) {
+        super( TYPE_KEY );
         this.soundId = -1;
         this.name = name;
         this.eventType = eventType;

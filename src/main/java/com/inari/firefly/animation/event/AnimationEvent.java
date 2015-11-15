@@ -19,6 +19,8 @@ import com.inari.commons.event.Event;
 
 public final class AnimationEvent extends Event<AnimationEventListener> {
     
+    public static final EventTypeKey TYPE_KEY = createTypeKey( AnimationEvent.class );
+    
     public enum Type {
         START_ANIMATION,
         STOP_ANIMATION
@@ -28,6 +30,7 @@ public final class AnimationEvent extends Event<AnimationEventListener> {
     public final Type type;
 
     public AnimationEvent( Type type, int animationId ) {
+        super( TYPE_KEY );
         this.animationId = animationId;
         this.type = type;
     }

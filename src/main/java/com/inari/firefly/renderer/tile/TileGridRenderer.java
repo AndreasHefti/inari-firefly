@@ -57,8 +57,8 @@ public class TileGridRenderer extends BaseRenderer implements RenderEventListene
     protected void renderTileGridAllData( TileGridIterator iterator ) {
         while( iterator.hasNext() ) {
             int entityId = iterator.next();
-            ESprite sprite = entitySystem.getComponent( entityId, COMPONENT_ID_ESPRITE );
-            ETransform transform = entitySystem.getComponent( entityId, COMPONENT_ID_ETRANSFORM );
+            ESprite sprite = entitySystem.getComponent( entityId, ESprite.TYPE_KEY );
+            ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
             
             transformCollector.set( transform );
             transformCollector.xpos += iterator.getWorldXPos();
@@ -70,7 +70,7 @@ public class TileGridRenderer extends BaseRenderer implements RenderEventListene
 
     protected void renderTileGrid( TileGridIterator iterator ) {
         while( iterator.hasNext() ) {
-            ESprite sprite = entitySystem.getComponent( iterator.next(), COMPONENT_ID_ESPRITE );
+            ESprite sprite = entitySystem.getComponent( iterator.next(), ESprite.TYPE_KEY );
             lowerSystemFacade.renderSprite( sprite, iterator.getWorldXPos(), iterator.getWorldYPos() );
         }
     }

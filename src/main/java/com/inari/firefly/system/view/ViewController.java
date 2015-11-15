@@ -29,7 +29,7 @@ public abstract class ViewController extends Controller implements ViewEventList
     public void onViewEvent( ViewEvent event ) {
         switch ( event.eventType ) {
         case VIEW_ACTIVATED: {
-            if ( event.view.controlledBy( indexedId ) ) {
+            if ( event.view.controlledBy( index ) ) {
                 componentIds.add( event.view.index() );
             }
             break;

@@ -37,7 +37,7 @@ public abstract class Asset extends NamedIndexedComponent implements DynamicAttr
     
     protected Asset( int assetId ) {
         super( assetId );
-        typeKey = new AssetTypeKey( super.indexedId, getComponentType() );
+        typeKey = new AssetTypeKey( super.index, getComponentType() );
     }
 
     public boolean isLoaded() {

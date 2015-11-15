@@ -20,6 +20,8 @@ import com.inari.commons.lang.aspect.AspectBitSet;
 
 public final class EntityActivationEvent extends AspectedEvent<EntityActivationListener> {
     
+    public static final EventTypeKey TYPE_KEY = createTypeKey( EntityActivationEvent.class );
+    
     public enum Type {
         ENTITY_ACTIVATED,
         ENTITY_DEACTIVATED
@@ -30,7 +32,7 @@ public final class EntityActivationEvent extends AspectedEvent<EntityActivationL
     public final Type eventType;
 
     public EntityActivationEvent( int entityId, AspectBitSet aspect, Type eventType ) {
-        super();
+        super( TYPE_KEY );
         this.entityId = entityId;
         this.aspect = aspect;
         this.eventType = eventType;

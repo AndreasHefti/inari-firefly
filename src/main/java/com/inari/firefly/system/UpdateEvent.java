@@ -17,11 +17,14 @@ package com.inari.firefly.system;
 
 import com.inari.commons.event.Event;
 
-public final class UpdateEvent extends Event<UpdateEventListener>{
+public final class UpdateEvent extends Event<UpdateEventListener> {
+    
+    public static final EventTypeKey TYPE_KEY = createTypeKey( UpdateEvent.class );
 
     public final FFTimer timer;
 
     public UpdateEvent( FFTimer timer ) {
+        super( TYPE_KEY );
         this.timer = timer;
     }
 

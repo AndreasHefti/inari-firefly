@@ -7,6 +7,7 @@ import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.build.ComponentCreationException;
+import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
@@ -31,8 +32,10 @@ public final class EntityProvider implements FFContextInitiable  {
         if ( compSetCap != null ) {
             componentSetCapacity = compSetCap;
         }
-        if ( Indexer.getIndexedTypeSize( EntityComponent.class ) > componentSetCapacity ) {
-            componentSetCapacity = Indexer.getIndexedTypeSize( EntityComponent.class );
+        
+        int size = Indexer.getIndexedObjectSize( EntityComponentTypeKey.class );
+        if ( size > componentSetCapacity ) {
+            componentSetCapacity = size;
         }
 
         disposedComponents.ensureCapacity( componentSetCapacity );
@@ -45,8 +48,10 @@ public final class EntityProvider implements FFContextInitiable  {
         if ( cacheSize != null ) {
             createEntitiesForLaterUse( cacheSize );
             createComponentSetsForLaterUse( cacheSize );
-            for ( int i = 0; i < Indexer.getIndexedTypeSize( EntityComponent.class ); i++ ) {
-                Class<? extends EntityComponent> componentType = Indexer.getTypeForIndex( EntityComponent.class, i );
+            for ( int i = 0; i < size; i++ ) {
+                EntityComponentTypeKey indexedTypeKey = Indexer.getIndexedTypeKeyForIndex( EntityComponentTypeKey.class, i );
+                @SuppressWarnings( "unchecked" )
+                Class<? extends EntityComponent> componentType = (Class<? extends EntityComponent>) indexedTypeKey.indexedType;
                 createComponentsForLaterUse( cacheSize, componentType );
             }
         }
@@ -77,7 +82,7 @@ public final class EntityProvider implements FFContextInitiable  {
     }
     
     public <T extends EntityComponent> T getComponent( Class<T> componentType ) {
-        int componentTypeId = Indexer.getIndexForType( componentType, EntityComponent.class );
+        int componentTypeId = Indexer.getIndexedTypeKey( EntityComponentTypeKey.class, componentType ).index();
         ArrayDeque<EntityComponent> componentsOfType = disposedComponents.get( componentTypeId );
         T component;
         if ( componentsOfType.isEmpty() ) {
@@ -99,7 +104,7 @@ public final class EntityProvider implements FFContextInitiable  {
         for ( int i = 0; i < number; i++ ) {
             disposedComponentSets.add( 
                 new IndexedTypeSet( 
-                    EntityComponent.class, 
+                    EntityComponentTypeKey.class, 
                     componentSetCapacity 
                 ) 
             );
@@ -107,7 +112,7 @@ public final class EntityProvider implements FFContextInitiable  {
     }
     
     public final void createComponentsForLaterUse( int number, Class<? extends EntityComponent> componentType ) {
-        int componentTypeId = Indexer.getIndexForType( componentType, EntityComponent.class );
+        int componentTypeId = Indexer.getIndexedTypeKey( EntityComponentTypeKey.class, componentType ).index();
         ArrayDeque<EntityComponent> componentsOfType = disposedComponents.get( componentTypeId );
         if ( componentsOfType == null ) {
             componentsOfType = new ArrayDeque<EntityComponent>();
@@ -121,7 +126,7 @@ public final class EntityProvider implements FFContextInitiable  {
 
     public IndexedTypeSet getComponentTypeSet() {
         if ( disposedComponentSets.isEmpty() ) {
-            return new IndexedTypeSet( EntityComponent.class, componentSetCapacity );
+            return new IndexedTypeSet( EntityComponentTypeKey.class, componentSetCapacity );
         }
         
         IndexedTypeSet result = disposedComponentSets.pop();

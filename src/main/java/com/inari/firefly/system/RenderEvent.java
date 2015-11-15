@@ -19,6 +19,8 @@ import com.inari.commons.event.Event;
 import com.inari.commons.geom.Rectangle;
 
 public final class RenderEvent extends Event<RenderEventListener> {
+    
+    public static final EventTypeKey TYPE_KEY = createTypeKey( RenderEvent.class );
 
     /** Use this if the game loop works with approximation time on rendering */
     long approximationTime;
@@ -28,6 +30,10 @@ public final class RenderEvent extends Event<RenderEventListener> {
     int layerId;
     /** Defines a clipping area */
     final Rectangle clip = new Rectangle();
+    
+    public RenderEvent() {
+        super( TYPE_KEY );
+    }
     
     public final long getApproximationTime() {
         return approximationTime;

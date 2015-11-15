@@ -39,7 +39,7 @@ public abstract class NamedIndexedComponent extends BaseIndexedObject implements
     }
     
     public final int getId() {
-        return indexedId;
+        return index;
     }
 
     @Override

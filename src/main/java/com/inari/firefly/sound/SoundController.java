@@ -58,7 +58,7 @@ public abstract class SoundController extends Controller implements SoundEventLi
        
         switch ( event.eventType ) {
             case PLAY_SOUND: {
-                if ( sound.getControllerId() == indexedId ) {
+                if ( sound.getControllerId() == index ) {
                     componentIds.add( sound.index() );
                 }
                 break;

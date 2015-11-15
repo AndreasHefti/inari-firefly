@@ -20,6 +20,8 @@ import com.inari.firefly.system.view.View;
 
 public final class ViewEvent extends Event<ViewEventListener> {
     
+    public static final EventTypeKey TYPE_KEY = createTypeKey( ViewEvent.class );
+    
     public static enum Type {
         VIEW_CREATED,
         VIEW_ACTIVATED,
@@ -31,6 +33,7 @@ public final class ViewEvent extends Event<ViewEventListener> {
     public final Type eventType;
 
     public ViewEvent( View view, Type eventType ) {
+        super( TYPE_KEY );
         this.eventType = eventType;
         this.view = view;
     }

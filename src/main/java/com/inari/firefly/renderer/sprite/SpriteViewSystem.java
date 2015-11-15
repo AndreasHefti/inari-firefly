@@ -21,10 +21,8 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
@@ -34,10 +32,6 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 
 public final class SpriteViewSystem implements FFContextInitiable, EntityActivationListener {
-    
-    private final int COMPONENT_ID_ETRANSFORM = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
-    private final int COMPONENT_ID_ESPRITE = Indexer.getIndexForType( ESprite.class, EntityComponent.class );
-    private final int COMPONENT_ID_ETILE = Indexer.getIndexForType( ETile.class, EntityComponent.class );
     
     public static final TypedKey<SpriteViewSystem> CONTEXT_KEY = TypedKey.create( "FF_SPRITE_VIEW_SYSTEM", SpriteViewSystem.class ); 
     
@@ -67,13 +61,13 @@ public final class SpriteViewSystem implements FFContextInitiable, EntityActivat
     
     @Override
     public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( COMPONENT_ID_ESPRITE ) && !aspect.contains( COMPONENT_ID_ETILE );
+        return aspect.contains( ESprite.TYPE_KEY ) && !aspect.contains( ETile.TYPE_KEY );
     }
     
     @Override
     public final void onEntityActivationEvent( EntityActivationEvent event ) {
         IndexedTypeSet components = entitySystem.getComponents( event.entityId );
-        ETransform transform = components.get( COMPONENT_ID_ETRANSFORM );
+        ETransform transform = components.get( ETransform.TYPE_KEY );
         int viewId = transform.getViewId();
         int layerId = transform.getLayerId();
         switch ( event.eventType ) {
@@ -131,8 +125,8 @@ public final class SpriteViewSystem implements FFContextInitiable, EntityActivat
             if ( its2 == null ) {
                 return -1;
             }
-            SpriteRenderable sr1 = its1.get( COMPONENT_ID_ESPRITE );
-            SpriteRenderable sr2 = its2.get( COMPONENT_ID_ESPRITE );
+            SpriteRenderable sr1 = its1.get( ESprite.TYPE_KEY );
+            SpriteRenderable sr2 = its2.get( ESprite.TYPE_KEY );
             int o1 = sr1.getOrdering();
             int o2 = sr2.getOrdering();
             if ( o1 == o2 ) {

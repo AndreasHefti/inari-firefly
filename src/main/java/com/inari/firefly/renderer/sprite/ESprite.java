@@ -27,9 +27,10 @@ import com.inari.firefly.renderer.BlendMode;
 import com.inari.firefly.renderer.SpriteRenderable;
 
 public final class ESprite extends EntityComponent implements SpriteRenderable {
+    
+    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( ESprite.class );
 
     public static final AttributeKey<Integer> SPRITE_ID = new AttributeKey<Integer>( "spriteId", Integer.class, ESprite.class );
-    
     public static final AttributeKey<Integer> ORDERING = new AttributeKey<Integer>( "ordering", Integer.class, ESprite.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, ESprite.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ESprite.class );
@@ -46,7 +47,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     private BlendMode blendMode;
     
     public ESprite() {
-        super();
+        super( TYPE_KEY );
         resetAttributes();
     }
 
