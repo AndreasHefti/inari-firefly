@@ -18,15 +18,18 @@ package com.inari.firefly.control;
 import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.Disposable;
-import com.inari.firefly.component.NamedIndexedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFTimer;
 import com.inari.firefly.system.FFTimer.UpdateScheduler;
+import com.inari.firefly.system.component.SystemComponent;
 
-public abstract class Controller extends NamedIndexedComponent implements Disposable {
+public abstract class Controller extends SystemComponent implements Disposable {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Controller.class );
     
     public static final AttributeKey<Float> UPDATE_RESOLUTION = new AttributeKey<Float>( "updateResolution", Float.class, Controller.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
@@ -45,6 +48,11 @@ public abstract class Controller extends NamedIndexedComponent implements Dispos
         updateResolution = -1;
         updateScheduler = null;
     }
+    
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
+    }
 
     public final float getUpdateResolution() {
         return updateResolution;
@@ -60,7 +68,7 @@ public abstract class Controller extends NamedIndexedComponent implements Dispos
     }
     
     @Override
-    public final Class<Controller> getComponentType() {
+    public final Class<Controller> componentType() {
         return Controller.class;
     }
     

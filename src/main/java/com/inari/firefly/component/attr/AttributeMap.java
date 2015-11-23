@@ -15,6 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.component.attr;
 
+import com.inari.firefly.component.Component.ComponentKey;
 
 public interface AttributeMap {
     

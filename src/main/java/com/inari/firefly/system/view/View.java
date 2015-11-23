@@ -21,13 +21,16 @@ import java.util.Set;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.renderer.BlendMode;
 import com.inari.firefly.renderer.sprite.ESprite;
+import com.inari.firefly.system.component.SystemComponent;
 
-public class View extends NamedIndexedComponent {
+public class View extends SystemComponent {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( View.class );
     
     public static final AttributeKey<Rectangle> BOUNDS = new AttributeKey<Rectangle>( "bounds", Rectangle.class, View.class );
     public static final AttributeKey<Position> WORLD_POSITION = new AttributeKey<Position>( "worldPosition", Position.class, View.class );
@@ -70,6 +73,11 @@ public class View extends NamedIndexedComponent {
         blendMode = BlendMode.NONE;
         zoom = 1.0f;
         controllerIds = null;
+    }
+    
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
     }
     
     public final int getOrder() {

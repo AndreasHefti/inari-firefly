@@ -12,26 +12,23 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.indexed.Indexer;
-import com.inari.firefly.EventDispatcherMock;
-import com.inari.firefly.LowerSystemFacadeMock;
+import com.inari.firefly.FireFlyMock;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextImpl;
-import com.inari.firefly.system.FFContextImpl.InitMap;
 
 public class ViewSystemTest {
 
     @Test
     public void testCreation() {
         Indexer.clear();
-        FFContext context = createContext();
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        ViewSystem viewSystem = new ViewSystem();
-        viewSystem.init( context );
+        FFContext context = new FireFlyMock().getContext();
+        IEventDispatcher eventDispatcher = context.getEventDispatcher();
+        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        
         Attributes attrs = new Attributes();
         
-        viewSystem.toAttributes( attrs );
+        context.toAttributes( attrs, View.TYPE_KEY );
         assertEquals( 
             "View(0)::" +
             "name:String=BASE_VIEW, " +
@@ -65,10 +62,10 @@ public class ViewSystemTest {
     @Test
     public void testCreateViews() {
         Indexer.clear();
-        FFContext context = createContext();
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        ViewSystem viewSystem = new ViewSystem();
-        viewSystem.init( context );
+        FFContext context = new FireFlyMock().getContext();
+        IEventDispatcher eventDispatcher = context.getEventDispatcher();
+        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+
         Attributes attrs = new Attributes();
         
         viewSystem.getViewBuilder()
@@ -81,7 +78,7 @@ public class ViewSystemTest {
             .set( View.WORLD_POSITION, new Position( 0, 0 ) )
             .build( 2 );
         
-        viewSystem.toAttributes( attrs );
+        context.toAttributes( attrs, View.TYPE_KEY );
         assertEquals( 
             "View(0)::" +
             "name:String=BASE_VIEW, " +
@@ -147,10 +144,10 @@ public class ViewSystemTest {
     @Test
     public void testCreateLayersForBaseView() {
         Indexer.clear();
-        FFContext context = createContext();
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        ViewSystem viewSystem = new ViewSystem();
-        viewSystem.init( context );
+        FFContext context = new FireFlyMock().getContext();
+        IEventDispatcher eventDispatcher = context.getEventDispatcher();
+        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        
         Attributes attrs = new Attributes();
         
         try {
@@ -176,7 +173,7 @@ public class ViewSystemTest {
             .set( Layer.NAME, "Layer3" )
             .build();
         
-        viewSystem.toAttributes( attrs );
+        context.toAttributes( attrs, View.TYPE_KEY, Layer.TYPE_KEY );
         assertEquals( 
             "View(0)::" +
             "name:String=BASE_VIEW, " +
@@ -214,13 +211,6 @@ public class ViewSystemTest {
         } catch ( ComponentCreationException e ) {
             assertEquals( "The View with id: 100. dont exists.", e.getMessage() );
         }
-    }
-
-    private FFContext createContext() {
-        InitMap initMap = new InitMap();
-        initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcherMock.class );
-        initMap.put( FFContext.LOWER_SYSTEM_FACADE, LowerSystemFacadeMock.class );
-        return new FFContextImpl( initMap, true );
     }
 
 }

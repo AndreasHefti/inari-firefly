@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.inari.firefly.component.Component.ComponentKey;
 import com.inari.firefly.entity.Entity;
 
 public class ComponentAttributeMap implements AttributeMap {

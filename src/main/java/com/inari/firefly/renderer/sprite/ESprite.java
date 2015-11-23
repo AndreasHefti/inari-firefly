@@ -59,7 +59,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     }
     
     @Override
-    public final Class<ESprite> getComponentType() {
+    public final Class<ESprite> componentType() {
         return ESprite.class;
     }
 

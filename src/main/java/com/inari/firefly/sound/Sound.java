@@ -18,11 +18,14 @@ package com.inari.firefly.sound;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.component.SystemComponent;
 
-public final class Sound extends NamedIndexedComponent {
+public final class Sound extends SystemComponent {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Sound.class );
     
     public static final AttributeKey<Integer> ASSET_ID = new AttributeKey<Integer>( "assetId", Integer.class, Sound.class );
     public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Sound.class );
@@ -75,6 +78,11 @@ public final class Sound extends NamedIndexedComponent {
     public final boolean isStreaming() {
         return streaming;
     }
+    
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
+    }
 
     @Override
     public final Class<Sound> indexedObjectType() {
@@ -82,7 +90,7 @@ public final class Sound extends NamedIndexedComponent {
     }
 
     @Override
-    public final Class<Sound> getComponentType() {
+    public final Class<Sound> componentType() {
         return Sound.class;
     }
 
@@ -170,9 +178,5 @@ public final class Sound extends NamedIndexedComponent {
         attributes.put( CONTROLLER_ID, controllerId );
         attributes.put( CHANNEL, channel );
     }
-
-    
-
-    
 
 }

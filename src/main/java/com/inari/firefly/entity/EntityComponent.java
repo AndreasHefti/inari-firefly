@@ -28,16 +28,9 @@ public abstract class EntityComponent implements Component, IndexedType {
         this.indexedTypeKey = indexedTypeKey;
     }
 
-    @Override
-    public final int typeIndex() {
-        return indexedTypeKey.index();
-    }
-
-    @Override
     public final IndexedTypeKey indexedTypeKey() {
         return indexedTypeKey;
     }
-
     
     public abstract void resetAttributes();
     
@@ -45,6 +38,7 @@ public abstract class EntityComponent implements Component, IndexedType {
     protected static final EntityComponentTypeKey createTypeKey( Class<? extends EntityComponent> type ) {
         return Indexer.getIndexedTypeKey( EntityComponentTypeKey.class, type );
     }
+    
     
     public static final class EntityComponentTypeKey extends IndexedTypeKey {
 

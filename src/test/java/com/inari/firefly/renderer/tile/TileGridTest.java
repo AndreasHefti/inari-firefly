@@ -13,7 +13,7 @@ import com.inari.commons.StringUtils;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
-import com.inari.firefly.renderer.tile.TileGrid.TileGridIterator;
+import com.inari.firefly.renderer.tile.TileGrid.TileIterator;
 public class TileGridTest {
     
     @Before
@@ -563,7 +563,7 @@ public class TileGridTest {
             StringUtils.array2DToString( grid.grid )
         );
         
-        TileGridIterator iterator = grid.iterator();
+        TileIterator iterator = grid.iterator();
         assertNotNull( iterator );
         assertTrue( "should have next", iterator.hasNext() );
         assertEquals( "expected next", 100, iterator.next() );

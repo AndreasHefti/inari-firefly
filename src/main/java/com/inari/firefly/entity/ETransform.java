@@ -77,7 +77,7 @@ public final class ETransform extends EntityComponent {
     }
     
     @Override
-    public final Class<ETransform> getComponentType() {
+    public final Class<ETransform> componentType() {
         return ETransform.class;
     }
     

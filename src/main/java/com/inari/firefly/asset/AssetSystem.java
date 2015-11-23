@@ -18,31 +18,31 @@ package com.inari.firefly.asset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import com.inari.commons.StringUtils;
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.component.Component;
-import com.inari.firefly.component.ComponentBuilderHelper;
-import com.inari.firefly.component.ComponentSystem;
-import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.component.build.BaseComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public class AssetSystem implements ComponentSystem {
+public class AssetSystem extends ComponentSystem {
+    
+    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+        Asset.TYPE_KEY
+    };
     
     public static final TypedKey<AssetSystem> CONTEXT_KEY = TypedKey.create( "FF_ASSET_SYSTEM", AssetSystem.class );
     
     public static final String DEFAULT_GROUP_NAME = "FF_DEFAULT_ASSET_GROUP";
-    
-    private FFContext context;
-    private IEventDispatcher eventDispatcher;
     
     private final Map<AssetNameKey, Asset> assets;
     private final Map<AssetTypeKey, Asset> typeMapping;
@@ -55,8 +55,7 @@ public class AssetSystem implements ComponentSystem {
     
     @Override
     public void init( FFContext context ) {
-        this.context = context;
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        super.init( context );
     }
 
     @Override
@@ -90,22 +89,12 @@ public class AssetSystem implements ComponentSystem {
         return assetType.cast( asset );
     }
 
-    @Override
-    @SuppressWarnings( { "unchecked", "rawtypes" } )
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( !Asset.class.isAssignableFrom( type ) ) {
-            throw new IllegalArgumentException( "The IComponentType is not a subtype of Asset." + type );
-        }
-        
-        return new AssetBuilder( this, type, false );
-    }
-
-    public final <A extends Asset> AssetBuilder<A> getAssetBuilder( Class<A> assetType ) {
-        return new AssetBuilder<A>( this, assetType, false );
+    public final AssetBuilder getAssetBuilder() {
+        return new AssetBuilder( false );
     }
     
-    public final <A extends Asset> AssetBuilder<A> getAssetBuilderWithAutoLoad( Class<A> assetType ) {
-        return new AssetBuilder<A>( this, assetType, true );
+    public final AssetBuilder getAssetBuilderWithAutoLoad() {
+        return new AssetBuilder( true );
     }
     
     public final void loadAsset( AssetNameKey key ) {
@@ -275,47 +264,10 @@ public class AssetSystem implements ComponentSystem {
         assets.clear();
         typeMapping.clear();
     }
-    
-    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
+
     @Override
-    public final Set<Class<?>> supportedComponentTypes() {
-        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
-            SUPPORTED_COMPONENT_TYPES.add( Asset.class );
-        }
+    public final SystemComponentKey[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
-    }
-
-    @Override
-    public final void fromAttributes( Attributes attributes ) {
-        fromAttributes( attributes, BuildType.CLEAR_OLD );
-    }
-
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
-        if ( buildType == BuildType.CLEAR_OLD ) {
-            clear();
-        }
-        
-        for ( final Class<? extends Asset> assetSubType : attributes.getAllSubTypes( Asset.class ) ) {
-            new ComponentBuilderHelper<Asset>() {
-                @Override
-                public Asset get( int id ) {
-                    return getAsset( new AssetTypeKey( id, assetSubType ) );
-                }
-                @Override
-                public void delete( int id ) {
-                    deleteAsset( new AssetTypeKey( id, assetSubType ) );
-                }
-            }.buildComponents( Asset.class, buildType, (AssetBuilder<Asset>) getAssetBuilder( assetSubType ), attributes );
-        }
-    }
-
-    @Override
-    public final void toAttributes( Attributes attributes ) {
-        for ( Asset asset : assets.values() ) {
-            ComponentBuilderHelper.toAttributes( attributes, asset.indexedObjectType(), asset );
-        }
     }
     
     public final Collection<AssetNameKey> getAssetNameKeysOfGroup( String group ) {
@@ -336,6 +288,13 @@ public class AssetSystem implements ComponentSystem {
             }
         }
         return assetsOfGroup;
+    }
+
+    @Override
+    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
+        return new SystemBuilderAdapter<?>[] {
+            new AssetBuilderAdapter( this )
+        };
     }
 
     private Collection<AssetTypeKey> disposeAsset( Asset asset ) {
@@ -389,12 +348,12 @@ public class AssetSystem implements ComponentSystem {
         }
         
         assets.remove( new AssetNameKey( deleted.group, deleted.getName() ) );
-        eventDispatcher.notify( new AssetEvent( deleted, AssetEvent.Type.ASSET_DELETED ) );
+        context.notify( new AssetEvent( deleted, AssetEvent.Type.ASSET_DELETED ) );
         deleted.dispose();
     }
 
     private void dispose( Asset asset ) {
-        eventDispatcher.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_DISPOSED ) );
+        context.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_DISPOSED ) );
         asset.loaded = false;
     }
 
@@ -413,7 +372,7 @@ public class AssetSystem implements ComponentSystem {
     }
     
     private void load( Asset asset ) {
-        eventDispatcher.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_LOADED ) );
+        context.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_LOADED ) );
         asset.loaded = true;
     }
     
@@ -429,21 +388,23 @@ public class AssetSystem implements ComponentSystem {
         }
     }
     
-    public final class AssetBuilder<A extends Asset> extends BaseComponentBuilder<A> {
+    public final class AssetBuilder extends SystemComponentBuilder {
         
-        private final Class<A> assetType;
         private final boolean autoLoad;
         
-        private AssetBuilder( AssetSystem system, Class<A> assetType, boolean autoLoad ) {
-            super( system );
-            this.assetType = assetType;
+        private AssetBuilder( boolean autoLoad ) {
             this.autoLoad = autoLoad;
+        }
+        
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return Asset.TYPE_KEY;
         }
 
         @Override
-        public A build( int componentId ) {
-            attributes.put( Component.INSTANCE_TYPE_NAME, assetType.getName() );
-            A asset = getInstance( componentId );
+        public int doBuild( int componentId, Class<?> componentType ) {
+            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
+            Asset asset = getInstance( componentId );
             
             asset.fromAttributes( attributes );
             
@@ -465,13 +426,36 @@ public class AssetSystem implements ComponentSystem {
             typeMapping.put( asset.typeKey, asset );
             postInit( asset, context );
             
-            eventDispatcher.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
+            context.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
             
             if ( autoLoad ) {
                 load( asset );
             }
             
-            return asset;
+            return asset.getId();
+        }
+    }
+    
+    private final class AssetBuilderAdapter extends SystemBuilderAdapter<Asset> {
+        public AssetBuilderAdapter( AssetSystem system ) {
+            super( system, new AssetBuilder( false ) );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return Asset.TYPE_KEY;
+        }
+        @Override
+        public final Asset get( int id, Class<? extends Asset> subtype ) {
+            return getAsset( new AssetTypeKey( id, subtype ) );
+        }
+        @Override
+        public final void delete( int id, Class<? extends Asset> subtype ) {
+            deleteAsset( new AssetTypeKey( id, subtype ) );
+        }
+        
+        @Override
+        public final Iterator<Asset> getAll() {
+            return assets.values().iterator();
         }
     }
 

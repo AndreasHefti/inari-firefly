@@ -4,19 +4,19 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.inari.commons.event.EventDispatcher;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FireFly;
 import com.inari.firefly.system.FFSystemInterface;
+import com.inari.firefly.system.FireFly;
 
 public class SystemTests {
     
@@ -26,26 +26,26 @@ public class SystemTests {
     @Test
     public void createTextureAndSpriteAndOneEntity() {
         Indexer.clear();
-        FireFly firefly = new FireFly( LowerSystemFacadeMock.class, InputMock.class );
+        FireFly firefly = new FireFlyMock( new EventDispatcher() );
         FFContext context = firefly.getContext();
-        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-        FFSystemInterface lowerSystemMock = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        FFSystemInterface lowerSystemMock = context.getSystemInterface();
         
         assetSystem
-            .getAssetBuilder( TextureAsset.class )
+            .getAssetBuilder()
                 .set( TextureAsset.NAME, TEXTURE_ASSET_KEY.name )
                 .set( TextureAsset.ASSET_GROUP, TEXTURE_ASSET_KEY.group )
                 .set( TextureAsset.RESOURCE_NAME, "origTiles.png" )
-            .buildAndNext( SpriteAsset.class )
+            .buildAndNext( TextureAsset.class )
                 .set( SpriteAsset.NAME, SPRITE_ASSET_KEY.name )
                 .set( SpriteAsset.ASSET_GROUP, SPRITE_ASSET_KEY.group )
                 .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetTypeKey( TEXTURE_ASSET_KEY ).id )
                 .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, 32, 32 ) )
-            .build()
+            .build( SpriteAsset.class )
             ;
           
-        Entity entity = entitySystem
+        int entityId = entitySystem
             .getEntityBuilder()
                 .set( ETransform.VIEW_ID, 0 )
                 .set( ETransform.XPOSITION, 0 )
@@ -65,7 +65,7 @@ public class SystemTests {
 
         assetSystem.loadAsset( TEXTURE_ASSET_KEY );
         assetSystem.loadAsset( SPRITE_ASSET_KEY );
-        entitySystem.activate( entity.getId() );
+        entitySystem.activate( entityId );
         
         assertEquals( 
             "LowerSystemFacadeMock [" +

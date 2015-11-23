@@ -15,66 +15,69 @@
  ******************************************************************************/ 
 package com.inari.firefly.renderer.tile;
 
-import com.inari.commons.event.IEventDispatcher;
+import java.util.Iterator;
+
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.build.BaseComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
-import com.inari.firefly.renderer.tile.TileGrid.TileGridIterator;
+import com.inari.firefly.renderer.tile.TileGrid.TileIterator;
 import com.inari.firefly.renderer.tile.TileGrid.TileRenderMode;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
-import com.inari.firefly.system.view.ViewSystem;
+import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.view.event.ViewEvent;
 import com.inari.firefly.system.view.event.ViewEvent.Type;
 import com.inari.firefly.system.view.event.ViewEventListener;
 
-public final class TileGridSystem 
+public final class TileGridSystem
+    extends 
+        ComponentSystem
     implements
-        FFContextInitiable,
-        ComponentBuilderFactory, 
         ViewEventListener,
         EntityActivationListener {
     
+    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+        TileGrid.TYPE_KEY
+    };
+    
     public static final TypedKey<TileGridSystem> CONTEXT_KEY = TypedKey.create( "FF_TILE_GRID_SYSTEM", TileGridSystem.class ); 
     
-    public static final int VOID_ENTITY_ID = -1;
-    
-    private IEventDispatcher eventDispatcher;
     private EntitySystem entitySystem;
-    private ViewSystem viewSystem;
     
+    private final DynArray<TileGrid> tileGrids;
     private final DynArray<DynArray<TileGrid>> tileGridOfViewsPerLayer;
     
     public TileGridSystem() {
+        tileGrids = new DynArray<TileGrid>();
         tileGridOfViewsPerLayer = new DynArray<DynArray<TileGrid>>();
     }
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-        viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
+        super.init( context );
+        context.loadSystem( TileGridRenderer.CONTEXT_KEY );
         
-        eventDispatcher.register( EntityActivationEvent.class, this );
-        eventDispatcher.register( ViewEvent.class, this );
+        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        
+        context.registerListener( EntityActivationEvent.class, this );
+        context.registerListener( ViewEvent.class, this );
     }
 
     @Override
     public final void dispose( FFContext context ) {
-        eventDispatcher.unregister( EntityActivationEvent.class, this );
-        eventDispatcher.unregister( ViewEvent.class, this );
+        context.disposeListener( EntityActivationEvent.class, this );
+        context.disposeListener( ViewEvent.class, this );
         
-        tileGridOfViewsPerLayer.clear();
+        clear();
     }
 
     @Override
@@ -108,24 +111,23 @@ public final class TileGridSystem
     }
     
     public final TileGrid getTileGrid( String tileGridName ) {
-        for ( int i = 0; i < tileGridOfViewsPerLayer.capacity(); i++ ) {
-            if ( tileGridOfViewsPerLayer.contains( i ) ) {
-                DynArray<TileGrid> tileGrids = tileGridOfViewsPerLayer.get( i );
-                for ( int j = 0; j < tileGrids.capacity(); j++ ) {
-                    TileGrid tileGrid = tileGrids.get( j );
-                    if ( tileGrid != null && tileGrid.getName().equals(  tileGridName ) ) {
-                        return tileGrid;
-                    }
-                }
+        for ( TileGrid tileGrid : tileGrids ) {
+            if ( tileGrid != null && tileGrid.getName().equals(  tileGridName ) ) {
+                return tileGrid;
             }
         }
         return null;
     }
     
-    public final TileGrid getTileGrid( int viewId ) {
-        return getTileGrid( viewId, 0 );
+    public final TileGrid getTileGrid( int tileGridId ) {
+        for ( TileGrid tileGrid : tileGrids ) {
+            if ( tileGrid != null && tileGrid.index() == tileGridId ) {
+                return tileGrid;
+            }
+        }
+        return null;
     }
-    
+
     public final TileGrid getTileGrid( int viewId, int layerId ) {
         if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
             return null;
@@ -145,7 +147,10 @@ public final class TileGridSystem
     
     public final void deleteAllTileGrid( int viewId ) {
         if ( tileGridOfViewsPerLayer.contains( viewId ) ) {
-            tileGridOfViewsPerLayer.remove( viewId );
+            DynArray<TileGrid> toRemove = tileGridOfViewsPerLayer.remove( viewId );
+            for ( TileGrid tileGrid : toRemove ) {
+                tileGrids.remove( tileGrid.index() );
+            }
         }
     }
     
@@ -161,65 +166,27 @@ public final class TileGridSystem
         if ( !tileGridOfViewsPerLayer.contains( layerId ) ) {
             return;
         }
-        tileGridsForView.remove( layerId );
+        
+        TileGrid removed = tileGridsForView.remove( layerId );
+        tileGrids.remove( removed.index() );
     }
     
-    public final TileGridIterator iterator( int viewId, int layerId, Rectangle clip ) {
+    public final void deleteTileGrid( int tileGridId ) {
+        if ( !tileGrids.contains( tileGridId ) ) {
+            return;
+        }
+        
+        TileGrid removed = tileGrids.get( tileGridId );
+        tileGridOfViewsPerLayer.get( removed.getViewId() ).remove( removed.getLayerId() );
+    };
+    
+    public final TileIterator iterator( int viewId, int layerId, Rectangle clip ) {
         TileGrid tileGrid = getTileGrid( viewId, layerId );
         if ( tileGrid == null ) {
             return null;
         }
         return tileGrid.iterator( clip );
     }
-
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( type != TileGrid.class ) {
-            throw new IllegalArgumentException( "Unsupported IComponent type for this IComponentBuilderFactory: " + type );
-        }
-        
-        return (ComponentBuilder<C>) getTileGridBuilder();
-    }
-
-    
-    public final BaseComponentBuilder<TileGrid> getTileGridBuilder() {
-        return new BaseComponentBuilder<TileGrid>( this ) {
-            @Override
-            public TileGrid build( int componentId ) {
-                TileGrid tileGrid = new TileGrid( componentId );
-                tileGrid.fromAttributes( attributes );
-                int viewId = tileGrid.getViewId();
-                int layerId = tileGrid.getLayerId();
-                if ( viewId < 0 ) {
-                    viewId = 0;
-                } 
-                if ( layerId < 0 ) {
-                    layerId = 0;
-                }
-                
-                if ( viewSystem.getView( viewId ) == null ) {
-                    throw new ComponentCreationException( "The viewId: " + viewId + " doesn't exist as a View in ViewSystem. Create the view first" );
-                }
-
-                if ( layerId > 0 && !viewSystem.hasLayer( viewId, layerId ) ) {
-                    throw new ComponentCreationException( "The Layer with id: " + layerId + " doesn't exists. Create the Layer first." );
-                }
-                
-                DynArray<TileGrid> perLayer;
-                if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
-                    perLayer = new DynArray<TileGrid>();
-                    tileGridOfViewsPerLayer.set( viewId, perLayer );
-                } else {
-                    perLayer = tileGridOfViewsPerLayer.get( viewId );
-                }
-                
-                perLayer.set( layerId, tileGrid );
-                return tileGrid;
-            }
-        };
-    }
-    
     
     private final void registerEntity( int entityId, AspectBitSet entityAspect ) {
         ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
@@ -247,6 +214,87 @@ public final class TileGridSystem
             Position gridPosition = tile.getGridPosition();
             tileGrid.resetIfMatch( entityId, gridPosition.x, gridPosition.y );
         }
+    }
+
+    
+    public final BaseComponentBuilder getTileGridBuilder() {
+        return new TileGridBuilder();
+    }
+    
+    @Override
+    public final SystemComponentKey[] supportedComponentTypes() {
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    @Override
+    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
+        return new SystemBuilderAdapter<?>[] {
+            new TileGridBuilderAdapter( this )
+        };
+    }
+
+    @Override
+    public final void clear() {
+        tileGridOfViewsPerLayer.clear();
+    }
+    
+    private final class TileGridBuilder extends SystemComponentBuilder {
+        
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return TileGrid.TYPE_KEY;
+        }
+        
+        @Override
+        public int doBuild( int componentId, Class<?> subType ) {
+            TileGrid tileGrid = new TileGrid( componentId );
+            tileGrid.fromAttributes( attributes );
+            int viewId = tileGrid.getViewId();
+            int layerId = tileGrid.getLayerId();
+            if ( viewId < 0 ) {
+                viewId = 0;
+            } 
+            if ( layerId < 0 ) {
+                layerId = 0;
+            }
+            
+            DynArray<TileGrid> perLayer;
+            if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
+                perLayer = new DynArray<TileGrid>();
+                tileGridOfViewsPerLayer.set( viewId, perLayer );
+            } else {
+                perLayer = tileGridOfViewsPerLayer.get( viewId );
+            }
+            perLayer.set( layerId, tileGrid );
+            
+            tileGrids.set( componentId, tileGrid );
+            
+            return tileGrid.getId();
+        }
+    }
+    
+    private final class TileGridBuilderAdapter extends SystemBuilderAdapter<TileGrid> {
+        public TileGridBuilderAdapter( ComponentSystem system ) {
+            super( system, new TileGridBuilder() );
+        }
+        @Override
+        public SystemComponentKey componentTypeKey() {
+            return TileGrid.TYPE_KEY;
+        }
+        @Override
+        public TileGrid get( int id, Class<? extends TileGrid> subtype ) {
+            return getTileGrid( id );
+        }
+        @Override
+        public Iterator<TileGrid> getAll() {
+            return tileGrids.iterator();
+        }
+
+        @Override
+        public void delete( int id, Class<? extends TileGrid> subtype ) {
+            deleteTileGrid( id );
+        }
+        
     }
 
 }

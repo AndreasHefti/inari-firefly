@@ -3,21 +3,21 @@ package com.inari.firefly.renderer;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.FFSystemInterface;
 
-public abstract class BaseRenderer implements FFContextInitiable {
+public abstract class BaseRenderer implements FFSystem {
     
-    protected FFSystemInterface lowerSystemFacade;
+    protected FFSystemInterface systemInterface;
     protected EntitySystem entitySystem;
 
     protected final TransformDataCollector transformCollector = new TransformDataCollector();
     
     @Override
     public void init( FFContext context ) throws FFInitException {
-        lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        systemInterface = context.getSystemInterface();
+        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
     }
     
     protected final void render( SpriteRenderable sprite ) {
@@ -31,7 +31,7 @@ public abstract class BaseRenderer implements FFContextInitiable {
         }
         
         if ( transformCollector.scalex != 1 || transformCollector.scaley != 1 || transformCollector.rotation != 0 ) {
-            lowerSystemFacade.renderSprite( 
+            systemInterface.renderSprite( 
                 sprite, 
                 transformCollector.xpos, 
                 transformCollector.ypos, 
@@ -42,7 +42,7 @@ public abstract class BaseRenderer implements FFContextInitiable {
                 transformCollector.rotation
             );
         } else {
-            lowerSystemFacade.renderSprite( sprite, transformCollector.xpos, transformCollector.ypos );
+            systemInterface.renderSprite( sprite, transformCollector.xpos, transformCollector.ypos );
         }
     }
     

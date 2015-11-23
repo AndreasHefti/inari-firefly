@@ -57,7 +57,7 @@ public final class ETile extends EntityComponent {
     }
     
     @Override
-    public final Class<ETile> getComponentType() {
+    public final Class<ETile> componentType() {
         return ETile.class;
     }
 

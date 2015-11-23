@@ -22,7 +22,10 @@ public final class WorkflowEvent extends Event<WorkflowEventListener> {
     public static final EventTypeKey TYPE_KEY = createTypeKey( WorkflowEvent.class );
     
     public enum Type {
-        STATE_CHANGE
+        DO_STATE_CHANGE,
+        WORKFLOW_STARTED,
+        STATE_CHANGED,
+        WORKFLOW_FINISHED
     }
     
     public final Type type;

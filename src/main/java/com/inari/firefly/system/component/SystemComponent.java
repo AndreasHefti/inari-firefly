@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.component;
+package com.inari.firefly.system.component;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -21,19 +21,24 @@ import java.util.Set;
 
 import com.inari.commons.lang.indexed.BaseIndexedObject;
 import com.inari.commons.lang.indexed.IndexedObject;
+import com.inari.commons.lang.indexed.IndexedType;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
+import com.inari.commons.lang.indexed.Indexer;
+import com.inari.firefly.component.Component;
+import com.inari.firefly.component.NamedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
-public abstract class NamedIndexedComponent extends BaseIndexedObject implements NamedComponent {
+public abstract class SystemComponent extends BaseIndexedObject implements IndexedType, NamedComponent {
 
-    public static final AttributeKey<String> NAME = new AttributeKey<String>( "name", String.class, NamedIndexedComponent.class );
+    public static final AttributeKey<String> NAME = new AttributeKey<String>( "name", String.class, SystemComponent.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         NAME
     };
     
     protected String name;
     
-    protected NamedIndexedComponent( int id ) {
+    protected SystemComponent( int id ) {
         super( id );
         name = null;
     }
@@ -43,7 +48,7 @@ public abstract class NamedIndexedComponent extends BaseIndexedObject implements
     }
 
     @Override
-    public Class<? extends Component> getComponentType() {
+    public Class<? extends Component> componentType() {
         return this.getClass();
     }
 
@@ -75,6 +80,22 @@ public abstract class NamedIndexedComponent extends BaseIndexedObject implements
     @Override
     public void toAttributes( AttributeMap attributes ) {
         attributes.put( NAME, name );
+    }
+    
+    public static final class SystemComponentKey extends IndexedTypeKey {
+
+        protected SystemComponentKey( Class<? extends IndexedType> indexedType ) {
+            super( indexedType );
+        }
+
+        @Override
+        protected final Class<SystemComponent> baseIndexedType() {
+            return SystemComponent.class;
+        }
+        
+        public static final SystemComponentKey create( Class<? extends SystemComponent> type ) {
+            return Indexer.getIndexedTypeKey( SystemComponentKey.class, type );
+        }
     }
 
 }

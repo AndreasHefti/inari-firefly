@@ -41,7 +41,7 @@ public class SoundAsset extends Asset {
     }
     
     @Override
-    public final Class<SoundAsset> getComponentType() {
+    public final Class<SoundAsset> componentType() {
         return SoundAsset.class;
     }
 

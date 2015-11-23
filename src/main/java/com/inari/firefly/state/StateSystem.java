@@ -15,41 +15,42 @@
  ******************************************************************************/ 
 package com.inari.firefly.state;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.component.ComponentBuilderHelper;
-import com.inari.firefly.component.ComponentSystem;
-import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.state.event.WorkflowEvent;
+import com.inari.firefly.state.event.WorkflowEvent.Type;
 import com.inari.firefly.state.event.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
+import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.task.event.TaskEvent;
 
-public class StateSystem 
+public class StateSystem
+    extends
+        ComponentSystem
     implements 
-        ComponentSystem,
         UpdateEventListener,
         WorkflowEventListener {
     
-    public static final TypedKey<StateSystem> CONTEXT_KEY = TypedKey.create( "FF_STATE_SYSTEM", StateSystem.class );
+    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+        Workflow.TYPE_KEY,
+        State.TYPE_KEY,
+        StateChange.TYPE_KEY
+    };
     
-    private IEventDispatcher eventDispatcher;
-    private FFContext context;
+    public static final TypedKey<StateSystem> CONTEXT_KEY = TypedKey.create( "FF_STATE_SYSTEM", StateSystem.class );
     
     private final DynArray<Workflow> workflows;
     private final DynArray<State> states;
@@ -65,24 +66,18 @@ public class StateSystem
     
     @Override
     public void init( FFContext context ) {
-        if ( this.context != null ) {
-            return;
-        }
-        this.context = context;
+        super.init( context );
         
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        eventDispatcher.register( UpdateEvent.class, this );
-        eventDispatcher.register( WorkflowEvent.class, this );
+        context.registerListener( UpdateEvent.class, this );
+        context.registerListener( WorkflowEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        eventDispatcher.unregister( UpdateEvent.class, this );
-        eventDispatcher.unregister( WorkflowEvent.class, this );
+        context.disposeListener( UpdateEvent.class, this );
+        context.disposeListener( WorkflowEvent.class, this );
         
         clear();
-        context = null;
-        eventDispatcher = null;
     }
 
     public final int getUpdateStep() {
@@ -123,16 +118,17 @@ public class StateSystem
         
         int initTaskId = workflow.getInitTaskId();
         if ( initTaskId >= 0 ) {
-            eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, initTaskId ) );
+            context.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, initTaskId ) );
         }
         
         workflow.activate( startStateId );
+        context.notify( new WorkflowEvent( workflow.getId(), -1, Type.WORKFLOW_STARTED ) );
     }
     
     @Override
     public void onEvent( WorkflowEvent event ) {
         switch ( event.type ) {
-            case STATE_CHANGE: {
+            case DO_STATE_CHANGE: {
                 Workflow workflow = ( event.workflowName != null )? getWorkflow( event.workflowName ): getWorkflow( event.workflowId );
                 StateChange stateChange = ( event.stateChangeName != null )? getStateChange( event.stateChangeName ): getStateChange( event.stateChangeId );
                 if ( workflow != null && stateChange != null ) {
@@ -175,10 +171,17 @@ public class StateSystem
     private void doStateChange( Workflow workflow, StateChange stateChange ) {
         int taskId = stateChange.getTaskId();
         if ( taskId >= 0 ) {
-            eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, taskId ) );
+            context.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, taskId ) );
         }
         
-        workflow.setCurrentStateId( stateChange.getToStateId() );
+        int toStateId = stateChange.getToStateId();
+        workflow.setCurrentStateId( toStateId );
+        
+        if ( toStateId >= 0 ) {
+            context.notify( new WorkflowEvent( workflow.getId(), stateChange.getId(), Type.STATE_CHANGED ) );
+        } else {
+            context.notify( new WorkflowEvent( workflow.getId(), stateChange.getId(), Type.WORKFLOW_FINISHED ) );
+        }
     }
     
     public final boolean deleteWorkflow( String name ) {
@@ -377,138 +380,161 @@ public class StateSystem
         return workflowId == state.getWorkflowId();
     }
 
-    @Override
-    @SuppressWarnings( { "unchecked" } )
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( type == Workflow.class ) {
-            return (ComponentBuilder<C>) getWorkflowBuilder();
-        }
-        
-        if ( type == State.class ) {
-            return (ComponentBuilder<C>) getStateBuilder();
-        }
-        
-        if ( type == StateChange.class ) {
-            return (ComponentBuilder<C>) getStateChangeBuilder();
-        }
-        
-        throw new IllegalArgumentException( "Unsupported IComponent type for StateSystem. Type: " + type );
-    }
     
-    public final ComponentBuilder<Workflow> getWorkflowBuilder() {
-        return new BaseComponentBuilder<Workflow>( this ) {
-            @Override
-            protected Workflow createInstance( Constructor<Workflow> constructor, Object... paramValues ) throws Exception {
-                return constructor.newInstance( paramValues );
-            }
-            @Override
-            public Workflow build( int componentId ) {
-                Workflow workflow = new Workflow( componentId );
-                workflow.fromAttributes( attributes );
-                workflows.set( workflow.index(), workflow );
-                return workflow;
-            }
-        };
-    }
-    
-    public final ComponentBuilder<State> getStateBuilder() {
-        return new BaseComponentBuilder<State>( this ) {
-            @Override
-            protected State createInstance( Constructor<State> constructor, Object... paramValues ) throws Exception {
-                return constructor.newInstance( paramValues );
-            }
-            @Override
-            public State build( int componentId ) {
-                State state = new State( componentId );
-                state.fromAttributes( attributes );
-                states.set( state.index(), state );
-                return state;
-            }
-        };
+    public final ComponentBuilder getWorkflowBuilder() {
+        return new WorkflowBuilder();
     }
 
-    public final ComponentBuilder<StateChange> getStateChangeBuilder() {
-        return new StateChangeBuilder( this );
+    public final ComponentBuilder getStateBuilder() {
+        return new StateBuilder();
     }
 
-    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
+    public final ComponentBuilder getStateChangeBuilder() {
+        return new StateChangeBuilder();
+    }
+
     @Override
-    public final Set<Class<?>> supportedComponentTypes() {
-        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
-            SUPPORTED_COMPONENT_TYPES.add( State.class );
-            SUPPORTED_COMPONENT_TYPES.add( StateChange.class );
-            SUPPORTED_COMPONENT_TYPES.add( Workflow.class );
-        }
+    public final SystemComponentKey[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final void fromAttributes( Attributes attributes ) {
-        fromAttributes( attributes, BuildType.CLEAR_OLD );
+    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
+        return new SystemBuilderAdapter<?>[] {
+                new WorkflowBuilderAdapter( this ),
+                new StateBuilderAdapter( this ),
+                new StateChangeBuilderAdapter( this )
+            };
     }
 
-    @Override
-    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
-        if ( buildType == BuildType.CLEAR_OLD ) {
-            clear();
+  
+
+    private final class WorkflowBuilderAdapter extends SystemBuilderAdapter<Workflow> {
+        public WorkflowBuilderAdapter( ComponentSystem system ) {
+            super( system, new WorkflowBuilder() );
         }
-        
-        new ComponentBuilderHelper<Workflow>() {
-            @Override
-            public Workflow get( int id ) {
-                return workflows.get( id );
-            }
-            @Override
-            public void delete( int id ) {
-                deleteWorkflow( id );
-            }
-        }.buildComponents( Workflow.class, buildType, getWorkflowBuilder(), attributes );
-        
-        new ComponentBuilderHelper<State>() {
-            @Override
-            public State get( int id ) {
-                return states.get( id );
-            }
-            @Override
-            public void delete( int id ) {
-                deleteState( id );
-            }
-        }.buildComponents( State.class, buildType, getStateBuilder(), attributes );
-        
-        new ComponentBuilderHelper<StateChange>() {
-            @Override
-            public StateChange get( int id ) {
-                return getStateChange( id );
-            }
-            @Override
-            public void delete( int id ) {
-                deleteStateChange( id );
-            }
-        }.buildComponents( StateChange.class, buildType, getStateChangeBuilder(), attributes );
-    }
-
-    @Override
-    public final void toAttributes( Attributes attributes ) {
-        ComponentBuilderHelper.toAttributes( attributes, Workflow.class, workflows );
-        ComponentBuilderHelper.toAttributes( attributes, State.class, states );
-        for ( Collection<StateChange> stateChanges : stateChangesForState ) {
-            ComponentBuilderHelper.toAttributes( attributes, StateChange.class, stateChanges );
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return Workflow.TYPE_KEY;
+        }
+        @Override
+        public final Workflow get( int id, Class<? extends Workflow> subtype ) {
+            return workflows.get( id );
+        }
+        @Override
+        public final Iterator<Workflow> getAll() {
+            return workflows.iterator();
+        }
+        @Override
+        public final void delete( int id, Class<? extends Workflow> subtype ) {
+            deleteWorkflow( id );
         }
     }
-
-    private final class StateChangeBuilder extends BaseComponentBuilder<StateChange> {
+    
+    private final class StateBuilderAdapter extends SystemBuilderAdapter<State> {
+        public StateBuilderAdapter( ComponentSystem system ) {
+            super( system, new StateBuilder() );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return State.TYPE_KEY;
+        }
+        @Override
+        public final State get( int id, Class<? extends State> subtype ) {
+            return states.get( id );
+        }
+        @Override
+        public final Iterator<State> getAll() {
+            return states.iterator();
+        }
+        @Override
+        public final void delete( int id, Class<? extends State> subtype ) {
+            deleteState( id );
+        }
+    }
+    
+    private final class StateChangeBuilderAdapter extends SystemBuilderAdapter<StateChange> {
+        public StateChangeBuilderAdapter( ComponentSystem system ) {
+            super( system, new StateChangeBuilder() );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return StateChange.TYPE_KEY;
+        }
+        @Override
+        public final StateChange get( int id, Class<? extends StateChange> subtype ) {
+            return getStateChange( id );
+        }
+        @Override
+        public final Iterator<StateChange> getAll() {
+            return new Iterator<StateChange>() {
+                private Iterator<Collection<StateChange>> it1 = stateChangesForState.iterator();
+                private Iterator<StateChange> it2 = null;
+                @Override
+                public boolean hasNext() {
+                    return it1.hasNext() || it2.hasNext();
+                }
+                @Override
+                public StateChange next() {
+                    if ( it2 == null || !it2.hasNext() ) {
+                        it2 = it1.next().iterator();
+                    }
+                    return it2.next();
+                }
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+        @Override
+        public final void delete( int id, Class<? extends StateChange> subtype ) {
+            deleteStateChange( id );
+        }
+    }
+    
+    private final class WorkflowBuilder extends SystemComponentBuilder {
         
-        protected StateChangeBuilder( StateSystem system ) {
-            super( system );
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return Workflow.TYPE_KEY;
         }
         
         @Override
-        protected StateChange createInstance( Constructor<StateChange> constructor, Object... paramValues ) throws Exception {
-            return constructor.newInstance( paramValues );
+        public int doBuild( int componentId, Class<?> subType ) {
+            Workflow workflow = new Workflow( componentId );
+            workflow.fromAttributes( attributes );
+            workflows.set( workflow.index(), workflow );
+            
+            return workflow.getId();
         }
-
+    }
+    
+    private final class StateBuilder extends SystemComponentBuilder {
+        
         @Override
-        public StateChange build( int componentId ) {
+        public final SystemComponentKey systemComponentKey() {
+            return State.TYPE_KEY;
+        }
+        
+        @Override
+        public int doBuild( int componentId, Class<?> subType ) {
+            State state = new State( componentId );
+            state.fromAttributes( attributes );
+            states.set( state.index(), state );
+            return state.getId();
+        }
+    }
+
+    private final class StateChangeBuilder extends SystemComponentBuilder {
+        
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return StateChange.TYPE_KEY;
+        }
+        
+        @Override
+        public int doBuild( int componentId, Class<?> subType ) {
             StateChange stateChange = new StateChange( componentId );
             stateChange.fromAttributes( attributes );
             
@@ -535,8 +561,7 @@ public class StateSystem
                 stateChanges = stateChangesForState.get( fromStateId );
             }
             stateChanges.add( stateChange );
-            
-            return stateChange;
+            return stateChange.getId();
         }
     }
 

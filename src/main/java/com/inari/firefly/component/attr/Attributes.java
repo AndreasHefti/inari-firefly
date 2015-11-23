@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.inari.firefly.component.Component.ComponentKey;
+
 public final class Attributes implements Iterable<AttributeMap> {
     
     private final Map<ComponentKey, AttributeMap> attributes = new LinkedHashMap<ComponentKey, AttributeMap>();

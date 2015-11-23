@@ -1,5 +1,6 @@
 package com.inari.firefly.asset;
 
+// TODO considering to give a type T that is the subtype of Asset
 public final class AssetTypeKey {
     
     public final int id;

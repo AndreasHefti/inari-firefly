@@ -15,37 +15,38 @@
  ******************************************************************************/ 
 package com.inari.firefly.sound;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.asset.AssetTypeKey;
-import com.inari.firefly.component.ComponentBuilderHelper;
-import com.inari.firefly.component.ComponentSystem;
-import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.component.build.BaseComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.FFSystemInterface;
+import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public final class SoundSystem 
+public final class SoundSystem
+    extends
+        ComponentSystem
     implements 
-        ComponentSystem,
         SoundEventListener {
+    
+    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+        Sound.TYPE_KEY
+    };
     
     public static final TypedKey<SoundSystem> CONTEXT_KEY = TypedKey.create( "FF_SOUND_SYSTEM", SoundSystem.class );
     
-    private FFContext context;
     private AssetSystem assetSystem;
-    private FFSystemInterface lowerSystemFacade;
+    private FFSystemInterface systemInterface;
     
     private final DynArray<Sound> sounds;
 
@@ -55,18 +56,19 @@ public final class SoundSystem
     
     @Override
     public final void init( FFContext context ) {
-        this.context = context;
-        assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
+        super.init( context );
         
-        context.getComponent( FFContext.EVENT_DISPATCHER ).register( SoundEvent.class, this );
+        assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        systemInterface = context.getSystemInterface();
+        
+        context.registerListener( SoundEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
         clear();
         
-        context.getComponent( FFContext.EVENT_DISPATCHER ).unregister( SoundEvent.class, this );
+        context.disposeListener( SoundEvent.class, this );
     }
 
     public final void clear() {
@@ -127,14 +129,14 @@ public final class SoundSystem
         switch ( event.eventType ) {
             case PLAY_SOUND : {
                 if ( sound.streaming ) {
-                    lowerSystemFacade.playMusic( 
+                    systemInterface.playMusic( 
                         sound.getAssetId(), 
                         sound.isLooping(), 
                         sound.getVolume(), 
                         sound.getPan() 
                     );
                 } else {
-                    sound.instanceId = lowerSystemFacade.playSound( 
+                    sound.instanceId = systemInterface.playSound( 
                         sound.getAssetId(), 
                         sound.getChannel(), 
                         sound.isLooping(), 
@@ -147,74 +149,40 @@ public final class SoundSystem
             }
             case STOP_PLAYING : {
                 if ( sound.streaming ) {
-                    lowerSystemFacade.stopMusic( sound.getAssetId() );
+                    systemInterface.stopMusic( sound.getAssetId() );
                 } else {
-                    lowerSystemFacade.stopSound( sound.getAssetId(), sound.instanceId );
+                    systemInterface.stopSound( sound.getAssetId(), sound.instanceId );
                 } 
                 break;
             }
         }
     }
-
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( Sound.class.isAssignableFrom( type ) ) {
-            return (ComponentBuilder<C>) new SoundBuilder( this );
-        }
-        
-        throw new IllegalArgumentException( "Unsupported Component type for SoundSystem Builder. Type: " + type );
-    }
     
     public final SoundBuilder getSoundBuilder() {
-        return new SoundBuilder( this );
+        return new SoundBuilder();
     }
-
-    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
+    
     @Override
-    public final Set<Class<?>> supportedComponentTypes() {
-        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
-            SUPPORTED_COMPONENT_TYPES.add( Sound.class );
-        }
+    public final SystemComponentKey[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final void fromAttributes( Attributes attributes ) {
-        fromAttributes( attributes, BuildType.CLEAR_OLD );
+    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
+        return new SystemBuilderAdapter<?>[] {
+            new SoundBuilderAdapter( this )
+        };
     }
 
-    @Override
-    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
-        if ( buildType == BuildType.CLEAR_OLD ) {
-            clear();
-        }
+    public final class SoundBuilder extends SystemComponentBuilder {
 
-        new ComponentBuilderHelper<Sound>() {
-            @Override
-            public Sound get( int id ) {
-                return sounds.get( id );
-            }
-            @Override
-            public void delete( int id ) {
-                deleteSound( id );
-            }
-        }.buildComponents( Sound.class, buildType, getSoundBuilder(), attributes );
-    }
-
-    @Override
-    public final void toAttributes( Attributes attributes ) {
-        ComponentBuilderHelper.toAttributes( attributes, Sound.class, sounds );
-    }
-    
-    public final class SoundBuilder extends BaseComponentBuilder<Sound> {
-
-        protected SoundBuilder( ComponentBuilderFactory componentFactory ) {
-            super( componentFactory );
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return Sound.TYPE_KEY;
         }
 
         @Override
-        public Sound build( int componentId ) {
+        public int doBuild( int componentId, Class<?> subType ) {
             if ( componentId >= 0 && sounds.contains( componentId ) ) {
                 throw new FFInitException( "Sound with id: " + componentId + " already exists: " + sounds.get( componentId ).getName() );
             }
@@ -231,7 +199,29 @@ public final class SoundSystem
             sounds.set( result.index(), result );
             postInit( result, context );
             
-            return result;
+            return result.getId();
+        }
+    }
+    
+    private final class SoundBuilderAdapter extends SystemBuilderAdapter<Sound> {
+        public SoundBuilderAdapter( ComponentSystem system ) {
+            super( system, new SoundBuilder() );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return Sound.TYPE_KEY;
+        }
+        @Override
+        public final Sound get( int id, Class<? extends Sound> subtype ) {
+            return sounds.get( id );
+        }
+        @Override
+        public final Iterator<Sound> getAll() {
+            return sounds.iterator();
+        }
+        @Override
+        public final void delete( int id, Class<? extends Sound> subtype ) {
+            deleteSound( id );
         }
     }
 

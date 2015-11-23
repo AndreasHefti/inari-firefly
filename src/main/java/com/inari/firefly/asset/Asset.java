@@ -18,14 +18,17 @@ package com.inari.firefly.asset;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
 import com.inari.firefly.component.dynattr.DynamicAttributeMap;
 import com.inari.firefly.component.dynattr.DynamicAttributedComponent;
+import com.inari.firefly.system.component.SystemComponent;
 
-public abstract class Asset extends NamedIndexedComponent implements DynamicAttributedComponent {
+public abstract class Asset extends SystemComponent implements DynamicAttributedComponent {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Asset.class );
     
     public static final AttributeKey<String> ASSET_GROUP = new AttributeKey<String>( "group", String.class, Asset.class );
     
@@ -37,7 +40,12 @@ public abstract class Asset extends NamedIndexedComponent implements DynamicAttr
     
     protected Asset( int assetId ) {
         super( assetId );
-        typeKey = new AssetTypeKey( super.index, getComponentType() );
+        typeKey = new AssetTypeKey( super.index, componentType() );
+    }
+    
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
     }
 
     public boolean isLoaded() {
@@ -45,11 +53,11 @@ public abstract class Asset extends NamedIndexedComponent implements DynamicAttr
     }
     @Override
     public final Class<? extends Asset> indexedObjectType() {
-        return getComponentType();
+        return componentType();
     }
     
     @Override
-    public abstract Class<? extends Asset> getComponentType();
+    public abstract Class<? extends Asset> componentType();
     
     public final AssetTypeKey getTypeKey() {
         return typeKey;
@@ -57,12 +65,12 @@ public abstract class Asset extends NamedIndexedComponent implements DynamicAttr
 
     @Override
     public boolean hasDynamicAttributes() {
-        return DynamicAttribueMapper.hasDynamicAttributes( getComponentType() );
+        return DynamicAttribueMapper.hasDynamicAttributes( componentType() );
     }
     
     @Override
     public final <A> void setDynamicAttribute( AttributeKey<A> key, A value ) {
-        dynamicAttributeMap.setDynamicAttribute( key, value, getComponentType() );
+        dynamicAttributeMap.setDynamicAttribute( key, value, componentType() );
     }
     
     @Override

@@ -15,32 +15,27 @@
  ******************************************************************************/ 
 package com.inari.firefly.sound;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFTimer;
-import com.inari.firefly.system.FFSystemInterface;
 
 public abstract class SoundController extends Controller implements SoundEventListener {
 
+    protected FFContext context;
     protected SoundSystem soundSystem;
-    protected FFSystemInterface lowerSystemFacade;
-    protected IEventDispatcher eventDispatcher;
     
     protected SoundController( int id, FFContext context ) {
         super( id );
-        soundSystem = context.getComponent( SoundSystem.CONTEXT_KEY );
-        lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         
-        eventDispatcher.register( SoundEvent.class, this );
+        this.context = context;
+        context.registerListener( SoundEvent.class, this );
     }
 
     @Override
     public final void dispose( FFContext context ) {
-        eventDispatcher.unregister( SoundEvent.class, this );
+        context.disposeListener( SoundEvent.class, this );
     }
 
     @Override
@@ -54,7 +49,7 @@ public abstract class SoundController extends Controller implements SoundEventLi
         
         if ( sound == null ) {
             return;
-        }
+        } 
        
         switch ( event.eventType ) {
             case PLAY_SOUND: {

@@ -19,13 +19,16 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.StringUtils;
-import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFInitException;
+import com.inari.firefly.system.component.SystemComponent;
 
 
-public final class StateChange extends NamedIndexedComponent {
+public final class StateChange extends SystemComponent {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( StateChange.class );
     
     public static final AttributeKey<Integer> WORKFLOW_ID = new AttributeKey<Integer>( "workflowId", Integer.class, StateChange.class );
     public static final AttributeKey<Integer> FORM_STATE_ID = new AttributeKey<Integer>( "fromStateId", Integer.class, StateChange.class );
@@ -53,6 +56,11 @@ public final class StateChange extends NamedIndexedComponent {
         workflowId = -1;
         condition = null;
         taskId = -1;
+    }
+    
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
     }
     
     public final int getFromStateId() {

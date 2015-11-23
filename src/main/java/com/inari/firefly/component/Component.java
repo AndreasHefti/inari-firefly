@@ -44,12 +44,71 @@ public interface Component {
      */
     public static final AttributeKey<String> INSTANCE_TYPE_NAME = new AttributeKey<String>( "instanceTypeName", String.class, Component.class );
     
-    Class<? extends Component> getComponentType();
+    Class<? extends Component> componentType();
     
     Set<AttributeKey<?>> attributeKeys();
     
     void fromAttributes( AttributeMap attributes );
     
     void toAttributes( AttributeMap attributes );
+    
+    // TODO add method to set/get single attribute?
+    
 
+    public static final class ComponentKey {
+        
+        private final Class<?> type;
+        private final int id;
+        
+        
+        public ComponentKey( Class<?> type, int id ) {
+            super();
+            this.type = type;
+            this.id = id;
+        }
+
+        public Class<?> getType() {
+            return type;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + id;
+            result = prime * result + ( ( type == null ) ? 0 : type.hashCode() );
+            return result;
+        }
+
+        @Override
+        public boolean equals( Object obj ) {
+            if ( this == obj )
+                return true;
+            if ( obj == null )
+                return false;
+            if ( getClass() != obj.getClass() )
+                return false;
+            ComponentKey other = (ComponentKey) obj;
+            if ( id != other.id )
+                return false;
+            if ( type != other.type ) 
+                return false;
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append( type.getSimpleName() );
+            builder.append( "(" );
+            builder.append( id );
+            builder.append( ")" );
+            return builder.toString();
+        }
+
+    }
 }

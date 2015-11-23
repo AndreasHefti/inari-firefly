@@ -18,115 +18,93 @@ package com.inari.firefly.system;
 import java.util.Iterator;
 import java.util.Random;
 
-import com.inari.commons.event.EventDispatcher;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.TypedKey;
-import com.inari.firefly.action.ActionSystem;
-import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntityPrefabSystem;
-import com.inari.firefly.entity.EntityProvider;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.sprite.SpriteViewRenderer;
-import com.inari.firefly.renderer.sprite.SpriteViewSystem;
-import com.inari.firefly.renderer.tile.TileGridRenderer;
 import com.inari.firefly.renderer.tile.TileGridSystem;
-import com.inari.firefly.sound.SoundSystem;
-import com.inari.firefly.state.StateSystem;
-import com.inari.firefly.system.FFContextImpl.InitMap;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.TaskSystem;
 
-public final class FireFly {
+public abstract class FireFly {
     
     public static final Random RANDOM = new Random();
     
-    private FFContextImpl context;
+    protected final FFContext context;
     
-    private IEventDispatcher eventDispatcher;
-    private ViewSystem viewSystem;
-    private FFSystemInterface lowerSystemFacade;
+    protected FFSystemInterface lowerSystemFacade;
+    protected ViewSystem viewSystem;
 
     private final UpdateEvent updateEvent;
     private final RenderEvent renderEvent;
-
-
-    public FireFly( 
-        Class<? extends FFSystemInterface> lowerSystemFacadeType,
-        Class<? extends Input> input
-    ) {
-        InitMap initMap = new InitMap();
-        initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcher.class );
-        initMap.put( FFContext.TIMER, DefaultFFTimerImpl.class );
-        initMap.put( FFContext.INPUT, input );
-        initMap.put( FFContext.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
-        initMap.put( FFContext.ENTITY_PROVIDER, EntityProvider.class );
-        initMap.put( ActionSystem.CONTEXT_KEY, ActionSystem.class );
-        initMap.put( AssetSystem.CONTEXT_KEY, AssetSystem.class );
-        initMap.put( StateSystem.CONTEXT_KEY, StateSystem.class );
-        initMap.put( ViewSystem.CONTEXT_KEY, ViewSystem.class );
-        initMap.put( EntitySystem.CONTEXT_KEY, EntitySystem.class );
-        initMap.put( EntityPrefabSystem.CONTEXT_KEY, EntityPrefabSystem.class );
-        initMap.put( SpriteViewSystem.CONTEXT_KEY, SpriteViewSystem.class );
-        initMap.put( TileGridSystem.CONTEXT_KEY, TileGridSystem.class );
-        initMap.put( ControllerSystem.CONTEXT_KEY, ControllerSystem.class );
-        initMap.put( AnimationSystem.CONTEXT_KEY, AnimationSystem.class );
-        initMap.put( SoundSystem.CONTEXT_KEY, SoundSystem.class );
-        initMap.put( SpriteViewRenderer.CONTEXT_KEY, SpriteViewRenderer.class );
-        initMap.put( TileGridRenderer.CONTEXT_KEY, TileGridRenderer.class );
-        initMap.put( TaskSystem.CONTEXT_KEY, TaskSystem.class );
-
-        init( initMap );
-        
-        updateEvent = new UpdateEvent( context.getComponent( FFContext.TIMER ) );
-        renderEvent = new RenderEvent();
-    }
-
     
-    public FireFly( InitMap initMap ) {
-        init( initMap );
+    private boolean disposed = false;
+
+    protected FireFly( 
+            IEventDispatcher eventDispatcher, 
+            FFSystemInterface systemInterface, 
+            FFTimer timer,
+            Input input 
+    ) {
+//        InitMap initMap = new InitMap();
+//        initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcher.class );
+//        initMap.put( FFContext.TIMER, DefaultFFTimerImpl.class );
+//        initMap.put( FFContext.INPUT, input );
+//        initMap.put( FFContext.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
+//        initMap.put( FFContext.ENTITY_PROVIDER, EntityProvider.class );
+//        initMap.put( ActionSystem.CONTEXT_KEY, ActionSystem.class );
+//        initMap.put( AssetSystem.CONTEXT_KEY, AssetSystem.class );
+//        initMap.put( StateSystem.CONTEXT_KEY, StateSystem.class );
+//        initMap.put( ViewSystem.CONTEXT_KEY, ViewSystem.class );
+//        initMap.put( EntitySystem.CONTEXT_KEY, EntitySystem.class );
+//        initMap.put( EntityPrefabSystem.CONTEXT_KEY, EntityPrefabSystem.class );
+//        initMap.put( SpriteViewSystem.CONTEXT_KEY, SpriteViewSystem.class );
+//        initMap.put( TileGridSystem.CONTEXT_KEY, TileGridSystem.class );
+//        initMap.put( ControllerSystem.CONTEXT_KEY, ControllerSystem.class );
+//        initMap.put( AnimationSystem.CONTEXT_KEY, AnimationSystem.class );
+//        initMap.put( SoundSystem.CONTEXT_KEY, SoundSystem.class );
+//        initMap.put( SpriteViewRenderer.CONTEXT_KEY, SpriteViewRenderer.class );
+//        initMap.put( TileGridRenderer.CONTEXT_KEY, TileGridRenderer.class );
+//        initMap.put( TaskSystem.CONTEXT_KEY, TaskSystem.class );
+
+        context = new FFContext( eventDispatcher, systemInterface, timer, input );
         
-        updateEvent = new UpdateEvent( context.getComponent( FFContext.TIMER ) );
+        lowerSystemFacade = context.getSystemInterface();
+        viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        
+        context.loadSystem( AssetSystem.CONTEXT_KEY );
+        context.loadSystem( EntitySystem.CONTEXT_KEY );
+        context.loadSystem( EntityPrefabSystem.CONTEXT_KEY );
+        context.loadSystem( SpriteViewRenderer.CONTEXT_KEY );
+        context.loadSystem( TileGridSystem.CONTEXT_KEY );
+        context.loadSystem( TaskSystem.CONTEXT_KEY );
+        
+        updateEvent = new UpdateEvent( timer );
         renderEvent = new RenderEvent();
     }
-
-    private void init( InitMap initMap ) {
-        context = new FFContextImpl( initMap );
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
-        lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
-
-        if ( eventDispatcher == null ) {
-            throw new FFInitException( "Missing IEventDispatcher instance from FFContext" );
-        }
-        if ( viewSystem == null ) {
-            throw new FFInitException( "Missing ViewSystem instance from FFContext" );
-        }
-    }
-
 
     public final void dispose() {
         context.dispose();
+        disposed = true;
     }
-    
-    public final <T> T get( TypedKey<T> key ) {
-        return context.getComponent( key );
-    }
-    
+
     public final FFContext getContext() {
         return context;
     }
     
     public final void update() {
         updateEvent.timer.tick();
-        eventDispatcher.notify( updateEvent );
+        context.notify( updateEvent );
     }
     
     public final void render() {
+        if ( disposed ) {
+            return;
+        }
         // NOTE: for now there is no renderer that works with approximationTime so I skip the calculation so far.
         // TODO: implements the calculation of approximationTime and set it to the event.
         if ( viewSystem.hasActiveViewports() ) {
@@ -147,7 +125,7 @@ public final class FireFly {
                 renderEvent.clip.height = bounds.height;
 
                 lowerSystemFacade.startRendering( virtualView );
-                eventDispatcher.notify( renderEvent );
+                context.notify( renderEvent );
                 lowerSystemFacade.endRendering( virtualView );
             }
             
@@ -164,7 +142,7 @@ public final class FireFly {
             renderEvent.clip.height = bounds.height;
             
             lowerSystemFacade.startRendering( baseView );
-            eventDispatcher.notify( renderEvent );
+            context.notify( renderEvent );
             lowerSystemFacade.endRendering( baseView );
             
             lowerSystemFacade.flush( null );

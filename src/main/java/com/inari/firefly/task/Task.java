@@ -18,12 +18,15 @@ package com.inari.firefly.task;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponent;
 
-public abstract class Task extends NamedIndexedComponent {
+public abstract class Task extends SystemComponent {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Task.class );
 
     public static final AttributeKey<Boolean> REMOVE_AFTER_RUN = new AttributeKey<Boolean>( "removeAfterRun", Boolean.class, Task.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
@@ -37,7 +40,12 @@ public abstract class Task extends NamedIndexedComponent {
     }
     
     @Override
-    public final Class<Task> getComponentType() {
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
+    }
+    
+    @Override
+    public final Class<Task> componentType() {
         return Task.class;
     }
 

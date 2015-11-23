@@ -13,14 +13,12 @@ import org.junit.Test;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.indexed.Indexer;
-import com.inari.firefly.EventDispatcherMock;
+import com.inari.firefly.FireFlyMock;
+import com.inari.firefly.asset.AssetSystem.AssetBuilder;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextImpl;
-import com.inari.firefly.system.FFContextImpl.InitMap;
 
 public class AssetSystemTest {
     
@@ -31,12 +29,11 @@ public class AssetSystemTest {
     
     @Test
     public void testCreation() {
-        FFContext ffContext = getTestFFContext();
-        AssetSystem service = new AssetSystem();
-        service.init( ffContext );
+        FFContext ffContext = new FireFlyMock().getContext();
+        ffContext.getSystem( AssetSystem.CONTEXT_KEY );
         
         Attributes attrs = new Attributes();
-        service.toAttributes( attrs );
+        ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         
         assertEquals( 
             "", 
@@ -97,18 +94,19 @@ public class AssetSystemTest {
     
     @Test
     public void testBuildAsset() {
-        FFContext ffContext = getTestFFContext();
-        AssetSystem service = new AssetSystem();
+        FFContext ffContext = new FireFlyMock().getContext();
+        AssetSystem service = ffContext.getSystem( AssetSystem.CONTEXT_KEY );
+        
         service.init( ffContext );
         Attributes attrs = new Attributes();
         
-        ComponentBuilder<TestAsset> assetBuilder = service.getAssetBuilder( TestAsset.class );
+        AssetBuilder assetBuilder = service.getAssetBuilder();
         assetBuilder
             .set( TestAsset.NAME, "asset1" )
             .set( TestAsset.ASSET_GROUP,"group1" )
-            .build( 0 );
+            .build( 0, TestAsset.class );
         
-        service.toAttributes( attrs );
+        ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
             "TestAsset(0)::name:String=asset1, group:String=group1", 
             attrs.toString() 
@@ -118,21 +116,21 @@ public class AssetSystemTest {
         assetBuilder
             .set( TestAsset.NAME, "asset2" )
             .set( TestAsset.ASSET_GROUP,"group1" )
-            .build( 1 );
+            .build( 1, TestAsset.class );
         assetBuilder
             .set( TestAsset.NAME, "asset3" )
             .set( TestAsset.ASSET_GROUP,"group1" )
-            .build( 2 );
+            .build( 2, TestAsset.class );
         assetBuilder
             .set( TestAsset.NAME, "asset4" )
             .set( TestAsset.ASSET_GROUP,"group2" )
-            .build( 3 );
+            .build( 3, TestAsset.class );
         assetBuilder
             .set( TestAsset.NAME, "asset5" )
             .set( TestAsset.ASSET_GROUP,"group3" )
-            .build( 4 );
+            .build( 4, TestAsset.class );
         
-        service.toAttributes( attrs );
+        ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
             "TestAsset(0)::name:String=asset1, group:String=group1 " +
             "TestAsset(1)::name:String=asset2, group:String=group1 " +
@@ -146,25 +144,26 @@ public class AssetSystemTest {
     
     @Test
     public void testCreateLoadDisposeAndDeleteSingleAsset() {
-        FFContext ffContext = getTestFFContext();
-        IEventDispatcher eventDispatcher = ffContext.getComponent( FFContext.EVENT_DISPATCHER );
-        AssetSystem service = new AssetSystem();
+        FFContext ffContext = new FireFlyMock().getContext();
+        AssetSystem service = ffContext.getSystem( AssetSystem.CONTEXT_KEY );
+        IEventDispatcher eventDispatcher = ffContext.getEventDispatcher();
+        
         service.init( ffContext );
         Attributes attrs = new Attributes();
         
         service
-            .getAssetBuilder( TestAsset.class )
+            .getAssetBuilder()
                 .set( TestAsset.NAME, "asset1" )
                 .set( TestAsset.ASSET_GROUP,"group1" )
-            .build();
+            .build( TestAsset.class );
         
         assertEquals( 
-            "TestEventDispatcher [events=[AssetEvent [eventType=ASSET_CREATED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset]]]", 
+            "TestEventDispatcher [events=[ViewEvent [eventType=VIEW_CREATED, view=0], AssetEvent [eventType=ASSET_CREATED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset]]]", 
             eventDispatcher.toString() 
         );
         
         attrs.clear();
-        service.toAttributes( attrs );
+        ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
             "TestAsset(0)::name:String=asset1, group:String=group1", 
             attrs.toString() 
@@ -173,24 +172,26 @@ public class AssetSystemTest {
         service.loadAsset( new AssetNameKey( "group1", "asset1" ) );
         assertTrue( service.isAssetLoaded( new AssetNameKey( "group1", "asset1" ) ) );
         attrs.clear();
-        service.toAttributes( attrs );
+        ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
             "TestAsset(0)::name:String=asset1, group:String=group1", 
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=[" +
-            "AssetEvent [eventType=ASSET_CREATED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
-            "AssetEvent [eventType=ASSET_LOADED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset]]]", 
+            "TestEventDispatcher [events=["
+            + "ViewEvent [eventType=VIEW_CREATED, view=0], "
+            + "AssetEvent [eventType=ASSET_CREATED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], "
+            + "AssetEvent [eventType=ASSET_LOADED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset]]]", 
             eventDispatcher.toString() 
         );
         
         service.disposeAsset( new AssetNameKey( "group1", "asset1" ) );
         assertFalse( service.isAssetLoaded( new AssetNameKey( "group1", "asset1" ) ) );
         attrs.clear();
-        service.toAttributes( attrs );
+        ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
             "TestEventDispatcher [events=[" +
+            "ViewEvent [eventType=VIEW_CREATED, view=0], " +
             "AssetEvent [eventType=ASSET_CREATED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
             "AssetEvent [eventType=ASSET_LOADED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
             "AssetEvent [eventType=ASSET_DISPOSED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset]]]", 
@@ -199,13 +200,14 @@ public class AssetSystemTest {
         
         service.deleteAsset( new AssetNameKey( "group1", "asset1" ) );
         attrs.clear();
-        service.toAttributes( attrs );
+        ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
             "", 
             attrs.toString() 
         );
         assertEquals( 
             "TestEventDispatcher [events=[" +
+            "ViewEvent [eventType=VIEW_CREATED, view=0], " +
             "AssetEvent [eventType=ASSET_CREATED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
             "AssetEvent [eventType=ASSET_LOADED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
             "AssetEvent [eventType=ASSET_DISPOSED, assetType=class com.inari.firefly.asset.AssetSystemTest$TestAsset], " +
@@ -216,21 +218,21 @@ public class AssetSystemTest {
     
     @Test
     public void testPreventingOfUseOfIdTwice() {
-        FFContext ffContext = getTestFFContext();
-        AssetSystem service = new AssetSystem();
-        service.init( ffContext );
+        FFContext ffContext = new FireFlyMock().getContext();
+        AssetSystem service = ffContext.getSystem( AssetSystem.CONTEXT_KEY );
+        
         Attributes attrs = new Attributes();
         
-        service.getAssetBuilder( TestAsset.class )
+        service.getAssetBuilder()
             .set( Asset.NAME, "asset2" )
             .set( Asset.ASSET_GROUP,"group1" )
-            .buildAndNext( 1 );
+            .buildAndNext( 1, TestAsset.class );
         
         try {
-            service.getAssetBuilder( TestAsset.class )
+            service.getAssetBuilder()
                 .set( Asset.NAME, "asset2" )
                 .set( Asset.ASSET_GROUP,"group3" )
-                .buildAndNext( 1 );
+                .buildAndNext( 1, TestAsset.class );
             fail( "Exception expected here" );
         } catch ( Exception e ) {
             e.printStackTrace();
@@ -244,7 +246,7 @@ public class AssetSystemTest {
            );
         }
         
-        service.toAttributes( attrs );
+        ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
             "TestAsset(1)::name:String=asset2, group:String=group1", 
             attrs.toString() 
@@ -253,39 +255,39 @@ public class AssetSystemTest {
     
     @Test
     public void testDifferentTypesOnDifferentGroups() {
-        FFContext ffContext = getTestFFContext();
-        AssetSystem service = new AssetSystem();
-        service.init( ffContext );
+        FFContext ffContext = new FireFlyMock().getContext();
+        AssetSystem service = ffContext.getSystem( AssetSystem.CONTEXT_KEY );
+        
         Attributes attrs = new Attributes();
         
-        service.getAssetBuilder( TestAsset.class )
+        service.getAssetBuilder()
             .set( Asset.NAME, "asset2" )
             .set( Asset.ASSET_GROUP,"group1" )
-            .buildAndNext( 1 )
+            .buildAndNext( 1, TestAsset.class )
             .set( Asset.NAME, "asset3" )
             .set( Asset.ASSET_GROUP,"group1" )
-            .buildAndNext( 2 )
+            .buildAndNext( 2, TestAsset.class )
             .set( Asset.NAME, "asset4" )
             .set( Asset.ASSET_GROUP,"group2" )
-            .buildAndNext( 3 )
+            .buildAndNext( 3, TestAsset.class )
             .set( Asset.NAME, "asset5" )
             .set( Asset.ASSET_GROUP,"group3" )
-            .build( 4 );
-        service.getAssetBuilder( TestAsset2.class )
+            .build( 4, TestAsset.class );
+        service.getAssetBuilder()
             .set( Asset.NAME, "asset22" )
             .set( Asset.ASSET_GROUP,"group1" )
-            .buildAndNext( 1 )
+            .buildAndNext( 1, TestAsset2.class )
             .set( Asset.NAME, "asset23" )
             .set( Asset.ASSET_GROUP,"group1" )
-            .buildAndNext( 2 )
+            .buildAndNext( 2, TestAsset2.class )
             .set( Asset.NAME, "asset24" )
             .set( Asset.ASSET_GROUP,"group2" )
-            .buildAndNext( 3 )
+            .buildAndNext( 3, TestAsset2.class )
             .set( Asset.NAME, "asset25" )
             .set( Asset.ASSET_GROUP,"group3" )
-            .build( 4 );
+            .build( 4, TestAsset2.class );
         
-        service.toAttributes( attrs );
+        ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
             "TestAsset(1)::name:String=asset2, group:String=group1 " +
             "TestAsset(2)::name:String=asset3, group:String=group1 " +
@@ -297,14 +299,6 @@ public class AssetSystemTest {
             "TestAsset2(4)::name:String=asset25, group:String=group3", 
             attrs.toString() 
         );
-    }
-
-    
-    private FFContext getTestFFContext() {
-        InitMap initMap = new InitMap();
-        initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcherMock.class );
-        FFContext result = new FFContextImpl( initMap, true );
-        return result;
     }
     
     public static class TestAsset extends Asset {
@@ -329,7 +323,7 @@ public class AssetSystemTest {
         }
 
         @Override
-        public Class<TestAsset> getComponentType() {
+        public Class<TestAsset> componentType() {
             return TestAsset.class;
         }
     }
@@ -356,7 +350,7 @@ public class AssetSystemTest {
         }
 
         @Override
-        public Class<TestAsset2> getComponentType() {
+        public Class<TestAsset2> componentType() {
             return TestAsset2.class;
         }
     }

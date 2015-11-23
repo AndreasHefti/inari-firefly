@@ -53,7 +53,7 @@ public class EController extends EntityComponent {
     }
 
     @Override
-    public final Class<? extends Component> getComponentType() {
+    public final Class<? extends Component> componentType() {
         return EController.class;
     }
 

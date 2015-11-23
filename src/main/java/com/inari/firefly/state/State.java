@@ -18,11 +18,14 @@ package com.inari.firefly.state;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.component.SystemComponent;
 
-public final class State extends NamedIndexedComponent {
+public final class State extends SystemComponent {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( State.class );
     
     public static final AttributeKey<Integer> WORKFLOW_ID = new AttributeKey<Integer>( "workflowId", Integer.class, State.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
@@ -33,6 +36,11 @@ public final class State extends NamedIndexedComponent {
 
     State( int stateId ) {
         super( stateId );
+    }
+    
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
     }
 
     public final int getWorkflowId() {

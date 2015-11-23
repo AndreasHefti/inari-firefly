@@ -15,30 +15,27 @@
  ******************************************************************************/ 
 package com.inari.firefly.task;
 
-import java.lang.reflect.Constructor;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.component.Component;
-import com.inari.firefly.component.ComponentSystem;
-import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.component.build.BaseComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.task.event.TaskEvent;
 import com.inari.firefly.task.event.TaskEventListener;
 
-public final class TaskSystem implements ComponentSystem, TaskEventListener {
+public final class TaskSystem extends ComponentSystem implements TaskEventListener {
+    
+    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+        Task.TYPE_KEY,
+    };
     
     public static final TypedKey<TaskSystem> CONTEXT_KEY = TypedKey.create( "FF_TASK_SYSTEM", TaskSystem.class );
-    
-    private FFContext context;
-    private IEventDispatcher eventDispatcher;
     
     private final DynArray<Task> tasks;
     
@@ -48,14 +45,14 @@ public final class TaskSystem implements ComponentSystem, TaskEventListener {
 
     @Override
     public final void init( FFContext context ) {
-        this.context = context;
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        eventDispatcher.register( TaskEvent.class, this );
+        super.init( context );
+        
+        context.registerListener( TaskEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        eventDispatcher.unregister( TaskEvent.class, this );
+        context.disposeListener( TaskEvent.class, this );
         clear();
     }
 
@@ -120,72 +117,64 @@ public final class TaskSystem implements ComponentSystem, TaskEventListener {
         }
     }
 
-    @Override
-    @SuppressWarnings( { "unchecked", "rawtypes" } )
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( !Task.class.isAssignableFrom( type ) ) {
-            throw new IllegalArgumentException( "The IComponentType is not a subtype of Task." + type );
-        }
-        
-        return new TaskBuilder( this, type );
-    }
     
-    public final <T extends Task> TaskBuilder<T> getTaskBuilder( Class<T> taskType ) {
-        return new TaskBuilder<T>( this, taskType );
+    public final TaskBuilder getTaskBuilder() {
+        return new TaskBuilder();
     }
 
-    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
     @Override
-    public final Set<Class<?>> supportedComponentTypes() {
-        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
-            SUPPORTED_COMPONENT_TYPES.add( Task.class );
-        }
+    public final SystemComponentKey[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final void fromAttributes( Attributes attributes ) {
-        fromAttributes( attributes, BuildType.CLEAR_OLD );
+    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
+        return new SystemBuilderAdapter<?>[] {
+            new TaskBuilderAdapter( this )
+        };
     }
 
-    @Override
-    public void fromAttributes( Attributes attributes, BuildType buildType ) {
-        
-    }
-
-    @Override
-    public void toAttributes( Attributes attributes ) {
-        // TODO Auto-generated method stub
-        
-    }
     
-    public final class TaskBuilder<T extends Task> extends BaseComponentBuilder<T> {
-        
-        private final Class<T> taskType;
+    public final class TaskBuilder extends SystemComponentBuilder {
 
-        protected TaskBuilder( ComponentBuilderFactory componentFactory, Class<T> taskType ) {
-            super( componentFactory );
-            this.taskType = taskType;
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return Task.TYPE_KEY;
         }
         
         @Override
-        protected T createInstance( Constructor<T> constructor, Object... paramValues ) throws Exception {
-            return constructor.newInstance( paramValues );
-        }
-
-        @Override
-        public T build( int componentId ) {
+        public final int doBuild( int componentId, Class<?> taskType ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, taskType.getName() );
             
-            T result = getInstance( context, componentId );
+            Task result = getInstance( context, componentId );
             result.fromAttributes( attributes );
             
             tasks.set( result.getId(), result );
             postInit( result, context );
-            
-            return result;
+            return result.getId();
         }
-        
+    }
+    
+    private final class TaskBuilderAdapter extends SystemBuilderAdapter<Task> {
+        public TaskBuilderAdapter( ComponentSystem system ) {
+            super( system, new TaskBuilder() );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return Task.TYPE_KEY;
+        }
+        @Override
+        public final Task get( int id, Class<? extends Task> subtype ) {
+            return tasks.get( id );
+        }
+        @Override
+        public final Iterator<Task> getAll() {
+            return tasks.iterator();
+        }
+        @Override
+        public final void delete( int id, Class<? extends Task> subtype ) {
+            deleteTask( id );
+        }
     }
     
 }

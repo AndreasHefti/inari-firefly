@@ -44,7 +44,7 @@ public final class SpriteAsset extends Asset {
     }
     
     @Override
-    public final Class<SpriteAsset> getComponentType() {
+    public final Class<SpriteAsset> componentType() {
         return SpriteAsset.class;
     }
 

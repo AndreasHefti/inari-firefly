@@ -31,32 +31,26 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
 
-public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
+public abstract class BaseComponentBuilder implements ComponentBuilder {
     
     protected final AttributeMap attributes;
-    private final ComponentBuilderFactory componentFactory;
     
-    protected BaseComponentBuilder( ComponentBuilderFactory componentFactory ) {
-            this.attributes = new ComponentAttributeMap();
-            this.componentFactory = componentFactory;
-        }
+    protected BaseComponentBuilder() {
+        this.attributes = new ComponentAttributeMap();
+    }
     
-    protected BaseComponentBuilder( 
-        ComponentBuilderFactory componentFactory,
-        AttributeMap attributes
-    ) {
+    protected BaseComponentBuilder( AttributeMap attributes ) {
         this.attributes = attributes;
-        this.componentFactory = componentFactory;
     }
     
     @Override
-    public final ComponentBuilder<C> clear() {
+    public final ComponentBuilder clear() {
         attributes.clear();
         return this;
     }
 
     @Override
-    public final BaseComponentBuilder<C> setAttributes( AttributeMap attributes ) {
+    public final BaseComponentBuilder setAttributes( AttributeMap attributes ) {
         attributes.putAll( attributes );
         return this;
     }
@@ -67,81 +61,91 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
     }
 
     @Override
-    public final ComponentBuilder<C> set( AttributeKey<?> key, Object value ) {
+    public final ComponentBuilder set( AttributeKey<?> key, Object value ) {
         attributes.putUntyped( key, value );
         return this;
     }
     
     @Override
-    public final ComponentBuilder<C> set( AttributeKey<Float> key, float value ) {
+    public final ComponentBuilder set( AttributeKey<Float> key, float value ) {
         attributes.put( key, value );
         return this;
     }
     
     @Override
-    public final ComponentBuilder<C> set( AttributeKey<Integer> key, int value ) {
+    public final ComponentBuilder set( AttributeKey<Integer> key, int value ) {
         attributes.put( key, value );
         return this;
     }
     
     @Override
-    public final ComponentBuilder<C> set( AttributeKey<Long> key, long value ) {
+    public final ComponentBuilder set( AttributeKey<Long> key, long value ) {
         attributes.put( key, value );
         return this;
     }
     
     @Override
-    public final ComponentBuilder<C> set( AttributeKey<Double> key, double value ) {
+    public final ComponentBuilder set( AttributeKey<Double> key, double value ) {
         attributes.put( key, value );
         return this;
     }
     
     @Override
-    public final ComponentBuilder<C> set( Attribute... attributes ) {
+    public final ComponentBuilder set( Attribute... attributes ) {
         for ( Attribute attribute : attributes ) {
             this.attributes.putUntyped( attribute.getKey(), attribute.getValue() );
         }
         return this;
     }
+    
+    
 
     @Override
-    public C build() {
-        return build( getId() );
+    public final int build( Class<?> componentType ) {
+        int componentId = getId();
+        return doBuild( componentId, componentType );
     }
 
-    @Override
-    public final ComponentBuilder<C> buildAndNext() {
-        build( getId() );
-        attributes.clear();
-        return this;
-    }
-
-    @Override
-    public final <CC> ComponentBuilder<CC> buildAndNext( Class<CC> componentType ) {
-        build( getId() );
-        return componentFactory.getComponentBuilder( componentType );
-    }
-
-    @Override
-    public final ComponentBuilder<C> buildAndNext( int componentId ) {
-        build( componentId );
-        attributes.clear();
-        return this;
-    }
-
-    @Override
-    public final <CC> ComponentBuilder<CC> buildAndNext( int componentId, Class<CC> componentType ) {
-        build( componentId );
-        return componentFactory.getComponentBuilder( componentType );
+    public final void build( int componentId, Class<?> componentType ) {
+        doBuild( componentId, componentType );
     }
     
-    protected C getInstance( int componentId ) {
+    protected abstract int doBuild( int componentId, Class<?> componentType );
+
+    @Override
+    public final ComponentBuilder buildAndNext() {
+        build();
+        return this;
+    }
+
+    @Override
+    public final ComponentBuilder buildAndNext( int componentId ) {
+        build( componentId );
+        return this;
+    }
+
+    @Override
+    public final ComponentBuilder buildAndNext( Class<?> componentType ) {
+        build( getId(), componentType );
+        attributes.clear();
+        return this;
+    }
+
+
+    @Override
+    public final ComponentBuilder buildAndNext( int componentId, Class<?> componentType ) {
+        build( componentId, componentType );
+        attributes.clear();
+        return this;
+    }
+    
+    protected <C extends Component> C getInstance( int componentId ) {
         return getInstance( null, componentId );
     }
     
     // TODO find better handling
     @SuppressWarnings( "unchecked" )
-    protected C getInstance( FFContext context, Integer componentId ) {
+    protected <C extends Component> C getInstance( FFContext context, Integer componentId ) {
         String className = attributes.getValue( Component.INSTANCE_TYPE_NAME );
         if ( className == null ) {
             throw new ComponentCreationException( "Missing mandatory attribute " + Component.INSTANCE_TYPE_NAME + " for Component creation" );
@@ -153,6 +157,7 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         } catch ( Exception e ) {
             throw new ComponentCreationException( "Failed to getComponent class for name: " + className );
         }
+        
         if ( componentId == null ) {
             try {
                 Constructor<C> constructor = typeClass.getDeclaredConstructor();
@@ -218,7 +223,7 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
         }
     }
     
-    protected C createInstance( Constructor<C> constructor, Object... paramValues ) throws Exception {
+    protected <C extends Component> C createInstance( Constructor<C> constructor, Object... paramValues ) throws Exception {
         boolean hasAccess = constructor.isAccessible();
         if ( !hasAccess ) {
             constructor.setAccessible( true );
@@ -243,11 +248,11 @@ public abstract class BaseComponentBuilder<C> implements ComponentBuilder<C>{
             ( (FFContextInitiable) component ).init( context );
         }
         if ( component instanceof WorkflowEventListener ) {
-            context.getComponent( FFContext.EVENT_DISPATCHER ).register( WorkflowEvent.class, (WorkflowEventListener) component );
+            context.registerListener( WorkflowEvent.class, (WorkflowEventListener) component );
         }
     }
-    
-    private int getId() {
+
+    protected int getId() {
         int id = -1;
         if ( attributes.getComponentKey() != null && attributes.getComponentKey().getId() >= 0 ) {
             id = attributes.getComponentKey().getId(); 

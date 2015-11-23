@@ -18,12 +18,15 @@ package com.inari.firefly.system.view;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.build.ComponentCreationException;
+import com.inari.firefly.system.component.SystemComponent;
 
-public final class Layer extends NamedIndexedComponent {
+public final class Layer extends SystemComponent {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Layer.class );
     
     public static final String DEFAULT_LAYER_NAME = "LAYER_";
     
@@ -36,6 +39,11 @@ public final class Layer extends NamedIndexedComponent {
     
     Layer( int layerId ) {
         super( layerId );
+    }
+    
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
     }
 
     public int getViewId() {

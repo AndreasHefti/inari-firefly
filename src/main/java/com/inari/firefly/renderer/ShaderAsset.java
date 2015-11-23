@@ -29,7 +29,7 @@ public final class ShaderAsset extends Asset {
     }
 
     @Override
-    public final Class<ShaderAsset> getComponentType() {
+    public final Class<ShaderAsset> componentType() {
         return ShaderAsset.class;
     }
 

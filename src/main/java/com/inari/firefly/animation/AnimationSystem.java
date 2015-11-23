@@ -15,37 +15,33 @@
  ******************************************************************************/ 
 package com.inari.firefly.animation;
 
-import java.lang.reflect.Constructor;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.animation.event.AnimationEvent;
 import com.inari.firefly.animation.event.AnimationEventListener;
 import com.inari.firefly.component.Component;
-import com.inari.firefly.component.ComponentBuilderHelper;
-import com.inari.firefly.component.ComponentSystem;
-import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.component.build.BaseComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.state.event.WorkflowEvent;
-import com.inari.firefly.state.event.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
+import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public final class AnimationSystem 
+    extends 
+        ComponentSystem
     implements
-        ComponentSystem,
         UpdateEventListener, 
         AnimationEventListener {
     
-    public static final TypedKey<AnimationSystem> CONTEXT_KEY = TypedKey.create( "FF_ANIMATION_SYSTEM", AnimationSystem.class );
+    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+        Animation.TYPE_KEY
+    };
     
-    private FFContext context;
-    private IEventDispatcher eventDispatcher;
+    public static final TypedKey<AnimationSystem> CONTEXT_KEY = TypedKey.create( "FF_ANIMATION_SYSTEM", AnimationSystem.class );
     
     private final DynArray<Animation> animations;
 
@@ -55,19 +51,18 @@ public final class AnimationSystem
     
     @Override
     public void init( FFContext context ) {
-        this.context = context;
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        super.init( context );
         
-        eventDispatcher.register( UpdateEvent.class, this );
-        eventDispatcher.register( AnimationEvent.class, this );
+        context.registerListener( UpdateEvent.class, this );
+        context.registerListener( AnimationEvent.class, this );
     }
     
     @Override
     public void dispose( FFContext context ) {
         clear();
         
-        eventDispatcher.unregister( UpdateEvent.class, this );
-        eventDispatcher.unregister( AnimationEvent.class, this );
+        context.disposeListener( UpdateEvent.class, this );
+        context.disposeListener( AnimationEvent.class, this );
     }
     
     public final void clear() {
@@ -142,6 +137,10 @@ public final class AnimationSystem
         return animations.get( animationId );
     }
     
+    public final <T extends Animation> T getAnimationAs( int animationId, Class<T> animationType ) {
+        return animationType.cast( animations.get( animationId ) );
+    }
+    
     public final int getAnimationId( String animationName ) {
         for ( int i = 0; i < animations.capacity(); i++ ) {
             if ( !animations.contains( i ) ) {
@@ -201,102 +200,74 @@ public final class AnimationSystem
         disposeAnimation( animations.remove( animationId ) );
     }
     
-    @Override
-    @SuppressWarnings( { "unchecked", "rawtypes" } )
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( !Animation.class.isAssignableFrom( type ) ) {
-            throw new IllegalArgumentException( "The IComponentType is not a subtype of Animation." + type );
-        }
-        
-        return new AnimationBuilder( this, type );
+    public final AnimationBuilder getAnimationBuilder() {
+        return new AnimationBuilder();
     }
     
-    public final <A extends Animation> AnimationBuilder<A> getAnimationBuilder( Class<A> animationType ) {
-        return new AnimationBuilder<A>( this, animationType );
-    }
-    
-    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
     @Override
-    public final Set<Class<?>> supportedComponentTypes() {
-        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
-            SUPPORTED_COMPONENT_TYPES.add( Animation.class );
-        }
+    public final SystemComponentKey[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
-    }
-
-    @Override
-    public final void fromAttributes( Attributes attributes ) {
-        fromAttributes( attributes, BuildType.CLEAR_OLD ); 
-    }
-
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
-        if ( buildType == BuildType.CLEAR_OLD ) {
-            clear();
-        }
-        
-        for ( Class<? extends Animation> animationSubType : attributes.getAllSubTypes( Animation.class ) ) {
-            new ComponentBuilderHelper<Animation>() {
-                @Override
-                public Animation get( int id ) {
-                    return getAnimation( id );
-                }
-                @Override
-                public void delete( int id ) {
-                    deleteAnimation( id );
-                }
-            }.buildComponents( Animation.class, buildType, (AnimationBuilder<Animation>) getAnimationBuilder( animationSubType ), attributes );
-        }
-        
-    }
-
-    @Override
-    public final void toAttributes( Attributes attributes ) {
-        for ( Animation animation : animations ) {
-            ComponentBuilderHelper.toAttributes( attributes, animation.indexedObjectType(), animation );
-        }
     }
     
     private final void disposeAnimation( Animation animation ) {
         if ( animation == null ) {
             return;
         }
-        
-        if ( animation instanceof WorkflowEventListener ) {
-            eventDispatcher.unregister( WorkflowEvent.class, (WorkflowEventListener) animation );
-        }
-        
+
         animation.dispose();
-    } 
+    }
+
+    @Override
+    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
+        return new SystemBuilderAdapter[] {
+            new AnimationBuilderAdapter( this )
+        };
+    };
     
 
-    public final class AnimationBuilder<A extends Animation> extends BaseComponentBuilder<A> {
+    public final class AnimationBuilder extends SystemComponentBuilder {
         
-        private final Class<A> animationType;
-        
-        private AnimationBuilder( AnimationSystem system, Class<A> animationType ) {
-            super( system );
-            this.animationType = animationType;
-        }
-        
-        @Override
-        protected A createInstance( Constructor<A> constructor, Object... paramValues ) throws Exception {
-            return constructor.newInstance( paramValues );
-        }
+        private AnimationBuilder() {}
 
         @Override
-        public A build( int componentId ) {
-            attributes.put( Component.INSTANCE_TYPE_NAME, animationType.getName() );
-            A animation = getInstance( context, componentId );
+        public int doBuild( int componentId, Class<?> componentType ) {
+            checkType( componentType );
+            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
+            Animation animation = getInstance( context, componentId );
             
             animation.fromAttributes( attributes );
             
             animations.set( animation.index(), animation );
             postInit( animation, context );
             
-            return animation;
+            return animation.getId();
+        }
+
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return Animation.TYPE_KEY;
         }
     }
 
+    private final class AnimationBuilderAdapter extends SystemBuilderAdapter<Animation> {
+        public AnimationBuilderAdapter( AnimationSystem system ) {
+            super( system, new AnimationBuilder() );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return Animation.TYPE_KEY;
+        }
+        @Override
+        public final Animation get( int id, Class<? extends Animation> subtype ) {
+            return getAnimation( id );
+        }
+        @Override
+        public final void delete( int id, Class<? extends Animation> subtype ) {
+            deleteAnimation( id );
+        }
+        @Override
+        public final Iterator<Animation> getAll() {
+            return animations.iterator();
+        }
+    }
 }

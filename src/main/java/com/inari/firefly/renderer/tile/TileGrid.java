@@ -22,11 +22,14 @@ import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.IntIterator;
-import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.component.SystemComponent;
 
-public final class TileGrid extends NamedIndexedComponent {
+public final class TileGrid extends SystemComponent {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( TileGrid.class );
     
     public enum TileRenderMode {
         FULL_RENDERING,
@@ -86,9 +89,14 @@ public final class TileGrid extends NamedIndexedComponent {
         renderMode = TileRenderMode.FULL_RENDERING;
         createGrid();
     }
+    
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
+    }
 
     @Override
-    public final Class<TileGrid> getComponentType() {
+    public final Class<TileGrid> componentType() {
         return TileGrid.class;
     }
 
@@ -281,12 +289,12 @@ public final class TileGrid extends NamedIndexedComponent {
         return get( xpos, ypos );
     }
     
-    public final TileGridIterator iterator() {
-        return new TileGridIterator( new Rectangle( -1, 0, width, height ) );
+    public final TileIterator iterator() {
+        return new TileIterator( new Rectangle( -1, 0, width, height ) );
     }
     
-    public final TileGridIterator iterator( Rectangle worldClip ) {
-        return new TileGridIterator( new Rectangle( -1, 0, width, height ) );
+    public final TileIterator iterator( Rectangle worldClip ) {
+        return new TileIterator( new Rectangle( -1, 0, width, height ) );
     }
 
     private void createGrid() {
@@ -308,13 +316,13 @@ public final class TileGrid extends NamedIndexedComponent {
         }
     }
     
-    public final class TileGridIterator implements IntIterator {
+    public final class TileIterator implements IntIterator {
         
         private final Rectangle clip;
         private final Vector2f worldPosition;
         private boolean hasNext = true;
         
-        private TileGridIterator( Rectangle clip ) {
+        private TileIterator( Rectangle clip ) {
             this.clip = clip;
             worldPosition = new Vector2f();
             findNext();
@@ -361,5 +369,5 @@ public final class TileGrid extends NamedIndexedComponent {
             worldPosition.dy = worldYPos + ( clip.y * cellHeight );
         }
     }
-
+    
 }

@@ -15,35 +15,31 @@
  ******************************************************************************/ 
 package com.inari.firefly.control;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
 
 import com.inari.commons.StringUtils;
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.Component;
-import com.inari.firefly.component.ComponentBuilderHelper;
-import com.inari.firefly.component.ComponentSystem;
-import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.component.build.BaseComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
-import com.inari.firefly.state.event.WorkflowEvent;
-import com.inari.firefly.state.event.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
+import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public final class ControllerSystem 
+public final class ControllerSystem
+    extends
+        ComponentSystem
     implements
-        ComponentSystem,
         UpdateEventListener {
     
-    public static final TypedKey<ControllerSystem> CONTEXT_KEY = TypedKey.create( "FF_COMPONENT_CONTROLLER_SYSTEM", ControllerSystem.class );
+    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+       Controller.TYPE_KEY
+    };
     
-    private FFContext context;
-    private IEventDispatcher eventDispatcher;
+    public static final TypedKey<ControllerSystem> CONTEXT_KEY = TypedKey.create( "FF_COMPONENT_CONTROLLER_SYSTEM", ControllerSystem.class );
     
     private final DynArray<Controller> controller;
 
@@ -53,15 +49,14 @@ public final class ControllerSystem
     
     @Override
     public void init( FFContext context ) {
-        this.context = context;
+        super.init( context );
         
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        eventDispatcher.register( UpdateEvent.class, this );
+        context.registerListener( UpdateEvent.class, this );
     }
 
     @Override
     public final void dispose( FFContext context ) {
-        eventDispatcher.unregister( UpdateEvent.class, this );
+        context.disposeListener( UpdateEvent.class, this );
         
         clear();
     }
@@ -139,89 +134,67 @@ public final class ControllerSystem
         }
     }
     
-    @Override
-    @SuppressWarnings( { "unchecked", "rawtypes" } )
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> controllerType ) {
-        if ( Controller.class.isAssignableFrom( controllerType ) ) {
-            return new ControllerBuilder( this, controllerType );
-        }
-        
-        throw new IllegalArgumentException( "Unsupported Component type for ControllerSystem Builder. Type: " + controllerType );
+    public final ControllerBuilder getControllerBuilder() {
+        return new ControllerBuilder();
     }
-    
-    public final <C extends Controller> ControllerBuilder<C> getControllerBuilder( Class<C> controllerType ) {
-        return new ControllerBuilder<C>( this, controllerType );
-    }
-    
-    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
+
     @Override
-    public final Set<Class<?>> supportedComponentTypes() {
-        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
-            SUPPORTED_COMPONENT_TYPES.add( Controller.class );
-        }
+    public final SystemComponentKey[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final void fromAttributes( Attributes attributes ) {
-        fromAttributes( attributes, BuildType.CLEAR_OLD );
-    }
-
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
-        if ( buildType == BuildType.CLEAR_OLD ) {
-            clear();
-        }
-        for ( Class<? extends Controller> controllerSubType : attributes.getAllSubTypes( Controller.class ) ) {
-            new ComponentBuilderHelper<Controller>() {
-                @Override
-                public Controller get( int id ) {
-                    return controller.get( id );
-                }
-                @Override
-                public void delete( int id ) {
-                    deleteController( id );
-                }
-            }.buildComponents( Controller.class, buildType, (ControllerBuilder<Controller>) getControllerBuilder( controllerSubType ), attributes );
-        }
-    }
-
-    @Override
-    public final void toAttributes( Attributes attributes ) {
-        ComponentBuilderHelper.toAttributes( attributes, Controller.class, controller );
+    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
+        return new SystemBuilderAdapter<?>[] {
+            new ControllerBuilderAdapter( this )
+        };
     }
     
     private final void disposeController( Controller c ) {
-        if ( c instanceof WorkflowEventListener ) {
-            eventDispatcher.unregister( WorkflowEvent.class, (WorkflowEventListener) c );
-        }
         c.dispose( context );
         c.dispose();
     }
     
 
-    public final class ControllerBuilder<C extends Controller> extends BaseComponentBuilder<C> {
+    public final class ControllerBuilder extends SystemComponentBuilder {
         
-        private final Class<C> controllerType;
-
-        protected ControllerBuilder( ComponentBuilderFactory componentFactory, Class<C> controllerType ) {
-            super( componentFactory );
-            this.controllerType = controllerType;
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return Controller.TYPE_KEY;
         }
 
         @Override
-        public C build( int componentId ) {
+        public final int doBuild( int componentId, Class<?> controllerType ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, controllerType.getName() );
-            C result = getInstance( context, componentId );
+            Controller result = getInstance( context, componentId );
             result.fromAttributes( attributes );
             controller.set( result.index(), result );
             
             postInit( result, context );
             
-            return result;
+            return result.getId();
         }
     }
 
-
+    private final class ControllerBuilderAdapter extends SystemBuilderAdapter<Controller> {
+        public ControllerBuilderAdapter( ComponentSystem system ) {
+            super( system, new ControllerBuilder() );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return Controller.TYPE_KEY;
+        }
+        @Override
+        public final Controller get( int id, Class<? extends Controller> subtype ) {
+            return controller.get( id );
+        }
+        @Override
+        public final Iterator<Controller> getAll() {
+            return controller.iterator();
+        }
+        @Override
+        public final void delete( int id, Class<? extends Controller> subtype ) {
+            deleteController( id );
+        }
+    }
 }

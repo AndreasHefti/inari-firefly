@@ -45,7 +45,7 @@ public final class TextureAsset extends Asset {
     }
     
     @Override
-    public final Class<TextureAsset> getComponentType() {
+    public final Class<TextureAsset> componentType() {
         return TextureAsset.class;
     }
 

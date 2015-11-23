@@ -18,12 +18,15 @@ package com.inari.firefly.animation;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.component.SystemComponent;
 
-public abstract class Animation extends NamedIndexedComponent {
+public abstract class Animation extends SystemComponent {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Animation.class );
     
     public static final AttributeKey<Long> START_TIME = new AttributeKey<Long>( "startTime", Long.class, Animation.class );
     public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Animation.class );
@@ -46,7 +49,12 @@ public abstract class Animation extends NamedIndexedComponent {
     }
 
     @Override
-    public final Class<Animation> getComponentType() {
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
+    }
+
+    @Override
+    public final Class<Animation> componentType() {
         return Animation.class;
     }
 

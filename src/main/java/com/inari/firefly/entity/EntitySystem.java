@@ -15,37 +15,44 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.functional.Predicate;
 import com.inari.commons.lang.indexed.Indexed;
+import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeAspectSet;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
-import com.inari.firefly.component.Component;
-import com.inari.firefly.component.ComponentSystem;
+import com.inari.firefly.component.Component.ComponentKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.component.attr.ComponentKey;
-import com.inari.firefly.component.build.BaseComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
+public final class EntitySystem extends ComponentSystem implements Iterable<Entity> {
+    
+    public static final SystemComponentKey ENTITY_TYPE_KEY = SystemComponentKey.create( EntityComponentAdapter.class );
+
+    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+        ENTITY_TYPE_KEY
+    };
     
     public static final TypedKey<EntitySystem> CONTEXT_KEY = TypedKey.create( "FF_ENTITY_SYSTEM", EntitySystem.class );
+    
+    private static final int INIT_SIZE = 1000;
 
-    private IEventDispatcher eventDispatcher;
     private EntityProvider entityProvider;
     
     final DynArray<Entity> activeEntities;
@@ -53,15 +60,16 @@ public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
     final DynArray<IndexedTypeSet> components;
     
     EntitySystem() {
-        activeEntities = new DynArray<Entity>();
-        inactiveEntities = new DynArray<Entity>();
-        components = new DynArray<IndexedTypeSet>();
+        activeEntities = new DynArray<Entity>( INIT_SIZE );
+        inactiveEntities = new DynArray<Entity>( INIT_SIZE );
+        components = new DynArray<IndexedTypeSet>( INIT_SIZE );
     }
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        entityProvider = context.getComponent( FFContext.ENTITY_PROVIDER );
+        super.init( context );
+        
+        entityProvider = context.getSystem( EntityProvider.CONTEXT_KEY );
 
         Integer entityCapacity = context.getProperty( FFContext.Properties.ENTITY_MAP_CAPACITY );
         if ( entityCapacity != null ) {
@@ -73,30 +81,17 @@ public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
     
     @Override
     public void dispose( FFContext context ) {
-        eventDispatcher = null;
-        entityProvider = null;
-
         activeEntities.clear();
         inactiveEntities.clear();
         components.clear();
     }
     
-    @Override
-    @SuppressWarnings( "unchecked" )
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( type != Entity.class ) {
-            throw new IllegalArgumentException( "The IComponentType is not supported: " + type );
-        }
-        
-        return (ComponentBuilder<C>) getEntityBuilder();
-    }
-    
     public final EntityBuilder getEntityBuilder() {
-        return new EntityBuilder( this, false );
+        return new EntityBuilder( false );
     }
     
     public final EntityBuilder getEntityBuilderWithAutoActivation() {
-        return new EntityBuilder( this, true );
+        return new EntityBuilder( true );
     }
 
     public final boolean isActive( int entityId ) {
@@ -115,12 +110,10 @@ public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
         Entity entity = inactiveEntities.remove( entityId );
         activeEntities.set( entityId, entity ) ;
         
-        if ( eventDispatcher != null ) {
-            AspectBitSet aspect = getAspect( entityId );
-            eventDispatcher.notify( 
-                new EntityActivationEvent( entity.index(), aspect, Type.ENTITY_ACTIVATED ) 
-            );
-        }
+        AspectBitSet aspect = getAspect( entityId );
+        context.notify( 
+            new EntityActivationEvent( entity.index(), aspect, Type.ENTITY_ACTIVATED ) 
+        );
     }
     
     public final void deactivate( int entityId ) {
@@ -131,11 +124,13 @@ public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
         Entity entity = activeEntities.remove( entityId );
         inactiveEntities.set( entity.index(), entity );
         
-        if ( eventDispatcher != null ) {
-            eventDispatcher.notify( 
-                new EntityActivationEvent( entityId, getAspect( entityId ), Type.ENTITY_DEACTIVATED ) 
-            );
-        }
+        context.notify( 
+            new EntityActivationEvent( entityId, getAspect( entityId ), Type.ENTITY_DEACTIVATED ) 
+        );
+    }
+    
+    public final void deleteEtity( int entityId ) {
+        delete( entityId );
     }
 
     public final void delete( int entityId ) {
@@ -170,6 +165,11 @@ public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
         for ( Entity entity : activeEntities ) {
             delete( entity.index() );
         }
+    }
+    
+    @Override
+    public final void clear() {
+        deleteAll();
     }
 
     public final Entity getEntity( int entityId ) {
@@ -246,80 +246,11 @@ public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
     
     // ---- ComponentSystem implementation --------------------------------------
     
-    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
     @Override
-    public final Set<Class<?>> supportedComponentTypes() {
-        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
-            SUPPORTED_COMPONENT_TYPES.add( Entity.class );
-        }
+    public final SystemComponentKey[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
-
-    @Override
-    public final void fromAttributes( Attributes attributes ) {
-        fromAttributes( attributes, BuildType.CLEAR_OLD );
-    }
     
-    static final AttributeKey<String> ACTIVE_ENTITY_IDS = new AttributeKey<String>( "ACTIVE_ENTITY_IDS", String.class, ActiveEntitiesComponent.class );
-    static interface ActiveEntitiesComponent extends Component{}
-    static final ComponentKey ACTIVE_ENTITIES_IDS_KEY = new ComponentKey( ActiveEntitiesComponent.class, 0 );
-
-    @Override
-    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
-        if ( buildType == BuildType.CLEAR_OLD ) {
-            deleteAll();
-        }
-        
-        EntityBuilder entityBuilder = getEntityBuilder();
-        for ( AttributeMap entityAttrs : attributes.getAllOfType( Entity.class ) ) {
-            int entityId = entityAttrs.getComponentKey().getId();
-            if ( buildType == BuildType.MERGE_ATTRIBUTES ) {
-                IndexedTypeSet componentsOfEntity = getComponents( entityId );
-                if ( componentsOfEntity != null ) {
-                    for ( EntityComponent comp : componentsOfEntity.<EntityComponent>getIterable() ) {
-                        comp.toAttributes( entityBuilder.getAttributes() );
-                    }
-                }
-            } else if ( buildType == BuildType.OVERWRITE ) {
-                delete( entityId );
-            }
-            entityBuilder
-                .setAttributes( entityAttrs )
-                .buildAndNext()
-                .clear();
-        }
-        
-        AttributeMap attributeMap = attributes.get( ACTIVE_ENTITIES_IDS_KEY );
-        if ( attributeMap == null ) {
-            return;
-        }
-        String activeEntityIdsString = attributeMap.getValue( ACTIVE_ENTITY_IDS );
-        IntBag activeEntityIds = new IntBag();
-        activeEntityIds.fromConfigString( activeEntityIdsString );
-        IntIterator iterator = activeEntityIds.iterator();
-        while ( iterator.hasNext() ) {
-            activate( iterator.next() );
-        }
-    }
-
-    @Override
-    public final void toAttributes( Attributes attributes ) {
-        IntBag activeEntityIds = new IntBag( activeEntities.size() );
-        for ( Entity entity : activeEntities ) {
-            entityToAttribute( attributes, entity );
-            activeEntityIds.add( entity.getId() );
-        }
-        
-        EntityAttributeMap attributeMap = new EntityAttributeMap();
-        attributeMap.setComponentKey( ACTIVE_ENTITIES_IDS_KEY );
-        attributes.add( attributeMap );
-        attributeMap.put( ACTIVE_ENTITY_IDS, activeEntityIds.toConfigString() );
-        
-        for ( Entity entity : inactiveEntities ) {
-            entityToAttribute( attributes, entity );
-        }
-    }
-
     private void entityToAttribute( Attributes attributes, Entity entity ) {
         ComponentKey key = new ComponentKey( Entity.class, entity.getId() );
         EntityAttributeMap attributeMap = new EntityAttributeMap();
@@ -333,6 +264,13 @@ public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
         if ( entity.getName() != null ) {
             attributeMap.put( Entity.NAME, entity.getName() );
         }
+    }
+
+    @Override
+    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
+        return new SystemBuilderAdapter<?>[] {
+            new EntityBuilderHelper( this )
+        };
     }
     
     // ---- Utilities --------------------------------------------------------
@@ -414,14 +352,13 @@ public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
         }
     }
     
-    
-    public final class EntityBuilder extends BaseComponentBuilder<Entity> {
+    public final class EntityBuilder extends SystemComponentBuilder {
         
         private IndexedTypeSet prefabComponents;
         private final boolean autoActivate;
 
-        private EntityBuilder( EntitySystem system, boolean autoActivate ) {
-            super( system, new EntityAttributeMap() );
+        private EntityBuilder( boolean autoActivate ) {
+            super( new EntityAttributeMap() );
             this.autoActivate = autoActivate;
         }
         
@@ -431,7 +368,7 @@ public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
         }
         
         @Override
-        public Entity build( int componentId ) {
+        public int doBuild( int componentId, Class<?> componentType ) {
             Entity entity = entityProvider.getEntity( componentId );
             
             if ( attributes.contains( Entity.NAME ) ) {
@@ -462,9 +399,105 @@ public final class EntitySystem implements ComponentSystem, Iterable<Entity> {
                 activate( entity.index() );
             }
             
-            return entity;
+            return entity.index();
         }
+
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return ENTITY_TYPE_KEY;
+        }
+    }
+    
+    private final class EntityBuilderHelper extends SystemBuilderAdapter<EntityComponentAdapter> {
         
+        public EntityBuilderHelper( EntitySystem system ) {
+            super( system, getEntityBuilder() );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return ENTITY_TYPE_KEY;
+        }
+        @Override
+        public EntityComponentAdapter get( int id, Class<? extends EntityComponentAdapter> subtype ) {
+            return null;
+        }
+        @Override
+        public void delete( int id, Class<? extends EntityComponentAdapter> subtype ) {
+        }
+        @Override
+        public final Iterator<EntityComponentAdapter> getAll() {
+            return null;
+        }
+        @Override
+        public final void fromAttributes( Attributes attributes, BuildType buildType ) {
+            if ( buildType == BuildType.CLEAR_OLD ) {
+                deleteAll();
+            }
+            
+            EntityBuilder entityBuilder = getEntityBuilder();
+            for ( AttributeMap entityAttrs : attributes.getAllOfType( Entity.class ) ) {
+                int entityId = entityAttrs.getComponentKey().getId();
+                if ( buildType == BuildType.MERGE_ATTRIBUTES ) {
+                    IndexedTypeSet componentsOfEntity = getComponents( entityId );
+                    if ( componentsOfEntity != null ) {
+                        for ( EntityComponent comp : componentsOfEntity.<EntityComponent>getIterable() ) {
+                            comp.toAttributes( entityBuilder.getAttributes() );
+                        }
+                    }
+                } else if ( buildType == BuildType.OVERWRITE ) {
+                    deleteEtity( entityId );
+                }
+                entityBuilder
+                    .setAttributes( entityAttrs )
+                    .buildAndNext( Entity.class )
+                    .clear();
+            }
+            
+            AttributeMap attributeMap = attributes.get( EntityComponentAdapter.ACTIVE_ENTITIES_IDS_KEY );
+            if ( attributeMap == null ) {
+                return;
+            }
+            String activeEntityIdsString = attributeMap.getValue( EntityComponentAdapter.ACTIVE_ENTITY_IDS );
+            IntBag activeEntityIds = new IntBag();
+            activeEntityIds.fromConfigString( activeEntityIdsString );
+            IntIterator iterator = activeEntityIds.iterator();
+            while ( iterator.hasNext() ) {
+                activate( iterator.next() );
+            }
+        }
+
+        @Override
+        public final void toAttributes( Attributes attributes ) {
+            IntBag activeEntityIds = new IntBag( activeEntities.size() );
+            for ( Entity entity : activeEntities ) {
+                entityToAttribute( attributes, entity );
+                activeEntityIds.add( entity.getId() );
+            }
+            
+            EntityAttributeMap attributeMap = new EntityAttributeMap();
+            attributeMap.setComponentKey( EntityComponentAdapter.ACTIVE_ENTITIES_IDS_KEY );
+            attributes.add( attributeMap );
+            attributeMap.put( EntityComponentAdapter.ACTIVE_ENTITY_IDS, activeEntityIds.toConfigString() );
+            
+            for ( Entity entity : inactiveEntities ) {
+                entityToAttribute( attributes, entity );
+            }
+        }
+    }
+    
+    final static class EntityComponentAdapter extends SystemComponent implements IndexedType {
+        
+        static final AttributeKey<String> ACTIVE_ENTITY_IDS = new AttributeKey<String>( "ACTIVE_ENTITY_IDS", String.class, EntityComponentAdapter.class );
+        static final ComponentKey ACTIVE_ENTITIES_IDS_KEY = new ComponentKey( EntityComponentAdapter.class, 0 );
+        
+        protected EntityComponentAdapter() {
+            super( 0 );
+        }
+
+        @Override
+        public final IndexedTypeKey indexedTypeKey() {
+            return ENTITY_TYPE_KEY;
+        }
     }
 
 }

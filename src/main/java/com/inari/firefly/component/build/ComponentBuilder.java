@@ -19,31 +19,35 @@ import com.inari.firefly.component.attr.Attribute;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
-public interface ComponentBuilder<C> {
+public interface ComponentBuilder {
+
+    ComponentBuilder clear();
     
-    ComponentBuilder<C> clear();
-    
-    ComponentBuilder<C> setAttributes( AttributeMap attributes );
+    ComponentBuilder setAttributes( AttributeMap attributes );
     
     AttributeMap getAttributes();
     
-    ComponentBuilder<C> set( AttributeKey<?> key, Object value );
-    ComponentBuilder<C> set( AttributeKey<Float> key, float value );
-    ComponentBuilder<C> set( AttributeKey<Integer> key, int value );
-    ComponentBuilder<C> set( AttributeKey<Long> key, long value );
-    ComponentBuilder<C> set( AttributeKey<Double> key, double value );
-    ComponentBuilder<C> set( Attribute... attributes );
+    ComponentBuilder set( AttributeKey<?> key, Object value );
+    ComponentBuilder set( AttributeKey<Float> key, float value );
+    ComponentBuilder set( AttributeKey<Integer> key, int value );
+    ComponentBuilder set( AttributeKey<Long> key, long value );
+    ComponentBuilder set( AttributeKey<Double> key, double value );
+    ComponentBuilder set( Attribute... attributes );
     
-    C build();
+    int build();
     
-    C build( int componentId );
+    void build( int componentId );
     
-    ComponentBuilder<C> buildAndNext();
+    int build( Class<?> componentType );
     
-    <CC> ComponentBuilder<CC> buildAndNext( Class<CC> componentType );
+    void build( int componentId, Class<?> componentType );
     
-    ComponentBuilder<C> buildAndNext( int componentId );
+    ComponentBuilder buildAndNext();
     
-    <CC> ComponentBuilder<CC> buildAndNext( int componentId, Class<CC> componentType );
+    ComponentBuilder buildAndNext( int componentId );
+    
+    ComponentBuilder buildAndNext( Class<?> componentType  );
+    
+    ComponentBuilder buildAndNext( int componentId, Class<?> componentType  );
 
 }

@@ -40,9 +40,7 @@ public class EntityBatchLoad implements Loadable {
         int index = 0;
         for ( AttributeMap entityAttributeMap : entityAttributes ) {
             entityBuilder.setAttributes( entityAttributeMap );
-            Entity entity = entityBuilder.build();
-            entitySystem.activate( entity.getId() );
-            entityIds[ index ] = entity.index();
+            entityIds[ index ] = entityBuilder.build();
             index++;
         }
         

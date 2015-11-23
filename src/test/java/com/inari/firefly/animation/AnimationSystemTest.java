@@ -7,11 +7,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.inari.commons.lang.indexed.Indexer;
-import com.inari.firefly.EventDispatcherMock;
+import com.inari.firefly.FireFlyMock;
 import com.inari.firefly.TestTimer;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextImpl;
 import com.inari.firefly.system.UpdateEvent;
 
 public class AnimationSystemTest {
@@ -22,13 +21,12 @@ public class AnimationSystemTest {
     }
 
     @Test
-    public void testCreation() {
-        FFContext ffContext = getTestFFContext();
-        AnimationSystem animationSystem = new AnimationSystem();
-        animationSystem.init( ffContext );
+    public void testCreationWithinContext() {
+        FFContext ffContext = new FireFlyMock().getContext();
+        ffContext.getSystem( AnimationSystem.CONTEXT_KEY );
 
         Attributes attrs = new Attributes();
-        animationSystem.toAttributes( attrs );
+        ffContext.toAttributes( attrs, Animation.TYPE_KEY );
 
         assertEquals(
             "",
@@ -38,18 +36,17 @@ public class AnimationSystemTest {
 
     @Test
     public void testOneAnimation() {
-        FFContext ffContext = getTestFFContext();
-        AnimationSystem animationSystem = new AnimationSystem();
-        animationSystem.init( ffContext );
+        FFContext ffContext = new FireFlyMock().getContext();
+        AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.CONTEXT_KEY );
 
-        animationSystem.getAnimationBuilder( TestAnimation.class )
+        animationSystem.getAnimationBuilder()
             .set( Animation.NAME, "testAnimation" )
             .set( Animation.START_TIME, 10l )
             .set( Animation.LOOPING, false )
-            .build( 0 );
+            .build( 0, TestAnimation.class );
 
         Attributes attrs = new Attributes();
-        animationSystem.toAttributes( attrs );
+        ffContext.toAttributes( attrs, Animation.TYPE_KEY );
 
         assertEquals(
             "Animation(0)::name:String=testAnimation, startTime:Long=10, looping:Boolean=false",
@@ -64,15 +61,14 @@ public class AnimationSystemTest {
 
     @Test
     public void testUpdate() {
-        FFContext ffContext = getTestFFContext();
-        AnimationSystem animationSystem = new AnimationSystem();
-        animationSystem.init( ffContext );
+        FFContext ffContext = new FireFlyMock().getContext();
+        AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.CONTEXT_KEY );
 
-        animationSystem.getAnimationBuilder( TestAnimation.class )
+        animationSystem.getAnimationBuilder(  )
             .set( Animation.NAME, "testAnimation" )
             .set( Animation.START_TIME, 10l )
             .set( Animation.LOOPING, false )
-            .build( 0 );
+            .build( 0, TestAnimation.class );
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",
@@ -130,10 +126,10 @@ public class AnimationSystemTest {
         assertFalse( animationSystem.exists( 0 ) );
     }
 
-    private FFContext getTestFFContext() {
-        FFContextImpl.InitMap initMap = new FFContextImpl.InitMap();
-        initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcherMock.class );
-        FFContext result = new FFContextImpl( initMap, true );
-        return result;
-    }
+//    private FFContext getTestFFContext() {
+//        return 
+////        initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcherMock.class );
+////        FFContext result = new FFContextImpl( initMap, true );
+////        return result;
+//    }
 }

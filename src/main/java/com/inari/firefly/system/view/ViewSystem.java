@@ -18,58 +18,58 @@ package com.inari.firefly.system.view;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.component.ComponentBuilderHelper;
-import com.inari.firefly.component.ComponentSystem;
-import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.component.build.BaseComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFSystemInterface;
+import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.view.event.ViewEvent;
 
-public final class ViewSystem implements ComponentSystem {
+public final class ViewSystem extends ComponentSystem {
     
-    public static final TypedKey<ViewSystem> CONTEXT_KEY = TypedKey.create( "FF_VIEW_SYSTEM", ViewSystem.class );
-    
-    public static final int BASE_VIEW_ID = 0;
+    private static final int INITAL_SIZE = 20;
 
-    private IEventDispatcher eventDispatcher;
+    public static final TypedKey<ViewSystem> CONTEXT_KEY = TypedKey.create( "FF_VIEW_SYSTEM", ViewSystem.class );
+    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+        View.TYPE_KEY,
+        Layer.TYPE_KEY,
+    };
+
+    public static final int BASE_VIEW_ID = 0;
     
     private final DynArray<View> views;
-    private final DynArray<List<Layer>> layersOfView;
+    private final DynArray<Layer> layers;
+    private final DynArray<IntBag> layersOfView;
     
     private final List<View> orderedViewports;
     private final List<View> activeViewports;
     
     ViewSystem() {
-        views = new DynArray<View>( 20 );
-        orderedViewports = new ArrayList<View>( 20 );
-        activeViewports = new ArrayList<View>( 20 );
-        layersOfView = new DynArray<List<Layer>>( 20 );
+        views = new DynArray<View>( INITAL_SIZE );
+        layers = new DynArray<Layer>( INITAL_SIZE );
+        orderedViewports = new ArrayList<View>( INITAL_SIZE );
+        activeViewports = new ArrayList<View>( INITAL_SIZE );
+        layersOfView = new DynArray<IntBag>( INITAL_SIZE );
     }
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        super.init( context );
 
         // create the base view that is the screen
-        FFSystemInterface lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
         Rectangle screenBounds = new Rectangle(
             0, 0,
-            lowerSystemFacade.getScreenWidth(),
-            lowerSystemFacade.getScreenHeight()
+            context.getScreenWidth(),
+            context.getScreenHeight()
         );
         ViewBuilder viewBuilder = getViewBuilder();
         viewBuilder.buildBaseView( screenBounds );
@@ -130,7 +130,7 @@ public final class ViewSystem implements ComponentSystem {
         if ( view != null && !view.isActive() ) {
             view.active = true;
             refreshActiveViewports();
-            eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_ACTIVATED ) );
+            context.notify( new ViewEvent( view, ViewEvent.Type.VIEW_ACTIVATED ) );
         }
     }
 
@@ -142,7 +142,7 @@ public final class ViewSystem implements ComponentSystem {
         if ( view != null && view.isActive() ) {
             view.active = false;
             refreshActiveViewports();
-            eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_DISPOSED ) );
+            context.notify( new ViewEvent( view, ViewEvent.Type.VIEW_DISPOSED ) );
         }
     }
     
@@ -185,7 +185,7 @@ public final class ViewSystem implements ComponentSystem {
             orderedViewports.remove( view );
             activeViewports.remove( view );
             disableLayering( viewId );
-            eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_DELETED ) );
+            context.notify( new ViewEvent( view, ViewEvent.Type.VIEW_DELETED ) );
             view.dispose();
         }
     }
@@ -195,7 +195,7 @@ public final class ViewSystem implements ComponentSystem {
     }
     
     public final void clear() {
-        for( View view : views ) {
+        for ( View view : views ) {
             disableLayering( view.index() );
             deleteView( view.index() );
         }
@@ -203,49 +203,36 @@ public final class ViewSystem implements ComponentSystem {
         layersOfView.clear();
     }
     
-    public final boolean hasLayer( int viewId, int layerId ) {
-        return getLayer( viewId, layerId ) != null;
+    public final boolean hasLayer( int layerId ) {
+        return layers.contains( layerId );
+    }
+    
+    public final boolean hasLayer( int viewId, int index ) {
+        if ( !layersOfView.contains( viewId ) ) {
+            return false;
+        }
+        IntBag layers = layersOfView.get( viewId );
+        return layers.get( index ) != layers.getNullValue();
     }
     
     public final Layer getLayer( int layerId ) {
-        for ( List<Layer> layers : layersOfView ) {
-            for ( Layer layer : layers ) {
-                if ( layer.index() == layerId ) {
-                    return layer;
-                }
-            }
+        if ( layers.contains( layerId ) ) {
+            return layers.get( layerId );
         }
         
         return null;
     }
     
     public final int getLayerId( String layerName ) {
-        for ( List<Layer> layers : layersOfView ) {
-            for ( Layer layer : layers ) {
-                if ( layerName.equals( layer.getName() ) ) {
-                    return layer.getId();
-                }
+        for ( Layer layer : layers  ) {
+            if ( layerName.equals( layer.getName() ) ) {
+                return layer.getId();
             }
         }
         
         return -1;
     }
-    
-    public final Layer getLayer( int viewId, int layerId ) {
-        if ( !hasView( viewId ) || !isLayeringEnabled( viewId ) ) {
-            return null;
-        }
-        
-        Collection<Layer> layers = layersOfView.get( viewId );
-        for ( Layer layer : layers ) {
-            if ( layerId == layer.index() ) {
-                return layer;
-            }
-        }
-        
-        return null;
-    }
-    
+
     public final boolean moveLayerUp( int viewId, int index ) {
         if ( index < 1 ) {
             return false;
@@ -255,13 +242,12 @@ public final class ViewSystem implements ComponentSystem {
             return false;
         }
         
-        List<Layer> layers = layersOfView.get( viewId );
+        IntBag layers = layersOfView.get( viewId );
         if ( layers.size() <= index ) {
             return false;
         }
         
-        Layer removed = layers.remove( index );
-        layers.add( --index, removed );
+        layers.swap( index, --index );
         return true;
     }
     
@@ -274,13 +260,12 @@ public final class ViewSystem implements ComponentSystem {
             return false;
         }
         
-        List<Layer> layers = layersOfView.get( viewId );
+        IntBag layers = layersOfView.get( viewId );
         if ( index >= layers.size() - 1 ) {
             return false;
         }
         
-        Layer removed = layers.remove( index );
-        layers.add( ++index, removed );
+        layers.swap( index, ++index );
         return true;
     }
 
@@ -289,41 +274,26 @@ public final class ViewSystem implements ComponentSystem {
             return;
         }
         
-        Collection<Layer> layers = layersOfView.remove( viewId );
+        IntBag layers = layersOfView.get( viewId );
         if ( layers != null ) {
-            for ( Layer layer : layers ) {
-                layer.dispose();
+            IntIterator iterator = layers.iterator();
+            while( iterator.hasNext() ) {
+                Layer removed = this.layers.remove( iterator.next() );
+                removed.dispose();
             }
             layers.clear();
         }
     }
     
     public final void deleteLayer( int layerId ) {
-        for ( List<Layer> layers : layersOfView ) {
-            Iterator<Layer> layerIt = layers.iterator();
-            while ( layerIt.hasNext() ) {
-                Layer layer = layerIt.next();
-                if ( layer.index() == layerId ) {
-                    layerIt.remove();
-                    layer.dispose();
-                }
-            }
-        }
-    }
-    
-    public final void deleteLayer( int viewId, int layerId ) {
-        List<Layer> layers = layersOfView.get( viewId );
-        if ( layers.size() == 1 ) {
-            throw new IllegalArgumentException( "There is only this layer left int the Layer list. If there should be no Layering for that view, please disable Layering instead." );
+        if ( !layers.contains( layerId ) ) {
+            return;
         }
         
-        if ( layers != null ) {
-            Layer layer = layers.get( layerId );
-            if ( layer != null ) {
-                layers.remove( layerId );
-                layer.dispose();
-            }
-        }
+        Layer toDelete = layers.get( layerId );
+        IntBag layersOfView = this.layersOfView.get( toDelete.getViewId() );
+        layersOfView.remove( toDelete.getId() );
+        toDelete.dispose();
     }
     
     public final boolean isLayeringEnabled( int viewId ) {
@@ -334,18 +304,14 @@ public final class ViewSystem implements ComponentSystem {
     }
     
     public final void enableLayering( int viewId ) {
-        if ( isLayeringEnabled( viewId ) ) {
+        if ( !views.contains( viewId ) ) {
             return;
         }
-
-        layersOfView.set( viewId, new ArrayList<Layer>() );
-        // build the first Layer and give it a default name
-        Layer layer = getLayerBuilder().build();
-        layer.setName( "Layer 0" );
+        
+        views.get( viewId ).setLayeringEnabled( true );
     }
     
     public final void disableLayering( int viewId ) {
-        
         if ( !isLayeringEnabled( viewId ) ) {
             return;
         }
@@ -355,83 +321,30 @@ public final class ViewSystem implements ComponentSystem {
         layersOfView.remove( viewId );
         view.setLayeringEnabled( false );
     }
-    
-    @Override
-    @SuppressWarnings( "unchecked" )
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( type == View.class ) {
-            return (ComponentBuilder<C>) getViewBuilder();
-        }
-        
-        if ( type == Layer.class ) {
-            return (ComponentBuilder<C>) getLayerBuilder();
-        }
-        
-        throw new IllegalArgumentException( "Unsupported IComponent type for ViewSystem. Type: " + type );
-    }
 
-    public final ComponentBuilder<Layer> getLayerBuilder() {
-        return new LayerBuilder( this );
+    public final LayerBuilder getLayerBuilder() {
+        return new LayerBuilder();
     }
 
     public final ViewBuilder getViewBuilder() {
-        return new ViewBuilder( this, false );
+        return new ViewBuilder( false );
     }
     
     public final ViewBuilder getViewBuilderWithAutoActivation() {
-        return new ViewBuilder( this, true );
+        return new ViewBuilder( true );
     }
-    
-    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
+
     @Override
-    public final Set<Class<?>> supportedComponentTypes() {
-        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
-            SUPPORTED_COMPONENT_TYPES.add( View.class );
-            SUPPORTED_COMPONENT_TYPES.add( Layer.class );
-        }
+    public final SystemComponentKey[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public void fromAttributes( Attributes attributes ) {
-        fromAttributes( attributes, BuildType.CLEAR_OLD );
-    }
-
-    @Override
-    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
-        if ( buildType == BuildType.CLEAR_OLD ) {
-            clear();
-        }
-        
-        new ComponentBuilderHelper<View>() {
-            @Override
-            public View get( int id ) {
-                return views.get( id );
-            }
-            @Override
-            public void delete( int id ) {
-                deleteView( id );
-            }
-        }.buildComponents( View.class, buildType, getViewBuilder(), attributes );
-        
-        new ComponentBuilderHelper<Layer>() {
-            @Override
-            public Layer get( int id ) {
-                return getLayer( id );
-            }
-            @Override
-            public void delete( int id ) {
-                deleteLayer( id );
-            }
-        }.buildComponents( Layer.class, buildType, getLayerBuilder(), attributes );
-    }
-
-    @Override
-    public final void toAttributes( Attributes attributes ) {
-        ComponentBuilderHelper.toAttributes( attributes, View.class, views );
-        for ( List<Layer> layers : layersOfView ) {
-            ComponentBuilderHelper.toAttributes( attributes, Layer.class, layers );
-        }
+    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
+        return new SystemBuilderAdapter<?>[] {
+            new ViewBuilderAdapter( this ),
+            new LayerBuilderAdapter( this )
+        };
     }
     
     private void reorder() {
@@ -452,17 +365,21 @@ public final class ViewSystem implements ComponentSystem {
     }
     
     
-    public final class ViewBuilder extends BaseComponentBuilder<View> {
+    public final class ViewBuilder extends SystemComponentBuilder {
         
         private final boolean autoActivation;
 
-        protected ViewBuilder( ViewSystem viewSystem, boolean autoActivation ) {
-            super( viewSystem );
+        protected ViewBuilder( boolean autoActivation ) {
             this.autoActivation = autoActivation;
+        }
+        
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return View.TYPE_KEY;
         }
 
         @Override
-        public final View build( int componentId ) {
+        public final int doBuild( int componentId, Class<?> subType ) {
             View view = new View( componentId );
             view.fromAttributes( attributes );
             
@@ -472,37 +389,34 @@ public final class ViewSystem implements ComponentSystem {
                 view.order = orderedViewports.size();
                 orderedViewports.add( view );
             }
-            eventDispatcher.notify( new ViewEvent( view, ViewEvent.Type.VIEW_CREATED ) );
+            context.notify( new ViewEvent( view, ViewEvent.Type.VIEW_CREATED ) );
             
             if ( autoActivation ) {
                 activateView( view.index() );
             }
-            
-            return view;
+            return view.getId();
         }
         
         void buildBaseView( Rectangle screenBounds ) {
             set( View.NAME, "BASE_VIEW" );
             set( View.BOUNDS, screenBounds );
-            View view = build( BASE_VIEW_ID );
+            
+            build( BASE_VIEW_ID );
+            View view = getView( BASE_VIEW_ID );
             view.active = true;
             view.order = -1;
         }
-        
     }
     
-    public final class LayerBuilder extends BaseComponentBuilder<Layer> {
+    public final class LayerBuilder extends SystemComponentBuilder {
 
-        protected LayerBuilder( ComponentBuilderFactory componentFactory ) {
-            super( componentFactory );
-        }
-
-        public ComponentBuilder<Layer> setAttribute( AttributeKey<Integer> key, View value ) {
-            return super.set( key, value.index() );
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return Layer.TYPE_KEY;
         }
 
         @Override
-        public Layer build( int componentId ) {
+        public int doBuild( int componentId, Class<?> subType ) {
             Layer layer = new Layer( componentId );
             layer.fromAttributes( attributes );
             checkName( layer );
@@ -516,16 +430,63 @@ public final class ViewSystem implements ComponentSystem {
                 throw new ComponentCreationException( "Layering is not enabled for view with id: " + viewId + ". Enable Layering for View first" );
             }
             
-            List<Layer> layers;
+            IntBag viewLayers;
             if ( !layersOfView.contains( viewId ) ) {
-                layers = new ArrayList<Layer>();
-                layersOfView.set( viewId, layers );
+                viewLayers = new IntBag( INITAL_SIZE );
+                layersOfView.set( viewId, viewLayers );
             } else {
-                layers = layersOfView.get( viewId );
+                viewLayers = layersOfView.get( viewId );
             }
-         
-            layers.add( layer );
-            return layer;
+            
+            int layerId = layer.getId();
+            viewLayers.add( layerId );
+            layers.set( layerId, layer );
+            
+            return layerId;
+        }
+    }
+    
+    private final class ViewBuilderAdapter extends SystemBuilderAdapter<View> {
+        public ViewBuilderAdapter( ComponentSystem system ) {
+            super( system, new ViewBuilder( false ) );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return View.TYPE_KEY;
+        }
+        @Override
+        public final View get( int id, Class<? extends View> subtype ) {
+            return views.get( id );
+        }
+        @Override
+        public final Iterator<View> getAll() {
+            return views.iterator();
+        }
+        @Override
+        public final void delete( int id, Class<? extends View> subtype ) {
+            deleteView( id );
+        }
+    }
+    
+    private final class LayerBuilderAdapter extends SystemBuilderAdapter<Layer> {
+        public LayerBuilderAdapter( ComponentSystem system ) {
+            super( system, new LayerBuilder() );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return Layer.TYPE_KEY;
+        }
+        @Override
+        public final Layer get( int id, Class<? extends Layer> subtype ) {
+            return getLayer( id );
+        }
+        @Override
+        public final Iterator<Layer> getAll() {
+            return layers.iterator();
+        }
+        @Override
+        public final void delete( int id, Class<? extends Layer> subtype ) {
+            deleteLayer( id );
         }
     }
 

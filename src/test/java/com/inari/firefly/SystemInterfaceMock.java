@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.system.FFContext;
@@ -12,28 +11,24 @@ import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEvent;
 
-public class LowerSystemFacadeMock implements FFSystemInterface {
+public class SystemInterfaceMock implements FFSystemInterface {
     
     private final Collection<String> loadedAssets = new ArrayList<String>();
     private final Collection<String> views = new ArrayList<String>();
     private final Collection<String> sounds = new ArrayList<String>();
     
     private final Collection<String> log = new ArrayList<String>();
-    
-    private IEventDispatcher eventDispatcher;
-    
+
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        
-        eventDispatcher.register( AssetEvent.class, this );
-        eventDispatcher.register( ViewEvent.class, this );
+        context.registerListener( AssetEvent.class, this );
+        context.registerListener( ViewEvent.class, this );
     }
     
     @Override
     public void dispose( FFContext context ) {
-        eventDispatcher.unregister( AssetEvent.class, this );
-        eventDispatcher.unregister( ViewEvent.class, this );
+        context.disposeListener( AssetEvent.class, this );
+        context.disposeListener( ViewEvent.class, this );
         
         clear();
     }

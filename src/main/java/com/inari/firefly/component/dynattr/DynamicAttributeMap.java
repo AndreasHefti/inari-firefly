@@ -29,7 +29,7 @@ public class DynamicAttributeMap {
 
     public final Set<AttributeKey<?>> attributeKeys( DynamicAttributedComponent component, Set<AttributeKey<?>> attributeKeys ) {
         attributeKeys.addAll( component.attributeKeys() );
-        Set<AttributeKey<?>> dynAttributeSetForType = DynamicAttribueMapper.getDynAttributeSetForType( component.getComponentType() );
+        Set<AttributeKey<?>> dynAttributeSetForType = DynamicAttribueMapper.getDynAttributeSetForType( component.componentType() );
         if ( dynAttributeSetForType != null && !attributeKeys.containsAll( dynAttributeSetForType ) ) {
             attributeKeys.addAll( dynAttributeSetForType );
         } 
@@ -38,7 +38,7 @@ public class DynamicAttributeMap {
     }
 
     public final void fromAttributeMap( AttributeMap attributes, DynamicAttributedComponent component ) {
-        Set<AttributeKey<?>> dynAttributeSetForType = DynamicAttribueMapper.getDynAttributeSetForType( component.getComponentType() );
+        Set<AttributeKey<?>> dynAttributeSetForType = DynamicAttribueMapper.getDynAttributeSetForType( component.componentType() );
         if ( dynAttributeSetForType == null ) {
             return;
         }
@@ -50,7 +50,7 @@ public class DynamicAttributeMap {
     }
 
     public final void toAttributeMap( AttributeMap attributes, DynamicAttributedComponent component ) {
-        Set<AttributeKey<?>> dynAttributeSetForType = DynamicAttribueMapper.getDynAttributeSetForType( component.getComponentType() );
+        Set<AttributeKey<?>> dynAttributeSetForType = DynamicAttribueMapper.getDynAttributeSetForType( component.componentType() );
         if ( dynAttributeSetForType == null ) {
             return;
         }

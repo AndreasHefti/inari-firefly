@@ -15,19 +15,19 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.inari.firefly.component.Component;
+import com.inari.firefly.component.Component.ComponentKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
-import com.inari.firefly.component.attr.ComponentKey;
 
 public class EntityAttributeMap extends ComponentAttributeMap {
     
     @Override
     public final void setComponentKey( ComponentKey typeKey ) {
-        if ( typeKey.getType() != Entity.class && typeKey.getType() != EntitySystem.ActiveEntitiesComponent.class ) {
+        if ( typeKey.getType() != Entity.class && typeKey.getType() != EntitySystem.EntityComponentAdapter.class ) {
             throw new IllegalArgumentException( "The ComponentKey has not the expected type: " + Entity.class.getName() );
         }
         super.setComponentKey( typeKey );
@@ -35,7 +35,7 @@ public class EntityAttributeMap extends ComponentAttributeMap {
 
     @SuppressWarnings( "unchecked" )
     public Set<Class<? extends EntityComponent>> getEntityComponentTypes() {
-        Set<Class<? extends EntityComponent>> componentTypes = new HashSet<Class<? extends EntityComponent>>();
+        Set<Class<? extends EntityComponent>> componentTypes = new LinkedHashSet<Class<? extends EntityComponent>>();
         for ( AttributeKey<?> attrKey : attributes.keySet() ) {
             Class<? extends Component> componentType = attrKey.componentType();
             if ( !EntityComponent.class.isAssignableFrom( componentType ) ) {
