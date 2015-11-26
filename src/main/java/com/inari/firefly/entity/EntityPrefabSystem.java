@@ -148,17 +148,21 @@ public class EntityPrefabSystem extends ComponentSystem implements EntityPrefabA
         }
     }
     
-    public final int buildOne( int prefabId ) {
-        return entitySystem.getEntityBuilder()
+    public final Entity buildOne( int prefabId ) {
+        return entitySystem.getEntity( 
+        entitySystem.getEntityBuilder()
             .setPrefabComponents( getComponents( prefabId ) )
-            .build();
+            .build()
+        );
     }
 
-    public final int buildOne( int prefabId, EntityAttributeMap attributes ) {
-        return entitySystem.getEntityBuilder()
+    public final Entity buildOne( int prefabId, EntityAttributeMap attributes ) {
+        return entitySystem.getEntity( 
+        entitySystem.getEntityBuilder()
             .setPrefabComponents( getComponents( prefabId ) )
             .setAttributes( attributes )
-            .build();
+            .build()
+        );
     }
 
     public final void rebuildEntity( int prefabId, int entityId, EntityAttributeMap attributes, boolean activation ) {
@@ -182,12 +186,12 @@ public class EntityPrefabSystem extends ComponentSystem implements EntityPrefabA
     }
 
     public final int activateOne( int prefabId, EntityAttributeMap attributes ) {
-        int newEntity = buildOne( prefabId, attributes );
-        if ( newEntity >= 0 ) {
-            entitySystem.activate( newEntity );
+        int newEntityId = buildOne( prefabId, attributes ).getId();
+        if ( newEntityId >= 0 ) {
+            entitySystem.activate( newEntityId );
         }
 
-        return newEntity;
+        return newEntityId;
     }
 
     private IndexedTypeSet getComponents( int prefabId ) {
@@ -246,6 +250,10 @@ public class EntityPrefabSystem extends ComponentSystem implements EntityPrefabA
 
     
     public final class EntityPrefabBuilder extends SystemComponentBuilder {
+        
+        private EntityPrefabBuilder() {
+            super( new EntityAttributeMap() );
+        }
 
         @Override
         public final SystemComponentKey systemComponentKey() {

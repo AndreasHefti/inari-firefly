@@ -103,11 +103,14 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
     @Override
     public final int build( Class<?> componentType ) {
         int componentId = getId();
-        return doBuild( componentId, componentType );
+        int id = doBuild( componentId, componentType );
+        attributes.clear();
+        return id;
     }
 
     public final void build( int componentId, Class<?> componentType ) {
         doBuild( componentId, componentType );
+        attributes.clear();
     }
     
     protected abstract int doBuild( int componentId, Class<?> componentType );
@@ -127,7 +130,6 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
     @Override
     public final ComponentBuilder buildAndNext( Class<?> componentType ) {
         build( getId(), componentType );
-        attributes.clear();
         return this;
     }
 
@@ -135,7 +137,6 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
     @Override
     public final ComponentBuilder buildAndNext( int componentId, Class<?> componentType ) {
         build( componentId, componentType );
-        attributes.clear();
         return this;
     }
     

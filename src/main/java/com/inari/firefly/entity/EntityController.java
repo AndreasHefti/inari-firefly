@@ -28,12 +28,12 @@ import com.inari.firefly.system.FFTimer;
 
 public abstract class EntityController extends Controller implements EntityActivationListener {
     
-    protected EntitySystem entitySystem;
+    protected FFContext context;
     protected AnimationSystem animationSystem;
     
     protected EntityController( int id, FFContext context ) {
         super( id );
-        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        this.context = context;
         animationSystem = context.getSystem( AnimationSystem.CONTEXT_KEY );
         
         context.registerListener( EntityActivationEvent.class, this );
@@ -81,7 +81,7 @@ public abstract class EntityController extends Controller implements EntityActiv
     protected abstract void update( final FFTimer timer, int entityId );
     
     private final boolean hasControllerId( int entityId ) {
-        EController controllerComponent = entitySystem.getComponent( entityId, EController.TYPE_KEY );
+        EController controllerComponent = context.getEntityComponent( entityId, EController.TYPE_KEY );
         if ( controllerComponent == null ) {
             return false;
         }

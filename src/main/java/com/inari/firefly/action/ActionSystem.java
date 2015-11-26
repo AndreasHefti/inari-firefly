@@ -89,7 +89,9 @@ public final class ActionSystem extends ComponentSystem implements ActionEventLi
         };
     };
 
-    private final class ActionBuilder extends SystemComponentBuilder {
+    public final class ActionBuilder extends SystemComponentBuilder {
+        
+        protected ActionBuilder() {}
         
         @Override
         public final SystemComponentKey systemComponentKey() {
@@ -110,9 +112,9 @@ public final class ActionSystem extends ComponentSystem implements ActionEventLi
 
     }
 
-    private final class ActionBuilderAdapter extends SystemBuilderAdapter<Action> {
+    public final class ActionBuilderAdapter extends SystemBuilderAdapter<Action> {
         
-        public ActionBuilderAdapter( ComponentSystem system ) {
+        protected ActionBuilderAdapter( ComponentSystem system ) {
             super( system, getActionBuilder() );
         }
         

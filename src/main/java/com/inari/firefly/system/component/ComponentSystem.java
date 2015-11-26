@@ -44,12 +44,6 @@ public abstract class ComponentSystem implements FFSystem {
    
     public abstract SystemBuilderAdapter<?>[] getSupportedBuilderAdapter();
     
-//    void fromAttributes( Attributes attributes );
-//    
-//    void fromAttributes( Attributes attributes, BuildType buildType );
-//    
-//    void toAttributes( Attributes attributes );
-    
     public abstract void clear();
 
 }

@@ -267,7 +267,7 @@ public final class TileGridSystem
             }
             perLayer.set( layerId, tileGrid );
             
-            tileGrids.set( componentId, tileGrid );
+            tileGrids.set( tileGrid.getId(), tileGrid );
             
             return tileGrid.getId();
         }

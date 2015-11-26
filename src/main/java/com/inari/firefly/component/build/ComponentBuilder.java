@@ -49,5 +49,4 @@ public interface ComponentBuilder {
     ComponentBuilder buildAndNext( Class<?> componentType  );
     
     ComponentBuilder buildAndNext( int componentId, Class<?> componentType  );
-
 }

@@ -171,9 +171,16 @@ public final class EntitySystem extends ComponentSystem implements Iterable<Enti
     public final void clear() {
         deleteAll();
     }
+    
+    public final Entity getEntityActive( int entityId ) {
+        return activeEntities.get( entityId );
+    }
 
     public final Entity getEntity( int entityId ) {
-        return activeEntities.get( entityId );
+        if ( activeEntities.contains( entityId ) ) {
+            return activeEntities.get( entityId );
+        }
+        return inactiveEntities.get( entityId );
     }
     
     public final int getEntityId( String name ) {

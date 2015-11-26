@@ -21,7 +21,9 @@ public abstract class SystemComponentBuilder extends BaseComponentBuilder {
     @Override
     public final int build() {
         int componentId = getId();
-        return doBuild( componentId, systemComponentKey().indexedType );
+        int id = doBuild( componentId, systemComponentKey().indexedType );
+        attributes.clear();
+        return id;
     }
     
     @Override
