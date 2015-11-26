@@ -1,6 +1,5 @@
 package com.inari.firefly.system.component;
 
-import com.inari.firefly.action.Action;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.system.FFInitException;
@@ -33,7 +32,7 @@ public abstract class SystemComponentBuilder extends BaseComponentBuilder {
     
     protected void checkType( Class<?> componentType ) {
         if ( !systemComponentKey().indexedType.isAssignableFrom( componentType ) ) {
-            throw new FFInitException( "Component Builder Type missmatch. builderType: " + Action.class.getName() + " is not a valid substitute of type: " + componentType.getName() );
+            throw new FFInitException( "Component Builder Type missmatch. builderType: " + componentType.getName() + " is not a valid substitute of type: " + componentType.getName() );
         }
     }
 

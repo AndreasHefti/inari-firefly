@@ -21,7 +21,6 @@ import java.util.Random;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
@@ -55,33 +54,11 @@ public abstract class FireFly {
             FFTimer timer,
             Input input 
     ) {
-//        InitMap initMap = new InitMap();
-//        initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcher.class );
-//        initMap.put( FFContext.TIMER, DefaultFFTimerImpl.class );
-//        initMap.put( FFContext.INPUT, input );
-//        initMap.put( FFContext.LOWER_SYSTEM_FACADE, lowerSystemFacadeType );
-//        initMap.put( FFContext.ENTITY_PROVIDER, EntityProvider.class );
-//        initMap.put( ActionSystem.CONTEXT_KEY, ActionSystem.class );
-//        initMap.put( AssetSystem.CONTEXT_KEY, AssetSystem.class );
-//        initMap.put( StateSystem.CONTEXT_KEY, StateSystem.class );
-//        initMap.put( ViewSystem.CONTEXT_KEY, ViewSystem.class );
-//        initMap.put( EntitySystem.CONTEXT_KEY, EntitySystem.class );
-//        initMap.put( EntityPrefabSystem.CONTEXT_KEY, EntityPrefabSystem.class );
-//        initMap.put( SpriteViewSystem.CONTEXT_KEY, SpriteViewSystem.class );
-//        initMap.put( TileGridSystem.CONTEXT_KEY, TileGridSystem.class );
-//        initMap.put( ControllerSystem.CONTEXT_KEY, ControllerSystem.class );
-//        initMap.put( AnimationSystem.CONTEXT_KEY, AnimationSystem.class );
-//        initMap.put( SoundSystem.CONTEXT_KEY, SoundSystem.class );
-//        initMap.put( SpriteViewRenderer.CONTEXT_KEY, SpriteViewRenderer.class );
-//        initMap.put( TileGridRenderer.CONTEXT_KEY, TileGridRenderer.class );
-//        initMap.put( TaskSystem.CONTEXT_KEY, TaskSystem.class );
-
         context = new FFContext( eventDispatcher, systemInterface, timer, input );
         
         lowerSystemFacade = context.getSystemInterface();
         viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
         
-        context.loadSystem( ActionSystem.CONTEXT_KEY );
         context.loadSystem( AssetSystem.CONTEXT_KEY );
         context.loadSystem( StateSystem.CONTEXT_KEY );
         context.loadSystem( EntitySystem.CONTEXT_KEY );
