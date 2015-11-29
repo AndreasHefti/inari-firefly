@@ -73,6 +73,10 @@ public abstract class FireFly {
         updateEvent = new UpdateEvent( timer );
         renderEvent = new RenderEvent();
     }
+    
+    public final boolean exit() {
+        return context.exit;
+    }
 
     public final void dispose() {
         context.dispose();

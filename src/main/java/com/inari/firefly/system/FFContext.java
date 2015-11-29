@@ -46,6 +46,7 @@ public final class FFContext {
     private final Input input;
     
     private EntitySystem entitySystem;
+    boolean exit = false;
 
     public FFContext( 
         IEventDispatcher eventDispatcher, 
@@ -252,8 +253,12 @@ public final class FFContext {
     public final int getScreenHeight() {
         return systemInterface.getScreenHeight();
     }
+    
+    public final void exit() {
+        this.exit = true;
+    }
 
-    public final void dispose() {
+    final void dispose() {
         for ( DataComponent component : dataComponents.values() ) {
             if ( component instanceof Disposable ) {
                 ( (Disposable) component ).dispose( this );

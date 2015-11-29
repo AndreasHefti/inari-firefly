@@ -14,10 +14,11 @@ import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 
-public final class SpriteViewRenderer extends BaseRenderer implements RenderEventListener, EntityActivationListener {
+public final class SpriteViewRenderer extends BaseRenderer implements FFSystem, RenderEventListener, EntityActivationListener {
     
     public static final TypedKey<SpriteViewRenderer> CONTEXT_KEY = TypedKey.create( "FF_SPRITE_VIEW_RENDERER", SpriteViewRenderer.class );
     

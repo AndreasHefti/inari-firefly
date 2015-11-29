@@ -3,11 +3,11 @@ package com.inari.firefly.renderer;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.FFSystemInterface;
 
-public abstract class BaseRenderer implements FFSystem {
+public abstract class BaseRenderer implements FFContextInitiable {
     
     protected FFSystemInterface systemInterface;
     protected EntitySystem entitySystem;

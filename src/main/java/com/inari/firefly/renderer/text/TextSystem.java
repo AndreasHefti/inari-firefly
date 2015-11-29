@@ -17,6 +17,8 @@ import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
+import com.inari.firefly.system.RenderEvent;
+import com.inari.firefly.system.RenderEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
@@ -26,7 +28,8 @@ public class TextSystem
     extends 
         ComponentSystem
     implements 
-        EntityActivationListener {
+        EntityActivationListener,
+        RenderEventListener {
     
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Font.TYPE_KEY
@@ -36,6 +39,7 @@ public class TextSystem
     
     private EntitySystem entitySystem;
     private AssetSystem assetSystem;
+    private TextRenderer renderer;
 
     private final DynArray<Font> fonts;
     private final DynArray<DynArray<DynArray<IndexedTypeSet>>> textPerViewAndLayer;
@@ -49,18 +53,19 @@ public class TextSystem
     public final void init( FFContext context ) throws FFInitException {
         entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
         assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        renderer = new TextRenderer( this );
+        renderer.init( context );
         
-        context.loadSystem( TextRenderer.CONTEXT_KEY );
-
         context.registerListener( EntityActivationEvent.class, this );
+        context.registerListener( RenderEvent.class, this );
     }
 
     @Override
     public final void dispose( FFContext context ) {
         context.disposeListener( EntityActivationEvent.class, this );
+        context.disposeListener( RenderEvent.class, this );
         
-        context.disposeSystem( TextRenderer.CONTEXT_KEY );
-        
+        renderer.dispose( context );
         textPerViewAndLayer.clear();
         clear();
     }
@@ -133,6 +138,11 @@ public class TextSystem
                 renderablesOfView.remove( components );
             }
         }
+    }
+    
+    @Override
+    public final void render( RenderEvent event ) {
+        renderer.render( event.getViewId(), event.getLayerId() );
     }
     
     public final DynArray<IndexedTypeSet> getTexts( int viewId, int layerId ) {
@@ -265,4 +275,5 @@ public class TextSystem
             return fonts.iterator();
         }
     }
+
 }

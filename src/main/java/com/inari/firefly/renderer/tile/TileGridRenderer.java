@@ -7,10 +7,11 @@ import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.tile.TileGrid.TileIterator;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 
-public final class TileGridRenderer extends BaseRenderer implements RenderEventListener {
+public final class TileGridRenderer extends BaseRenderer implements FFSystem, RenderEventListener {
     
     public static final TypedKey<TileGridRenderer> CONTEXT_KEY = TypedKey.create( "FF_TILE_GRID_RENDERER", TileGridRenderer.class );
     
