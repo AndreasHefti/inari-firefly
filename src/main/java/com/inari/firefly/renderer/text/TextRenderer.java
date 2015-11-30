@@ -15,6 +15,7 @@ final class TextRenderer extends BaseRenderer {
     private final TextSystem textSystem;
     
     TextRenderer( TextSystem textSystem ) {
+        super();
         this.textSystem = textSystem;
     }
     

@@ -3,7 +3,7 @@ package com.inari.firefly.entity;
 import java.util.ArrayDeque;
 import java.util.Set;
 
-import com.inari.commons.lang.TypedKey;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
@@ -16,7 +16,7 @@ import com.inari.firefly.system.FFSystem;
 
 public final class EntityProvider implements FFSystem, FFContextInitiable  {
     
-    public static final TypedKey<EntityProvider> CONTEXT_KEY = TypedKey.create( "FF_ENTITY_PROVIDER", EntityProvider.class );
+    public static final FFSystemTypeKey<EntityProvider> SYSTEM_KEY = FFSystemTypeKey.create( EntityProvider.class );
 
     final ArrayDeque<Entity> disposedEntities;
     final ArrayDeque<IndexedTypeSet> disposedComponentSets;
@@ -28,6 +28,16 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
         disposedEntities = new ArrayDeque<Entity>();
         disposedComponentSets = new ArrayDeque<IndexedTypeSet>();
         disposedComponents = new DynArray<ArrayDeque<EntityComponent>>();
+    }
+    
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return SYSTEM_KEY;
+    }
+
+    @Override
+    public final FFSystemTypeKey<EntityProvider> systemTypeKey() {
+        return SYSTEM_KEY;
     }
 
     @Override

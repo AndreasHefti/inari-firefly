@@ -15,7 +15,7 @@ public class ControllerSystemTest {
     public void testCreationWithinContext() {
         Indexer.clear();
         FFContext ffContext = new FireFlyMock().getContext();
-        ffContext.getSystem( ControllerSystem.CONTEXT_KEY );
+        ffContext.getSystem( ControllerSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
         ffContext.toAttributes( attrs, Controller.TYPE_KEY );

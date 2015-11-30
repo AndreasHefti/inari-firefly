@@ -103,17 +103,30 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
     @Override
     public final int build( Class<?> componentType ) {
         int componentId = getId();
-        int id = doBuild( componentId, componentType );
+        int id = doBuild( componentId, componentType, false );
         attributes.clear();
         return id;
     }
 
+    @Override
     public final void build( int componentId, Class<?> componentType ) {
-        doBuild( componentId, componentType );
+        doBuild( componentId, componentType, false );
         attributes.clear();
     }
     
-    protected abstract int doBuild( int componentId, Class<?> componentType );
+    @Override
+    public final int activate( Class<?> componentType ) {
+        int componentId = getId();
+        int id = doBuild( componentId, componentType, true );
+        attributes.clear();
+        return id;
+    }
+
+    @Override
+    public final void activate( int componentId, Class<?> componentType ) {
+        doBuild( componentId, componentType, true );
+        attributes.clear();
+    }
 
     @Override
     public final ComponentBuilder buildAndNext() {
@@ -139,6 +152,34 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
         build( componentId, componentType );
         return this;
     }
+    
+    @Override
+    public final ComponentBuilder activateAndNext() {
+        activate();
+        return this;
+    }
+
+    @Override
+    public final ComponentBuilder activateAndNext( int componentId ) {
+        activate( componentId );
+        return this;
+    }
+
+    @Override
+    public final ComponentBuilder activateAndNext( Class<?> componentType ) {
+        activate( getId(), componentType );
+        return this;
+    }
+
+    @Override
+    public final ComponentBuilder activateAndNext( int componentId, Class<?> componentType ) {
+        activate( componentId, componentType );
+        return this;
+    }
+    
+    
+    protected abstract int doBuild( int componentId, Class<?> componentType, boolean activate );
+    
     
     protected <C extends Component> C getInstance( int componentId ) {
         return getInstance( null, componentId );

@@ -34,7 +34,7 @@ public abstract class EntityController extends Controller implements EntityActiv
     protected EntityController( int id, FFContext context ) {
         super( id );
         this.context = context;
-        animationSystem = context.getSystem( AnimationSystem.CONTEXT_KEY );
+        animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         
         context.registerListener( EntityActivationEvent.class, this );
     }

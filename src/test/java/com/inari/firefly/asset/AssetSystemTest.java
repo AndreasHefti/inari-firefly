@@ -30,7 +30,7 @@ public class AssetSystemTest {
     @Test
     public void testCreation() {
         FFContext ffContext = new FireFlyMock().getContext();
-        ffContext.getSystem( AssetSystem.CONTEXT_KEY );
+        ffContext.getSystem( AssetSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
@@ -95,7 +95,7 @@ public class AssetSystemTest {
     @Test
     public void testBuildAsset() {
         FFContext ffContext = new FireFlyMock().getContext();
-        AssetSystem service = ffContext.getSystem( AssetSystem.CONTEXT_KEY );
+        AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
         
         service.init( ffContext );
         Attributes attrs = new Attributes();
@@ -145,7 +145,7 @@ public class AssetSystemTest {
     @Test
     public void testCreateLoadDisposeAndDeleteSingleAsset() {
         FFContext ffContext = new FireFlyMock().getContext();
-        AssetSystem service = ffContext.getSystem( AssetSystem.CONTEXT_KEY );
+        AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
         IEventDispatcher eventDispatcher = ffContext.getEventDispatcher();
         
         service.init( ffContext );
@@ -219,7 +219,7 @@ public class AssetSystemTest {
     @Test
     public void testPreventingOfUseOfIdTwice() {
         FFContext ffContext = new FireFlyMock().getContext();
-        AssetSystem service = ffContext.getSystem( AssetSystem.CONTEXT_KEY );
+        AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
         
@@ -256,7 +256,7 @@ public class AssetSystemTest {
     @Test
     public void testDifferentTypesOnDifferentGroups() {
         FFContext ffContext = new FireFlyMock().getContext();
-        AssetSystem service = ffContext.getSystem( AssetSystem.CONTEXT_KEY );
+        AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
         

@@ -23,7 +23,6 @@ import java.util.List;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.build.ComponentCreationException;
@@ -34,17 +33,17 @@ import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.view.event.ViewEvent;
 
-public final class ViewSystem extends ComponentSystem {
-    
-    private static final int INITAL_SIZE = 20;
+public final class ViewSystem extends ComponentSystem<ViewSystem> {
 
-    public static final TypedKey<ViewSystem> CONTEXT_KEY = TypedKey.create( "FF_VIEW_SYSTEM", ViewSystem.class );
+    public static final FFSystemTypeKey<ViewSystem> SYSTEM_KEY = FFSystemTypeKey.create( ViewSystem.class );
+    
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         View.TYPE_KEY,
         Layer.TYPE_KEY,
     };
 
     public static final int BASE_VIEW_ID = 0;
+    private static final int INITAL_SIZE = 20;
     
     private final DynArray<View> views;
     private final DynArray<Layer> layers;
@@ -54,6 +53,7 @@ public final class ViewSystem extends ComponentSystem {
     private final List<View> activeViewports;
     
     ViewSystem() {
+        super( SYSTEM_KEY );
         views = new DynArray<View>( INITAL_SIZE );
         layers = new DynArray<Layer>( INITAL_SIZE );
         orderedViewports = new ArrayList<View>( INITAL_SIZE );
@@ -327,11 +327,7 @@ public final class ViewSystem extends ComponentSystem {
     }
 
     public final ViewBuilder getViewBuilder() {
-        return new ViewBuilder( false );
-    }
-    
-    public final ViewBuilder getViewBuilderWithAutoActivation() {
-        return new ViewBuilder( true );
+        return new ViewBuilder();
     }
 
     @Override
@@ -366,12 +362,8 @@ public final class ViewSystem extends ComponentSystem {
     
     
     public final class ViewBuilder extends SystemComponentBuilder {
-        
-        private final boolean autoActivation;
 
-        protected ViewBuilder( boolean autoActivation ) {
-            this.autoActivation = autoActivation;
-        }
+        protected ViewBuilder() {}
         
         @Override
         public final SystemComponentKey systemComponentKey() {
@@ -379,7 +371,7 @@ public final class ViewSystem extends ComponentSystem {
         }
 
         @Override
-        public final int doBuild( int componentId, Class<?> subType ) {
+        public final int doBuild( int componentId, Class<?> subType, boolean activate ) {
             View view = new View( componentId );
             view.fromAttributes( attributes );
             
@@ -391,7 +383,7 @@ public final class ViewSystem extends ComponentSystem {
             }
             context.notify( new ViewEvent( view, ViewEvent.Type.VIEW_CREATED ) );
             
-            if ( autoActivation ) {
+            if ( activate ) {
                 activateView( view.index() );
             }
             return view.getId();
@@ -416,7 +408,7 @@ public final class ViewSystem extends ComponentSystem {
         }
 
         @Override
-        public int doBuild( int componentId, Class<?> subType ) {
+        public int doBuild( int componentId, Class<?> subType, boolean activate ) {
             Layer layer = new Layer( componentId );
             layer.fromAttributes( attributes );
             checkName( layer );
@@ -447,8 +439,8 @@ public final class ViewSystem extends ComponentSystem {
     }
     
     private final class ViewBuilderAdapter extends SystemBuilderAdapter<View> {
-        public ViewBuilderAdapter( ComponentSystem system ) {
-            super( system, new ViewBuilder( false ) );
+        public ViewBuilderAdapter( ViewSystem system ) {
+            super( system, new ViewBuilder() );
         }
         @Override
         public final SystemComponentKey componentTypeKey() {
@@ -469,7 +461,7 @@ public final class ViewSystem extends ComponentSystem {
     }
     
     private final class LayerBuilderAdapter extends SystemBuilderAdapter<Layer> {
-        public LayerBuilderAdapter( ComponentSystem system ) {
+        public LayerBuilderAdapter( ViewSystem system ) {
             super( system, new LayerBuilder() );
         }
         @Override

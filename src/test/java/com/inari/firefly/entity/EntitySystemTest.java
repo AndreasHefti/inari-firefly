@@ -21,7 +21,7 @@ public class EntitySystemTest {
     @Test
     public void testCreation() {
         FFContext testContext = new FireFlyMock().getContext();
-        EntitySystem entitySystem = testContext.getSystem( EntitySystem.CONTEXT_KEY );
+        EntitySystem entitySystem = testContext.getSystem( EntitySystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
         testContext.toAttributes( attrs, EntitySystem.ENTITY_TYPE_KEY );
@@ -53,7 +53,7 @@ public class EntitySystemTest {
     @Test
     public void testCreationWithinContext() {
         FFContext testContext = new FireFlyMock().getContext();
-        testContext.getSystem( EntitySystem.CONTEXT_KEY );
+        testContext.getSystem( EntitySystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
         testContext.toAttributes( attrs, EntitySystem.ENTITY_TYPE_KEY );
@@ -67,7 +67,7 @@ public class EntitySystemTest {
     @Test
     public void testCreateAndDelete() {
         FFContext testContext = new FireFlyMock().getContext();
-        EntitySystem entitySystem = testContext.getSystem( EntitySystem.CONTEXT_KEY );
+        EntitySystem entitySystem = testContext.getSystem( EntitySystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
         testContext.toAttributes( attrs, EntitySystem.ENTITY_TYPE_KEY );
@@ -77,12 +77,12 @@ public class EntitySystemTest {
             attrs.toString()
         );
         
-        int entityId = entitySystem.getEntityBuilderWithAutoActivation()
+        int entityId = entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 1 )
             .set( ETransform.XPOSITION, 234 )
             .set( ETransform.YPOSITION, 134 )
             .set( ESprite.SPRITE_ID, 555 )
-        .build();
+        .activate();
         
         assertEquals( "1", String.valueOf( entitySystem.activeEntities.size() ) );
         assertEquals( "0", String.valueOf( entitySystem.inactiveEntities.size() ) );

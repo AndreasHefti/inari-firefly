@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.build.ComponentBuilder;
@@ -39,19 +38,19 @@ import com.inari.firefly.task.event.TaskEvent;
 
 public class StateSystem
     extends
-        ComponentSystem
+        ComponentSystem<StateSystem>
     implements 
         UpdateEventListener,
         WorkflowEventListener {
+    
+    public static final FFSystemTypeKey<StateSystem> SYSTEM_KEY = FFSystemTypeKey.create( StateSystem.class );
     
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Workflow.TYPE_KEY,
         State.TYPE_KEY,
         StateChange.TYPE_KEY
     };
-    
-    public static final TypedKey<StateSystem> CONTEXT_KEY = TypedKey.create( "FF_STATE_SYSTEM", StateSystem.class );
-    
+
     private final DynArray<Workflow> workflows;
     private final DynArray<State> states;
     private final DynArray<Collection<StateChange>> stateChangesForState;
@@ -59,6 +58,7 @@ public class StateSystem
     private int updateStep = 1;
 
     public StateSystem() {
+        super( SYSTEM_KEY );
         workflows = new DynArray<Workflow>( Indexer.getIndexedObjectSize( Workflow.class ) );
         states = new DynArray<State>( Indexer.getIndexedObjectSize( State.class ) );
         stateChangesForState = new DynArray<Collection<StateChange>>( Indexer.getIndexedObjectSize( State.class ) );
@@ -410,7 +410,7 @@ public class StateSystem
   
 
     private final class WorkflowBuilderAdapter extends SystemBuilderAdapter<Workflow> {
-        public WorkflowBuilderAdapter( ComponentSystem system ) {
+        public WorkflowBuilderAdapter( StateSystem system ) {
             super( system, new WorkflowBuilder() );
         }
         @Override
@@ -432,7 +432,7 @@ public class StateSystem
     }
     
     private final class StateBuilderAdapter extends SystemBuilderAdapter<State> {
-        public StateBuilderAdapter( ComponentSystem system ) {
+        public StateBuilderAdapter( StateSystem system ) {
             super( system, new StateBuilder() );
         }
         @Override
@@ -454,7 +454,7 @@ public class StateSystem
     }
     
     private final class StateChangeBuilderAdapter extends SystemBuilderAdapter<StateChange> {
-        public StateChangeBuilderAdapter( ComponentSystem system ) {
+        public StateChangeBuilderAdapter( StateSystem system ) {
             super( system, new StateChangeBuilder() );
         }
         @Override
@@ -501,7 +501,7 @@ public class StateSystem
         }
         
         @Override
-        public int doBuild( int componentId, Class<?> subType ) {
+        public int doBuild( int componentId, Class<?> subType, boolean activate ) {
             Workflow workflow = new Workflow( componentId );
             workflow.fromAttributes( attributes );
             workflows.set( workflow.index(), workflow );
@@ -518,7 +518,7 @@ public class StateSystem
         }
         
         @Override
-        public int doBuild( int componentId, Class<?> subType ) {
+        public int doBuild( int componentId, Class<?> subType, boolean activate ) {
             State state = new State( componentId );
             state.fromAttributes( attributes );
             states.set( state.index(), state );
@@ -534,7 +534,7 @@ public class StateSystem
         }
         
         @Override
-        public int doBuild( int componentId, Class<?> subType ) {
+        public int doBuild( int componentId, Class<?> subType, boolean activate ) {
             StateChange stateChange = new StateChange( componentId );
             stateChange.fromAttributes( attributes );
             

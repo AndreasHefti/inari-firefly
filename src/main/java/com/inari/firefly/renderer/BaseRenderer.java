@@ -17,7 +17,11 @@ public abstract class BaseRenderer implements FFContextInitiable {
     @Override
     public void init( FFContext context ) throws FFInitException {
         systemInterface = context.getSystemInterface();
-        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+    }
+    
+    @Override
+    public void dispose( FFContext context ) {
     }
     
     protected final void render( SpriteRenderable sprite ) {

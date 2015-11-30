@@ -3,7 +3,6 @@ package com.inari.firefly.entity;
 import java.util.ArrayDeque;
 import java.util.Iterator;
 
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.entity.event.EntityPrefabActionEvent;
@@ -15,14 +14,14 @@ import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public class EntityPrefabSystem extends ComponentSystem implements EntityPrefabActionListener {
+public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> implements EntityPrefabActionListener {
+    
+    public static final FFSystemTypeKey<EntityPrefabSystem> SYSTEM_KEY = FFSystemTypeKey.create( EntityPrefabSystem.class );
     
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         EntityPrefab.TYPE_KEY
     };
-    
-    public static final TypedKey<EntityPrefabSystem> CONTEXT_KEY = TypedKey.create( "ENTITY_PREFAB_SYSTEM", EntityPrefabSystem.class );
-    
+
     private DynArray<EntityPrefab> prefabs;
     private DynArray<String> prefabNames;
     private DynArray<IndexedTypeSet> prefabComponents;
@@ -35,6 +34,7 @@ public class EntityPrefabSystem extends ComponentSystem implements EntityPrefabA
     
     
     EntityPrefabSystem() {
+        super( SYSTEM_KEY );
         attributeMap = new EntityAttributeMap();
     }
     
@@ -47,8 +47,8 @@ public class EntityPrefabSystem extends ComponentSystem implements EntityPrefabA
         prefabComponents = new DynArray<IndexedTypeSet>();
         components = new DynArray<ArrayDeque<IndexedTypeSet>>();
         
-        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
-        entityProvider = context.getSystem( EntityProvider.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        entityProvider = context.getSystem( EntityProvider.SYSTEM_KEY );
         context.registerListener( EntityPrefabActionEvent.class, this );
     }
     
@@ -167,7 +167,7 @@ public class EntityPrefabSystem extends ComponentSystem implements EntityPrefabA
 
     public final void rebuildEntity( int prefabId, int entityId, EntityAttributeMap attributes, boolean activation ) {
         if ( activation ) {
-            entitySystem.deactivate( entityId );
+            entitySystem.deactivateEntity( entityId );
         }
 
         IndexedTypeSet components = entitySystem.getComponents( entityId );
@@ -181,14 +181,14 @@ public class EntityPrefabSystem extends ComponentSystem implements EntityPrefabA
         entitySystem.components.set( entityId, newComponents );
 
         if ( activation ) {
-            entitySystem.activate( entityId );
+            entitySystem.activateEntity( entityId );
         }
     }
 
     public final int activateOne( int prefabId, EntityAttributeMap attributes ) {
         int newEntityId = buildOne( prefabId, attributes ).getId();
         if ( newEntityId >= 0 ) {
-            entitySystem.activate( newEntityId );
+            entitySystem.activateEntity( newEntityId );
         }
 
         return newEntityId;
@@ -261,7 +261,7 @@ public class EntityPrefabSystem extends ComponentSystem implements EntityPrefabA
         }
 
         @Override
-        public final int doBuild( int componentId, Class<?> subType ) {
+        public final int doBuild( int componentId, Class<?> subType, boolean activate ) {
             IndexedTypeSet components = entityProvider.getComponentTypeSet();
             entityProvider.createComponents( components, (EntityAttributeMap) attributes );
 

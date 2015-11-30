@@ -20,6 +20,7 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.system.FFSystem.FFSystemTypeKey;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
@@ -36,7 +37,7 @@ public final class FFContext {
     private final Map<TypedKey<?>, Object> properties =  new LinkedHashMap<TypedKey<?>, Object>();
     
     private final Map<TypedKey<? extends DataComponent>, DataComponent> dataComponents = new LinkedHashMap<TypedKey<? extends DataComponent>, DataComponent>();
-    private final Map<TypedKey<? extends FFSystem>, FFSystem> componentSystems = new LinkedHashMap<TypedKey<? extends FFSystem>, FFSystem>();
+    private final DynArray<FFSystem> systems = new DynArray<FFSystem>();
     
     private final DynArray<SystemBuilderAdapter<?>> systemBuilderAdapter = new DynArray<SystemBuilderAdapter<?>>();
     
@@ -77,21 +78,21 @@ public final class FFContext {
         return input;
     }
 
-    public final <T extends FFSystem> T getSystem( TypedKey<T> key ) {
-        if ( !componentSystems.containsKey( key ) ) {
+    public final <T extends FFSystem> T getSystem( FFSystemTypeKey<T> key ) {
+        if ( !systems.contains( key.index() ) ) {
             loadSystem( key, true );
         }
-        return key.cast( componentSystems.get( key ) );
+        return key.cast( systems.get( key.index() ) );
     }
     
-    public final <T extends FFSystem> void loadSystem( TypedKey<T> key ) {
+    public final <T extends FFSystem> void loadSystem( FFSystemTypeKey<T> key ) {
         loadSystem( key, false );
     }
     
-    public final <T extends FFSystem> void loadSystem( TypedKey<T> key, boolean force ) {
-        if ( componentSystems.containsKey( key ) ) {
+    public final <T extends FFSystem> void loadSystem( FFSystemTypeKey<T> key, boolean force ) {
+        if ( systems.contains( key.index() ) ) {
             if ( force ) {
-                FFSystem oldSystem = componentSystems.remove( key );
+                FFSystem oldSystem = systems.remove( key.index() );
                 oldSystem.dispose( this );
             } else {
                 throw new FFInitException( "The System for key: " + key + " already exists" );
@@ -99,20 +100,20 @@ public final class FFContext {
         }
         
         try {
-            Class<T> typeClass = key.type();
+            Class<T> typeClass = key.systemType();
             Constructor<T> constructor = typeClass.getDeclaredConstructor();
             boolean accessible = constructor.isAccessible();
             constructor.setAccessible( true );
             T componentSystem = constructor.newInstance();
-            componentSystems.put( key, componentSystem );
+            systems.set( key.index(), componentSystem );
             componentSystem.init( this );
             constructor.setAccessible( accessible );
             
             if ( componentSystem instanceof ComponentSystem ) {
-                initComponentSystem( (ComponentSystem) componentSystem );
+                initComponentSystem( (ComponentSystem<?>) componentSystem );
             }
             
-            if ( key == EntitySystem.CONTEXT_KEY ) {
+            if ( typeClass == EntitySystem.class ) {
                 entitySystem = (EntitySystem) componentSystem;
             }
         } catch ( Exception e ) {
@@ -120,15 +121,15 @@ public final class FFContext {
         }
     }
     
-    public final <T extends FFSystem> void disposeSystem( TypedKey<T> key ) {
+    public final <T extends FFSystem> void disposeSystem( FFSystemTypeKey<T> key ) {
         @SuppressWarnings( "unchecked" )
-        T system = (T) componentSystems.remove( key );
+        T system = (T) systems.remove( key.index() );
         if ( system != null ) {
             system.dispose( this );
         }
     }
     
-    private final void initComponentSystem( ComponentSystem system ) {
+    private final void initComponentSystem( ComponentSystem<?> system ) {
         SystemBuilderAdapter<?>[] supportedBuilderAdapter = system.getSupportedBuilderAdapter();
         if ( supportedBuilderAdapter != null ) {
             for ( int i = 0; i < supportedBuilderAdapter.length; i++ ) {
@@ -183,7 +184,7 @@ public final class FFContext {
     }
     
     public final void deactivateEntity( int entityId ) {
-        entitySystem.deactivate( entityId );
+        entitySystem.deactivateEntity( entityId );
     }
     
     public final void deleteEntity( int entityId ) {
@@ -266,10 +267,10 @@ public final class FFContext {
         }
         dataComponents.clear();
         
-        for ( FFSystem system : componentSystems.values() ) {
+        for ( FFSystem system : systems ) {
             system.dispose( this );
         }
-        componentSystems.clear();
+        systems.clear();
     }
 
 }

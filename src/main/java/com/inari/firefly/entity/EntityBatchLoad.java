@@ -48,7 +48,7 @@ public class EntityBatchLoad implements Loadable {
             @Override
             public void dispose( FFContext context ) {
                 for ( int entityId : entityIds ) {
-                    entitySystem.deactivate( entityId );
+                    entitySystem.deactivateEntity( entityId );
                 }
             }
         };

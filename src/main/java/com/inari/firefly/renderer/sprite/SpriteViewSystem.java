@@ -2,8 +2,8 @@ package com.inari.firefly.renderer.sprite;
 
 import java.util.Comparator;
 
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.entity.ETransform;
@@ -18,15 +18,31 @@ import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 
-public final class SpriteViewRenderer extends BaseRenderer implements FFSystem, RenderEventListener, EntityActivationListener {
+public final class SpriteViewSystem 
+    extends 
+        BaseRenderer 
+    implements 
+        FFSystem, 
+        RenderEventListener, 
+        EntityActivationListener {
     
-    public static final TypedKey<SpriteViewRenderer> CONTEXT_KEY = TypedKey.create( "FF_SPRITE_VIEW_RENDERER", SpriteViewRenderer.class );
+    public static final FFSystemTypeKey<SpriteViewSystem> SYSTEM_KEY = FFSystemTypeKey.create( SpriteViewSystem.class );
     
     // TODO another approach would be, storing only the id's within DynArray<DynArray<IntBag>>
     private final DynArray<DynArray<DynArray<IndexedTypeSet>>> spritesPerViewAndLayer;
     
-    SpriteViewRenderer() {
+    SpriteViewSystem() {
         spritesPerViewAndLayer = new DynArray<DynArray<DynArray<IndexedTypeSet>>>();
+    }
+    
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return SYSTEM_KEY;
+    }
+
+    @Override
+    public final FFSystemTypeKey<SpriteViewSystem> systemTypeKey() {
+        return SYSTEM_KEY;
     }
 
     @Override

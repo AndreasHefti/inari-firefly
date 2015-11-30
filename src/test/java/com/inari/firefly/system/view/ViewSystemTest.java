@@ -24,7 +24,7 @@ public class ViewSystemTest {
         Indexer.clear();
         FFContext context = new FireFlyMock().getContext();
         IEventDispatcher eventDispatcher = context.getEventDispatcher();
-        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
         
@@ -64,7 +64,7 @@ public class ViewSystemTest {
         Indexer.clear();
         FFContext context = new FireFlyMock().getContext();
         IEventDispatcher eventDispatcher = context.getEventDispatcher();
-        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
 
         Attributes attrs = new Attributes();
         
@@ -146,7 +146,7 @@ public class ViewSystemTest {
         Indexer.clear();
         FFContext context = new FireFlyMock().getContext();
         IEventDispatcher eventDispatcher = context.getEventDispatcher();
-        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
         

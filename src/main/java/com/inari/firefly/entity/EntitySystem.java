@@ -18,7 +18,6 @@ package com.inari.firefly.entity;
 import java.util.Iterator;
 
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.functional.Predicate;
 import com.inari.commons.lang.indexed.Indexed;
@@ -41,16 +40,15 @@ import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public final class EntitySystem extends ComponentSystem implements Iterable<Entity> {
+public final class EntitySystem extends ComponentSystem<EntitySystem> implements Iterable<Entity> {
     
+    public static final FFSystemTypeKey<EntitySystem> SYSTEM_KEY = FFSystemTypeKey.create( EntitySystem.class );
     public static final SystemComponentKey ENTITY_TYPE_KEY = SystemComponentKey.create( EntityComponentAdapter.class );
 
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         ENTITY_TYPE_KEY
     };
-    
-    public static final TypedKey<EntitySystem> CONTEXT_KEY = TypedKey.create( "FF_ENTITY_SYSTEM", EntitySystem.class );
-    
+
     private static final int INIT_SIZE = 1000;
 
     private EntityProvider entityProvider;
@@ -60,6 +58,7 @@ public final class EntitySystem extends ComponentSystem implements Iterable<Enti
     final DynArray<IndexedTypeSet> components;
     
     EntitySystem() {
+        super( SYSTEM_KEY );
         activeEntities = new DynArray<Entity>( INIT_SIZE );
         inactiveEntities = new DynArray<Entity>( INIT_SIZE );
         components = new DynArray<IndexedTypeSet>( INIT_SIZE );
@@ -69,7 +68,7 @@ public final class EntitySystem extends ComponentSystem implements Iterable<Enti
     public void init( FFContext context ) {
         super.init( context );
         
-        entityProvider = context.getSystem( EntityProvider.CONTEXT_KEY );
+        entityProvider = context.getSystem( EntityProvider.SYSTEM_KEY );
 
         Integer entityCapacity = context.getProperty( FFContext.Properties.ENTITY_MAP_CAPACITY );
         if ( entityCapacity != null ) {
@@ -87,11 +86,7 @@ public final class EntitySystem extends ComponentSystem implements Iterable<Enti
     }
     
     public final EntityBuilder getEntityBuilder() {
-        return new EntityBuilder( false );
-    }
-    
-    public final EntityBuilder getEntityBuilderWithAutoActivation() {
-        return new EntityBuilder( true );
+        return new EntityBuilder();
     }
 
     public final boolean isActive( int entityId ) {
@@ -102,7 +97,7 @@ public final class EntitySystem extends ComponentSystem implements Iterable<Enti
         return !( activeEntities.contains( entityId ) && inactiveEntities.contains( entityId ) );
     }
     
-    public final void activate( int entityId ) {
+    public final void activateEntity( int entityId ) {
         if ( activeEntities.contains( entityId ) || !inactiveEntities.contains( entityId ) ) {
             return;
         }
@@ -116,7 +111,7 @@ public final class EntitySystem extends ComponentSystem implements Iterable<Enti
         );
     }
     
-    public final void deactivate( int entityId ) {
+    public final void deactivateEntity( int entityId ) {
         if ( !activeEntities.contains( entityId ) ) {
             return;
         }
@@ -135,7 +130,7 @@ public final class EntitySystem extends ComponentSystem implements Iterable<Enti
 
     public final void delete( int entityId ) {
         if ( activeEntities.contains( entityId ) ) {
-            deactivate( entityId );
+            deactivateEntity( entityId );
         }
         
         if ( !inactiveEntities.contains( entityId ) ) {
@@ -362,11 +357,9 @@ public final class EntitySystem extends ComponentSystem implements Iterable<Enti
     public final class EntityBuilder extends SystemComponentBuilder {
         
         private IndexedTypeSet prefabComponents;
-        private final boolean autoActivate;
 
-        private EntityBuilder( boolean autoActivate ) {
+        private EntityBuilder() {
             super( new EntityAttributeMap() );
-            this.autoActivate = autoActivate;
         }
         
         public EntityBuilder setPrefabComponents( IndexedTypeSet prefabComponents ) {
@@ -375,7 +368,7 @@ public final class EntitySystem extends ComponentSystem implements Iterable<Enti
         }
         
         @Override
-        public int doBuild( int componentId, Class<?> componentType ) {
+        public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             Entity entity = entityProvider.getEntity( componentId );
             
             if ( attributes.contains( Entity.NAME ) ) {
@@ -402,8 +395,8 @@ public final class EntitySystem extends ComponentSystem implements Iterable<Enti
             
             inactiveEntities.set( entity.getId(), entity );
             
-            if ( autoActivate ) {
-                activate( entity.index() );
+            if ( activate ) {
+                activateEntity( entity.index() );
             }
             
             return entity.index();
@@ -469,7 +462,7 @@ public final class EntitySystem extends ComponentSystem implements Iterable<Enti
             activeEntityIds.fromConfigString( activeEntityIdsString );
             IntIterator iterator = activeEntityIds.iterator();
             while ( iterator.hasNext() ) {
-                activate( iterator.next() );
+                activateEntity( iterator.next() );
             }
         }
 

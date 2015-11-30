@@ -35,18 +35,22 @@ public interface ComponentBuilder {
     ComponentBuilder set( Attribute... attributes );
     
     int build();
-    
     void build( int componentId );
-    
     int build( Class<?> componentType );
-    
     void build( int componentId, Class<?> componentType );
     
+    int activate();
+    void activate( int componentId );
+    int activate( Class<?> componentType );
+    void activate( int componentId, Class<?> componentType );
+    
     ComponentBuilder buildAndNext();
-    
     ComponentBuilder buildAndNext( int componentId );
-    
     ComponentBuilder buildAndNext( Class<?> componentType  );
-    
     ComponentBuilder buildAndNext( int componentId, Class<?> componentType  );
+    
+    ComponentBuilder activateAndNext();
+    ComponentBuilder activateAndNext( int componentId );
+    ComponentBuilder activateAndNext( Class<?> componentType  );
+    ComponentBuilder activateAndNext( int componentId, Class<?> componentType  );
 }

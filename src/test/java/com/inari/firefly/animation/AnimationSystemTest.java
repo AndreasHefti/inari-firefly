@@ -23,7 +23,7 @@ public class AnimationSystemTest {
     @Test
     public void testCreationWithinContext() {
         FFContext ffContext = new FireFlyMock().getContext();
-        ffContext.getSystem( AnimationSystem.CONTEXT_KEY );
+        ffContext.getSystem( AnimationSystem.SYSTEM_KEY );
 
         Attributes attrs = new Attributes();
         ffContext.toAttributes( attrs, Animation.TYPE_KEY );
@@ -37,7 +37,7 @@ public class AnimationSystemTest {
     @Test
     public void testOneAnimation() {
         FFContext ffContext = new FireFlyMock().getContext();
-        AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.CONTEXT_KEY );
+        AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.SYSTEM_KEY );
 
         animationSystem.getAnimationBuilder()
             .set( Animation.NAME, "testAnimation" )
@@ -62,7 +62,7 @@ public class AnimationSystemTest {
     @Test
     public void testUpdate() {
         FFContext ffContext = new FireFlyMock().getContext();
-        AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.CONTEXT_KEY );
+        AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.SYSTEM_KEY );
 
         animationSystem.getAnimationBuilder(  )
             .set( Animation.NAME, "testAnimation" )

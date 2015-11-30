@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.inari.commons.StringUtils;
-import com.inari.commons.lang.TypedKey;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.build.ComponentCreationException;
@@ -34,25 +33,25 @@ import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public class AssetSystem extends ComponentSystem {
+public class AssetSystem extends ComponentSystem<AssetSystem> {
     
+    public static final FFSystemTypeKey<AssetSystem> SYSTEM_KEY = FFSystemTypeKey.create( AssetSystem.class );
+
+    public static final String DEFAULT_GROUP_NAME = "FF_DEFAULT_ASSET_GROUP";
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Asset.TYPE_KEY
     };
-    
-    public static final TypedKey<AssetSystem> CONTEXT_KEY = TypedKey.create( "FF_ASSET_SYSTEM", AssetSystem.class );
-    
-    public static final String DEFAULT_GROUP_NAME = "FF_DEFAULT_ASSET_GROUP";
     
     private final Map<AssetNameKey, Asset> assets;
     private final Map<AssetTypeKey, Asset> typeMapping;
     
     
     AssetSystem() {
+        super( SYSTEM_KEY );
         assets = new LinkedHashMap<AssetNameKey, Asset>();
         typeMapping = new LinkedHashMap<AssetTypeKey, Asset>();
     }
-    
+
     @Override
     public void init( FFContext context ) {
         super.init( context );
@@ -90,11 +89,7 @@ public class AssetSystem extends ComponentSystem {
     }
 
     public final AssetBuilder getAssetBuilder() {
-        return new AssetBuilder( false );
-    }
-    
-    public final AssetBuilder getAssetBuilderWithAutoLoad() {
-        return new AssetBuilder( true );
+        return new AssetBuilder();
     }
     
     public final void loadAsset( AssetNameKey key ) {
@@ -390,11 +385,7 @@ public class AssetSystem extends ComponentSystem {
     
     public final class AssetBuilder extends SystemComponentBuilder {
         
-        private final boolean autoLoad;
-        
-        private AssetBuilder( boolean autoLoad ) {
-            this.autoLoad = autoLoad;
-        }
+        private AssetBuilder() {}
         
         @Override
         public final SystemComponentKey systemComponentKey() {
@@ -402,7 +393,7 @@ public class AssetSystem extends ComponentSystem {
         }
 
         @Override
-        public int doBuild( int componentId, Class<?> componentType ) {
+        public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
             Asset asset = getInstance( componentId );
             
@@ -428,7 +419,7 @@ public class AssetSystem extends ComponentSystem {
             
             context.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
             
-            if ( autoLoad ) {
+            if ( activate ) {
                 load( asset );
             }
             
@@ -438,7 +429,7 @@ public class AssetSystem extends ComponentSystem {
     
     private final class AssetBuilderAdapter extends SystemBuilderAdapter<Asset> {
         public AssetBuilderAdapter( AssetSystem system ) {
-            super( system, new AssetBuilder( false ) );
+            super( system, new AssetBuilder() );
         }
         @Override
         public final SystemComponentKey componentTypeKey() {

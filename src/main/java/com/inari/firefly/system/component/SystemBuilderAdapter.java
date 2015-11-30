@@ -28,15 +28,15 @@ import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public abstract class SystemBuilderAdapter<C extends Component> {
     
-    protected final ComponentSystem system;
+    protected final ComponentSystem<?> system;
     protected final SystemComponentBuilder componentBuilder;
 
-    public SystemBuilderAdapter( ComponentSystem system, SystemComponentBuilder componentBuilder ) {
+    public SystemBuilderAdapter( ComponentSystem<?> system, SystemComponentBuilder componentBuilder ) {
         this.system = system;
         this.componentBuilder = componentBuilder;
     }
 
-    public final ComponentSystem getSystem() {
+    public final ComponentSystem<?> getSystem() {
         return system;
     }
 

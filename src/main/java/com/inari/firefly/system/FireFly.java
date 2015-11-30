@@ -26,7 +26,7 @@ import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntityPrefabSystem;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.renderer.sprite.SpriteViewRenderer;
+import com.inari.firefly.renderer.sprite.SpriteViewSystem;
 import com.inari.firefly.renderer.tile.TileGridSystem;
 import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.state.StateSystem;
@@ -57,18 +57,18 @@ public abstract class FireFly {
         context = new FFContext( eventDispatcher, systemInterface, timer, input );
         
         lowerSystemFacade = context.getSystemInterface();
-        viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         
-        context.loadSystem( AssetSystem.CONTEXT_KEY );
-        context.loadSystem( StateSystem.CONTEXT_KEY );
-        context.loadSystem( EntitySystem.CONTEXT_KEY );
-        context.loadSystem( EntityPrefabSystem.CONTEXT_KEY );
-        context.loadSystem( ControllerSystem.CONTEXT_KEY );
-        context.loadSystem( AnimationSystem.CONTEXT_KEY );
-        context.loadSystem( SoundSystem.CONTEXT_KEY );
-        context.loadSystem( SpriteViewRenderer.CONTEXT_KEY );
-        context.loadSystem( TileGridSystem.CONTEXT_KEY );
-        context.loadSystem( TaskSystem.CONTEXT_KEY );
+        context.loadSystem( AssetSystem.SYSTEM_KEY );
+        context.loadSystem( StateSystem.SYSTEM_KEY );
+        context.loadSystem( EntitySystem.SYSTEM_KEY );
+        context.loadSystem( EntityPrefabSystem.SYSTEM_KEY );
+        context.loadSystem( ControllerSystem.SYSTEM_KEY );
+        context.loadSystem( AnimationSystem.SYSTEM_KEY );
+        context.loadSystem( SoundSystem.SYSTEM_KEY );
+        context.loadSystem( SpriteViewSystem.SYSTEM_KEY );
+        context.loadSystem( TileGridSystem.SYSTEM_KEY );
+        context.loadSystem( TaskSystem.SYSTEM_KEY );
         
         updateEvent = new UpdateEvent( timer );
         renderEvent = new RenderEvent();

@@ -3,7 +3,6 @@ package com.inari.firefly.renderer.text;
 import java.util.Iterator;
 
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
@@ -26,17 +25,17 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public class TextSystem 
     extends 
-        ComponentSystem
+        ComponentSystem<TextSystem>
     implements 
         EntityActivationListener,
         RenderEventListener {
     
+    public static final FFSystemTypeKey<TextSystem> SYSTEM_KEY = FFSystemTypeKey.create( TextSystem.class );
+    
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Font.TYPE_KEY
     };
-    
-    public static final TypedKey<TextSystem> CONTEXT_KEY = TypedKey.create( "TextSystem", TextSystem.class );
-    
+
     private EntitySystem entitySystem;
     private AssetSystem assetSystem;
     private TextRenderer renderer;
@@ -45,14 +44,16 @@ public class TextSystem
     private final DynArray<DynArray<DynArray<IndexedTypeSet>>> textPerViewAndLayer;
     
     TextSystem() {
+        super( SYSTEM_KEY );
         fonts = new DynArray<Font>();
         textPerViewAndLayer = new DynArray<DynArray<DynArray<IndexedTypeSet>>>();
     }
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
-        assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        
         renderer = new TextRenderer( this );
         renderer.init( context );
         
@@ -174,11 +175,7 @@ public class TextSystem
     }
     
     public final FontBuilder getFontBuilder() {
-        return new FontBuilder( false );
-    }
-    
-    public final FontBuilder getFontBuilderWithAutoLoad() {
-        return new FontBuilder( true );
+        return new FontBuilder();
     }
 
     @Override
@@ -194,12 +191,8 @@ public class TextSystem
     }
 
     public final class FontBuilder extends SystemComponentBuilder {
-        
-        private final boolean autoLoad;
 
-        protected FontBuilder( boolean autoLoad ) {
-            this.autoLoad = autoLoad;
-        }
+        protected FontBuilder() {}
         
         @Override
         public final SystemComponentKey systemComponentKey() {
@@ -207,7 +200,7 @@ public class TextSystem
         }
 
         @Override
-        public final int doBuild( int componentId, Class<?> subType ) {
+        public final int doBuild( int componentId, Class<?> subType, boolean activate ) {
             Font font = new Font( componentId );
             font.fromAttributes( attributes );
             
@@ -246,7 +239,7 @@ public class TextSystem
  
             fonts.set( font.index(), font );
             
-            if ( autoLoad ) {
+            if ( activate ) {
                 loadFont( font.index() );
             }
             
@@ -255,8 +248,8 @@ public class TextSystem
     }
     
     private final class FontBuilderHelper extends SystemBuilderAdapter<Font> {
-        public FontBuilderHelper( ComponentSystem system ) {
-            super( system, new FontBuilder( false ) );
+        public FontBuilderHelper( TextSystem system ) {
+            super( system, new FontBuilder() );
         }
         @Override
         public final SystemComponentKey componentTypeKey() {

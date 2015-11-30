@@ -17,7 +17,6 @@ package com.inari.firefly.task;
 
 import java.util.Iterator;
 
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.component.Component;
@@ -29,17 +28,20 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.task.event.TaskEvent;
 import com.inari.firefly.task.event.TaskEventListener;
 
-public final class TaskSystem extends ComponentSystem implements TaskEventListener {
+public final class TaskSystem extends ComponentSystem<TaskSystem> implements TaskEventListener {
+    
+    public static final FFSystemTypeKey<TaskSystem> SYSTEM_KEY = FFSystemTypeKey.create( TaskSystem.class );
     
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Task.TYPE_KEY,
     };
     
-    public static final TypedKey<TaskSystem> CONTEXT_KEY = TypedKey.create( "FF_TASK_SYSTEM", TaskSystem.class );
+    
     
     private final DynArray<Task> tasks;
     
     TaskSystem() {
+        super( SYSTEM_KEY );
         tasks = new DynArray<Task>();
     }
 
@@ -143,7 +145,7 @@ public final class TaskSystem extends ComponentSystem implements TaskEventListen
         }
         
         @Override
-        public final int doBuild( int componentId, Class<?> taskType ) {
+        public final int doBuild( int componentId, Class<?> taskType, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, taskType.getName() );
             
             Task result = getInstance( context, componentId );
@@ -156,7 +158,7 @@ public final class TaskSystem extends ComponentSystem implements TaskEventListen
     }
     
     private final class TaskBuilderAdapter extends SystemBuilderAdapter<Task> {
-        public TaskBuilderAdapter( ComponentSystem system ) {
+        public TaskBuilderAdapter( TaskSystem system ) {
             super( system, new TaskBuilder() );
         }
         @Override

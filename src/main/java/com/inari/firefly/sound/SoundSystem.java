@@ -18,7 +18,6 @@ package com.inari.firefly.sound;
 import java.util.Iterator;
 
 import com.inari.commons.StringUtils;
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.asset.AssetTypeKey;
@@ -35,22 +34,23 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public final class SoundSystem
     extends
-        ComponentSystem
+        ComponentSystem<SoundSystem>
     implements 
         SoundEventListener {
+    
+    public static final FFSystemTypeKey<SoundSystem> SYSTEM_KEY = FFSystemTypeKey.create( SoundSystem.class );
     
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Sound.TYPE_KEY
     };
-    
-    public static final TypedKey<SoundSystem> CONTEXT_KEY = TypedKey.create( "FF_SOUND_SYSTEM", SoundSystem.class );
-    
+
     private AssetSystem assetSystem;
     private FFSystemInterface systemInterface;
     
     private final DynArray<Sound> sounds;
 
     SoundSystem() {
+        super( SYSTEM_KEY );
         sounds = new DynArray<Sound>();
     }
     
@@ -58,7 +58,7 @@ public final class SoundSystem
     public final void init( FFContext context ) {
         super.init( context );
         
-        assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        assetSystem = context.getSystem( AssetSystem. SYSTEM_KEY );
         systemInterface = context.getSystemInterface();
         
         context.registerListener( SoundEvent.class, this );
@@ -182,7 +182,7 @@ public final class SoundSystem
         }
 
         @Override
-        public int doBuild( int componentId, Class<?> subType ) {
+        public int doBuild( int componentId, Class<?> subType, boolean activate ) {
             if ( componentId >= 0 && sounds.contains( componentId ) ) {
                 throw new FFInitException( "Sound with id: " + componentId + " already exists: " + sounds.get( componentId ).getName() );
             }
@@ -204,7 +204,7 @@ public final class SoundSystem
     }
     
     private final class SoundBuilderAdapter extends SystemBuilderAdapter<Sound> {
-        public SoundBuilderAdapter( ComponentSystem system ) {
+        public SoundBuilderAdapter( SoundSystem system ) {
             super( system, new SoundBuilder() );
         }
         @Override

@@ -28,8 +28,8 @@ public class SystemTests {
         Indexer.clear();
         FireFly firefly = new FireFlyMock( new EventDispatcher() );
         FFContext context = firefly.getContext();
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         FFSystemInterface lowerSystemMock = context.getSystemInterface();
         
         assetSystem
@@ -65,7 +65,7 @@ public class SystemTests {
 
         assetSystem.loadAsset( TEXTURE_ASSET_KEY );
         assetSystem.loadAsset( SPRITE_ASSET_KEY );
-        entitySystem.activate( entityId );
+        entitySystem.activateEntity( entityId );
         
         assertEquals( 
             "LowerSystemFacadeMock [" +

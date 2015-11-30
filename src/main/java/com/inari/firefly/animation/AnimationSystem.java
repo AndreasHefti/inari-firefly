@@ -17,7 +17,6 @@ package com.inari.firefly.animation;
 
 import java.util.Iterator;
 
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.animation.event.AnimationEvent;
 import com.inari.firefly.animation.event.AnimationEventListener;
@@ -32,20 +31,21 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public final class AnimationSystem 
     extends 
-        ComponentSystem
+        ComponentSystem<AnimationSystem>
     implements
         UpdateEventListener, 
         AnimationEventListener {
     
+    public static final FFSystemTypeKey<AnimationSystem> SYSTEM_KEY = FFSystemTypeKey.create( AnimationSystem.class );
+    
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Animation.TYPE_KEY
     };
-    
-    public static final TypedKey<AnimationSystem> CONTEXT_KEY = TypedKey.create( "FF_ANIMATION_SYSTEM", AnimationSystem.class );
-    
+
     private final DynArray<Animation> animations;
 
     AnimationSystem() {
+        super( SYSTEM_KEY );
         animations = new DynArray<Animation>();
     }
     
@@ -228,9 +228,14 @@ public final class AnimationSystem
     public final class AnimationBuilder extends SystemComponentBuilder {
         
         private AnimationBuilder() {}
+        
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return Animation.TYPE_KEY;
+        }
 
         @Override
-        public int doBuild( int componentId, Class<?> componentType ) {
+        public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             checkType( componentType );
             attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
             Animation animation = getInstance( context, componentId );
@@ -241,11 +246,6 @@ public final class AnimationSystem
             postInit( animation, context );
             
             return animation.getId();
-        }
-
-        @Override
-        public final SystemComponentKey systemComponentKey() {
-            return Animation.TYPE_KEY;
         }
     }
 
@@ -270,4 +270,5 @@ public final class AnimationSystem
             return animations.iterator();
         }
     }
+
 }

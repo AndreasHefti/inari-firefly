@@ -18,7 +18,6 @@ package com.inari.firefly.control;
 import java.util.Iterator;
 
 import com.inari.commons.StringUtils;
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
@@ -31,19 +30,20 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public final class ControllerSystem
     extends
-        ComponentSystem
+        ComponentSystem<ControllerSystem>
     implements
         UpdateEventListener {
+    
+    public static final FFSystemTypeKey<ControllerSystem> SYSTEM_KEY = FFSystemTypeKey.create( ControllerSystem.class );
     
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
        Controller.TYPE_KEY
     };
-    
-    public static final TypedKey<ControllerSystem> CONTEXT_KEY = TypedKey.create( "FF_COMPONENT_CONTROLLER_SYSTEM", ControllerSystem.class );
-    
+
     private final DynArray<Controller> controller;
 
     ControllerSystem() {
+        super( SYSTEM_KEY );
         controller = new DynArray<Controller>();
     }
     
@@ -164,7 +164,7 @@ public final class ControllerSystem
         }
 
         @Override
-        public final int doBuild( int componentId, Class<?> controllerType ) {
+        public final int doBuild( int componentId, Class<?> controllerType, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, controllerType.getName() );
             Controller result = getInstance( context, componentId );
             result.fromAttributes( attributes );
@@ -177,7 +177,7 @@ public final class ControllerSystem
     }
 
     private final class ControllerBuilderAdapter extends SystemBuilderAdapter<Controller> {
-        public ControllerBuilderAdapter( ComponentSystem system ) {
+        public ControllerBuilderAdapter( ControllerSystem system ) {
             super( system, new ControllerBuilder() );
         }
         @Override
