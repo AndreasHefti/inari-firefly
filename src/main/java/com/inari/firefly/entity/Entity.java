@@ -16,18 +16,11 @@
 package com.inari.firefly.entity;
 
 import com.inari.commons.lang.indexed.BaseIndexedObject;
-import com.inari.firefly.component.Component;
-import com.inari.firefly.component.attr.AttributeKey;
 
 public final class Entity extends BaseIndexedObject {
     
-    public static final AttributeKey<String> NAME = new AttributeKey<String>( "name", String.class, Component.class );
-    
-    private String name;
-    
     Entity() {
         super( false );
-        name = null;
     }
 
     Entity( int id ) {
@@ -46,19 +39,10 @@ public final class Entity extends BaseIndexedObject {
     final void setId( int entityId ) {
         setIndex( entityId );
     }
-    
-    final void setName( String name ) {
-        this.name = name;
-    }
-    
-    public final String getName() {
-        return name;
-    }
 
     @Override
     public final void dispose() {
         super.dispose();
-        name = null;
     }
 
 }

@@ -1,26 +1,27 @@
-package com.inari.firefly.control;
+package com.inari.firefly.entity;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.firefly.component.Component;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.entity.EntityComponent;
 
-public class EController extends EntityComponent {
+public class EEntity extends EntityComponent {
     
-    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( EController.class );
+    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( EEntity.class );
     
-    public static final AttributeKey<int[]> CONTROLLER_IDS = new AttributeKey<int[]>( "controllerIds", int[].class, EController.class );
+    public static final AttributeKey<String> ENTITY_NAME = new AttributeKey<String>( "entityName", String.class, EEntity.class );
+    public static final AttributeKey<int[]> CONTROLLER_IDS = new AttributeKey<int[]>( "controllerIds", int[].class, EEntity.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+        ENTITY_NAME,
         CONTROLLER_IDS
     };
     
+    private String entityName;
     private int[] controllerIds;
     
-    public EController() {
+    public EEntity() {
         super( TYPE_KEY );
         resetAttributes();
     }
@@ -28,6 +29,15 @@ public class EController extends EntityComponent {
     @Override
     public final void resetAttributes() {
         controllerIds = null;
+        entityName = null;
+    }
+
+    public final String getEntityName() {
+        return entityName;
+    }
+
+    public final void setEntityName( String entityName ) {
+        this.entityName = entityName;
     }
 
     public final int[] getControllerIds() {
@@ -53,8 +63,8 @@ public class EController extends EntityComponent {
     }
 
     @Override
-    public final Class<? extends Component> componentType() {
-        return EController.class;
+    public final Class<EEntity> componentType() {
+        return EEntity.class;
     }
 
     @Override
@@ -64,12 +74,14 @@ public class EController extends EntityComponent {
 
     @Override
     public void fromAttributes( AttributeMap attributes ) {
+        entityName = attributes.getValue( ENTITY_NAME, entityName );
         controllerIds = attributes.getValue( CONTROLLER_IDS, controllerIds );
     }
 
     @Override
     public void toAttributes( AttributeMap attributes ) {
+        attributes.put( ENTITY_NAME, entityName );
         attributes.put( CONTROLLER_IDS, controllerIds );
     }
-
+    
 }

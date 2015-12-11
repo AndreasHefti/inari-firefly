@@ -19,7 +19,6 @@ import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.control.Controller;
-import com.inari.firefly.control.EController;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.system.FFContext;
@@ -46,7 +45,7 @@ public abstract class EntityController extends Controller implements EntityActiv
     
     @Override
     public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( EController.TYPE_KEY );
+        return aspect.contains( EEntity.TYPE_KEY );
     }
 
     @Override
@@ -81,7 +80,7 @@ public abstract class EntityController extends Controller implements EntityActiv
     protected abstract void update( final FFTimer timer, int entityId );
     
     private final boolean hasControllerId( int entityId ) {
-        EController controllerComponent = context.getEntityComponent( entityId, EController.TYPE_KEY );
+        EEntity controllerComponent = context.getEntityComponent( entityId, EEntity.TYPE_KEY );
         if ( controllerComponent == null ) {
             return false;
         }

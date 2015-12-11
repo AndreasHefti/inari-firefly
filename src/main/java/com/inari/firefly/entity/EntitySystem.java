@@ -25,6 +25,7 @@ import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeAspectSet;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.Component.ComponentKey;
@@ -183,16 +184,14 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> implements
             return -1;
         }
         
-        for ( Entity activeEntity : activeEntities ) {
-            if ( name.equals( activeEntity.getName() ) ) {
-                return activeEntity.getId();
+        ComponentIterator<EEntity> iterator = new ComponentIterator<EEntity>( EEntity.TYPE_KEY.index(), false );
+        while ( iterator.hasNext() ) {
+            EEntity entityComponent = iterator.next();
+            if ( name.equals( entityComponent.getEntityName() ) ) {
+                return iterator.entityId();
             }
         }
-        for ( Entity inactiveEntity : inactiveEntities ) {
-            if ( name.equals( inactiveEntity.getName() ) ) {
-                return inactiveEntity.getId();
-            }
-        }
+ 
         
         return -1;
     }
@@ -209,6 +208,20 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> implements
     @Override
     public final Iterator<Entity> iterator() {
         return activeEntities.iterator();
+    }
+    
+    public final <T extends EntityComponent> Iterable<T> components( final Class<T> componentType ) {
+        return components( componentType, true );
+    }
+    
+    public final <T extends EntityComponent> Iterable<T> components( final Class<T> componentType, final boolean onlyActive ) {
+        final int componentIndex = Indexer.getIndexedTypeKey( EntityComponent.EntityComponentTypeKey.class, componentType ).index();
+        return new Iterable<T>() {
+            @Override
+            public final Iterator<T> iterator() {
+                return new ComponentIterator<T>( componentIndex, onlyActive );
+            }
+        };
     }
 
     public final Iterable<Entity> entities( final AspectBitSet aspect ) {
@@ -262,10 +275,6 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> implements
         for ( EntityComponent component : components.<EntityComponent>getIterable() ) {
             component.toAttributes( attributeMap );
         }
-        
-        if ( entity.getName() != null ) {
-            attributeMap.put( Entity.NAME, entity.getName() );
-        }
     }
 
     @Override
@@ -304,6 +313,55 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> implements
         }
         
         protected abstract void findNext();
+    }
+    
+    public final class ComponentIterator<C extends EntityComponent> implements Iterator<C> {
+        
+        private final int componentIndex;
+        private final boolean onlyActive;
+        private int currentEntityIndex = -1;
+        private int nextEntityIndex = -1;
+        
+        ComponentIterator( int componentIndex, boolean onlyActive ) {
+            this.componentIndex = componentIndex;
+            this.onlyActive = onlyActive;
+            findNext();
+        }
+        
+        private final void findNext() {
+            while ( nextEntityIndex < components.capacity() ) {
+                nextEntityIndex++;
+                if ( onlyActive && !activeEntities.contains( nextEntityIndex ) ) {
+                    continue;
+                }
+                if ( components.contains( nextEntityIndex ) && components.get( nextEntityIndex ).contains( componentIndex ) ) {
+                    return;
+                }
+            }
+            nextEntityIndex = -1;
+        }
+
+        @Override
+        public final boolean hasNext() {
+            return nextEntityIndex >= 0 ;
+        }
+        
+        public final int entityId() {
+            return currentEntityIndex;
+        }
+
+        @Override
+        public final C next() {
+            C component = components.get( nextEntityIndex ).get( componentIndex );
+            currentEntityIndex = nextEntityIndex;
+            findNext();
+            return component;
+        }
+
+        @Override
+        public final void remove() {
+            delete( currentEntityIndex );
+        }
     }
     
     private final class AspectedEntityIterator extends EntityIterator {
@@ -370,11 +428,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> implements
         @Override
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             Entity entity = entityProvider.getEntity( componentId );
-            
-            if ( attributes.contains( Entity.NAME ) ) {
-                entity.setName( attributes.getValue( Entity.NAME ) );
-            }
-            
+
             IndexedTypeAspectSet aspectToCheck;
             if ( prefabComponents != null ) {
                 // if we have prefab components we use them
