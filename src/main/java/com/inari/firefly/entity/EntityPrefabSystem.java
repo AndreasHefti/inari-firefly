@@ -148,21 +148,17 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
         }
     }
     
-    public final Entity buildOne( int prefabId ) {
-        return entitySystem.getEntity( 
-        entitySystem.getEntityBuilder()
+    public final int buildOne( int prefabId ) {
+        return entitySystem.getEntityBuilder()
             .setPrefabComponents( getComponents( prefabId ) )
-            .build()
-        );
+            .build();
     }
 
-    public final Entity buildOne( int prefabId, EntityAttributeMap attributes ) {
-        return entitySystem.getEntity( 
-        entitySystem.getEntityBuilder()
+    public final int buildOne( int prefabId, EntityAttributeMap attributes ) {
+        return entitySystem.getEntityBuilder()
             .setPrefabComponents( getComponents( prefabId ) )
             .setAttributes( attributes )
-            .build()
-        );
+            .build();
     }
 
     public final void rebuildEntity( int prefabId, int entityId, EntityAttributeMap attributes, boolean activation ) {
@@ -186,7 +182,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
     }
 
     public final int activateOne( int prefabId, EntityAttributeMap attributes ) {
-        int newEntityId = buildOne( prefabId, attributes ).getId();
+        int newEntityId = buildOne( prefabId, attributes );
         if ( newEntityId >= 0 ) {
             entitySystem.activateEntity( newEntityId );
         }

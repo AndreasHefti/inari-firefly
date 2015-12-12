@@ -18,14 +18,12 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
     
     public static final FFSystemTypeKey<EntityProvider> SYSTEM_KEY = FFSystemTypeKey.create( EntityProvider.class );
 
-    final ArrayDeque<Entity> disposedEntities;
     final ArrayDeque<IndexedTypeSet> disposedComponentSets;
     final DynArray<ArrayDeque<EntityComponent>> disposedComponents;
 
     private int componentSetCapacity = 20;
 
     EntityProvider() {
-        disposedEntities = new ArrayDeque<Entity>();
         disposedComponentSets = new ArrayDeque<IndexedTypeSet>();
         disposedComponents = new DynArray<ArrayDeque<EntityComponent>>();
     }
@@ -60,7 +58,6 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
 
         Integer cacheSize = context.getProperty( FFContext.Properties.ENTITY_BEANS_CACHE_SIZE );
         if ( cacheSize != null ) {
-            createEntitiesForLaterUse( cacheSize );
             createComponentSetsForLaterUse( cacheSize );
             for ( int i = 0; i < size; i++ ) {
                 EntityComponentTypeKey indexedTypeKey = Indexer.getIndexedTypeKeyForIndex( EntityComponentTypeKey.class, i );
@@ -73,26 +70,8 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
 
     @Override
     public final void dispose( FFContext context ) {
-        disposedEntities.clear();
         disposedComponentSets.clear();
         disposedComponents.clear();
-    }
-    
-    public final Entity getEntity() {
-        return getEntity( -1 );
-    }
-
-    public final Entity getEntity( int entityId ) {
-        if ( disposedEntities.isEmpty() ) {
-            return new Entity( entityId );
-        }
-        
-        Entity result = disposedEntities.pop();
-        if ( entityId < 0 ) {
-            entityId = Indexer.nextObjectIndex( Entity.class );
-        }
-        result.setId( entityId );
-        return result;
     }
     
     public <T extends EntityComponent> T getComponent( Class<T> componentType ) {
@@ -106,12 +85,6 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
         }
 
         return component;
-    }
-    
-    public final void createEntitiesForLaterUse( int number ) {
-        for ( int i = 0; i < number; i++ ) {
-            disposedEntities.add( new Entity() );
-        }
     }
     
     public final void createComponentSetsForLaterUse( int number ) {
@@ -148,13 +121,6 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
             throw new IllegalStateException( "NOTE: this can happen but never should happen. It seem that there is a other reference to this IndexedTypeSet: " + result );
         }
         return result;
-    }
-
-    void dispose( Entity entity, IndexedTypeSet components ) {
-        entity.dispose();
-        disposedEntities.add( entity );
-
-        disposeComponentSet( components );
     }
 
     void disposeComponentSet( IndexedTypeSet components ) {

@@ -21,11 +21,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.inari.firefly.component.Component.ComponentKey;
-import com.inari.firefly.entity.Entity;
 
 public class ComponentAttributeMap implements AttributeMap {
 
-    protected ComponentKey typeKey = new ComponentKey( Entity.class, -1 );
+    protected ComponentKey typeKey;
     protected final HashMap<AttributeKey<?>, Object> attributes = new LinkedHashMap<AttributeKey<?>, Object>();
     
     @Override

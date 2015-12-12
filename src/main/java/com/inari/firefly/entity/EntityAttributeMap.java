@@ -27,8 +27,8 @@ public class EntityAttributeMap extends ComponentAttributeMap {
     
     @Override
     public final void setComponentKey( ComponentKey typeKey ) {
-        if ( typeKey.getType() != Entity.class && typeKey.getType() != EntitySystem.EntityComponentAdapter.class ) {
-            throw new IllegalArgumentException( "The ComponentKey has not the expected type: " + Entity.class.getName() );
+        if ( typeKey.getType() != EntitySystem.Entity.class ) {
+            throw new IllegalArgumentException( "The ComponentKey has not the expected type: " + EntitySystem.Entity.class.getName() );
         }
         super.setComponentKey( typeKey );
     }
