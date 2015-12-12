@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, Andreas Hefti, inarisoft@yahoo.de 
+ * Copyright (c) 2015 - 2016, Andreas Hefti, inarisoft@yahoo.de 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
