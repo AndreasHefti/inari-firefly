@@ -45,7 +45,7 @@ public class StateSystem
     
     public static final FFSystemTypeKey<StateSystem> SYSTEM_KEY = FFSystemTypeKey.create( StateSystem.class );
     
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Workflow.TYPE_KEY,
         State.TYPE_KEY,
         StateChange.TYPE_KEY
@@ -394,7 +394,7 @@ public class StateSystem
     }
 
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
@@ -414,7 +414,7 @@ public class StateSystem
             super( system, new WorkflowBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<Workflow> componentTypeKey() {
             return Workflow.TYPE_KEY;
         }
         @Override
@@ -426,8 +426,16 @@ public class StateSystem
             return workflows.iterator();
         }
         @Override
-        public final void delete( int id, Class<? extends Workflow> subtype ) {
+        public final void deleteComponent( int id, Class<? extends Workflow> subtype ) {
             deleteWorkflow( id );
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteWorkflow( name );
+        }
+        @Override
+        public final Workflow get( String name, Class<? extends Workflow> subType ) {
+            return getWorkflow( name );
         }
     }
     
@@ -436,7 +444,7 @@ public class StateSystem
             super( system, new StateBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<State> componentTypeKey() {
             return State.TYPE_KEY;
         }
         @Override
@@ -448,8 +456,16 @@ public class StateSystem
             return states.iterator();
         }
         @Override
-        public final void delete( int id, Class<? extends State> subtype ) {
+        public final void deleteComponent( int id, Class<? extends State> subtype ) {
             deleteState( id );
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteState( getStateId( name ) );
+        }
+        @Override
+        public final State get( String name, Class<? extends State> subType ) {
+            return getState( getStateId( name ) );
         }
     }
     
@@ -458,7 +474,7 @@ public class StateSystem
             super( system, new StateChangeBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<StateChange> componentTypeKey() {
             return StateChange.TYPE_KEY;
         }
         @Override
@@ -488,15 +504,24 @@ public class StateSystem
             };
         }
         @Override
-        public final void delete( int id, Class<? extends StateChange> subtype ) {
+        public final void deleteComponent( int id, Class<? extends StateChange> subtype ) {
             deleteStateChange( id );
+        }
+        @Override
+        public void deleteComponent( String name ) {
+            deleteStateChange( getStateChange( name ).getId() );
+            
+        }
+        @Override
+        public StateChange get( String name, Class<? extends StateChange> subType ) {
+            return getStateChange( name );
         }
     }
     
     private final class WorkflowBuilder extends SystemComponentBuilder {
         
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<Workflow> systemComponentKey() {
             return Workflow.TYPE_KEY;
         }
         
@@ -513,7 +538,7 @@ public class StateSystem
     private final class StateBuilder extends SystemComponentBuilder {
         
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<State> systemComponentKey() {
             return State.TYPE_KEY;
         }
         
@@ -529,7 +554,7 @@ public class StateSystem
     private final class StateChangeBuilder extends SystemComponentBuilder {
         
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<StateChange> systemComponentKey() {
             return StateChange.TYPE_KEY;
         }
         

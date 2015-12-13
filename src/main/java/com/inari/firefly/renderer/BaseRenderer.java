@@ -51,7 +51,7 @@ public abstract class BaseRenderer implements FFContextInitiable {
     }
     
     private void collectTransformData( int parentId ) {
-        ETransform parentTransform = entitySystem.getComponent( parentId, ETransform.class );
+        ETransform parentTransform = entitySystem.getComponent( parentId, ETransform.TYPE_KEY );
         if ( parentTransform != null ) {
             transformCollector.add( parentTransform );
             if ( parentTransform.getParentId() >= 0 ) {

@@ -28,19 +28,19 @@ import com.inari.firefly.system.component.SystemComponent;
 
 public abstract class Asset extends SystemComponent implements DynamicAttributedComponent {
     
-    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Asset.class );
+    public static final SystemComponentKey<Asset> TYPE_KEY = SystemComponentKey.create( Asset.class );
     
     public static final AttributeKey<String> ASSET_GROUP = new AttributeKey<String>( "group", String.class, Asset.class );
     
     protected boolean loaded = false;
     protected String group;
-    protected final AssetTypeKey typeKey;
+    protected final AssetId assetId;
     
     private DynamicAttributeMap dynamicAttributeMap = new DynamicAttributeMap();
     
-    protected Asset( int assetId ) {
-        super( assetId );
-        typeKey = new AssetTypeKey( super.index, componentType() );
+    protected Asset( int assetIntId ) {
+        super( assetIntId );
+        assetId = new AssetId( super.index, componentType() );
     }
     
     @Override
@@ -59,8 +59,8 @@ public abstract class Asset extends SystemComponent implements DynamicAttributed
     @Override
     public abstract Class<? extends Asset> componentType();
     
-    public final AssetTypeKey getTypeKey() {
-        return typeKey;
+    public final AssetId getAssetId() {
+        return assetId;
     }
 
     @Override
@@ -102,7 +102,7 @@ public abstract class Asset extends SystemComponent implements DynamicAttributed
         return dynamicAttributeMap.attributeKeys( this, new HashSet<AttributeKey<?>>( attributeKeys ) );
     }
 
-    protected AssetTypeKey[] dependsOn() {
+    protected AssetId[] dependsOn() {
         return null;
     }
     

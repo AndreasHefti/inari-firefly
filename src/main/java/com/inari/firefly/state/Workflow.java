@@ -25,7 +25,7 @@ import com.inari.firefly.system.component.SystemComponent;
 
 public final class Workflow extends SystemComponent {
     
-    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Workflow.class );
+    public static final SystemComponentKey<Workflow> TYPE_KEY = SystemComponentKey.create( Workflow.class );
     
     public static final AttributeKey<String> START_STATE_NAME = new AttributeKey<String>( "startStateName", String.class, Workflow.class );
     public static final AttributeKey<Integer> INIT_TASK_ID = new AttributeKey<Integer>( "initTaskId", Integer.class, Workflow.class );

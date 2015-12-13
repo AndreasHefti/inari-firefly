@@ -18,7 +18,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
     
     public static final FFSystemTypeKey<EntityPrefabSystem> SYSTEM_KEY = FFSystemTypeKey.create( EntityPrefabSystem.class );
     
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         EntityPrefab.TYPE_KEY
     };
 
@@ -233,7 +233,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
         return new EntityPrefabBuilder();
     }
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
@@ -252,7 +252,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
         }
 
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<EntityPrefab> systemComponentKey() {
             return EntityPrefab.TYPE_KEY;
         }
 
@@ -280,7 +280,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
             super( system, new EntityPrefabBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<EntityPrefab> componentTypeKey() {
             return EntityPrefab.TYPE_KEY;
         }
         @Override
@@ -292,8 +292,17 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
             return prefabs.iterator();
         }
         @Override
-        public final void delete( int id, Class<? extends EntityPrefab> subtype ) {
+        public final void deleteComponent( int id, Class<? extends EntityPrefab> subtype ) {
             deletePrefab( id );
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deletePrefab( name );
+            
+        }
+        @Override
+        public final EntityPrefab get( String name, Class<? extends EntityPrefab> subType ) {
+            return getPrefab( name );
         }
     }
 }

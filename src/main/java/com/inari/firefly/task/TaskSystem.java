@@ -32,12 +32,10 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
     
     public static final FFSystemTypeKey<TaskSystem> SYSTEM_KEY = FFSystemTypeKey.create( TaskSystem.class );
     
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Task.TYPE_KEY,
     };
-    
-    
-    
+
     private final DynArray<Task> tasks;
     
     TaskSystem() {
@@ -56,6 +54,23 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
     public final void dispose( FFContext context ) {
         context.disposeListener( TaskEvent.class, this );
         clear();
+    }
+    
+    public final Task getTask( int taskId ) {
+        if ( !tasks.contains( taskId ) ) {
+            return null;
+        }
+        
+        return tasks.get( taskId );
+    }
+    
+    public <T extends Task> T getTaskAs( int taskId, Class<T> subType ) {
+        Task task = getTask( taskId );
+        if ( task == null ) {
+            return null;
+        }
+        
+        return subType.cast( task );
     }
 
     public final void clear() {
@@ -125,7 +140,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
     }
 
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
@@ -140,7 +155,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
     public final class TaskBuilder extends SystemComponentBuilder {
 
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<Task> systemComponentKey() {
             return Task.TYPE_KEY;
         }
         
@@ -162,7 +177,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
             super( system, new TaskBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<Task> componentTypeKey() {
             return Task.TYPE_KEY;
         }
         @Override
@@ -174,8 +189,17 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
             return tasks.iterator();
         }
         @Override
-        public final void delete( int id, Class<? extends Task> subtype ) {
+        public final void deleteComponent( int id, Class<? extends Task> subtype ) {
             deleteTask( id );
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteTask( getTaskId( name ) );
+        }
+        @Override
+        public final Task get( String name, Class<? extends Task> subType ) {
+            // TODO Auto-generated method stub
+            return getTask( getTaskId( name ) );
         }
     }
     

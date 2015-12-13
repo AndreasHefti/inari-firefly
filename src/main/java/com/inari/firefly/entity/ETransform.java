@@ -25,7 +25,7 @@ import com.inari.firefly.component.attr.AttributeMap;
 
 public final class ETransform extends EntityComponent {
     
-    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( ETransform.class );
+    public static final EntityComponentTypeKey<ETransform> TYPE_KEY = EntityComponentTypeKey.create( ETransform.class );
     
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, ETransform.class );
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, ETransform.class );

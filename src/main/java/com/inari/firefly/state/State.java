@@ -25,7 +25,7 @@ import com.inari.firefly.system.component.SystemComponent;
 
 public final class State extends SystemComponent {
     
-    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( State.class );
+    public static final SystemComponentKey<State> TYPE_KEY = SystemComponentKey.create( State.class );
     
     public static final AttributeKey<Integer> WORKFLOW_ID = new AttributeKey<Integer>( "workflowId", Integer.class, State.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 

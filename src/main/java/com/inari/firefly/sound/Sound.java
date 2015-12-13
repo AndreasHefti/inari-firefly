@@ -25,7 +25,7 @@ import com.inari.firefly.system.component.SystemComponent;
 
 public final class Sound extends SystemComponent {
     
-    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Sound.class );
+    public static final SystemComponentKey<Sound> TYPE_KEY = SystemComponentKey.create( Sound.class );
     
     public static final AttributeKey<Integer> ASSET_ID = new AttributeKey<Integer>( "assetId", Integer.class, Sound.class );
     public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Sound.class );

@@ -28,7 +28,7 @@ import com.inari.firefly.renderer.SpriteRenderable;
 
 public final class ESprite extends EntityComponent implements SpriteRenderable {
     
-    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( ESprite.class );
+    public static final EntityComponentTypeKey<ESprite> TYPE_KEY = EntityComponentTypeKey.create( ESprite.class );
 
     public static final AttributeKey<Integer> SPRITE_ID = new AttributeKey<Integer>( "spriteId", Integer.class, ESprite.class );
     public static final AttributeKey<Integer> ORDERING = new AttributeKey<Integer>( "ordering", Integer.class, ESprite.class );

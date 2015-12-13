@@ -38,7 +38,7 @@ public final class AnimationSystem
     
     public static final FFSystemTypeKey<AnimationSystem> SYSTEM_KEY = FFSystemTypeKey.create( AnimationSystem.class );
     
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Animation.TYPE_KEY
     };
 
@@ -205,7 +205,7 @@ public final class AnimationSystem
     }
     
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
     
@@ -230,7 +230,7 @@ public final class AnimationSystem
         private AnimationBuilder() {}
         
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<Animation> systemComponentKey() {
             return Animation.TYPE_KEY;
         }
 
@@ -254,7 +254,7 @@ public final class AnimationSystem
             super( system, new AnimationBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<Animation> componentTypeKey() {
             return Animation.TYPE_KEY;
         }
         @Override
@@ -262,12 +262,21 @@ public final class AnimationSystem
             return getAnimation( id );
         }
         @Override
-        public final void delete( int id, Class<? extends Animation> subtype ) {
+        public final void deleteComponent( int id, Class<? extends Animation> subtype ) {
             deleteAnimation( id );
         }
         @Override
         public final Iterator<Animation> getAll() {
             return animations.iterator();
+        }
+        
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteAnimation( getAnimationId( name ) );
+        }
+        @Override
+        public final Animation get( String name, Class<? extends Animation> subtype ) {
+            return getAnimation( getAnimationId( name ) );
         }
     }
 

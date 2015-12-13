@@ -32,7 +32,7 @@ public class TextSystem
     
     public static final FFSystemTypeKey<TextSystem> SYSTEM_KEY = FFSystemTypeKey.create( TextSystem.class );
     
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Font.TYPE_KEY
     };
 
@@ -179,7 +179,7 @@ public class TextSystem
     }
 
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
@@ -195,7 +195,7 @@ public class TextSystem
         protected FontBuilder() {}
         
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<Font> systemComponentKey() {
             return Font.TYPE_KEY;
         }
 
@@ -252,7 +252,7 @@ public class TextSystem
             super( system, new FontBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<Font> componentTypeKey() {
             return Font.TYPE_KEY;
         }
         @Override
@@ -260,12 +260,20 @@ public class TextSystem
             return fonts.get( id );
         }
         @Override
-        public final void delete( int id, Class<? extends Font> subtype ) {
+        public final void deleteComponent( int id, Class<? extends Font> subtype ) {
             deleteFont( id );
         }
         @Override
         public final Iterator<Font> getAll() {
             return fonts.iterator();
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteFont( getFontId( name ) );
+        }
+        @Override
+        public final Font get( String name, Class<? extends Font> subType ) {
+            return getFont( getFontId( name ) );
         }
     }
 

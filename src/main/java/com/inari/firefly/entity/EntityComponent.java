@@ -22,9 +22,9 @@ import com.inari.firefly.component.Component;
 
 public abstract class EntityComponent implements Component, IndexedType {
     
-    public final EntityComponentTypeKey indexedTypeKey;
+    public final EntityComponentTypeKey<?> indexedTypeKey;
     
-    protected EntityComponent( EntityComponentTypeKey indexedTypeKey ) {
+    protected EntityComponent( EntityComponentTypeKey<?> indexedTypeKey ) {
         this.indexedTypeKey = indexedTypeKey;
     }
 
@@ -33,22 +33,25 @@ public abstract class EntityComponent implements Component, IndexedType {
     }
     
     public abstract void resetAttributes();
-    
-    
-    protected static final EntityComponentTypeKey createTypeKey( Class<? extends EntityComponent> type ) {
-        return Indexer.getIndexedTypeKey( EntityComponentTypeKey.class, type );
-    }
-    
-    
-    public static final class EntityComponentTypeKey extends IndexedTypeKey {
 
-        protected EntityComponentTypeKey( Class<? extends IndexedType> indexedType ) {
+    
+    public static final class EntityComponentTypeKey<C extends EntityComponent> extends IndexedTypeKey {
+        
+        public final Class<C> type;
+
+        EntityComponentTypeKey( Class<C> indexedType ) {
             super( indexedType );
+            type = indexedType;
         }
 
         @Override
         protected final Class<EntityComponent> baseIndexedType() {
             return EntityComponent.class;
+        }
+        
+        @SuppressWarnings( "unchecked" )
+        public static final <C extends EntityComponent> EntityComponentTypeKey<C> create( Class<C> type ) {
+            return Indexer.getIndexedTypeKey( EntityComponentTypeKey.class, type );
         }
     }
     

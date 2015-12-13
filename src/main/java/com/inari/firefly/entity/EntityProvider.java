@@ -60,7 +60,7 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
         if ( cacheSize != null ) {
             createComponentSetsForLaterUse( cacheSize );
             for ( int i = 0; i < size; i++ ) {
-                EntityComponentTypeKey indexedTypeKey = Indexer.getIndexedTypeKeyForIndex( EntityComponentTypeKey.class, i );
+                EntityComponentTypeKey<?> indexedTypeKey = Indexer.getIndexedTypeKeyForIndex( EntityComponentTypeKey.class, i );
                 @SuppressWarnings( "unchecked" )
                 Class<? extends EntityComponent> componentType = (Class<? extends EntityComponent>) indexedTypeKey.indexedType;
                 createComponentsForLaterUse( cacheSize, componentType );

@@ -52,11 +52,11 @@ public abstract class ComponentSystem<T extends ComponentSystem<T>> implements F
         this.context = context;
     }
     
-    public ComponentBuilder getComponentBuilder( SystemComponentKey componentTypeKey ) {
+    public ComponentBuilder getComponentBuilder( SystemComponentKey<?> componentTypeKey ) {
         return context.getComponentBuilder( componentTypeKey );
     }
 
-    public abstract SystemComponentKey[] supportedComponentTypes();
+    public abstract SystemComponentKey<?>[] supportedComponentTypes();
    
     public abstract SystemBuilderAdapter<?>[] getSupportedBuilderAdapter();
     

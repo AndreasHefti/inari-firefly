@@ -49,7 +49,7 @@ public final class TileGridSystem
     
     public static final FFSystemTypeKey<TileGridSystem> SYSTEM_KEY = FFSystemTypeKey.create( TileGridSystem.class ); 
     
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         TileGrid.TYPE_KEY
     };
 
@@ -250,7 +250,7 @@ public final class TileGridSystem
     }
     
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
@@ -269,7 +269,7 @@ public final class TileGridSystem
     private final class TileGridBuilder extends SystemComponentBuilder {
         
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<TileGrid> systemComponentKey() {
             return TileGrid.TYPE_KEY;
         }
         
@@ -306,21 +306,28 @@ public final class TileGridSystem
             super( system, new TileGridBuilder() );
         }
         @Override
-        public SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<TileGrid> componentTypeKey() {
             return TileGrid.TYPE_KEY;
         }
         @Override
-        public TileGrid get( int id, Class<? extends TileGrid> subtype ) {
+        public final TileGrid get( int id, Class<? extends TileGrid> subtype ) {
             return getTileGrid( id );
         }
         @Override
-        public Iterator<TileGrid> getAll() {
+        public final Iterator<TileGrid> getAll() {
             return tileGrids.iterator();
         }
-
         @Override
-        public void delete( int id, Class<? extends TileGrid> subtype ) {
+        public final void deleteComponent( int id, Class<? extends TileGrid> subtype ) {
             deleteTileGrid( id );
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteTileGrid( getTileGrid( name ).getId() );
+        }
+        @Override
+        public final TileGrid get( String name, Class<? extends TileGrid> subType ) {
+            return getTileGrid( name );
         }
         
     }

@@ -24,7 +24,7 @@ public class EntitySystemTest {
         EntitySystem entitySystem = testContext.getSystem( EntitySystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
-        testContext.toAttributes( attrs, EntitySystem.ENTITY_TYPE_KEY );
+        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
             "Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
@@ -42,7 +42,7 @@ public class EntitySystemTest {
         entitySystem.init( testContext );
         
         attrs = new Attributes();
-        testContext.toAttributes( attrs, EntitySystem.ENTITY_TYPE_KEY );
+        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
             "Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
@@ -56,7 +56,7 @@ public class EntitySystemTest {
         testContext.getSystem( EntitySystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
-        testContext.toAttributes( attrs, EntitySystem.ENTITY_TYPE_KEY );
+        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
             "Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
@@ -70,7 +70,7 @@ public class EntitySystemTest {
         EntitySystem entitySystem = testContext.getSystem( EntitySystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
-        testContext.toAttributes( attrs, EntitySystem.ENTITY_TYPE_KEY );
+        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
             "Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
@@ -87,7 +87,7 @@ public class EntitySystemTest {
         assertEquals( "1", String.valueOf( entitySystem.activeEntities.cardinality() ) );
         assertEquals( "0", String.valueOf( entitySystem.inactiveEntities.cardinality() ) );
         assertEquals( "1", String.valueOf( entitySystem.components.size() ) );
-        testContext.toAttributes( attrs, EntitySystem.ENTITY_TYPE_KEY );
+        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         assertEquals(
             "Entity(-1)::ACTIVE_ENTITY_IDS:String=0 "
             + "Entity(0)::viewId:Integer:ETransform=1, layerId:Integer:ETransform=0, xpos:Float:ETransform=234.0, ypos:Float:ETransform=134.0, pivotx:Float:ETransform=0.0, pivoty:Float:ETransform=0.0, scalex:Float:ETransform=1.0, scaley:Float:ETransform=1.0, rotation:Float:ETransform=0.0, parentId:Integer:ETransform=-1, spriteId:Integer:ESprite=555, ordering:Integer:ESprite=0, tintColor:RGBColor:ESprite=[r=1.0,g=1.0,b=1.0,a=1.0], blendMode:BlendMode:ESprite=NONE", 
@@ -101,7 +101,7 @@ public class EntitySystemTest {
         assertEquals( "0", String.valueOf( entitySystem.inactiveEntities.cardinality() ) );
         assertEquals( "0", String.valueOf( entitySystem.components.size() ) );
         attrs = new Attributes();
-        testContext.toAttributes( attrs, EntitySystem.ENTITY_TYPE_KEY );
+        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         assertEquals( 
             "Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
             attrs.toString()

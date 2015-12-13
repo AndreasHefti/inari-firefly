@@ -30,7 +30,7 @@ import com.inari.firefly.system.component.SystemComponent;
 
 public class View extends SystemComponent {
     
-    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( View.class );
+    public static final SystemComponentKey<View> TYPE_KEY = SystemComponentKey.create( View.class );
     
     public static final AttributeKey<Rectangle> BOUNDS = new AttributeKey<Rectangle>( "bounds", Rectangle.class, View.class );
     public static final AttributeKey<Position> WORLD_POSITION = new AttributeKey<Position>( "worldPosition", Position.class, View.class );

@@ -26,7 +26,7 @@ import com.inari.firefly.system.component.SystemComponent;
 
 public abstract class Task extends SystemComponent {
     
-    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Task.class );
+    public static final SystemComponentKey<Task> TYPE_KEY = SystemComponentKey.create( Task.class );
 
     public static final AttributeKey<Boolean> REMOVE_AFTER_RUN = new AttributeKey<Boolean>( "removeAfterRun", Boolean.class, Task.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 

@@ -21,7 +21,7 @@ import java.util.Set;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.asset.Asset;
-import com.inari.firefly.asset.AssetTypeKey;
+import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.renderer.TextureAsset;
@@ -49,8 +49,8 @@ public final class SpriteAsset extends Asset {
     }
 
     @Override
-    protected final AssetTypeKey[] dependsOn() {
-        return new AssetTypeKey[] { new AssetTypeKey( textureId, TextureAsset.class ) };
+    protected final AssetId[] dependsOn() {
+        return new AssetId[] { new AssetId( textureId, TextureAsset.class ) };
     }
     
     public final int getTextureId() {

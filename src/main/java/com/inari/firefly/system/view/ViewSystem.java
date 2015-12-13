@@ -37,7 +37,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
 
     public static final FFSystemTypeKey<ViewSystem> SYSTEM_KEY = FFSystemTypeKey.create( ViewSystem.class );
     
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         View.TYPE_KEY,
         Layer.TYPE_KEY,
     };
@@ -331,7 +331,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     }
 
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
@@ -366,7 +366,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         protected ViewBuilder() {}
         
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<View> systemComponentKey() {
             return View.TYPE_KEY;
         }
 
@@ -403,7 +403,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     public final class LayerBuilder extends SystemComponentBuilder {
 
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<Layer> systemComponentKey() {
             return Layer.TYPE_KEY;
         }
 
@@ -443,7 +443,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             super( system, new ViewBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<View> componentTypeKey() {
             return View.TYPE_KEY;
         }
         @Override
@@ -455,8 +455,17 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return views.iterator();
         }
         @Override
-        public final void delete( int id, Class<? extends View> subtype ) {
+        public final void deleteComponent( int id, Class<? extends View> subtype ) {
             deleteView( id );
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteView( name );
+            
+        }
+        @Override
+        public final View get( String name, Class<? extends View> subType ) {
+            return getView( name );
         }
     }
     
@@ -465,7 +474,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             super( system, new LayerBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<Layer> componentTypeKey() {
             return Layer.TYPE_KEY;
         }
         @Override
@@ -477,8 +486,17 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return layers.iterator();
         }
         @Override
-        public final void delete( int id, Class<? extends Layer> subtype ) {
+        public final void deleteComponent( int id, Class<? extends Layer> subtype ) {
             deleteLayer( id );
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteLayer( getLayerId( name ) );
+            
+        }
+        @Override
+        public final Layer get( String name, Class<? extends Layer> subType ) {
+            return getLayer( getLayerId( name ) );
         }
     }
 

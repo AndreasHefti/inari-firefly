@@ -20,7 +20,6 @@ import java.util.Iterator;
 
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.AspectBitSet;
-import com.inari.commons.lang.indexed.Indexed;
 import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeAspectSet;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
@@ -32,6 +31,7 @@ import com.inari.firefly.component.Component.ComponentKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationEvent.Type;
 import com.inari.firefly.system.FFContext;
@@ -44,10 +44,9 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 public final class EntitySystem extends ComponentSystem<EntitySystem> {
     
     public static final FFSystemTypeKey<EntitySystem> SYSTEM_KEY = FFSystemTypeKey.create( EntitySystem.class );
-    public static final SystemComponentKey ENTITY_TYPE_KEY = SystemComponentKey.create( Entity.class );
 
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
-        ENTITY_TYPE_KEY
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+        Entity.ENTITY_TYPE_KEY
     };
 
     private static final int INIT_SIZE = 1000;
@@ -93,14 +92,23 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     }
 
     public final boolean isActive( int entityId ) {
+        if ( entityId < 0 ) {
+            return false;
+        }
         return activeEntities.get( entityId );
     }
 
     public final boolean isRestored( int entityId ) {
+        if ( entityId < 0 ) {
+            return false;
+        }
         return !activeEntities.get( entityId ) && inactiveEntities.get( entityId );
     }
     
     public final void activateEntity( int entityId ) {
+        if ( entityId < 0 ) {
+            return;
+        }
         if ( activeEntities.get( entityId ) || !inactiveEntities.get( entityId ) ) {
             return;
         }
@@ -115,6 +123,9 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     }
     
     public final void deactivateEntity( int entityId ) {
+        if ( entityId < 0 ) {
+            return;
+        }
         if ( !activeEntities.get( entityId ) ) {
             return;
         }
@@ -132,7 +143,11 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     }
 
     public final void delete( int entityId ) {
-        if ( activeEntities.get( entityId ) ) {
+        if ( entityId < 0 ) {
+            return;
+        }
+        
+        if (  activeEntities.get( entityId ) ) {
             deactivateEntity( entityId );
         }
         
@@ -196,16 +211,15 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         return components.getAspect();
     }
     
-    public final <T extends EntityComponent> Iterable<T> components( final Class<T> componentType ) {
+    public final <T extends EntityComponent> Iterable<T> components( final EntityComponentTypeKey<T> componentType ) {
         return components( componentType, true );
     }
     
-    public final <T extends EntityComponent> Iterable<T> components( final Class<T> componentType, final boolean onlyActive ) {
-        final int componentIndex = Indexer.getIndexedTypeKey( EntityComponent.EntityComponentTypeKey.class, componentType ).index();
+    public final <T extends EntityComponent> Iterable<T> components( final EntityComponentTypeKey<T> componentType, final boolean onlyActive ) {
         return new Iterable<T>() {
             @Override
             public final Iterator<T> iterator() {
-                return new ComponentIterator<T>( componentIndex, onlyActive );
+                return new ComponentIterator<T>( componentType.index(), onlyActive );
             }
         };
     }
@@ -222,16 +236,16 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         return new AspectedEntityIterator( aspect );
     }
 
-    public final <T extends EntityComponent> T getComponent( int entityId, Class<T> componentType ) {
+    public final <T extends EntityComponent> T getComponent( int entityId, EntityComponentTypeKey<T> componentType ) {
         return components.get( entityId ).get( componentType );
     }
-
-    public final <T extends EntityComponent> T getComponent( int entityId, int componentId ) {
-        return components.get( entityId ).get( componentId );
-    }
     
-    public final <T extends EntityComponent> T getComponent( int entityId, Indexed indexed ) {
-        return getComponent( entityId, indexed.index() );
+    public final <T extends EntityComponent> T getComponent( String entityName, EntityComponentTypeKey<T> componentType ) {
+        int entityId = getEntityId( entityName );
+        if ( entityId < 0 ) {
+            return null;
+        }
+        return components.get( entityId ).get( componentType );
     }
 
     public final IndexedTypeSet getComponents( int entityId ) {
@@ -241,7 +255,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     // ---- ComponentSystem implementation --------------------------------------
     
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
     
@@ -419,8 +433,8 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         }
 
         @Override
-        public final SystemComponentKey systemComponentKey() {
-            return ENTITY_TYPE_KEY;
+        public final SystemComponentKey<Entity> systemComponentKey() {
+            return Entity.ENTITY_TYPE_KEY;
         }
     }
     
@@ -430,19 +444,28 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             super( system, getEntityBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
-            return ENTITY_TYPE_KEY;
+        public final SystemComponentKey<Entity> componentTypeKey() {
+            return Entity.ENTITY_TYPE_KEY;
         }
         @Override
         public Entity get( int id, Class<? extends Entity> subtype ) {
-            return null;
+            throw new UnsupportedOperationException();
         }
         @Override
-        public void delete( int id, Class<? extends Entity> subtype ) {
+        public void deleteComponent( int id, Class<? extends Entity> subtype ) {
+            throw new UnsupportedOperationException();
         }
         @Override
         public final Iterator<Entity> getAll() {
-            return null;
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteEtity( getEntityId( name ) );
+        }
+        @Override
+        public final Entity get( String name, Class<? extends Entity> subType ) {
+            throw new UnsupportedOperationException();
         }
         @Override
         public final void fromAttributes( Attributes attributes, BuildType buildType ) {
@@ -508,12 +531,13 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         }
     }
     
-    final static class Entity extends SystemComponent implements IndexedType {
+    public final static class Entity extends SystemComponent implements IndexedType {
         
+        public static final SystemComponentKey<Entity> ENTITY_TYPE_KEY = SystemComponentKey.create( Entity.class );
         static final AttributeKey<String> ACTIVE_ENTITY_IDS = new AttributeKey<String>( "ACTIVE_ENTITY_IDS", String.class, Entity.class );
         static final ComponentKey ACTIVE_ENTITIES_IDS_KEY = new ComponentKey( Entity.class, -1 );
         
-        protected Entity() {
+        Entity() {
             super( 0 );
         }
 

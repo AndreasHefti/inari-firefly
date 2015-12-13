@@ -18,7 +18,6 @@ package com.inari.firefly.system.component;
 import java.util.Iterator;
 
 import com.inari.commons.lang.indexed.IndexedObject;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.component.Component.ComponentKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
@@ -26,7 +25,7 @@ import com.inari.firefly.component.attr.ComponentAttributeMap;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
-public abstract class SystemBuilderAdapter<C extends Component> {
+public abstract class SystemBuilderAdapter<C extends SystemComponent> implements ComponentSystemAdapter<C> {
     
     protected final ComponentSystem<?> system;
     protected final SystemComponentBuilder componentBuilder;
@@ -67,13 +66,7 @@ public abstract class SystemBuilderAdapter<C extends Component> {
             attributes.add( attrs );
         }
     }
-
-    public abstract SystemComponentKey componentTypeKey();
     
-    public abstract C get( int id, Class<? extends C> subtype );
-    public abstract void delete( int id, Class<? extends C> subtype );
-    public abstract Iterator<C> getAll();
-
     public void buildComponents(
         Class<? extends C> subType,
         BuildType buildType,
@@ -87,7 +80,7 @@ public abstract class SystemBuilderAdapter<C extends Component> {
                     component.toAttributes( componentBuilder.getAttributes() );
                 }
             } else if ( buildType == BuildType.OVERWRITE ) {
-                delete( componentId, subType );
+                deleteComponent( componentId, subType );
             }
             componentBuilder
                 .setAttributes( attributes )
@@ -95,5 +88,36 @@ public abstract class SystemBuilderAdapter<C extends Component> {
                 .clear();
         }
     }
+    
+    @Override
+    public final C getComponent( int id ) {
+        return get( id, null );
+    }
+
+    @Override
+    public final <CS extends C> CS getComponent( int id, Class<CS> subType ) {
+        return subType.cast( get( id, subType ) );
+    }
+    
+    @Override
+    public final C getComponent( String name ) {
+        return getComponent( name, null );
+    }
+    
+    public final <CS extends C> CS getComponent( String name, Class<CS> subType ) {
+        return subType.cast( get( name, subType ) );
+    }
+    
+    @Override
+    public final void deleteComponent( int id ) {
+        deleteComponent( id, null );
+    }
+
+    public abstract SystemComponentKey<C> componentTypeKey();
+    
+    public abstract C get( int id, Class<? extends C> subType );
+    public abstract C get( String name, Class<? extends C> subType );
+
+    public abstract Iterator<C> getAll();
 
 }

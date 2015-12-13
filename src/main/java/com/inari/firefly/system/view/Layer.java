@@ -26,7 +26,7 @@ import com.inari.firefly.system.component.SystemComponent;
 
 public final class Layer extends SystemComponent {
     
-    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Layer.class );
+    public static final SystemComponentKey<Layer> TYPE_KEY = SystemComponentKey.create( Layer.class );
     
     public static final String DEFAULT_LAYER_NAME = "LAYER_";
     

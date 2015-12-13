@@ -82,10 +82,15 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
         attributes.put( NAME, name );
     }
     
-    public static final class SystemComponentKey extends IndexedTypeKey {
+    
+    
+    public static final class SystemComponentKey<C extends SystemComponent> extends IndexedTypeKey {
+        
+        public final Class<C> componentType;
 
-        protected SystemComponentKey( Class<? extends IndexedType> indexedType ) {
+        SystemComponentKey( Class<C> indexedType ) {
             super( indexedType );
+            componentType = indexedType;
         }
 
         @Override
@@ -93,7 +98,8 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
             return SystemComponent.class;
         }
         
-        public static final SystemComponentKey create( Class<? extends SystemComponent> type ) {
+        @SuppressWarnings( "unchecked" )
+        public static final <T extends SystemComponent> SystemComponentKey<T> create( Class<T> type ) {
             return Indexer.getIndexedTypeKey( SystemComponentKey.class, type );
         }
     }

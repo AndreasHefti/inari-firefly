@@ -15,7 +15,7 @@ public abstract class SystemComponentBuilder extends BaseComponentBuilder {
         super( attributes );
     }
 
-    public abstract SystemComponentKey systemComponentKey();
+    public abstract SystemComponentKey<?> systemComponentKey();
     
     @Override
     public final int build() {

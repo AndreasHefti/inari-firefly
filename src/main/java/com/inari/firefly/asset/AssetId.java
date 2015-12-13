@@ -1,12 +1,13 @@
 package com.inari.firefly.asset;
 
-// TODO considering to give a type T that is the subtype of Asset
-public final class AssetTypeKey {
+public final class AssetId {
+    
+    public static final AssetId NULL_ID = new AssetId( -1, Asset.class );
     
     public final int id;
     public final Class<? extends Asset> type;
     
-    public AssetTypeKey( int id, Class<? extends Asset> type ) {
+    public AssetId( int id, Class<? extends Asset> type ) {
         this.id = id;
         this.type = type;
     }
@@ -28,7 +29,7 @@ public final class AssetTypeKey {
             return false;
         if ( getClass() != obj.getClass() )
             return false;
-        AssetTypeKey other = (AssetTypeKey) obj;
+        AssetId other = (AssetId) obj;
         if ( id != other.id )
             return false;
         if ( type == null ) {
@@ -49,5 +50,4 @@ public final class AssetTypeKey {
         builder.append( "]" );
         return builder.toString();
     }
-
 }

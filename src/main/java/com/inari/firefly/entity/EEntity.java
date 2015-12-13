@@ -9,7 +9,7 @@ import com.inari.firefly.component.attr.AttributeMap;
 
 public class EEntity extends EntityComponent {
     
-    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( EEntity.class );
+    public static final EntityComponentTypeKey<EEntity> TYPE_KEY = EntityComponentTypeKey.create( EEntity.class );
     
     public static final AttributeKey<String> ENTITY_NAME = new AttributeKey<String>( "entityName", String.class, EEntity.class );
     public static final AttributeKey<int[]> CONTROLLER_IDS = new AttributeKey<int[]>( "controllerIds", int[].class, EEntity.class );

@@ -12,7 +12,7 @@ import com.inari.firefly.renderer.BlendMode;
 
 public class EText extends EntityComponent {
     
-    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( EText.class );
+    public static final EntityComponentTypeKey<EText> TYPE_KEY = EntityComponentTypeKey.create( EText.class );
     
     public static final AttributeKey<Integer> FONT_ID = new AttributeKey<Integer>( "fontId", Integer.class, EText.class );
     public static final AttributeKey<char[]> TEXT = new AttributeKey<char[]>( "text", char[].class, EText.class );

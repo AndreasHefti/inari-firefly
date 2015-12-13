@@ -29,7 +29,7 @@ import com.inari.firefly.system.component.SystemComponent;
 
 public final class TileGrid extends SystemComponent {
     
-    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( TileGrid.class );
+    public static final SystemComponentKey<TileGrid> TYPE_KEY = SystemComponentKey.create( TileGrid.class );
     
     public enum TileRenderMode {
         FULL_RENDERING,

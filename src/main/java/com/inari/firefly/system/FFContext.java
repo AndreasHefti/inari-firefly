@@ -13,7 +13,6 @@ import com.inari.commons.event.PredicatedEventListener;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.component.DataComponent;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
@@ -24,6 +23,7 @@ import com.inari.firefly.system.FFSystem.FFSystemTypeKey;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public final class FFContext {
@@ -82,7 +82,7 @@ public final class FFContext {
         if ( !systems.contains( key.index() ) ) {
             loadSystem( key, true );
         }
-        return key.cast( systems.get( key.index() ) );
+        return key.systemType.cast( systems.get( key.index() ) );
     }
     
     public final <T extends FFSystem> void loadSystem( FFSystemTypeKey<T> key ) {
@@ -100,8 +100,7 @@ public final class FFContext {
         }
         
         try {
-            Class<T> typeClass = key.systemType();
-            Constructor<T> constructor = typeClass.getDeclaredConstructor();
+            Constructor<T> constructor = key.systemType.getDeclaredConstructor();
             boolean accessible = constructor.isAccessible();
             constructor.setAccessible( true );
             T componentSystem = constructor.newInstance();
@@ -113,7 +112,7 @@ public final class FFContext {
                 initComponentSystem( (ComponentSystem<?>) componentSystem );
             }
             
-            if ( typeClass == EntitySystem.class ) {
+            if ( key.systemType == EntitySystem.class ) {
                 entitySystem = (EntitySystem) componentSystem;
             }
         } catch ( Exception e ) {
@@ -129,48 +128,59 @@ public final class FFContext {
         }
     }
     
-    private final void initComponentSystem( ComponentSystem<?> system ) {
-        SystemBuilderAdapter<?>[] supportedBuilderAdapter = system.getSupportedBuilderAdapter();
-        if ( supportedBuilderAdapter != null ) {
-            for ( int i = 0; i < supportedBuilderAdapter.length; i++ ) {
-                systemBuilderAdapter.set( supportedBuilderAdapter[ i ].componentTypeKey().index(), supportedBuilderAdapter[ i ] );
-            }
-        }
+    //---- SystemComponent adaption ----
+
+
+    public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, int componentId ) {
+        SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
+        return key.componentType.cast( builderHelper.get( componentId, null ) );
     }
     
     @SuppressWarnings( "unchecked" )
-    public final <T extends Component> T getSystemComponent( SystemComponentKey key, int componentId ) {
+    public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentKey<C> key, int componentId, Class<CS> subType ) {
+        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        return builderHelper.getComponent( componentId, subType );
+    }
+    
+    public <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        return (T) builderHelper.get( componentId, null );
+        return key.componentType.cast( builderHelper.get( componentName, null ) );
+    }
+    
+    public <C extends SystemComponent> int getSystemComponentId( SystemComponentKey<C> key, String componentName ) {
+        SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
+        return key.componentType.cast( builderHelper.get( componentName, null ) ).getId();
     }
     
     @SuppressWarnings( "unchecked" )
-    public final <T extends Component, S extends T> T getSystemComponent( SystemComponentKey key, Class<S> subType, int componentId ) {
-        SystemBuilderAdapter<T> builderHelper = (SystemBuilderAdapter<T>) systemBuilderAdapter.get( key.index() );
-        return builderHelper.get( componentId, (Class<S>) key.indexedType );
+    public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentKey<C> key, String componentName, Class<CS> subType ) {
+        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        return builderHelper.getComponent( componentName, subType );
     }
     
-    public final <T extends Component> void deleteSystemComponent( SystemComponentKey key, int componentId ) {
+    public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, int componentId ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        builderHelper.delete( componentId, null );
+        builderHelper.deleteComponent( componentId, null );
     }
     
-    public final <T extends DataComponent> T getComponent( TypedKey<T> componentKey ) {
+    
+    
+    public final <T extends DataComponent> T getDataComponent( TypedKey<T> componentKey ) {
         return componentKey.cast( dataComponents.get( componentKey ) );
     }
     
-    public final <T extends DataComponent> void setComponent( T component ) {
+    public final <T extends DataComponent> void setDataComponent( T component ) {
         dataComponents.put( component.componentKey(), component );
     }
     
-    public final void disposeComponent( TypedKey<? extends DataComponent> componentKey ) {
+    public final void disposeDataComponent( TypedKey<? extends DataComponent> componentKey ) {
         DataComponent component = dataComponents.remove( componentKey );
         if ( component != null && component instanceof Disposable ) {
             ( (Disposable) component ).dispose( this );
         }
     }
     
-    public final ComponentBuilder getComponentBuilder( SystemComponentKey key ) {
+    public final ComponentBuilder getComponentBuilder( SystemComponentKey<?> key ) {
         int id = key.index();
         if ( !systemBuilderAdapter.contains( id ) ) {
             return null;
@@ -179,7 +189,7 @@ public final class FFContext {
         return systemBuilderAdapter.get( id ).getComponentBuilder();
     }
     
-    public final <T extends EntityComponent> T getEntityComponent( int entityId, EntityComponentTypeKey typeKey ) {
+    public final <T extends EntityComponent> T getEntityComponent( int entityId, EntityComponentTypeKey<T> typeKey ) {
         return entitySystem.getComponent( entityId, typeKey );
     }
     
@@ -240,8 +250,8 @@ public final class FFContext {
         }
     }
     
-    public final void toAttributes( Attributes attributes, SystemComponentKey... componentKeys ) {
-        for ( SystemComponentKey componentKey : componentKeys ) {
+    public final void toAttributes( Attributes attributes, SystemComponentKey<?>... componentKeys ) {
+        for ( SystemComponentKey<?> componentKey : componentKeys ) {
             SystemBuilderAdapter<?> builderAdapter = systemBuilderAdapter.get( componentKey.index() );
             builderAdapter.toAttributes( attributes );
         }
@@ -271,6 +281,15 @@ public final class FFContext {
             system.dispose( this );
         }
         systems.clear();
+    }
+    
+    private final void initComponentSystem( ComponentSystem<?> system ) {
+        SystemBuilderAdapter<?>[] supportedBuilderAdapter = system.getSupportedBuilderAdapter();
+        if ( supportedBuilderAdapter != null ) {
+            for ( int i = 0; i < supportedBuilderAdapter.length; i++ ) {
+                systemBuilderAdapter.set( supportedBuilderAdapter[ i ].componentTypeKey().index(), supportedBuilderAdapter[ i ] );
+            }
+        }
     }
 
 }

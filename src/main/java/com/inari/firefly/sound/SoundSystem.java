@@ -20,7 +20,7 @@ import java.util.Iterator;
 import com.inari.commons.StringUtils;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.asset.AssetTypeKey;
+import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;
@@ -40,7 +40,7 @@ public final class SoundSystem
     
     public static final FFSystemTypeKey<SoundSystem> SYSTEM_KEY = FFSystemTypeKey.create( SoundSystem.class );
     
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Sound.TYPE_KEY
     };
 
@@ -163,7 +163,7 @@ public final class SoundSystem
     }
     
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
@@ -177,7 +177,7 @@ public final class SoundSystem
     public final class SoundBuilder extends SystemComponentBuilder {
 
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<Sound> systemComponentKey() {
             return Sound.TYPE_KEY;
         }
 
@@ -190,7 +190,7 @@ public final class SoundSystem
             Sound result = new Sound( componentId );
             result.fromAttributes( attributes );
             
-            SoundAsset asset = assetSystem.getAsset( new AssetTypeKey( result.getAssetId(), SoundAsset.class ), SoundAsset.class );
+            SoundAsset asset = assetSystem.getAsset( new AssetId( result.getAssetId(), SoundAsset.class ), SoundAsset.class );
             if ( asset == null ) {
                 throw new ComponentCreationException( "The SoundAsset with id: " + result.getAssetId() + " does not exist" );
             }
@@ -208,7 +208,7 @@ public final class SoundSystem
             super( system, new SoundBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<Sound> componentTypeKey() {
             return Sound.TYPE_KEY;
         }
         @Override
@@ -220,8 +220,16 @@ public final class SoundSystem
             return sounds.iterator();
         }
         @Override
-        public final void delete( int id, Class<? extends Sound> subtype ) {
+        public final void deleteComponent( int id, Class<? extends Sound> subtype ) {
             deleteSound( id );
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteSound( getSound( name ).getId() );
+        }
+        @Override
+        public final Sound get( String name, Class<? extends Sound> subType ) {
+            return getSound( name );
         }
     }
 

@@ -11,7 +11,7 @@ import com.inari.firefly.system.component.SystemComponent;
 
 public class Font extends SystemComponent {
     
-    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Font.class );
+    public static final SystemComponentKey<Font> TYPE_KEY = SystemComponentKey.create( Font.class );
     
     public static final AttributeKey<String> FONT_TEXTURE_RESOURCE_NAME = new AttributeKey<String>( "fontTextureId", String.class, Font.class );
     public static final AttributeKey<char[][]> CHAR_TEXTURE_MAP = new AttributeKey<char[][]>( "charTextureMap", char[][].class, Font.class );

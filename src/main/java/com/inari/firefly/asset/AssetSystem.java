@@ -38,18 +38,18 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     public static final FFSystemTypeKey<AssetSystem> SYSTEM_KEY = FFSystemTypeKey.create( AssetSystem.class );
 
     public static final String DEFAULT_GROUP_NAME = "FF_DEFAULT_ASSET_GROUP";
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Asset.TYPE_KEY
     };
     
     private final Map<AssetNameKey, Asset> assets;
-    private final Map<AssetTypeKey, Asset> typeMapping;
+    private final Map<AssetId, Asset> typeMapping;
     
     
     AssetSystem() {
         super( SYSTEM_KEY );
         assets = new LinkedHashMap<AssetNameKey, Asset>();
-        typeMapping = new LinkedHashMap<AssetTypeKey, Asset>();
+        typeMapping = new LinkedHashMap<AssetId, Asset>();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         return assets.get( key );
     }
     
-    public final Asset getAsset( AssetTypeKey key ) {
+    public final Asset getAsset( AssetId key ) {
         return typeMapping.get( key );
     }
     
@@ -79,7 +79,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         return assetType.cast( asset );
     }
     
-    public final <A extends Asset> A getAsset( AssetTypeKey assetKey, Class<A> assetType ) {
+    public final <A extends Asset> A getAsset( AssetId assetKey, Class<A> assetType ) {
         Asset asset = getAsset( assetKey );
         if ( asset == null ) {
             return null;
@@ -98,7 +98,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         loadAsset( asset );
     }
     
-    public final void loadAsset( AssetTypeKey key ) {
+    public final void loadAsset( AssetId key ) {
         Asset asset = getAsset( key );
         checkAsset( key, asset );
         loadAsset( asset );
@@ -121,16 +121,16 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         return assets.keySet();
     }
     
-    public final Collection<AssetTypeKey> getTypeKeys() {
+    public final Collection<AssetId> getTypeKeys() {
         return typeMapping.keySet();
     }
 
-    public final AssetTypeKey getAssetTypeKey( AssetNameKey assetNameKey ) {
+    public final AssetId getAssetTypeKey( AssetNameKey assetNameKey ) {
         Asset asset = getAsset( assetNameKey );
         if ( asset == null ) {
             return null;
         }
-        return asset.typeKey;
+        return asset.assetId;
     }
 
     public final boolean isAssetLoaded( AssetNameKey key ) {
@@ -152,7 +152,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         disposeAsset( asset );
     }
     
-    public final void disposeAsset( AssetTypeKey key ) {
+    public final void disposeAsset( AssetId key ) {
         Asset asset = getAsset( key );
         if ( asset == null ) {
             return;
@@ -186,7 +186,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         deleteAsset( asset );
     }
     
-    public final void deleteAsset( AssetTypeKey key ) {
+    public final void deleteAsset( AssetId key ) {
         Asset asset = getAsset( key );
         if ( asset == null ) {
             return;
@@ -199,23 +199,23 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
             return;
         }
         
-        Collection<AssetTypeKey> assetsToDeleteAlso = null;
+        Collection<AssetId> assetsToDeleteAlso = null;
         Collection<AssetNameKey> assetNameKeysOfGroup = getAssetNameKeysOfGroup( group );
         for ( AssetNameKey key : assetNameKeysOfGroup ) {
             Asset asset = assets.get( key );
             if ( asset.loaded ) {
-                Collection<AssetTypeKey> alsoDisposedAssets = disposeAsset( asset );
+                Collection<AssetId> alsoDisposedAssets = disposeAsset( asset );
                 if ( assetsToDeleteAlso == null ) {
                     assetsToDeleteAlso = alsoDisposedAssets;
                 } else {
                     assetsToDeleteAlso.addAll( assetsToDeleteAlso );
                 }
             } 
-            delete( asset.typeKey );
+            delete( asset.assetId );
         }
         
         if ( assetsToDeleteAlso != null ) {
-            for ( AssetTypeKey key : assetsToDeleteAlso ) {
+            for ( AssetId key : assetsToDeleteAlso ) {
                 delete( key );
             }
         }
@@ -225,12 +225,22 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         return assets.containsKey( key );
     }
     
-    public final boolean hasAsset( AssetTypeKey key ) {
+    public final boolean hasAsset( AssetId key ) {
         return typeMapping.containsKey( key );
     }
     
+    public final AssetId getAssetId( String name ) {
+        for ( Asset asset : assets.values() ) {
+            if ( name.equals( asset.getName() ) ) {
+                return asset.getAssetId();
+            }
+        }
+        
+        return AssetId.NULL_ID;
+    }
+    
     public final int getAssetId( AssetNameKey key ) {
-        AssetTypeKey assetTypeKey = getAssetTypeKey( key );
+        AssetId assetTypeKey = getAssetTypeKey( key );
         if ( assetTypeKey == null ) {
             return -1;
         }
@@ -261,7 +271,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
 
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
     
@@ -275,11 +285,11 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         return assetsOfGroup;
     }
     
-    public final Collection<AssetTypeKey> getAssetTypeKeysOfGroup( String group ) {
-        Collection<AssetTypeKey> assetsOfGroup = new ArrayList<AssetTypeKey>();
+    public final Collection<AssetId> getAssetTypeKeysOfGroup( String group ) {
+        Collection<AssetId> assetsOfGroup = new ArrayList<AssetId>();
         for ( AssetNameKey key : assets.keySet() ) {
             if ( key.group.equals( group ) ) {
-                assetsOfGroup.add( assets.get( key ).typeKey );
+                assetsOfGroup.add( assets.get( key ).assetId );
             }
         }
         return assetsOfGroup;
@@ -292,10 +302,10 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         };
     }
 
-    private Collection<AssetTypeKey> disposeAsset( Asset asset ) {
-        Collection<AssetTypeKey> toDisposeFirst = findeAssetsToDisposeFirst( asset.typeKey );
+    private Collection<AssetId> disposeAsset( Asset asset ) {
+        Collection<AssetId> toDisposeFirst = findeAssetsToDisposeFirst( asset.assetId );
         if ( !toDisposeFirst.isEmpty() ) {
-            for ( AssetTypeKey key : toDisposeFirst ) {
+            for ( AssetId key : toDisposeFirst ) {
                 Asset toDispose = typeMapping.get( key );
                 if ( toDispose.loaded ) {
                     dispose( toDispose );
@@ -307,14 +317,14 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         return toDisposeFirst;
     }
     
-    private Collection<AssetTypeKey> findeAssetsToDisposeFirst( AssetTypeKey typeKey ) {
-        Set<AssetTypeKey> result = new HashSet<AssetTypeKey>();
+    private Collection<AssetId> findeAssetsToDisposeFirst( AssetId typeKey ) {
+        Set<AssetId> result = new HashSet<AssetId>();
         for ( Asset asset : assets.values() ) {
-            AssetTypeKey[] disposeFirst = asset.dependsOn();
+            AssetId[] disposeFirst = asset.dependsOn();
             if ( disposeFirst != null ) {
                 for ( int i = 0; i < disposeFirst.length; i++ ) {
                     if ( typeKey.equals( disposeFirst[ i ] ) ) {
-                        result.add( asset.typeKey );
+                        result.add( asset.assetId );
                         break;
                     }
                 }
@@ -325,18 +335,18 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     
     private void deleteAsset( Asset asset ) {
         if ( asset.loaded ) {
-            Collection<AssetTypeKey> alsoDisposedAssets = disposeAsset( asset );
+            Collection<AssetId> alsoDisposedAssets = disposeAsset( asset );
             if ( alsoDisposedAssets != null ) {
-                for ( AssetTypeKey typeKey : alsoDisposedAssets ) {
+                for ( AssetId typeKey : alsoDisposedAssets ) {
                     delete( typeKey );
                 }
             }
         }
         
-        delete( asset.typeKey );
+        delete( asset.assetId );
     }
     
-    private void delete( AssetTypeKey assetKey ) {
+    private void delete( AssetId assetKey ) {
         Asset deleted = typeMapping.remove( assetKey );
         if ( deleted == null ) {
             return;
@@ -353,7 +363,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
 
     private void loadAsset( Asset asset ) {
-        AssetTypeKey[] loadFirst = asset.dependsOn();
+        AssetId[] loadFirst = asset.dependsOn();
         if ( loadFirst != null ) {
             for ( int i = 0; i < loadFirst.length; i++ ) {
                 Asset assetToLoadFirst = typeMapping.get( loadFirst[ i ] );
@@ -371,7 +381,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         asset.loaded = true;
     }
     
-    private void checkAsset( AssetTypeKey key, Asset asset ) {
+    private void checkAsset( AssetId key, Asset asset ) {
         if ( asset == null ) {
             throw new IllegalArgumentException( "No Asset found for: " + key );
         }
@@ -388,7 +398,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         private AssetBuilder() {}
         
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<Asset> systemComponentKey() {
             return Asset.TYPE_KEY;
         }
 
@@ -414,7 +424,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
             }
 
             assets.put( assetKey, asset );
-            typeMapping.put( asset.typeKey, asset );
+            typeMapping.put( asset.assetId, asset );
             postInit( asset, context );
             
             context.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
@@ -432,21 +442,29 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
             super( system, new AssetBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<Asset> componentTypeKey() {
             return Asset.TYPE_KEY;
         }
         @Override
-        public final Asset get( int id, Class<? extends Asset> subtype ) {
-            return getAsset( new AssetTypeKey( id, subtype ) );
+        public final Asset get( int id, Class<? extends Asset> subType ) {
+            return getAsset( new AssetId( id, subType ) );
         }
         @Override
-        public final void delete( int id, Class<? extends Asset> subtype ) {
-            deleteAsset( new AssetTypeKey( id, subtype ) );
+        public final void deleteComponent( int id, Class<? extends Asset> subType ) {
+            deleteAsset( new AssetId( id, subType ) );
         }
         
         @Override
         public final Iterator<Asset> getAll() {
             return assets.values().iterator();
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteAsset( getAssetId( name ) );
+        }
+        @Override
+        public final Asset get( String name, Class<? extends Asset> subType ) {
+            return subType.cast( getAsset( getAssetId( name ) ) );
         }
     }
 

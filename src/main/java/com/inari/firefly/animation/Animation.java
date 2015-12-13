@@ -26,7 +26,7 @@ import com.inari.firefly.system.component.SystemComponent;
 
 public abstract class Animation extends SystemComponent {
     
-    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Animation.class );
+    public static final SystemComponentKey<Animation> TYPE_KEY = SystemComponentKey.create( Animation.class );
     
     public static final AttributeKey<Long> START_TIME = new AttributeKey<Long>( "startTime", Long.class, Animation.class );
     public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Animation.class );

@@ -36,7 +36,7 @@ public final class ControllerSystem
     
     public static final FFSystemTypeKey<ControllerSystem> SYSTEM_KEY = FFSystemTypeKey.create( ControllerSystem.class );
     
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
        Controller.TYPE_KEY
     };
 
@@ -139,7 +139,7 @@ public final class ControllerSystem
     }
 
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
@@ -159,7 +159,7 @@ public final class ControllerSystem
     public final class ControllerBuilder extends SystemComponentBuilder {
         
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<Controller> systemComponentKey() {
             return Controller.TYPE_KEY;
         }
 
@@ -181,11 +181,11 @@ public final class ControllerSystem
             super( system, new ControllerBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<Controller> componentTypeKey() {
             return Controller.TYPE_KEY;
         }
         @Override
-        public final Controller get( int id, Class<? extends Controller> subtype ) {
+        public final Controller get( int id, Class<? extends Controller> subType ) {
             return controller.get( id );
         }
         @Override
@@ -193,8 +193,16 @@ public final class ControllerSystem
             return controller.iterator();
         }
         @Override
-        public final void delete( int id, Class<? extends Controller> subtype ) {
+        public final void deleteComponent( int id, Class<? extends Controller> subType ) {
             deleteController( id );
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteController( name );
+        }
+        @Override
+        public Controller get( String name, Class<? extends Controller> subType ) {
+            return getControllerAs( name, subType );
         }
     }
 }
