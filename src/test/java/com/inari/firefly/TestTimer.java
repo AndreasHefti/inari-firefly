@@ -1,6 +1,6 @@
 package com.inari.firefly;
 
-import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.external.FFTimer;
 
 public class TestTimer extends FFTimer {
 

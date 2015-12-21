@@ -1,8 +1,8 @@
 package com.inari.firefly.system.component;
 
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.build.BaseComponentBuilder;
-import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public abstract class SystemComponentBuilder extends BaseComponentBuilder {

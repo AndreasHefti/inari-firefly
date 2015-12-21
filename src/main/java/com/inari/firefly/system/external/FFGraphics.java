@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system;
+package com.inari.firefly.system.external;
 
 import java.util.Iterator;
 
 import com.inari.firefly.asset.event.AssetEventListener;
 import com.inari.firefly.renderer.SpriteRenderable;
+import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEventListener;
 
-public interface FFSystemInterface extends FFContextInitiable, AssetEventListener, ViewEventListener {
+public interface FFGraphics extends FFContextInitiable, AssetEventListener, ViewEventListener {
+    
+    int getScreenWidth();
+
+    int getScreenHeight();
     
     void startRendering( View view );
     
@@ -33,21 +38,5 @@ public interface FFSystemInterface extends FFContextInitiable, AssetEventListene
     void endRendering( View view );
     
     void flush( Iterator<View> virtualViews );
-
-    long playSound( int soundId, int channel, boolean looping, float volume, float pitch, float pan );
-    
-    void changeSound( int soundId, long instanceId, float volume, float pitch, float pan );
-    
-    void stopSound( int soundId, long instanceId );
-    
-    void playMusic( int soundId, boolean looping, float volume, float pan );
-    
-    void changeMusic( int soundId, float volume, float pan );
-    
-    void stopMusic( int soundId );
-
-    int getScreenWidth();
-
-    int getScreenHeight();
 
 }

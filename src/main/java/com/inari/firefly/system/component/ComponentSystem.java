@@ -16,9 +16,9 @@
 package com.inari.firefly.system.component;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 

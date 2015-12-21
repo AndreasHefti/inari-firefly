@@ -1,22 +1,22 @@
 package com.inari.firefly.renderer;
 
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
-import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.FFSystemInterface;
+import com.inari.firefly.system.external.FFGraphics;
 
 public abstract class BaseRenderer implements FFContextInitiable {
     
-    protected FFSystemInterface systemInterface;
+    protected FFGraphics graphics;
     protected EntitySystem entitySystem;
 
     protected final TransformDataCollector transformCollector = new TransformDataCollector();
     
     @Override
     public void init( FFContext context ) throws FFInitException {
-        systemInterface = context.getSystemInterface();
+        graphics = context.getGraphics();
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
     }
     
@@ -35,7 +35,7 @@ public abstract class BaseRenderer implements FFContextInitiable {
         }
         
         if ( transformCollector.scalex != 1 || transformCollector.scaley != 1 || transformCollector.rotation != 0 ) {
-            systemInterface.renderSprite( 
+            graphics.renderSprite( 
                 sprite, 
                 transformCollector.xpos, 
                 transformCollector.ypos, 
@@ -46,7 +46,7 @@ public abstract class BaseRenderer implements FFContextInitiable {
                 transformCollector.rotation
             );
         } else {
-            systemInterface.renderSprite( sprite, transformCollector.xpos, transformCollector.ypos );
+            graphics.renderSprite( sprite, transformCollector.xpos, transformCollector.ypos );
         }
     }
     

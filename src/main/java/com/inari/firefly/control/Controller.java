@@ -23,9 +23,9 @@ import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.FFTimer;
-import com.inari.firefly.system.FFTimer.UpdateScheduler;
 import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.external.FFTimer;
+import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
 public abstract class Controller extends SystemComponent implements Disposable {
     

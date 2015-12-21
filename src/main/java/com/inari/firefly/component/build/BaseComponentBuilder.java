@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import com.inari.commons.StringUtils;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.NamedComponent;
 import com.inari.firefly.component.attr.Attribute;
@@ -29,7 +30,6 @@ import com.inari.firefly.state.event.WorkflowEvent;
 import com.inari.firefly.state.event.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
-import com.inari.firefly.system.FFInitException;
 
 public abstract class BaseComponentBuilder implements ComponentBuilder {
     

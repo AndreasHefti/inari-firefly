@@ -3,12 +3,12 @@ package com.inari.firefly.renderer.text;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.renderer.BaseRenderer;
 import com.inari.firefly.renderer.BlendMode;
 import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFInitException;
 
 final class TextRenderer extends BaseRenderer {
     

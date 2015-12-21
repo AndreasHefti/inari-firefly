@@ -1,4 +1,4 @@
-package com.inari.firefly.system;
+package com.inari.firefly.system.external;
 
 public abstract class FFTimer {
     
@@ -22,7 +22,7 @@ public abstract class FFTimer {
         return timeElapsed;
     }
 
-    protected abstract void tick();
+    public abstract void tick();
     
     public final UpdateScheduler createUpdateScheduler( float resolution ) {
         return new UpdateScheduler( resolution );

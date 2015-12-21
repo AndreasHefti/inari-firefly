@@ -20,9 +20,9 @@ import java.util.Set;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.component.SystemComponent;
 
 

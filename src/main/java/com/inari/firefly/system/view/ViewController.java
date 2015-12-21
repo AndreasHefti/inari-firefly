@@ -2,7 +2,7 @@ package com.inari.firefly.system.view;
 
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.view.event.ViewEvent;
 import com.inari.firefly.system.view.event.ViewEventListener;
 

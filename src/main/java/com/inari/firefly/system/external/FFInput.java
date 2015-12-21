@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system;
+package com.inari.firefly.system.external;
 
 import com.inari.commons.lang.TypedKey;
 
 
-public abstract class Input {
+public abstract class FFInput {
     
-    public static final TypedKey<Input> CONTEXT_KEY = TypedKey.create( "InputHandler", Input.class );
+    public static final TypedKey<FFInput> CONTEXT_KEY = TypedKey.create( "InputHandler", FFInput.class );
     
     public enum ButtonType {
         UP,

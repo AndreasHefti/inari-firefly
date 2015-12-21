@@ -29,7 +29,7 @@ public final class TileGridRenderer extends BaseRenderer {
     final void renderTileGrid( TileIterator iterator ) {
         while( iterator.hasNext() ) {
             ESprite sprite = entitySystem.getComponent( iterator.next(), ESprite.TYPE_KEY );
-            systemInterface.renderSprite( sprite, iterator.getWorldXPos(), iterator.getWorldYPos() );
+            graphics.renderSprite( sprite, iterator.getWorldXPos(), iterator.getWorldYPos() );
         }
     }
 

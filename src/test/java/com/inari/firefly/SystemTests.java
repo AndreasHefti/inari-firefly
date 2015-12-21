@@ -15,8 +15,8 @@ import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.FireFly;
+import com.inari.firefly.system.external.FFGraphics;
 
 public class SystemTests {
     
@@ -30,7 +30,7 @@ public class SystemTests {
         FFContext context = firefly.getContext();
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        FFSystemInterface lowerSystemMock = context.getSystemInterface();
+        FFGraphics lowerSystemMock = context.getGraphics();
         
         assetSystem
             .getAssetBuilder()
@@ -58,7 +58,6 @@ public class SystemTests {
             "LowerSystemFacadeMock [" +
             "loadedAssets=[], " +
             "views=[BASE_VIEW], " +
-            "sounds=[], " +
             "log=[]]", 
             lowerSystemMock.toString() 
         );
@@ -71,7 +70,6 @@ public class SystemTests {
             "LowerSystemFacadeMock [" +
             "loadedAssets=[boulderDashTextureAsset, spriteAsset], " +
             "views=[BASE_VIEW], " +
-            "sounds=[], " +
             "log=[]]", 
             lowerSystemMock.toString() 
         );
@@ -83,7 +81,6 @@ public class SystemTests {
             "LowerSystemFacadeMock [" +
             "loadedAssets=[boulderDashTextureAsset, spriteAsset], " +
             "views=[BASE_VIEW], " +
-            "sounds=[], " +
             "log=[startRendering::View(BASE_VIEW), renderSprite::Sprite(0), endRendering::View(BASE_VIEW), flush]]", 
             lowerSystemMock.toString() 
         );

@@ -1,4 +1,4 @@
-package com.inari.firefly.system;
+package com.inari.firefly.system.external;
 
 public final class DefaultFFTimerImpl extends FFTimer {
 
@@ -11,7 +11,6 @@ public final class DefaultFFTimerImpl extends FFTimer {
             time += timeElapsed;
             timeElapsed = currentTime - lastUpdateTime;
             lastUpdateTime = currentTime;
-            
         }
     }
 

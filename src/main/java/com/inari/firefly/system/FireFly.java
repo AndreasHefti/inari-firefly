@@ -30,6 +30,10 @@ import com.inari.firefly.renderer.sprite.SpriteViewSystem;
 import com.inari.firefly.renderer.tile.TileGridSystem;
 import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.state.StateSystem;
+import com.inari.firefly.system.external.FFAudio;
+import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.FFTimer;
+import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.TaskSystem;
@@ -40,7 +44,7 @@ public abstract class FireFly {
     
     protected final FFContext context;
     
-    protected FFSystemInterface lowerSystemFacade;
+    protected FFGraphics lowerSystemFacade;
     protected ViewSystem viewSystem;
 
     private final UpdateEvent updateEvent;
@@ -50,13 +54,14 @@ public abstract class FireFly {
 
     protected FireFly( 
             IEventDispatcher eventDispatcher, 
-            FFSystemInterface systemInterface, 
+            FFGraphics graphics,
+            FFAudio audio,
             FFTimer timer,
-            Input input 
+            FFInput input 
     ) {
-        context = new FFContext( eventDispatcher, systemInterface, timer, input );
+        context = new FFContext( eventDispatcher, graphics, audio, timer, input );
         
-        lowerSystemFacade = context.getSystemInterface();
+        lowerSystemFacade = context.getGraphics();
         viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         
         context.loadSystem( AssetSystem.SYSTEM_KEY );

@@ -19,18 +19,18 @@ import java.util.Iterator;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.asset.AssetSystem;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.AssetId;
+import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEventListener;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
+import com.inari.firefly.system.external.FFAudio;
 
 public final class SoundSystem
     extends
@@ -45,7 +45,7 @@ public final class SoundSystem
     };
 
     private AssetSystem assetSystem;
-    private FFSystemInterface systemInterface;
+    private FFAudio audio;
     
     private final DynArray<Sound> sounds;
 
@@ -59,7 +59,7 @@ public final class SoundSystem
         super.init( context );
         
         assetSystem = context.getSystem( AssetSystem. SYSTEM_KEY );
-        systemInterface = context.getSystemInterface();
+        audio = context.getAudio();
         
         context.registerListener( SoundEvent.class, this );
     }
@@ -129,14 +129,14 @@ public final class SoundSystem
         switch ( event.eventType ) {
             case PLAY_SOUND : {
                 if ( sound.streaming ) {
-                    systemInterface.playMusic( 
+                    audio.playMusic( 
                         sound.getAssetId(), 
                         sound.isLooping(), 
                         sound.getVolume(), 
                         sound.getPan() 
                     );
                 } else {
-                    sound.instanceId = systemInterface.playSound( 
+                    sound.instanceId = audio.playSound( 
                         sound.getAssetId(), 
                         sound.getChannel(), 
                         sound.isLooping(), 
@@ -149,9 +149,9 @@ public final class SoundSystem
             }
             case STOP_PLAYING : {
                 if ( sound.streaming ) {
-                    systemInterface.stopMusic( sound.getAssetId() );
+                    audio.stopMusic( sound.getAssetId() );
                 } else {
-                    systemInterface.stopSound( sound.getAssetId(), sound.instanceId );
+                    audio.stopSound( sound.getAssetId(), sound.instanceId );
                 } 
                 break;
             }

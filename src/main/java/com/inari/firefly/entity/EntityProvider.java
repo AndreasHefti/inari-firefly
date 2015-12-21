@@ -7,11 +7,11 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
-import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.FFSystem;
 
 public final class EntityProvider implements FFSystem, FFContextInitiable  {

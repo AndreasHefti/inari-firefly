@@ -1,8 +1,8 @@
 package com.inari.firefly;
 
-import com.inari.firefly.system.Input;
+import com.inari.firefly.system.external.FFInput;
 
-public class InputMock extends Input {
+public class InputMock extends FFInput {
 
     @Override
     public void mapKeyInput( ButtonType buttonType, int keyCode ) {

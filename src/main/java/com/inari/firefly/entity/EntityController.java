@@ -22,7 +22,7 @@ import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.external.FFTimer;
 
 
 public abstract class EntityController extends Controller implements EntityActivationListener {

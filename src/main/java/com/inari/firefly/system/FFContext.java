@@ -13,6 +13,7 @@ import com.inari.commons.event.PredicatedEventListener;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.DataComponent;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
@@ -25,6 +26,10 @@ import com.inari.firefly.system.component.ComponentSystem.BuildType;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.external.FFAudio;
+import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.FFTimer;
+import com.inari.firefly.system.external.FFInput;
 
 public final class FFContext {
 
@@ -42,22 +47,26 @@ public final class FFContext {
     private final DynArray<SystemBuilderAdapter<?>> systemBuilderAdapter = new DynArray<SystemBuilderAdapter<?>>();
     
     private final IEventDispatcher eventDispatcher;
-    private final FFSystemInterface systemInterface;
+    private final FFGraphics graphics;
+    private final FFAudio audio;
     private final FFTimer timer;
-    private final Input input;
+    private final FFInput input;
     
     private EntitySystem entitySystem;
     boolean exit = false;
 
     public FFContext( 
         IEventDispatcher eventDispatcher, 
-        FFSystemInterface systemInterface, 
+        FFGraphics graphics,
+        FFAudio audio,
         FFTimer timer,
-        Input input 
+        FFInput input 
     ) {
         this.eventDispatcher = eventDispatcher;
-        this.systemInterface = systemInterface;
-        systemInterface.init( this );
+        this.graphics = graphics;
+        graphics.init( this );
+        this.audio = audio;
+        audio.init( this );
         this.timer = timer;
         this.input = input;
     }
@@ -66,15 +75,19 @@ public final class FFContext {
         return eventDispatcher;
     }
 
-    public final FFSystemInterface getSystemInterface() {
-        return systemInterface;
+    public final FFGraphics getGraphics() {
+        return graphics;
+    }
+    
+    public final FFAudio getAudio() {
+        return audio;
     }
 
     public final FFTimer getTimer() {
         return timer;
     }
 
-    public final Input getInput() {
+    public final FFInput getInput() {
         return input;
     }
 
@@ -258,11 +271,11 @@ public final class FFContext {
     }
 
     public final int getScreenWidth() {
-        return systemInterface.getScreenWidth();
+        return graphics.getScreenWidth();
     }
     
     public final int getScreenHeight() {
-        return systemInterface.getScreenHeight();
+        return graphics.getScreenHeight();
     }
     
     public final void exit() {

@@ -7,15 +7,14 @@ import java.util.Iterator;
 import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.renderer.SpriteRenderable;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFSystemInterface;
+import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEvent;
 
-public class SystemInterfaceMock implements FFSystemInterface {
+public class FFGraphicsMock implements FFGraphics {
     
     private final Collection<String> loadedAssets = new ArrayList<String>();
     private final Collection<String> views = new ArrayList<String>();
-    private final Collection<String> sounds = new ArrayList<String>();
     
     private final Collection<String> log = new ArrayList<String>();
 
@@ -36,7 +35,6 @@ public class SystemInterfaceMock implements FFSystemInterface {
     public void clear() {
         loadedAssets.clear();
         views.clear();
-        sounds.clear();
         log.clear();
     }
 
@@ -67,37 +65,6 @@ public class SystemInterfaceMock implements FFSystemInterface {
             }
             default: {}
         }
-    }
-
-    @Override
-    public long playSound( int soundId, int chanel, boolean looping, float volume, float pitch, float pan ) {
-        log.add( "playSound" );
-        return soundId;
-    }
-
-    @Override
-    public void changeSound( int soundId, long instanceId, float volume, float pitch, float pan ) {
-        log.add( "changeSound" );
-    }
-
-    @Override
-    public void stopSound( int soundId, long instanceId ) {
-        log.add( "stopSound" );
-    }
-
-    @Override
-    public void playMusic( int soundId, boolean looping, float volume, float pan ) {
-        log.add( "playMusic" );
-    }
-
-    @Override
-    public void changeMusic( int soundId, float volume, float pan ) {
-        log.add( "changeMusic" );
-    }
-
-    @Override
-    public void stopMusic( int soundId ) {
-        log.add( "stopMusic" );
     }
 
     @Override
@@ -143,10 +110,6 @@ public class SystemInterfaceMock implements FFSystemInterface {
         return views.toString();
     }
     
-    public String sounds() {
-        return sounds.toString();
-    }
-    
     public String log() {
         return log.toString();
     }
@@ -158,8 +121,6 @@ public class SystemInterfaceMock implements FFSystemInterface {
         builder.append( loadedAssets );
         builder.append( ", views=" );
         builder.append( views );
-        builder.append( ", sounds=" );
-        builder.append( sounds );
         builder.append( ", log=" );
         builder.append( log );
         builder.append( "]" );

@@ -16,6 +16,7 @@
 package com.inari.firefly.system;
 
 import com.inari.commons.event.Event;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class UpdateEvent extends Event<UpdateEventListener> {
     
