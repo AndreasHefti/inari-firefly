@@ -28,6 +28,7 @@ public abstract class FFInput {
         DOWN,
         LEFT,
         
+        ENTER,
         FIRE_1,
         FIRE_2,
         
@@ -45,7 +46,8 @@ public abstract class FFInput {
         BUTTON_6,
         BUTTON_7,
         BUTTON_8,
-        BUTTON_9
+        BUTTON_9,
+        QUIT
     }
     
     public enum InputType {
