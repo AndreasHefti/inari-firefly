@@ -17,8 +17,12 @@ package com.inari.firefly.component.build;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import com.inari.commons.StringUtils;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.NamedComponent;
@@ -61,7 +65,7 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
     }
 
     @Override
-    public final ComponentBuilder set( AttributeKey<?> key, Object value ) {
+    public final <T> ComponentBuilder set( AttributeKey<T> key, T value ) {
         attributes.putUntyped( key, value );
         return this;
     }
@@ -89,16 +93,50 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
         attributes.put( key, value );
         return this;
     }
-    
+
     @Override
-    public final ComponentBuilder set( Attribute... attributes ) {
+    public final ComponentBuilder add( AttributeKey<IntBag> key, int value ) {
+        if ( ! attributes.contains( key ) ) {
+            attributes.put( key, new IntBag( 1, -1 ) );
+        }
+        
+        IntBag intBag = attributes.getValue( key );
+        intBag.add( value );
+        
+        return this;
+    }
+
+    @Override
+    public final <T> ComponentBuilder add( AttributeKey<Collection<T>> key, T value ) {
+        if ( ! attributes.contains( key ) ) {
+            attributes.put( key, new ArrayList<T>() );
+        }
+        
+        Collection<T> list = attributes.getValue( key );
+        list.add( value );
+        
+        return this;
+    }
+
+    @Override
+    public final <T> ComponentBuilder addAt( AttributeKey<List<T>> key, T value, int index ) {
+        if ( ! attributes.contains( key ) ) {
+            attributes.put( key, new ArrayList<T>() );
+        }
+        
+        List<T> list = attributes.getValue( key );
+        list.add( index, value );
+        
+        return this;
+    }
+
+    @Override
+    public final ComponentBuilder add( Attribute... attributes ) {
         for ( Attribute attribute : attributes ) {
             this.attributes.putUntyped( attribute.getKey(), attribute.getValue() );
         }
         return this;
     }
-    
-    
 
     @Override
     public final int build( Class<?> componentType ) {

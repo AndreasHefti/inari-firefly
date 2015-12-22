@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
@@ -12,14 +13,14 @@ public class EEntity extends EntityComponent {
     public static final EntityComponentTypeKey<EEntity> TYPE_KEY = EntityComponentTypeKey.create( EEntity.class );
     
     public static final AttributeKey<String> ENTITY_NAME = new AttributeKey<String>( "entityName", String.class, EEntity.class );
-    public static final AttributeKey<int[]> CONTROLLER_IDS = new AttributeKey<int[]>( "controllerIds", int[].class, EEntity.class );
+    public static final AttributeKey<IntBag> CONTROLLER_IDS = new AttributeKey<IntBag>( "controllerIds", IntBag.class, EEntity.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         ENTITY_NAME,
         CONTROLLER_IDS
     };
     
     private String entityName;
-    private int[] controllerIds;
+    private IntBag controllerIds;
     
     public EEntity() {
         super( TYPE_KEY );
@@ -40,12 +41,15 @@ public class EEntity extends EntityComponent {
         this.entityName = entityName;
     }
 
-    public final int[] getControllerIds() {
+    public final IntBag getControllerIds() {
         return controllerIds;
     }
 
-    public final void setControllerIds( int[] controllerIds ) {
+    public final void setControllerIds( IntBag controllerIds ) {
         this.controllerIds = controllerIds;
+        if ( controllerIds != null ) {
+            controllerIds.trim();
+        }
     }
     
     public final boolean controlledBy( int controllerId ) {
@@ -53,13 +57,7 @@ public class EEntity extends EntityComponent {
             return false;
         }
         
-        for ( int i = 0; i < controllerIds.length; i++ ) {
-            if ( controllerIds[ i ] == controllerId ) {
-                return true;
-            } 
-        }
-        
-        return false;
+        return controllerIds.contains( controllerId );
     }
 
     @Override
@@ -75,7 +73,7 @@ public class EEntity extends EntityComponent {
     @Override
     public void fromAttributes( AttributeMap attributes ) {
         entityName = attributes.getValue( ENTITY_NAME, entityName );
-        controllerIds = attributes.getValue( CONTROLLER_IDS, controllerIds );
+        setControllerIds( attributes.getValue( CONTROLLER_IDS, controllerIds ) );
     }
 
     @Override

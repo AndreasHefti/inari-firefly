@@ -15,6 +15,10 @@
  ******************************************************************************/ 
 package com.inari.firefly.component.build;
 
+import java.util.Collection;
+import java.util.List;
+
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.Attribute;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -27,12 +31,16 @@ public interface ComponentBuilder {
     
     AttributeMap getAttributes();
     
-    ComponentBuilder set( AttributeKey<?> key, Object value );
+    <T> ComponentBuilder set( AttributeKey<T> key, T value );
     ComponentBuilder set( AttributeKey<Float> key, float value );
     ComponentBuilder set( AttributeKey<Integer> key, int value );
     ComponentBuilder set( AttributeKey<Long> key, long value );
     ComponentBuilder set( AttributeKey<Double> key, double value );
-    ComponentBuilder set( Attribute... attributes );
+    
+    ComponentBuilder add( AttributeKey<IntBag> key, int value );
+    <T> ComponentBuilder add( AttributeKey<Collection<T>> key, T value );
+    <T> ComponentBuilder addAt( AttributeKey<List<T>> key, T value, int index );
+    ComponentBuilder add( Attribute... attributes );
     
     int build();
     void build( int componentId );
