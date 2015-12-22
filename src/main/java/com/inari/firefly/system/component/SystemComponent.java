@@ -24,7 +24,6 @@ import com.inari.commons.lang.indexed.IndexedObject;
 import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.Indexer;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.component.NamedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -36,10 +35,12 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
         NAME
     };
     
+    private final ComponentKey componentKey;
     protected String name;
     
     protected SystemComponent( int id ) {
         super( id );
+        componentKey = new ComponentKey( indexedTypeKey(), id );
         name = null;
     }
     
@@ -48,8 +49,8 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
     }
 
     @Override
-    public Class<? extends Component> componentType() {
-        return this.getClass();
+    public final ComponentKey componentKey() {
+        return componentKey;
     }
 
     @Override
@@ -85,19 +86,21 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
     
     
     public static final class SystemComponentKey<C extends SystemComponent> extends IndexedTypeKey {
-        
-        public final Class<C> componentType;
 
         SystemComponentKey( Class<C> indexedType ) {
             super( indexedType );
-            componentType = indexedType;
         }
 
         @Override
         protected final Class<SystemComponent> baseIndexedType() {
             return SystemComponent.class;
         }
-        
+
+        @Override
+        public String toString() {
+            return "SystemComponent:" + type().getSimpleName() + "[" + index + "]";
+        }
+
         @SuppressWarnings( "unchecked" )
         public static final <T extends SystemComponent> SystemComponentKey<T> create( Class<T> type ) {
             return Indexer.getIndexedTypeKey( SystemComponentKey.class, type );

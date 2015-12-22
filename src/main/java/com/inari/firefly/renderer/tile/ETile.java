@@ -55,11 +55,6 @@ public final class ETile extends EntityComponent {
         gridPositions.clear();
         multiPosition = false;
     }
-    
-    @Override
-    public final Class<ETile> componentType() {
-        return ETile.class;
-    }
 
     public final boolean isMultiPosition() {
         return multiPosition;

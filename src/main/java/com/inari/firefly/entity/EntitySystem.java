@@ -138,7 +138,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         );
     }
     
-    public final void deleteEtity( int entityId ) {
+    public final void deleteEntity( int entityId ) {
         delete( entityId );
     }
 
@@ -197,8 +197,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
                 return iterator.entityId();
             }
         }
- 
-        
+
         return -1;
     }
 
@@ -260,7 +259,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     }
     
     private void entityToAttribute( Attributes attributes, int entityId ) {
-        ComponentKey key = new ComponentKey( Entity.class, entityId );
+        ComponentKey key = new ComponentKey( Entity.ENTITY_TYPE_KEY, entityId );
         EntityAttributeMap attributeMap = new EntityAttributeMap();
         attributeMap.setComponentKey( key );
         attributes.add( attributeMap );
@@ -461,7 +460,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         }
         @Override
         public final void deleteComponent( String name ) {
-            deleteEtity( getEntityId( name ) );
+            deleteEntity( getEntityId( name ) );
         }
         @Override
         public final Entity get( String name, Class<? extends Entity> subType ) {
@@ -487,7 +486,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
                         }
                     }
                 } else if ( buildType == BuildType.OVERWRITE ) {
-                    deleteEtity( entityId );
+                    deleteEntity( entityId );
                 }
                 entityBuilder
                     .setAttributes( entityAttrs )
@@ -535,7 +534,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         
         public static final SystemComponentKey<Entity> ENTITY_TYPE_KEY = SystemComponentKey.create( Entity.class );
         static final AttributeKey<String> ACTIVE_ENTITY_IDS = new AttributeKey<String>( "ACTIVE_ENTITY_IDS", String.class, Entity.class );
-        static final ComponentKey ACTIVE_ENTITIES_IDS_KEY = new ComponentKey( Entity.class, -1 );
+        static final ComponentKey ACTIVE_ENTITIES_IDS_KEY = new ComponentKey( ENTITY_TYPE_KEY, -1 );
         
         Entity() {
             super( 0 );

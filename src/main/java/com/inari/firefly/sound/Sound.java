@@ -89,11 +89,6 @@ public final class Sound extends SystemComponent {
         return Sound.class;
     }
 
-    @Override
-    public final Class<Sound> componentType() {
-        return Sound.class;
-    }
-
     public final boolean isLooping() {
         return looping;
     }

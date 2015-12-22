@@ -12,11 +12,6 @@ public final class EntityPrefab extends SystemComponent {
     }
     
     @Override
-    public final Class<EntityPrefab> componentType() {
-        return EntityPrefab.class;
-    }
-    
-    @Override
     public final Class<EntityPrefab> indexedObjectType() {
         return EntityPrefab.class;
     }

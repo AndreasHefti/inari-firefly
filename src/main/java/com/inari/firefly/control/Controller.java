@@ -67,11 +67,6 @@ public abstract class Controller extends SystemComponent implements Disposable {
         return Controller.class;
     }
     
-    @Override
-    public final Class<Controller> componentType() {
-        return Controller.class;
-    }
-    
     public final void addComponentId( int componentId ) {
         componentIds.add( componentId );
     }

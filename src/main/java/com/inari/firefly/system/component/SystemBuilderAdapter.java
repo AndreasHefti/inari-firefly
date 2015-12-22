@@ -17,8 +17,6 @@ package com.inari.firefly.system.component;
 
 import java.util.Iterator;
 
-import com.inari.commons.lang.indexed.IndexedObject;
-import com.inari.firefly.component.Component.ComponentKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
@@ -60,8 +58,7 @@ public abstract class SystemBuilderAdapter<C extends SystemComponent> implements
         while ( all.hasNext() ) {
             C component = all.next();
             AttributeMap attrs = new ComponentAttributeMap();
-            int id = ( component instanceof IndexedObject )? ( (IndexedObject) component ).index() : -1;
-            attrs.setComponentKey( new ComponentKey( component.componentType(), id ) );
+            attrs.setComponentKey( component.componentKey() );
             component.toAttributes( attrs );
             attributes.add( attrs );
         }

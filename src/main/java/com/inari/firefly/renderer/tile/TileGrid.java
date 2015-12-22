@@ -95,11 +95,6 @@ public final class TileGrid extends SystemComponent {
         return TYPE_KEY;
     }
 
-    @Override
-    public final Class<TileGrid> componentType() {
-        return TileGrid.class;
-    }
-
     public final int getViewId() {
         return viewId;
     }

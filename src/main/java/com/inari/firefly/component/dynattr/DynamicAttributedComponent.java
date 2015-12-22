@@ -26,6 +26,5 @@ public interface DynamicAttributedComponent extends Component {
     
     public boolean hasDynamicAttributes();
     
-    @Override
     public Class<? extends DynamicAttributedComponent> componentType();
 }

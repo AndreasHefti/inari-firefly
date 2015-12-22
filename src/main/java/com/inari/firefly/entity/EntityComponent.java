@@ -15,6 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
+import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.Indexer;
@@ -22,31 +23,37 @@ import com.inari.firefly.component.Component;
 
 public abstract class EntityComponent implements Component, IndexedType {
     
-    public final EntityComponentTypeKey<?> indexedTypeKey;
+    public final ComponentKey componentKey;
     
     protected EntityComponent( EntityComponentTypeKey<?> indexedTypeKey ) {
-        this.indexedTypeKey = indexedTypeKey;
+        componentKey = new ComponentKey( indexedTypeKey, -1 );
     }
 
-    public final IndexedTypeKey indexedTypeKey() {
-        return indexedTypeKey;
+    public final IIndexedTypeKey indexedTypeKey() {
+        return componentKey.typeKey;
     }
-    
+
+    @Override
+    public final ComponentKey componentKey() {
+        return componentKey;
+    }
+
     public abstract void resetAttributes();
-
     
     public static final class EntityComponentTypeKey<C extends EntityComponent> extends IndexedTypeKey {
-        
-        public final Class<C> type;
 
         EntityComponentTypeKey( Class<C> indexedType ) {
             super( indexedType );
-            type = indexedType;
         }
 
         @Override
         protected final Class<EntityComponent> baseIndexedType() {
             return EntityComponent.class;
+        }
+        
+        @Override
+        public String toString() {
+            return "EntityComponentTypeKey:" + type().getSimpleName() + "[" + index + "]";
         }
         
         @SuppressWarnings( "unchecked" )

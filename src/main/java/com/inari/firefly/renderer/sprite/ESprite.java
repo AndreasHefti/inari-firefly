@@ -57,11 +57,6 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         setTintColor( new RGBColor( 1, 1, 1, 1 ) );
         blendMode = BlendMode.NONE;
     }
-    
-    @Override
-    public final Class<ESprite> componentType() {
-        return ESprite.class;
-    }
 
     @Override
     public final int getSpriteId() {

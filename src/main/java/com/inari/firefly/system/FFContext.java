@@ -14,7 +14,7 @@ import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.component.DataComponent;
+import com.inari.firefly.component.ContextComponent;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.entity.EntityComponent;
@@ -41,7 +41,7 @@ public final class FFContext {
     
     private final Map<TypedKey<?>, Object> properties =  new LinkedHashMap<TypedKey<?>, Object>();
     
-    private final Map<TypedKey<? extends DataComponent>, DataComponent> dataComponents = new LinkedHashMap<TypedKey<? extends DataComponent>, DataComponent>();
+    private final Map<TypedKey<? extends ContextComponent>, ContextComponent> contextComponents = new LinkedHashMap<TypedKey<? extends ContextComponent>, ContextComponent>();
     private final DynArray<FFSystem> systems = new DynArray<FFSystem>();
     
     private final DynArray<SystemBuilderAdapter<?>> systemBuilderAdapter = new DynArray<SystemBuilderAdapter<?>>();
@@ -146,7 +146,7 @@ public final class FFContext {
 
     public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, int componentId ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        return key.componentType.cast( builderHelper.get( componentId, null ) );
+        return key.<C>type().cast( builderHelper.get( componentId, null ) );
     }
     
     @SuppressWarnings( "unchecked" )
@@ -157,12 +157,12 @@ public final class FFContext {
     
     public <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        return key.componentType.cast( builderHelper.get( componentName, null ) );
+        return key.<C>type().cast( builderHelper.get( componentName, null ) );
     }
     
     public <C extends SystemComponent> int getSystemComponentId( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        return key.componentType.cast( builderHelper.get( componentName, null ) ).getId();
+        return key.<C>type().cast( builderHelper.get( componentName, null ) ).getId();
     }
     
     @SuppressWarnings( "unchecked" )
@@ -178,16 +178,16 @@ public final class FFContext {
     
     
     
-    public final <T extends DataComponent> T getDataComponent( TypedKey<T> componentKey ) {
-        return componentKey.cast( dataComponents.get( componentKey ) );
+    public final <T extends ContextComponent> T getContextComponent( TypedKey<T> componentKey ) {
+        return componentKey.cast(contextComponents.get( componentKey ) );
     }
     
-    public final <T extends DataComponent> void setDataComponent( T component ) {
-        dataComponents.put( component.componentKey(), component );
+    public final <T extends ContextComponent> void setContextComponent( T component ) {
+        contextComponents.put( component.contextKey(), component );
     }
     
-    public final void disposeDataComponent( TypedKey<? extends DataComponent> componentKey ) {
-        DataComponent component = dataComponents.remove( componentKey );
+    public final void disposeContextComponent( TypedKey<? extends ContextComponent> componentKey ) {
+        ContextComponent component = contextComponents.remove( componentKey );
         if ( component != null && component instanceof Disposable ) {
             ( (Disposable) component ).dispose( this );
         }
@@ -283,12 +283,12 @@ public final class FFContext {
     }
 
     final void dispose() {
-        for ( DataComponent component : dataComponents.values() ) {
+        for ( ContextComponent component : contextComponents.values() ) {
             if ( component instanceof Disposable ) {
                 ( (Disposable) component ).dispose( this );
             }
         }
-        dataComponents.clear();
+        contextComponents.clear();
         
         for ( FFSystem system : systems ) {
             system.dispose( this );

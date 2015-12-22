@@ -45,11 +45,6 @@ public class EText extends EntityComponent {
         blendMode = BlendMode.NONE;
     }
 
-    @Override
-    public final Class<EText> componentType() {
-        return EText.class;
-    }
-
     public final int getFontId() {
         return fontId;
     }

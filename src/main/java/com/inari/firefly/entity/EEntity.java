@@ -61,11 +61,6 @@ public class EEntity extends EntityComponent {
     }
 
     @Override
-    public final Class<EEntity> componentType() {
-        return EEntity.class;
-    }
-
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
     }

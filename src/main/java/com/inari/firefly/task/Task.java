@@ -43,11 +43,6 @@ public abstract class Task extends SystemComponent {
     public final IndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;
     }
-    
-    @Override
-    public final Class<Task> componentType() {
-        return Task.class;
-    }
 
     @Override
     public final Class<Task> indexedObjectType() {

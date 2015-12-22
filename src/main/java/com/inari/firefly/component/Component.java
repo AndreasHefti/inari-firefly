@@ -17,6 +17,7 @@ package com.inari.firefly.component;
 
 import java.util.Set;
 
+import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
@@ -44,7 +45,7 @@ public interface Component {
      */
     public static final AttributeKey<String> INSTANCE_TYPE_NAME = new AttributeKey<String>( "instanceTypeName", String.class, Component.class );
     
-    Class<? extends Component> componentType();
+    ComponentKey componentKey();
     
     Set<AttributeKey<?>> attributeKeys();
     
@@ -57,35 +58,45 @@ public interface Component {
 
     public static final class ComponentKey {
         
-        private final Class<?> type;
-        private final int id;
-        
-        
-        public ComponentKey( Class<?> type, int id ) {
+        public final IIndexedTypeKey typeKey;
+        public final int id;
+        private final int hashCode;
+
+        public ComponentKey( IIndexedTypeKey typeKey, int id ) {
             super();
-            this.type = type;
+            this.typeKey = typeKey;
             this.id = id;
+            
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + id;
+            result = prime * result + ( ( typeKey == null ) ? 0 : typeKey.hashCode() );
+            hashCode = result;
         }
 
-        public Class<?> getType() {
-            return type;
+        public final Class<?> getType() {
+            return typeKey.type();
+        }
+        
+        public final <T> Class<T> getTypeAs() {
+            return typeKey.type();
+        }
+        
+        public final int getTypeIndex() {
+            return typeKey.typeIndex();
         }
 
-        public int getId() {
+        public final int getId() {
             return id;
         }
 
         @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + id;
-            result = prime * result + ( ( type == null ) ? 0 : type.hashCode() );
-            return result;
+        public final int hashCode() {
+            return hashCode;
         }
 
         @Override
-        public boolean equals( Object obj ) {
+        public final boolean equals( Object obj ) {
             if ( this == obj )
                 return true;
             if ( obj == null )
@@ -95,20 +106,19 @@ public interface Component {
             ComponentKey other = (ComponentKey) obj;
             if ( id != other.id )
                 return false;
-            if ( type != other.type ) 
+            if ( typeKey != other.typeKey ) 
                 return false;
             return true;
         }
 
         @Override
-        public String toString() {
+        public final String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append( type.getSimpleName() );
+            builder.append( typeKey );
             builder.append( "(" );
             builder.append( id );
             builder.append( ")" );
             return builder.toString();
         }
-
     }
 }

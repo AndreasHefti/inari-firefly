@@ -76,11 +76,6 @@ public final class ETransform extends EntityComponent {
         parentId = -1;
     }
     
-    @Override
-    public final Class<ETransform> componentType() {
-        return ETransform.class;
-    }
-    
     public final int getViewId() {
         return viewId;
     }

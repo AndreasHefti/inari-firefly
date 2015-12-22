@@ -54,11 +54,6 @@ public abstract class Animation extends SystemComponent {
     }
 
     @Override
-    public final Class<Animation> componentType() {
-        return Animation.class;
-    }
-
-    @Override
     public final Class<Animation> indexedObjectType() {
         return Animation.class;
     }
