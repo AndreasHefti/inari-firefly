@@ -30,13 +30,11 @@ public final class AssetEvent extends Event<AssetEventListener> {
     }
     
     public final Asset asset;
-    public final Class<? extends Asset> assetType;
     public final Type eventType;
 
     public AssetEvent( Asset asset, Type eventType ) {
         super( TYPE_KEY );
         this.asset = asset;
-        assetType = asset.indexedObjectType();
         this.eventType = eventType;
     }
 
@@ -51,7 +49,6 @@ public final class AssetEvent extends Event<AssetEventListener> {
         builder.append( "AssetEvent [eventType=" );
         builder.append( eventType );
         builder.append( ", assetType=" );
-        builder.append( assetType );
         builder.append( "]" );
         return builder.toString();
     }

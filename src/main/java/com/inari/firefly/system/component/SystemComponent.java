@@ -55,7 +55,7 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
 
     @Override
     public Class<? extends IndexedObject> indexedObjectType() {
-        return this.getClass();
+        return indexedTypeKey().type();
     }
 
     @Override

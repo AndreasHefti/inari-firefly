@@ -53,11 +53,6 @@ public abstract class Animation extends SystemComponent {
         return TYPE_KEY;
     }
 
-    @Override
-    public final Class<Animation> indexedObjectType() {
-        return Animation.class;
-    }
-
     public final long getStartTime() {
         return startTime;
     }

@@ -10,11 +10,6 @@ public final class EntityPrefab extends SystemComponent {
     protected EntityPrefab( int id ) {
         super( id );
     }
-    
-    @Override
-    public final Class<EntityPrefab> indexedObjectType() {
-        return EntityPrefab.class;
-    }
 
     @Override
     public final IndexedTypeKey indexedTypeKey() {

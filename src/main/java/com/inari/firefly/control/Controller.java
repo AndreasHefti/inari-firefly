@@ -61,11 +61,6 @@ public abstract class Controller extends SystemComponent implements Disposable {
     public final void setUpdateResolution( float updateResolution ) {
         this.updateResolution = updateResolution;
     }
-
-    @Override
-    public final Class<Controller> indexedObjectType() {
-        return Controller.class;
-    }
     
     public final void addComponentId( int componentId ) {
         componentIds.add( componentId );

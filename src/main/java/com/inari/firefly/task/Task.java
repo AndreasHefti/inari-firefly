@@ -44,11 +44,6 @@ public abstract class Task extends SystemComponent {
         return TYPE_KEY;
     }
 
-    @Override
-    public final Class<Task> indexedObjectType() {
-        return Task.class;
-    }
-
     public final boolean removeAfterRun() {
         return removeAfterRun;
     }

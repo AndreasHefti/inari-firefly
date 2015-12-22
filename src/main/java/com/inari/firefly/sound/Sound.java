@@ -84,11 +84,6 @@ public final class Sound extends SystemComponent {
         return TYPE_KEY;
     }
 
-    @Override
-    public final Class<Sound> indexedObjectType() {
-        return Sound.class;
-    }
-
     public final boolean isLooping() {
         return looping;
     }
