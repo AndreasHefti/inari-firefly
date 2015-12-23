@@ -1,9 +1,13 @@
 package com.inari.firefly.system.external;
 
-import com.inari.firefly.asset.event.AssetEventListener;
+import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContextInitiable;
 
-public interface FFAudio extends FFContextInitiable, AssetEventListener {
+public interface FFAudio extends FFContextInitiable {
+    
+    int createSound( SoundAsset asset );
+    
+    void disposeSound( SoundAsset asset );
     
     long playSound( int soundId, int channel, boolean looping, float volume, float pitch, float pan );
     

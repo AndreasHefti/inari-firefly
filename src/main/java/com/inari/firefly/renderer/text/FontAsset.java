@@ -3,25 +3,27 @@ package com.inari.firefly.renderer.text;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.commons.lang.indexed.IndexedTypeKey;
+import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.IntBag;
+import com.inari.firefly.Disposable;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.external.FFGraphics;
 
-public class Font extends SystemComponent {
+public final class FontAsset extends Asset {
     
-    public static final SystemComponentKey<Font> TYPE_KEY = SystemComponentKey.create( Font.class );
-    
-    public static final AttributeKey<String> FONT_TEXTURE_RESOURCE_NAME = new AttributeKey<String>( "fontTextureId", String.class, Font.class );
-    public static final AttributeKey<char[][]> CHAR_TEXTURE_MAP = new AttributeKey<char[][]>( "charTextureMap", char[][].class, Font.class );
-    public static final AttributeKey<Integer> CHAR_WIDTH = new AttributeKey<Integer>( "charWidth", Integer.class, Font.class );
-    public static final AttributeKey<Integer> CHAR_HEIGHT = new AttributeKey<Integer>( "charHeight", Integer.class, Font.class );
-    public static final AttributeKey<Integer> CHAR_SPACE = new AttributeKey<Integer>( "charSpace", Integer.class, Font.class );
-    public static final AttributeKey<Integer> LINE_SPACE = new AttributeKey<Integer>( "lineSpace", Integer.class, Font.class );
-    public static final AttributeKey<Integer> DEFAULT_CHAR = new AttributeKey<Integer>( "defaultChar", Integer.class, Font.class );
+    public static final AttributeKey<String> TEXTURE_RESOURCE_NAME = new AttributeKey<String>( "fontTextureId", String.class, FontAsset.class );
+    public static final AttributeKey<char[][]> CHAR_TEXTURE_MAP = new AttributeKey<char[][]>( "charTextureMap", char[][].class, FontAsset.class );
+    public static final AttributeKey<Integer> CHAR_WIDTH = new AttributeKey<Integer>( "charWidth", Integer.class, FontAsset.class );
+    public static final AttributeKey<Integer> CHAR_HEIGHT = new AttributeKey<Integer>( "charHeight", Integer.class, FontAsset.class );
+    public static final AttributeKey<Integer> CHAR_SPACE = new AttributeKey<Integer>( "charSpace", Integer.class, FontAsset.class );
+    public static final AttributeKey<Integer> LINE_SPACE = new AttributeKey<Integer>( "lineSpace", Integer.class, FontAsset.class );
+    public static final AttributeKey<Integer> DEFAULT_CHAR = new AttributeKey<Integer>( "defaultChar", Integer.class, FontAsset.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
-        FONT_TEXTURE_RESOURCE_NAME,
+        TEXTURE_RESOURCE_NAME,
         CHAR_TEXTURE_MAP,
         CHAR_WIDTH,
         CHAR_HEIGHT,
@@ -30,7 +32,8 @@ public class Font extends SystemComponent {
         DEFAULT_CHAR
     };
 
-    private String fontTextureResourceName;
+    private String textureResourceName;
+    
     private char[][] charTextureMap;
     private int charWidth;
     private int charHeight;
@@ -39,8 +42,9 @@ public class Font extends SystemComponent {
     private int defaultChar;
     
     private IntBag charSpriteMap;
+    private int textureId = -1;
     
-    protected Font( int id ) {
+    FontAsset( int id ) {
         super( id );
         charTextureMap = null;
         charSpriteMap = new IntBag( 256, -1 );
@@ -50,16 +54,12 @@ public class Font extends SystemComponent {
         lineSpace = 0;
         defaultChar = -1;
     }
-    
+
     @Override
-    public final IndexedTypeKey indexedTypeKey() {
-        return TYPE_KEY;
+    public final int getInstanceId() {
+        throw new UnsupportedOperationException();
     }
-    
-    final void setCharSpriteMapping( char character, int spriteId ) {
-        charSpriteMap.set( character, spriteId );
-    }
-    
+
     public final int getSpriteId( char character ) {
         int spriteId = charSpriteMap.get( character );
         if ( spriteId >= 0 ) {
@@ -69,12 +69,12 @@ public class Font extends SystemComponent {
         return charSpriteMap.get( defaultChar );
     }
 
-    public final String getFontTextureResourceName() {
-        return fontTextureResourceName;
+    public final String getTextureResourceName() {
+        return textureResourceName;
     }
 
-    public final void setFontTextureResourceName( String fontTextureResourceName ) {
-        this.fontTextureResourceName = fontTextureResourceName;
+    public final void setTextureResourceName( String textureResourceName ) {
+        this.textureResourceName = textureResourceName;
     }
 
     public final char[][] getCharTextureMap() {
@@ -136,7 +136,7 @@ public class Font extends SystemComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        fontTextureResourceName = attributes.getValue( FONT_TEXTURE_RESOURCE_NAME, fontTextureResourceName );
+        textureResourceName = attributes.getValue( TEXTURE_RESOURCE_NAME, textureResourceName );
         charTextureMap = attributes.getValue( CHAR_TEXTURE_MAP, charTextureMap );
         charWidth = attributes.getValue( CHAR_WIDTH, charWidth );
         charHeight = attributes.getValue( CHAR_HEIGHT, charHeight );
@@ -149,13 +149,54 @@ public class Font extends SystemComponent {
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
 
-        attributes.put( FONT_TEXTURE_RESOURCE_NAME, fontTextureResourceName );
+        attributes.put( TEXTURE_RESOURCE_NAME, textureResourceName );
         attributes.put( CHAR_TEXTURE_MAP, charTextureMap );
         attributes.put( CHAR_WIDTH, charWidth );
         attributes.put( CHAR_HEIGHT, charHeight );
         attributes.put( CHAR_SPACE, charSpace );
         attributes.put( LINE_SPACE, lineSpace );
         attributes.put( DEFAULT_CHAR, defaultChar );
+    }
+
+    @Override
+    public final Disposable load( FFContext context ) {
+        if ( loaded ) {
+            return this;
+        }
+        
+        FFGraphics graphics = context.getGraphics();
+        textureId = graphics.createTexture( textureResourceName );
+        
+        Rectangle textureRegion = new Rectangle( 0, 0, getCharWidth(), getCharHeight() );
+        for ( int y = 0; y < charTextureMap.length; y++ ) {
+            for ( int x = 0; x < charTextureMap[ y ].length; x++ ) {
+                textureRegion.x = x * charWidth;
+                textureRegion.y = y * charHeight;
+                
+                int charSpriteId = graphics.createSprite( textureId, textureRegion );
+                charSpriteMap.set( charTextureMap[ y ][ x ], charSpriteId );
+            }
+        }
+        
+        return this;
+    }
+
+    @Override
+    public final void dispose( FFContext context ) {
+        if ( !loaded ) {
+            return;
+        }
+        
+        FFGraphics graphics = context.getGraphics();
+        
+        IntIterator iterator = charSpriteMap.iterator();
+        while ( iterator.hasNext() ) {
+            graphics.disposeSprite( iterator.next() );
+        }
+        charSpriteMap.clear();
+        
+        graphics.disposeTexture( textureId );
+        textureId = -1;
     }
 
 }

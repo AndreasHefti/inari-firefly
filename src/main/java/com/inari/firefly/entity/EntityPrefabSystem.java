@@ -284,7 +284,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
             return EntityPrefab.TYPE_KEY;
         }
         @Override
-        public final EntityPrefab get( int id, Class<? extends EntityPrefab> subtype ) {
+        public final EntityPrefab getComponent( int id ) {
             return prefabs.get( id );
         }
         @Override
@@ -292,7 +292,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
             return prefabs.iterator();
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends EntityPrefab> subtype ) {
+        public final void deleteComponent( int id ) {
             deletePrefab( id );
         }
         @Override
@@ -301,7 +301,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
             
         }
         @Override
-        public final EntityPrefab get( String name, Class<? extends EntityPrefab> subType ) {
+        public final EntityPrefab getComponent( String name ) {
             return getPrefab( name );
         }
     }

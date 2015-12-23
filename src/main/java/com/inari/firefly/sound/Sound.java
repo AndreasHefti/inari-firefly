@@ -27,7 +27,7 @@ public final class Sound extends SystemComponent {
     
     public static final SystemComponentKey<Sound> TYPE_KEY = SystemComponentKey.create( Sound.class );
     
-    public static final AttributeKey<Integer> ASSET_ID = new AttributeKey<Integer>( "assetId", Integer.class, Sound.class );
+    public static final AttributeKey<Integer> SOUND_ASSET_ID = new AttributeKey<Integer>( "soundId", Integer.class, Sound.class );
     public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Sound.class );
     public static final AttributeKey<Float> VOLUME = new AttributeKey<Float>( "volume", Float.class, Sound.class );
     public static final AttributeKey<Float> PITCH = new AttributeKey<Float>( "pitch", Float.class, Sound.class );
@@ -35,7 +35,7 @@ public final class Sound extends SystemComponent {
     public static final AttributeKey<Integer> CHANNEL = new AttributeKey<Integer>( "channel", Integer.class, Sound.class );
     public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, Sound.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
-        ASSET_ID,
+        SOUND_ASSET_ID,
         LOOPING,
         VOLUME,
         PITCH,
@@ -44,19 +44,21 @@ public final class Sound extends SystemComponent {
         CONTROLLER_ID,
     };
     
-    private int assetId;
+    private int soundAssetId;
     private boolean looping;
     private float volume;
     private float pitch;
     private float pan;
     private int controllerId;
+    private int channel;
+    
+    int soundId;
     boolean streaming;
     long instanceId;
-    int channel;
     
     Sound( int id ) {
         super( id );
-        assetId = -1;
+        soundAssetId = -1;
         looping = false;
         volume = 1;
         pitch = 1;
@@ -65,14 +67,19 @@ public final class Sound extends SystemComponent {
         streaming = false;
         instanceId = -1;
         channel = 0;
+        soundId = -1;
+    }
+    
+    public final int getSoundId() {
+        return soundId;
     }
 
-    public final int getAssetId() {
-        return assetId;
+    public final int getSoundAssetId() {
+        return soundAssetId;
     }
 
-    final void setAssetId( int assetId ) {
-        this.assetId = assetId;
+    final void setSoundAssetId( int soundAssetId ) {
+        this.soundAssetId = soundAssetId;
     }
 
     public final boolean isStreaming() {
@@ -147,7 +154,7 @@ public final class Sound extends SystemComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        assetId = attributes.getValue( ASSET_ID, assetId );
+        soundAssetId = attributes.getValue( SOUND_ASSET_ID, soundAssetId );
         looping = attributes.getValue( LOOPING, looping );
         volume = attributes.getValue( VOLUME, volume );
         pitch = attributes.getValue( PITCH, pitch );
@@ -160,7 +167,7 @@ public final class Sound extends SystemComponent {
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         
-        attributes.put( ASSET_ID, assetId );
+        attributes.put( SOUND_ASSET_ID, soundAssetId );
         attributes.put( LOOPING, looping );
         attributes.put( VOLUME, volume );
         attributes.put( PITCH, pitch );

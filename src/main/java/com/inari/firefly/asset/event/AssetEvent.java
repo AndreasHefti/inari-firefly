@@ -48,7 +48,8 @@ public final class AssetEvent extends Event<AssetEventListener> {
         StringBuilder builder = new StringBuilder();
         builder.append( "AssetEvent [eventType=" );
         builder.append( eventType );
-        builder.append( ", assetType=" );
+        builder.append( ", assetId=" );
+        builder.append( asset.getId() );
         builder.append( "]" );
         return builder.toString();
     }

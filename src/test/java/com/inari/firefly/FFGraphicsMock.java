@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.inari.firefly.asset.event.AssetEvent;
+import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.renderer.ShaderAsset;
 import com.inari.firefly.renderer.SpriteRenderable;
+import com.inari.firefly.renderer.TextureAsset;
+import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.view.View;
@@ -13,20 +17,18 @@ import com.inari.firefly.system.view.event.ViewEvent;
 
 public class FFGraphicsMock implements FFGraphics {
     
-    private final Collection<String> loadedAssets = new ArrayList<String>();
+    private final DynArray<String> loadedAssets = new DynArray<String>();
     private final Collection<String> views = new ArrayList<String>();
     
     private final Collection<String> log = new ArrayList<String>();
 
     @Override
     public void init( FFContext context ) {
-        context.registerListener( AssetEvent.class, this );
         context.registerListener( ViewEvent.class, this );
     }
     
     @Override
     public void dispose( FFContext context ) {
-        context.disposeListener( AssetEvent.class, this );
         context.disposeListener( ViewEvent.class, this );
         
         clear();
@@ -37,20 +39,50 @@ public class FFGraphicsMock implements FFGraphics {
         views.clear();
         log.clear();
     }
+    
+    @Override
+    public int createTexture( String resourceName ) {
+        return loadedAssets.add( resourceName );
+    }
 
     @Override
-    public void onAssetEvent( AssetEvent event ) {
-        switch ( event.eventType ) {
-            case ASSET_LOADED: {
-                loadedAssets.add( event.asset.getName() );
-                break;
-            }
-            case ASSET_DISPOSED: 
-            case ASSET_DELETED: {
-                loadedAssets.remove( event.asset.getName() );
-            }
-            default: {}
-        }
+    public int createTexture( TextureAsset textureAsset ) {
+        return createTexture( textureAsset.getName() );
+    }
+
+    @Override
+    public void disposeTexture( int textureId ) {
+        loadedAssets.remove( textureId );
+    }
+
+    @Override
+    public int createSprite( int textureId, Rectangle textureRegion ) {
+        return loadedAssets.add( "sprite:"+ textureRegion );
+    }
+
+    @Override
+    public int createSprite( SpriteAsset spriteAsset ) {
+        return loadedAssets.add( spriteAsset.getName() );
+    }
+
+    @Override
+    public void disposeSprite( int spriteId ) {
+        loadedAssets.remove( spriteId );
+    }
+
+    @Override
+    public int createShader( String shaderProgram ) {
+        return loadedAssets.add( shaderProgram );
+    }
+
+    @Override
+    public int createShader( ShaderAsset shaderAsset ) {
+        return loadedAssets.add( shaderAsset.getName() );
+    }
+
+    @Override
+    public void disposeShader( int shaderId ) {
+        loadedAssets.remove( shaderId );
     }
 
     @Override
@@ -118,13 +150,26 @@ public class FFGraphicsMock implements FFGraphics {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append( "LowerSystemFacadeMock [loadedAssets=" );
-        builder.append( loadedAssets );
+        assetsToString( builder );
         builder.append( ", views=" );
         builder.append( views );
         builder.append( ", log=" );
         builder.append( log );
         builder.append( "]" );
         return builder.toString();
+    }
+
+    private void assetsToString( StringBuilder builder ) {
+        builder.append( "[" );
+        for ( String assetName : loadedAssets ) {
+            builder.append( assetName ).append( "," );
+        }
+        
+        if ( loadedAssets.size() > 0 ) {
+            builder.deleteCharAt( builder.length() -1  );
+        }
+        
+        builder.append( "]" );
     }
 
 }

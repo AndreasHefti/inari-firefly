@@ -185,7 +185,7 @@ public final class ControllerSystem
             return Controller.TYPE_KEY;
         }
         @Override
-        public final Controller get( int id, Class<? extends Controller> subType ) {
+        public final Controller getComponent( int id ) {
             return controller.get( id );
         }
         @Override
@@ -193,7 +193,7 @@ public final class ControllerSystem
             return controller.iterator();
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends Controller> subType ) {
+        public final void deleteComponent( int id ) {
             deleteController( id );
         }
         @Override
@@ -201,8 +201,9 @@ public final class ControllerSystem
             deleteController( name );
         }
         @Override
-        public Controller get( String name, Class<? extends Controller> subType ) {
-            return getControllerAs( name, subType );
+        public final Controller getComponent( String name ) {
+            return getController( getControllerId( name ) );
         }
+        
     }
 }

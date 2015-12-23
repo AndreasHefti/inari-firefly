@@ -17,13 +17,34 @@ package com.inari.firefly.system.external;
 
 import java.util.Iterator;
 
-import com.inari.firefly.asset.event.AssetEventListener;
+import com.inari.commons.geom.Rectangle;
+import com.inari.firefly.renderer.ShaderAsset;
 import com.inari.firefly.renderer.SpriteRenderable;
+import com.inari.firefly.renderer.TextureAsset;
+import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEventListener;
 
-public interface FFGraphics extends FFContextInitiable, AssetEventListener, ViewEventListener {
+public interface FFGraphics extends FFContextInitiable, ViewEventListener {
+    
+    int createTexture( String resourceName );
+    
+    int createTexture( TextureAsset textureAsset );
+    
+    void disposeTexture( int textureId );
+    
+    int createSprite( int textureId, Rectangle textureRegion );
+    
+    int createSprite( SpriteAsset spriteAsset );
+    
+    void disposeSprite( int spriteId );
+    
+    int createShader( String shaderProgram );
+    
+    int createShader( ShaderAsset shaderAsset );
+    
+    void disposeShader( int shaderId );
     
     int getScreenWidth();
 
@@ -38,5 +59,11 @@ public interface FFGraphics extends FFContextInitiable, AssetEventListener, View
     void endRendering( View view );
     
     void flush( Iterator<View> virtualViews );
+
+    
+
+    
+
+    
 
 }

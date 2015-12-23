@@ -258,11 +258,11 @@ public final class AnimationSystem
             return Animation.TYPE_KEY;
         }
         @Override
-        public final Animation get( int id, Class<? extends Animation> subtype ) {
+        public final Animation getComponent( int id ) {
             return getAnimation( id );
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends Animation> subtype ) {
+        public final void deleteComponent( int id ) {
             deleteAnimation( id );
         }
         @Override
@@ -275,7 +275,7 @@ public final class AnimationSystem
             deleteAnimation( getAnimationId( name ) );
         }
         @Override
-        public final Animation get( String name, Class<? extends Animation> subtype ) {
+        public final Animation getComponent( String name ) {
             return getAnimation( getAnimationId( name ) );
         }
     }

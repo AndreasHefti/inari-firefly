@@ -19,34 +19,38 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.firefly.Disposable;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.external.FFGraphics;
 
 public final class TextureAsset extends Asset {
     
     public static final AttributeKey<String> RESOURCE_NAME = new AttributeKey<String>( "resourceName", String.class, TextureAsset.class );
-    public static final AttributeKey<Integer> TEXTURE_WIDTH = new AttributeKey<Integer>( "width", Integer.class, TextureAsset.class );
-    public static final AttributeKey<Integer> TEXTURE_HEIGHT = new AttributeKey<Integer>( "height", Integer.class, TextureAsset.class );
     
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
-        ASSET_GROUP,
         RESOURCE_NAME,
-        TEXTURE_WIDTH,
-        TEXTURE_HEIGHT
     } ) );
     
     private String resourceName;
+    
     private int width;
     private int height;
+    private int textureId = -1;
     
     TextureAsset( int assetId ) {
         super( assetId );
     }
     
     @Override
-    public final Class<TextureAsset> componentType() {
-        return TextureAsset.class;
+    public final int getInstanceId() {
+        return textureId;
+    }
+    
+    public int getTextureId() {
+        return textureId;
     }
 
     public final String getResourceName() {
@@ -61,16 +65,16 @@ public final class TextureAsset extends Asset {
     public final int getWidth() {
         return width;
     }
-    
+
     public final void setWidth( int width ) {
         checkNotAlreadyLoaded();
         this.width = width;
     }
-    
+
     public final int getHeight() {
         return height;
     }
-    
+
     public final void setHeight( int height ) {
         checkNotAlreadyLoaded();
         this.height = height;
@@ -87,16 +91,35 @@ public final class TextureAsset extends Asset {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         resourceName = attributes.getValue( RESOURCE_NAME, resourceName );
-        width = attributes.getValue( TEXTURE_WIDTH, width );
-        height = attributes.getValue( TEXTURE_HEIGHT, height );
     }
     
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         attributes.put( RESOURCE_NAME, resourceName );
-        attributes.put( TEXTURE_WIDTH, width );
-        attributes.put( TEXTURE_HEIGHT, height );
+    }
+
+    @Override
+    public final Disposable load( FFContext context ) {
+        if ( loaded ) {
+            return this;
+        }
+        
+        FFGraphics graphics = context.getGraphics();
+        textureId = graphics.createTexture( this );
+        return this;
+    }
+
+    @Override
+    public final void dispose( FFContext context ) {
+        if ( !loaded ) {
+            return;
+        }
+        
+        context.getGraphics().disposeTexture( textureId );
+        textureId = -1;
+        width = -1;
+        height = 1;
     }
 
 }

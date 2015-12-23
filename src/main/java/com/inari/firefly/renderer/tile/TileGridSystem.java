@@ -310,7 +310,7 @@ public final class TileGridSystem
             return TileGrid.TYPE_KEY;
         }
         @Override
-        public final TileGrid get( int id, Class<? extends TileGrid> subtype ) {
+        public final TileGrid getComponent( int id ) {
             return getTileGrid( id );
         }
         @Override
@@ -318,7 +318,7 @@ public final class TileGridSystem
             return tileGrids.iterator();
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends TileGrid> subtype ) {
+        public final void deleteComponent( int id ) {
             deleteTileGrid( id );
         }
         @Override
@@ -326,7 +326,7 @@ public final class TileGridSystem
             deleteTileGrid( getTileGrid( name ).getId() );
         }
         @Override
-        public final TileGrid get( String name, Class<? extends TileGrid> subType ) {
+        public final TileGrid getComponent( String name ) {
             return getTileGrid( name );
         }
         

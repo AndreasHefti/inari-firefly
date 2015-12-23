@@ -40,7 +40,7 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
     
     protected SystemComponent( int id ) {
         super( id );
-        componentKey = new ComponentKey( indexedTypeKey(), id );
+        componentKey = new ComponentKey( indexedTypeKey(), getId() );
         name = null;
     }
     
@@ -54,7 +54,7 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
     }
 
     @Override
-    public Class<? extends IndexedObject> indexedObjectType() {
+    public final Class<? extends IndexedObject> indexedObjectType() {
         return indexedTypeKey().type();
     }
 

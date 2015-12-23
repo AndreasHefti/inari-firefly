@@ -72,12 +72,12 @@ public abstract class SystemBuilderAdapter<C extends SystemComponent> implements
         for ( AttributeMap attributes : attrs.getAllOfType( subType ) ) {
             int componentId = attributes.getComponentKey().getId();
             if ( buildType == BuildType.MERGE_ATTRIBUTES ) {
-                C component = get( componentId, subType );
+                C component = getComponent( componentId );
                 if ( component != null ) {
                     component.toAttributes( componentBuilder.getAttributes() );
                 }
             } else if ( buildType == BuildType.OVERWRITE ) {
-                deleteComponent( componentId, subType );
+                deleteComponent( componentId );
             }
             componentBuilder
                 .setAttributes( attributes )
@@ -85,35 +85,8 @@ public abstract class SystemBuilderAdapter<C extends SystemComponent> implements
                 .clear();
         }
     }
-    
-    @Override
-    public final C getComponent( int id ) {
-        return get( id, null );
-    }
-
-    @Override
-    public final <CS extends C> CS getComponent( int id, Class<CS> subType ) {
-        return subType.cast( get( id, subType ) );
-    }
-    
-    @Override
-    public final C getComponent( String name ) {
-        return getComponent( name, null );
-    }
-    
-    public final <CS extends C> CS getComponent( String name, Class<CS> subType ) {
-        return subType.cast( get( name, subType ) );
-    }
-    
-    @Override
-    public final void deleteComponent( int id ) {
-        deleteComponent( id, null );
-    }
 
     public abstract SystemComponentKey<C> componentTypeKey();
-    
-    public abstract C get( int id, Class<? extends C> subType );
-    public abstract C get( String name, Class<? extends C> subType );
 
     public abstract Iterator<C> getAll();
 

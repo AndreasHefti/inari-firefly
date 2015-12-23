@@ -20,48 +20,61 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.list.IntBag;
+import com.inari.firefly.Disposable;
 import com.inari.firefly.asset.Asset;
-import com.inari.firefly.asset.AssetId;
+import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.renderer.TextureAsset;
+import com.inari.firefly.system.FFContext;
 
 public final class SpriteAsset extends Asset {
     
-    public static final AttributeKey<Integer> TEXTURE_ID = new AttributeKey<Integer>( "textureId", Integer.class, SpriteAsset.class );
+    public static final AttributeKey<Integer> TEXTURE_ASSET_ID = new AttributeKey<Integer>( "textureAssetId", Integer.class, SpriteAsset.class );
     public static final AttributeKey<Rectangle> TEXTURE_REGION  = new AttributeKey<Rectangle>( "textureRegion", Rectangle.class, SpriteAsset.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
-        TEXTURE_ID,
+        TEXTURE_ASSET_ID,
         TEXTURE_REGION
     } ) );
     
-    private int textureId;
+    private int textureAssetId;
     private final Rectangle textureRegion;
+    
+    private int textureId = -1;
+    private int spriteId = -1;
     
     SpriteAsset( int assetId ) {
         super( assetId );
         textureRegion = new Rectangle();
     }
-    
-    @Override
-    public final Class<SpriteAsset> componentType() {
-        return SpriteAsset.class;
+
+    public final int getTextureAssetId() {
+        return textureAssetId;
+    }
+
+    public final void setTextureAssetId( int textureAssetId ) {
+        this.textureAssetId = textureAssetId;
     }
 
     @Override
-    protected final AssetId[] dependsOn() {
-        return new AssetId[] { new AssetId( textureId, TextureAsset.class ) };
+    public final int getInstanceId() {
+        return spriteId;
+    }
+    
+    public final int getSpriteId() {
+        return spriteId;
+    }
+
+    @Override
+    protected final IntBag dependsOn() {
+        IntBag result = new IntBag( 1, -1 );
+        result.add( textureAssetId );
+        return result;
     }
     
     public final int getTextureId() {
         return textureId;
     }
-
-    public final void setTextureId( int textureId ) {
-        checkNotAlreadyLoaded();
-        this.textureId = textureId;
-    }
-
 
     public final Rectangle getTextureRegion() {
         return textureRegion;
@@ -87,7 +100,7 @@ public final class SpriteAsset extends Asset {
         checkNotAlreadyLoaded();
         super.fromAttributes( attributes );
         
-        textureId = attributes.getValue( TEXTURE_ID, textureId );
+        textureAssetId = attributes.getValue( TEXTURE_ASSET_ID, textureAssetId );
         Rectangle textureRegion = attributes.getValue( TEXTURE_REGION );
         if ( textureRegion != null ) {
             setTextureRegion( textureRegion );
@@ -97,7 +110,30 @@ public final class SpriteAsset extends Asset {
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        attributes.put( TEXTURE_ID, textureId );
+        attributes.put( TEXTURE_ASSET_ID, textureAssetId );
         attributes.put( TEXTURE_REGION, new Rectangle( textureRegion ) );
+    }
+
+    @Override
+    public final Disposable load( FFContext context ) {
+        if ( loaded ) {
+            return this;
+        }
+        
+        textureId = context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetInstaceId( textureAssetId );
+        spriteId = context.getGraphics().createSprite( this );
+        
+        return this;
+    }
+
+    @Override
+    public final void dispose( FFContext context ) {
+        if ( !loaded ) {
+            return;
+        }
+        
+        context.getGraphics().disposeSprite( spriteId );
+        spriteId = -1;
+        textureId = -1;
     }
 }

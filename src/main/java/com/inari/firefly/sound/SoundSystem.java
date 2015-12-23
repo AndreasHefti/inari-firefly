@@ -20,7 +20,6 @@ import java.util.Iterator;
 import com.inari.commons.StringUtils;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.sound.event.SoundEvent;
@@ -86,6 +85,13 @@ public final class SoundSystem
         
         sound.dispose();
     }
+    
+    public void deleteSound( String soundName ) {
+        Sound sound = getSound( soundName );
+        if ( sound != null ) {
+            deleteSound( sound.getId() );
+        }
+    }
 
     public final Sound getSound( int soundId ) {
         return sounds.get( soundId );
@@ -130,14 +136,14 @@ public final class SoundSystem
             case PLAY_SOUND : {
                 if ( sound.streaming ) {
                     audio.playMusic( 
-                        sound.getAssetId(), 
+                        sound.getSoundId(), 
                         sound.isLooping(), 
                         sound.getVolume(), 
                         sound.getPan() 
                     );
                 } else {
                     sound.instanceId = audio.playSound( 
-                        sound.getAssetId(), 
+                        sound.getSoundId(), 
                         sound.getChannel(), 
                         sound.isLooping(), 
                         sound.getVolume(), 
@@ -149,9 +155,9 @@ public final class SoundSystem
             }
             case STOP_PLAYING : {
                 if ( sound.streaming ) {
-                    audio.stopMusic( sound.getAssetId() );
+                    audio.stopMusic( sound.getSoundId() );
                 } else {
-                    audio.stopSound( sound.getAssetId(), sound.instanceId );
+                    audio.stopSound( sound.getSoundId(), sound.instanceId );
                 } 
                 break;
             }
@@ -190,10 +196,11 @@ public final class SoundSystem
             Sound result = new Sound( componentId );
             result.fromAttributes( attributes );
             
-            SoundAsset asset = assetSystem.getAsset( new AssetId( result.getAssetId(), SoundAsset.class ), SoundAsset.class );
+            SoundAsset asset = assetSystem.getAssetAs( result.getSoundAssetId(), SoundAsset.class );
             if ( asset == null ) {
-                throw new ComponentCreationException( "The SoundAsset with id: " + result.getAssetId() + " does not exist" );
+                throw new ComponentCreationException( "The SoundAsset with id: " + result.getSoundId() + " does not exist" );
             }
+            result.soundId = asset.getSoundId();
             result.streaming = asset.isStreaming();
             
             sounds.set( result.index(), result );
@@ -212,7 +219,7 @@ public final class SoundSystem
             return Sound.TYPE_KEY;
         }
         @Override
-        public final Sound get( int id, Class<? extends Sound> subtype ) {
+        public final Sound getComponent( int id ) {
             return sounds.get( id );
         }
         @Override
@@ -220,7 +227,7 @@ public final class SoundSystem
             return sounds.iterator();
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends Sound> subtype ) {
+        public final void deleteComponent( int id ) {
             deleteSound( id );
         }
         @Override
@@ -228,7 +235,7 @@ public final class SoundSystem
             deleteSound( getSound( name ).getId() );
         }
         @Override
-        public final Sound get( String name, Class<? extends Sound> subType ) {
+        public final Sound getComponent( String name ) {
             return getSound( name );
         }
     }

@@ -447,11 +447,11 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             return Entity.ENTITY_TYPE_KEY;
         }
         @Override
-        public Entity get( int id, Class<? extends Entity> subtype ) {
+        public final Entity getComponent( int id ) {
             throw new UnsupportedOperationException();
         }
         @Override
-        public void deleteComponent( int id, Class<? extends Entity> subtype ) {
+        public final void deleteComponent( int id ) {
             throw new UnsupportedOperationException();
         }
         @Override
@@ -463,7 +463,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             deleteEntity( getEntityId( name ) );
         }
         @Override
-        public final Entity get( String name, Class<? extends Entity> subType ) {
+        public final Entity getComponent( String name ) {
             throw new UnsupportedOperationException();
         }
         @Override

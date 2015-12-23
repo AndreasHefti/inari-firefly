@@ -3,7 +3,7 @@ package com.inari.firefly;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.inari.firefly.asset.event.AssetEvent;
+import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFAudio;
 
@@ -15,34 +15,16 @@ public class FFAudioMock implements FFAudio {
     
     @Override
     public void init( FFContext context ) {
-        context.registerListener( AssetEvent.class, this );
     }
     
     @Override
     public void dispose( FFContext context ) {
-        context.disposeListener( AssetEvent.class, this );
-        
         clear();
     }
     
     public void clear() {
         loadedAssets.clear();
         log.clear();
-    }
-    
-    @Override
-    public void onAssetEvent( AssetEvent event ) {
-        switch ( event.eventType ) {
-            case ASSET_LOADED: {
-                loadedAssets.add( event.asset.getName() );
-                break;
-            }
-            case ASSET_DISPOSED: 
-            case ASSET_DELETED: {
-                loadedAssets.remove( event.asset.getName() );
-            }
-            default: {}
-        }
     }
     
     @Override
@@ -74,5 +56,16 @@ public class FFAudioMock implements FFAudio {
     @Override
     public void stopMusic( int soundId ) {
         log.add( "stopMusic" );
+    }
+
+    @Override
+    public int createSound( SoundAsset asset ) {
+        loadedAssets.add( asset.getName() );
+        return asset.getId();
+    }
+
+    @Override
+    public void disposeSound( SoundAsset asset ) {
+        loadedAssets.remove( asset.getName() );
     }
 }

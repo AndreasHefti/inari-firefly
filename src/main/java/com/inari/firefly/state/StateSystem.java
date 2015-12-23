@@ -418,7 +418,7 @@ public class StateSystem
             return Workflow.TYPE_KEY;
         }
         @Override
-        public final Workflow get( int id, Class<? extends Workflow> subtype ) {
+        public final Workflow getComponent( int id ) {
             return workflows.get( id );
         }
         @Override
@@ -426,7 +426,7 @@ public class StateSystem
             return workflows.iterator();
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends Workflow> subtype ) {
+        public final void deleteComponent( int id ) {
             deleteWorkflow( id );
         }
         @Override
@@ -434,7 +434,7 @@ public class StateSystem
             deleteWorkflow( name );
         }
         @Override
-        public final Workflow get( String name, Class<? extends Workflow> subType ) {
+        public final Workflow getComponent( String name ) {
             return getWorkflow( name );
         }
     }
@@ -448,7 +448,7 @@ public class StateSystem
             return State.TYPE_KEY;
         }
         @Override
-        public final State get( int id, Class<? extends State> subtype ) {
+        public final State getComponent( int id ) {
             return states.get( id );
         }
         @Override
@@ -456,7 +456,7 @@ public class StateSystem
             return states.iterator();
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends State> subtype ) {
+        public final void deleteComponent( int id ) {
             deleteState( id );
         }
         @Override
@@ -464,7 +464,7 @@ public class StateSystem
             deleteState( getStateId( name ) );
         }
         @Override
-        public final State get( String name, Class<? extends State> subType ) {
+        public final State getComponent( String name ) {
             return getState( getStateId( name ) );
         }
     }
@@ -478,7 +478,7 @@ public class StateSystem
             return StateChange.TYPE_KEY;
         }
         @Override
-        public final StateChange get( int id, Class<? extends StateChange> subtype ) {
+        public final StateChange getComponent( int id ) {
             return getStateChange( id );
         }
         @Override
@@ -504,16 +504,16 @@ public class StateSystem
             };
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends StateChange> subtype ) {
+        public final void deleteComponent( int id ) {
             deleteStateChange( id );
         }
         @Override
-        public void deleteComponent( String name ) {
+        public final void deleteComponent( String name ) {
             deleteStateChange( getStateChange( name ).getId() );
             
         }
         @Override
-        public StateChange get( String name, Class<? extends StateChange> subType ) {
+        public final StateChange getComponent( String name ) {
             return getStateChange( name );
         }
     }

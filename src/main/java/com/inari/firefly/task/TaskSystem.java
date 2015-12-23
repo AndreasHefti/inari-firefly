@@ -181,7 +181,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
             return Task.TYPE_KEY;
         }
         @Override
-        public final Task get( int id, Class<? extends Task> subtype ) {
+        public final Task getComponent( int id ) {
             return tasks.get( id );
         }
         @Override
@@ -189,7 +189,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
             return tasks.iterator();
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends Task> subtype ) {
+        public final void deleteComponent( int id ) {
             deleteTask( id );
         }
         @Override
@@ -197,8 +197,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
             deleteTask( getTaskId( name ) );
         }
         @Override
-        public final Task get( String name, Class<? extends Task> subType ) {
-            // TODO Auto-generated method stub
+        public final Task getComponent( String name ) {
             return getTask( getTaskId( name ) );
         }
     }

@@ -19,6 +19,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
+import com.inari.commons.lang.list.IntBag;
+import com.inari.firefly.Disposable;
+import com.inari.firefly.Loadable;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
@@ -26,41 +29,32 @@ import com.inari.firefly.component.dynattr.DynamicAttributeMap;
 import com.inari.firefly.component.dynattr.DynamicAttributedComponent;
 import com.inari.firefly.system.component.SystemComponent;
 
-public abstract class Asset extends SystemComponent implements DynamicAttributedComponent {
+public abstract class Asset extends SystemComponent implements Loadable, Disposable, DynamicAttributedComponent {
     
     public static final SystemComponentKey<Asset> TYPE_KEY = SystemComponentKey.create( Asset.class );
     
-    public static final AttributeKey<String> ASSET_GROUP = new AttributeKey<String>( "group", String.class, Asset.class );
-    
     protected boolean loaded = false;
-    protected String group;
-    protected final AssetId assetId;
     
     private DynamicAttributeMap dynamicAttributeMap = new DynamicAttributeMap();
     
     protected Asset( int assetIntId ) {
         super( assetIntId );
-        assetId = new AssetId( super.index, componentType() );
     }
+    
+    public abstract int getInstanceId();
     
     @Override
     public final IndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;
     }
 
-    public boolean isLoaded() {
+    public final boolean isLoaded() {
         return loaded;
     }
-    @Override
-    public final Class<? extends Asset> indexedObjectType() {
-        return componentType();
-    }
     
     @Override
-    public abstract Class<? extends Asset> componentType();
-    
-    public final AssetId getAssetId() {
-        return assetId;
+    public final Class<? extends Asset> componentType() {
+        return this.getClass();
     }
 
     @Override
@@ -81,7 +75,6 @@ public abstract class Asset extends SystemComponent implements DynamicAttributed
     @Override
     public void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
-        group = attributes.getValue( ASSET_GROUP, group );
         
         if ( hasDynamicAttributes() ) {
             dynamicAttributeMap.fromAttributeMap( attributes, this );
@@ -91,7 +84,6 @@ public abstract class Asset extends SystemComponent implements DynamicAttributed
     @Override
     public void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        attributes.put( ASSET_GROUP, group );
         
         if ( hasDynamicAttributes() ) {
             dynamicAttributeMap.toAttributeMap( attributes, this );
@@ -102,13 +94,13 @@ public abstract class Asset extends SystemComponent implements DynamicAttributed
         return dynamicAttributeMap.attributeKeys( this, new HashSet<AttributeKey<?>>( attributeKeys ) );
     }
 
-    protected AssetId[] dependsOn() {
+    protected IntBag dependsOn() {
         return null;
     }
     
     protected void checkNotAlreadyLoaded() {
         if ( loaded ) {
-            throw new IllegalStateException( "Asset: " + group + " " + name + " is already loaded and can not be modified" );
+            throw new IllegalStateException( "Asset: " + name + " is already loaded and can not be modified" );
         } 
     }
 

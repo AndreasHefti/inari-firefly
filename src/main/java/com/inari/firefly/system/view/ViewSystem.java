@@ -447,7 +447,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return View.TYPE_KEY;
         }
         @Override
-        public final View get( int id, Class<? extends View> subtype ) {
+        public final View getComponent( int id ) {
             return views.get( id );
         }
         @Override
@@ -455,7 +455,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return views.iterator();
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends View> subtype ) {
+        public final void deleteComponent( int id ) {
             deleteView( id );
         }
         @Override
@@ -464,7 +464,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             
         }
         @Override
-        public final View get( String name, Class<? extends View> subType ) {
+        public final View getComponent( String name ) {
             return getView( name );
         }
     }
@@ -478,7 +478,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return Layer.TYPE_KEY;
         }
         @Override
-        public final Layer get( int id, Class<? extends Layer> subtype ) {
+        public final Layer getComponent( int id ) {
             return getLayer( id );
         }
         @Override
@@ -486,7 +486,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return layers.iterator();
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends Layer> subtype ) {
+        public final void deleteComponent( int id ) {
             deleteLayer( id );
         }
         @Override
@@ -495,7 +495,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             
         }
         @Override
-        public final Layer get( String name, Class<? extends Layer> subType ) {
+        public final Layer getComponent( String name ) {
             return getLayer( getLayerId( name ) );
         }
     }

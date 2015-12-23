@@ -30,7 +30,7 @@ public class ViewSystemTest {
         
         context.toAttributes( attrs, View.TYPE_KEY );
         assertEquals( 
-            "View(0)::" +
+            "SystemComponent:View[0](0)::" +
             "name:String=BASE_VIEW, " +
             "bounds:Rectangle=[x=0,y=0,width=100,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
@@ -80,7 +80,7 @@ public class ViewSystemTest {
         
         context.toAttributes( attrs, View.TYPE_KEY );
         assertEquals( 
-            "View(0)::" +
+            "SystemComponent:View[0](0)::" +
             "name:String=BASE_VIEW, " +
             "bounds:Rectangle=[x=0,y=0,width=100,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
@@ -90,7 +90,7 @@ public class ViewSystemTest {
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
             "controllerId:int[]=null " +
-            "View(1)::" +
+            "SystemComponent:View[0](1)::" +
             "name:String=Header, " +
             "bounds:Rectangle=[x=0,y=0,width=10,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
@@ -100,7 +100,7 @@ public class ViewSystemTest {
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
             "controllerId:int[]=null " +
-            "View(2)::" +
+            "SystemComponent:View[0](2)::" +
             "name:String=Body, " +
             "bounds:Rectangle=[x=0,y=10,width=90,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
@@ -175,7 +175,7 @@ public class ViewSystemTest {
         
         context.toAttributes( attrs, View.TYPE_KEY, Layer.TYPE_KEY );
         assertEquals( 
-            "View(0)::" +
+            "SystemComponent:View[0](0)::" +
             "name:String=BASE_VIEW, " +
             "bounds:Rectangle=[x=0,y=0,width=100,height=100], " +
             "worldPosition:Position=[x=0,y=0], " +
@@ -185,13 +185,13 @@ public class ViewSystemTest {
             "layeringEnabled:Boolean=true, " +
             "zoom:Float=1.0, " +
             "controllerId:int[]=null " +
-            "Layer(1)::" +
+            "SystemComponent:Layer[1](1)::" +
             "name:String=Layer1, " +
             "viewId:Integer=0 " +
-            "Layer(2)::" +
+            "SystemComponent:Layer[1](2)::" +
             "name:String=Layer2, " +
             "viewId:Integer=0 " +
-            "Layer(3)::" +
+            "SystemComponent:Layer[1](3)::" +
             "name:String=Layer3, " +
             "viewId:Integer=0", 
             attrs.toString() 

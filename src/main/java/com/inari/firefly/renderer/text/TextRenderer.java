@@ -4,6 +4,7 @@ import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
+import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.renderer.BaseRenderer;
 import com.inari.firefly.renderer.BlendMode;
@@ -12,16 +13,19 @@ import com.inari.firefly.system.FFContext;
 
 final class TextRenderer extends BaseRenderer {
     
-    private final TextSystem textSystem;
+    private TextSystem textSystem;
+    private AssetSystem assetSystem;
     
-    TextRenderer( TextSystem textSystem ) {
+    TextRenderer() {
         super();
-        this.textSystem = textSystem;
     }
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
+        
+        textSystem = context.getSystem( TextSystem.SYSTEM_KEY );
+        assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
     }
     
     @Override
@@ -46,7 +50,7 @@ final class TextRenderer extends BaseRenderer {
             
             EText text = components.get( EText.TYPE_KEY );
             ETransform transform = components.get( ETransform.TYPE_KEY );
-            Font font = textSystem.getFont( text.getFontId() );
+            FontAsset font = assetSystem.getAssetAs( text.getFontId(), FontAsset.class );
             
             char[] chars = text.getText();
             textRenderable.blendMode = text.getBlendMode();

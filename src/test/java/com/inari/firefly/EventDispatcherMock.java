@@ -12,7 +12,7 @@ import com.inari.commons.event.PredicatedEventListener;
 
 public class EventDispatcherMock implements IEventDispatcher {
     
-    private Collection<Event<?>> events = new ArrayList<Event<?>>();
+    private Collection<String> events = new ArrayList<String>();
 
     @Override
     public <L> void register( Class<? extends Event<L>> eventType, L listener ) {
@@ -25,17 +25,17 @@ public class EventDispatcherMock implements IEventDispatcher {
 
     @Override
     public <L> void notify( Event<L> event ) {
-        events.add( event );
+        events.add( event.toString() );
     }
 
     @Override
     public <L extends AspectedEventListener> void notify( AspectedEvent<L> event ) {
-        events.add( event );
+        events.add( event.toString() );
     }
 
     @Override
     public <L extends PredicatedEventListener> void notify( PredicatedEvent<L> event ) {
-        events.add( event );
+        events.add( event.toString() );
     }
 
     @Override

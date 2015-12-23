@@ -3,9 +3,12 @@ package com.inari.firefly.renderer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.inari.firefly.Disposable;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.FFContext;
 
 public final class ShaderAsset extends Asset {
 
@@ -13,7 +16,6 @@ public final class ShaderAsset extends Asset {
     public static final AttributeKey<String> RESOURCE_NAME = new AttributeKey<String>( "resourceName", String.class, ShaderAsset.class );
     public static final AttributeKey<String> SHADER_PROGRAM = new AttributeKey<String>( "shaderProgram", String.class, ShaderAsset.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] {
-        ASSET_GROUP,
         RESOURCE_BASED,
         RESOURCE_NAME,
         SHADER_PROGRAM
@@ -22,15 +24,21 @@ public final class ShaderAsset extends Asset {
     private boolean resourceBased;
     private String resourceName;
     private String shaderProgram;
+    
+    private int shaderId = -1;
 
     ShaderAsset( int assetId ) {
         super( assetId );
         resourceBased = true;
     }
-
+    
     @Override
-    public final Class<ShaderAsset> componentType() {
-        return ShaderAsset.class;
+    public final int getInstanceId() {
+        return shaderId;
+    }
+    
+    public final int getShaderId() {
+        return shaderId;
     }
 
     public final boolean isResourceBased() {
@@ -78,5 +86,25 @@ public final class ShaderAsset extends Asset {
         attributes.put( RESOURCE_BASED, resourceBased );
         attributes.put( RESOURCE_NAME, resourceName );
         attributes.put( SHADER_PROGRAM, shaderProgram );
+    }
+
+    @Override
+    public final Disposable load( FFContext context ) {
+        if ( loaded ) {
+            return this;
+        }
+
+        shaderId = context.getGraphics().createShader( this );
+        return this;
+    }
+
+    @Override
+    public void dispose( FFContext context ) {
+        if ( !loaded ) {
+            return;
+        }
+        
+        context.getGraphics().disposeShader( shaderId );
+        shaderId = -1;
     }
 }

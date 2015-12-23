@@ -19,30 +19,37 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.firefly.Disposable;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.FFContext;
 
 public class SoundAsset extends Asset {
     
     public static final AttributeKey<String> RESOURCE_NAME = new AttributeKey<String>( "resourceName", String.class, SoundAsset.class );
     public static final AttributeKey<Boolean> STREAMING = new AttributeKey<Boolean>( "streaming", Boolean.class, SoundAsset.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
-        ASSET_GROUP,
         RESOURCE_NAME,
         STREAMING
     } ) );
     
     private String resourceName;
     private boolean streaming;
+    
+    private int soundId;
 
     SoundAsset( int id ) {
         super( id );
     }
     
     @Override
-    public final Class<SoundAsset> componentType() {
-        return SoundAsset.class;
+    public final int getInstanceId() {
+        return soundId;
+    }
+    
+    public final int getSoundId() {
+        return soundId;
     }
 
     public final String getResourceName() {
@@ -80,5 +87,25 @@ public class SoundAsset extends Asset {
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         attributes.put( STREAMING, streaming );
+    }
+
+    @Override
+    public final Disposable load( FFContext context ) {
+        if ( loaded ) {
+            return this;
+        }
+
+        soundId = context.getAudio().createSound( this );
+        return this;
+    }
+
+    @Override
+    public final void dispose( FFContext context ) {
+        if ( !loaded ) {
+            return;
+        }
+        
+        context.getAudio().disposeSound( this );
+        soundId = -1;
     }
 }

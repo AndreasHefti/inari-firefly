@@ -1,60 +1,51 @@
 package com.inari.firefly.renderer.text;
 
-import java.util.Iterator;
-
-import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.AssetNameKey;
-import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
-import com.inari.firefly.renderer.TextureAsset;
-import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
-import com.inari.firefly.system.component.ComponentSystem;
-import com.inari.firefly.system.component.SystemBuilderAdapter;
-import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public class TextSystem 
-    extends 
-        ComponentSystem<TextSystem>
     implements 
+        FFSystem,
         EntityActivationListener,
         RenderEventListener {
     
     public static final FFSystemTypeKey<TextSystem> SYSTEM_KEY = FFSystemTypeKey.create( TextSystem.class );
-    
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
-        Font.TYPE_KEY
-    };
 
     private EntitySystem entitySystem;
-    private AssetSystem assetSystem;
     private TextRenderer renderer;
 
-    private final DynArray<Font> fonts;
     private final DynArray<DynArray<DynArray<IndexedTypeSet>>> textPerViewAndLayer;
     
     TextSystem() {
-        super( SYSTEM_KEY );
-        fonts = new DynArray<Font>();
         textPerViewAndLayer = new DynArray<DynArray<DynArray<IndexedTypeSet>>>();
+    }
+    
+    @Override
+    public IIndexedTypeKey indexedTypeKey() {
+        return SYSTEM_KEY;
+    }
+
+    @Override
+    public FFSystemTypeKey<?> systemTypeKey() {
+        return SYSTEM_KEY;
     }
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         
-        renderer = new TextRenderer( this );
+        renderer = new TextRenderer();
         renderer.init( context );
         
         context.registerListener( EntityActivationEvent.class, this );
@@ -75,46 +66,8 @@ public class TextSystem
         return textPerViewAndLayer.contains( viewId );
     }
     
-    public final Font getFont( int fontId ) {
-        return fonts.get( fontId );
-    }
-    
-    public final int getFontId( String name ) {
-        for ( Font font : fonts ) {
-            if ( name.equals( font.getName() ) ) {
-                return font.getId();
-            }
-        }
-        
-        return -1;
-    }
-    
-    public final void loadFont( int fontId ) {
-        Font font = fonts.get( fontId );
-        String name = font.getName();
-        assetSystem.loadAsset( new AssetNameKey( name, name ) );
-        assetSystem.loadAssets( name );
-    }
-    
-    public final void disposeFont( int fontId ) {
-        Font font = fonts.get( fontId );
-        String name = font.getName();
-        assetSystem.disposeAssets( name );
-        assetSystem.disposeAsset( new AssetNameKey( name, name ) );
-    }
-    
-    public final void deleteFont( int fontId ) {
-        Font font = fonts.remove( fontId );
-        if ( font != null ) {
-            font.dispose();
-        }
-    }
-    
     public final void clear() {
-        for ( Font font : fonts ) {
-            font.dispose();
-        }
-        fonts.clear();
+        textPerViewAndLayer.clear();
     }
 
     @Override
@@ -172,109 +125,6 @@ public class TextSystem
         }
         
         return textOfLayer;
-    }
-    
-    public final FontBuilder getFontBuilder() {
-        return new FontBuilder();
-    }
-
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
-        return SUPPORTED_COMPONENT_TYPES;
-    }
-
-    @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
-            new FontBuilderHelper( this )
-        };
-    }
-
-    public final class FontBuilder extends SystemComponentBuilder {
-
-        protected FontBuilder() {}
-        
-        @Override
-        public final SystemComponentKey<Font> systemComponentKey() {
-            return Font.TYPE_KEY;
-        }
-
-        @Override
-        public final int doBuild( int componentId, Class<?> subType, boolean activate ) {
-            Font font = new Font( componentId );
-            font.fromAttributes( attributes );
-            
-            checkName( font );
-            
-
-            Rectangle textureRegion = new Rectangle( 0, 0, font.getCharWidth(), font.getCharHeight() );
-            char[][] charTextureMap = font.getCharTextureMap();
-            int charWidth = font.getCharWidth();
-            int charHeight = font.getCharHeight();
-            String fontName = font.getName();
-            
-            int fontTextureId = assetSystem.getAssetBuilder()
-                .set( TextureAsset.NAME, fontName )
-                .set( TextureAsset.ASSET_GROUP, fontName )
-                .set( TextureAsset.RESOURCE_NAME, font.getFontTextureResourceName() )
-                .set( TextureAsset.TEXTURE_WIDTH, charTextureMap[ 0 ].length * font.getCharWidth() )
-                .set( TextureAsset.TEXTURE_HEIGHT, charTextureMap.length * font.getCharHeight() )
-            .build( TextureAsset.class );
-            
-            for ( int y = 0; y < charTextureMap.length; y++ ) {
-                for ( int x = 0; x < charTextureMap[ y ].length; x++ ) {
-                    textureRegion.x = x * charWidth;
-                    textureRegion.y = y * charHeight;
-                    
-                    int charSpriteAssetId = assetSystem.getAssetBuilder()
-                        .set( SpriteAsset.TEXTURE_ID, fontTextureId )
-                        .set( SpriteAsset.TEXTURE_REGION, textureRegion )
-                        .set( SpriteAsset.ASSET_GROUP, fontName )
-                        .set( SpriteAsset.NAME, fontName + "_" + x + "_"+ y )
-                    .build(  SpriteAsset.class  );
-                    
-                    font.setCharSpriteMapping( charTextureMap[ y ][ x ], charSpriteAssetId );
-                }
-            }
- 
-            fonts.set( font.index(), font );
-            
-            if ( activate ) {
-                loadFont( font.index() );
-            }
-            
-            return font.getId();
-        }
-    }
-    
-    private final class FontBuilderHelper extends SystemBuilderAdapter<Font> {
-        public FontBuilderHelper( TextSystem system ) {
-            super( system, new FontBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<Font> componentTypeKey() {
-            return Font.TYPE_KEY;
-        }
-        @Override
-        public final Font get( int id, Class<? extends Font> subtype ) {
-            return fonts.get( id );
-        }
-        @Override
-        public final void deleteComponent( int id, Class<? extends Font> subtype ) {
-            deleteFont( id );
-        }
-        @Override
-        public final Iterator<Font> getAll() {
-            return fonts.iterator();
-        }
-        @Override
-        public final void deleteComponent( String name ) {
-            deleteFont( getFontId( name ) );
-        }
-        @Override
-        public final Font get( String name, Class<? extends Font> subType ) {
-            return getFont( getFontId( name ) );
-        }
     }
 
 }

@@ -146,34 +146,42 @@ public final class FFContext {
 
     public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, int componentId ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        return key.<C>type().cast( builderHelper.get( componentId, null ) );
+        return key.<C>type().cast( builderHelper.getComponent( componentId ) );
     }
     
     @SuppressWarnings( "unchecked" )
     public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentKey<C> key, int componentId, Class<CS> subType ) {
         SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
-        return builderHelper.getComponent( componentId, subType );
+        C component = builderHelper.getComponent( componentId );
+        if ( component == null ) {
+            return null;
+        }
+        return subType.cast( component );
     }
     
     public <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        return key.<C>type().cast( builderHelper.get( componentName, null ) );
+        return key.<C>type().cast( builderHelper.getComponent( componentName ) );
     }
     
     public <C extends SystemComponent> int getSystemComponentId( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        return key.<C>type().cast( builderHelper.get( componentName, null ) ).getId();
+        return key.<C>type().cast( builderHelper.getComponent( componentName ) ).getId();
     }
     
     @SuppressWarnings( "unchecked" )
     public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentKey<C> key, String componentName, Class<CS> subType ) {
         SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
-        return builderHelper.getComponent( componentName, subType );
+        C component = builderHelper.getComponent( componentName );
+        if ( component == null ) {
+            return null;
+        }
+        return subType.cast( component );
     }
     
     public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, int componentId ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        builderHelper.deleteComponent( componentId, null );
+        builderHelper.deleteComponent( componentId );
     }
     
     
