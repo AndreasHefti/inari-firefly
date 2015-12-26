@@ -3,11 +3,13 @@ package com.inari.firefly.renderer.sprite;
 import java.util.Comparator;
 
 import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.renderer.BaseRenderer;
@@ -16,20 +18,21 @@ import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.RenderEvent;
-import com.inari.firefly.system.RenderEventListener;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public final class SpriteViewSystem 
-    extends 
-        BaseRenderer 
     implements 
         FFSystem, 
-        RenderEventListener, 
         EntityActivationListener {
     
+    private static final SystemComponentKey<SpriteRenderer> SPRITE_RENDERER_TYPE_KEY = SystemComponentKey.create( SpriteRenderer.class );
     public static final FFSystemTypeKey<SpriteViewSystem> SYSTEM_KEY = FFSystemTypeKey.create( SpriteViewSystem.class );
     
+    private EntitySystem entitySystem;
     // TODO another approach would be, storing only the id's within DynArray<DynArray<IntBag>>
     private final DynArray<DynArray<DynArray<IndexedTypeSet>>> spritesPerViewAndLayer;
+    private SpriteRenderer spriteRenderer;
+    
     
     SpriteViewSystem() {
         spritesPerViewAndLayer = new DynArray<DynArray<DynArray<IndexedTypeSet>>>();
@@ -47,16 +50,17 @@ public final class SpriteViewSystem
 
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        super.init( context );
-
-        context.registerListener( RenderEvent.class, this );
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        spriteRenderer = new SpriteRenderer( context );
+        
+        context.registerListener( RenderEvent.class, spriteRenderer );
         context.registerListener( EntityActivationEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
         
-        context.disposeListener( RenderEvent.class, this );
+        context.disposeListener( RenderEvent.class, spriteRenderer );
         context.disposeListener( EntityActivationEvent.class, this );
     }
     
@@ -84,28 +88,7 @@ public final class SpriteViewSystem
             }
         }
     }
-    
-    @Override
-    public final void render( RenderEvent event ) {
-        DynArray<IndexedTypeSet> spritesToRender = getSprites( event.getViewId(), event.getLayerId(), false );
-        if ( spritesToRender == null ) {
-            return;
-        }
-        
-        for ( int i = 0; i < spritesToRender.capacity(); i++ ) {
-            IndexedTypeSet components = spritesToRender.get( i );
-            if ( components == null ) {
-                continue;
-            }
-            
-            ESprite sprite = components.get( ESprite.TYPE_KEY );
-            ETransform transform = components.get( ETransform.TYPE_KEY );
-            transformCollector.set( transform );
-            
-            render( sprite, transform.getParentId() );
-        }
-    }
-    
+
     private final DynArray<IndexedTypeSet> getSprites( int viewId, int layerId, boolean createNew ) {
         DynArray<DynArray<IndexedTypeSet>> spritePerLayer = null;
         if ( spritesPerViewAndLayer.contains( viewId ) ) { 
@@ -129,7 +112,7 @@ public final class SpriteViewSystem
         
         return spritesOfLayer;
     }
-    
+
     private final Comparator<IndexedTypeSet> RENDERABLE_COMPARATOR = new Comparator<IndexedTypeSet>() {
         
         @Override
@@ -154,5 +137,40 @@ public final class SpriteViewSystem
             return ( o1 < o2 )? 1 : -1;
         }
     };
+    
+    final class SpriteRenderer extends BaseRenderer { 
+        
+        
+    
+        protected SpriteRenderer( FFContext context ) {
+            super( 0, context );
+        }
+
+        @Override
+        public final void render( RenderEvent event ) {
+            DynArray<IndexedTypeSet> spritesToRender = getSprites( event.getViewId(), event.getLayerId(), false );
+            if ( spritesToRender == null ) {
+                return;
+            }
+            
+            for ( int i = 0; i < spritesToRender.capacity(); i++ ) {
+                IndexedTypeSet components = spritesToRender.get( i );
+                if ( components == null ) {
+                    continue;
+                }
+                
+                ESprite sprite = components.get( ESprite.TYPE_KEY );
+                ETransform transform = components.get( ETransform.TYPE_KEY );
+                transformCollector.set( transform );
+                
+                render( sprite, transform.getParentId() );
+            }
+        }
+
+        @Override
+        public final IIndexedTypeKey indexedTypeKey() {
+            return SPRITE_RENDERER_TYPE_KEY;
+        }
+    }
 
 }

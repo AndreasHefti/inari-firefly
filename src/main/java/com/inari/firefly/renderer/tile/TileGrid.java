@@ -31,11 +31,7 @@ public final class TileGrid extends SystemComponent {
     
     public static final SystemComponentKey<TileGrid> TYPE_KEY = SystemComponentKey.create( TileGrid.class );
     
-    public enum TileRenderMode {
-        FULL_RENDERING,
-        FAST_RENDERING
-    }
-    
+    public static final AttributeKey<Integer> RENDERER_ID = new AttributeKey<Integer>( "rendererId", Integer.class, TileGrid.class );
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, TileGrid.class );
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, TileGrid.class );
     public static final AttributeKey<Integer> WIDTH = new AttributeKey<Integer>( "width", Integer.class, TileGrid.class );
@@ -45,8 +41,8 @@ public final class TileGrid extends SystemComponent {
     public static final AttributeKey<Float> WORLD_XPOS = new AttributeKey<Float>( "worldXPos", Float.class, TileGrid.class );
     public static final AttributeKey<Float> WORLD_YPOS = new AttributeKey<Float>( "worldYPos", Float.class, TileGrid.class );
     public static final AttributeKey<Boolean> SPHERICAL = new AttributeKey<Boolean>( "spherical", Boolean.class, TileGrid.class );
-    public static final AttributeKey<TileRenderMode> RENDER_MODE = new AttributeKey<TileRenderMode>( "renderMode", TileRenderMode.class, TileGrid.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+        RENDERER_ID,
         VIEW_ID,
         LAYER_ID,
         WIDTH,
@@ -55,12 +51,12 @@ public final class TileGrid extends SystemComponent {
         CELL_HEIGHT,
         WORLD_XPOS,
         WORLD_YPOS,
-        SPHERICAL,
-        RENDER_MODE
+        SPHERICAL
     };
     
     public final static int NULL_VALUE = -1;
 
+    private int rendererId;
     private int viewId;
     private int layerId;
     
@@ -71,12 +67,12 @@ public final class TileGrid extends SystemComponent {
     private float worldXPos;
     private float worldYPos;
     private boolean spherical;
-    private TileRenderMode renderMode;
     
     protected int[][] grid;
     
     protected TileGrid( int id ) {
         super( id );
+        rendererId = -1;
         viewId = 0;
         layerId = 0;
         width = 0;
@@ -86,13 +82,20 @@ public final class TileGrid extends SystemComponent {
         worldXPos = 0;
         worldYPos = 0;
         spherical = false;
-        renderMode = TileRenderMode.FULL_RENDERING;
         createGrid();
     }
     
     @Override
     public final IndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;
+    }
+
+    public final int getRendererId() {
+        return rendererId;
+    }
+
+    public final void setRendererId( int rendererId ) {
+        this.rendererId = rendererId;
     }
 
     public final int getViewId() {
@@ -169,14 +172,6 @@ public final class TileGrid extends SystemComponent {
         this.spherical = spherical;
     }
 
-    public final TileRenderMode getRenderMode() {
-        return renderMode;
-    }
-
-    public final void setRenderMode( TileRenderMode renderMode ) {
-        this.renderMode = renderMode;
-    }
-
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
@@ -188,6 +183,7 @@ public final class TileGrid extends SystemComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
+        rendererId = attributes.getValue( RENDERER_ID, rendererId );
         viewId = attributes.getValue( VIEW_ID, viewId );
         layerId = attributes.getValue( LAYER_ID, layerId );
         width = attributes.getValue( WIDTH, width );
@@ -197,7 +193,6 @@ public final class TileGrid extends SystemComponent {
         worldXPos = attributes.getValue( WORLD_XPOS, worldXPos );
         worldYPos = attributes.getValue( WORLD_YPOS, worldYPos );
         spherical = attributes.getValue( SPHERICAL, spherical );
-        renderMode = attributes.getValue( RENDER_MODE, renderMode );
         createGrid();
     }
 
@@ -205,6 +200,7 @@ public final class TileGrid extends SystemComponent {
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         
+        attributes.put( RENDERER_ID, rendererId );
         attributes.put( VIEW_ID, viewId );
         attributes.put( LAYER_ID, layerId );
         attributes.put( WIDTH, width );
@@ -214,7 +210,6 @@ public final class TileGrid extends SystemComponent {
         attributes.put( WORLD_XPOS, worldXPos );
         attributes.put( WORLD_YPOS, worldXPos );
         attributes.put( SPHERICAL, spherical );
-        attributes.put( RENDER_MODE, renderMode );
     }
     
     public final int get( int xpos, int ypos ) {

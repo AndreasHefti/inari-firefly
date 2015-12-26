@@ -34,6 +34,8 @@ import com.inari.firefly.state.event.WorkflowEvent;
 import com.inari.firefly.state.event.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
+import com.inari.firefly.system.RenderEvent;
+import com.inari.firefly.system.RenderEventListener;
 
 public abstract class BaseComponentBuilder implements ComponentBuilder {
     
@@ -329,6 +331,9 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
         }
         if ( component instanceof WorkflowEventListener ) {
             context.registerListener( WorkflowEvent.class, (WorkflowEventListener) component );
+        }
+        if ( component instanceof RenderEventListener ) {
+            context.registerListener( RenderEvent.class, (RenderEventListener) component );
         }
     }
 

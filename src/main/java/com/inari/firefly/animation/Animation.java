@@ -108,7 +108,4 @@ public abstract class Animation extends SystemComponent {
         attributes.put( LOOPING, looping );
     }
 
-    
-
-
 }

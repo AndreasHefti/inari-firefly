@@ -18,19 +18,16 @@ package com.inari.firefly.renderer.tile;
 import java.util.Iterator;
 
 import com.inari.commons.geom.Position;
-import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.component.Component;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
-import com.inari.firefly.renderer.tile.TileGrid.TileIterator;
-import com.inari.firefly.renderer.tile.TileGrid.TileRenderMode;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
-import com.inari.firefly.system.RenderEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
@@ -44,23 +41,23 @@ public final class TileGridSystem
         ComponentSystem<TileGridSystem>
     implements
         ViewEventListener,
-        EntityActivationListener,
-        RenderEventListener {
+        EntityActivationListener {
     
     public static final FFSystemTypeKey<TileGridSystem> SYSTEM_KEY = FFSystemTypeKey.create( TileGridSystem.class ); 
-    
     private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
-        TileGrid.TYPE_KEY
+        TileGrid.TYPE_KEY,
+        TileGridRenderer.TYPE_KEY
     };
 
     private EntitySystem entitySystem;
-    private TileGridRenderer renderer;
     
+    private final DynArray<TileGridRenderer> renderer;
     private final DynArray<TileGrid> tileGrids;
     private final DynArray<DynArray<TileGrid>> tileGridOfViewsPerLayer;
     
     public TileGridSystem() {
         super( SYSTEM_KEY );
+        renderer = new DynArray<TileGridRenderer>();
         tileGrids = new DynArray<TileGrid>();
         tileGridOfViewsPerLayer = new DynArray<DynArray<TileGrid>>();
     }
@@ -70,18 +67,30 @@ public final class TileGridSystem
         super.init( context );
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
-        renderer = new TileGridRenderer( context );
+        // build and register default tile grid renderer
+        getRendererBuilder()
+            .set( TileGridRenderer.NAME, NormalFastTileGridRenderer.NAME )
+            .buildAndNext( NormalFastTileGridRenderer.class )
+            .set( TileGridRenderer.NAME, NormalFullTileGridRenderer.NAME )
+            .build( NormalFullTileGridRenderer.class );
 
         context.registerListener( ViewEvent.class, this );
         context.registerListener( EntityActivationEvent.class, this );
-        context.registerListener( RenderEvent.class, this );
+    }
+
+    public final TileGridRendererBuilder getRendererBuilder() {
+        return new TileGridRendererBuilder();
     }
 
     @Override
     public final void dispose( FFContext context ) {
         context.disposeListener( ViewEvent.class, this );
         context.disposeListener( EntityActivationEvent.class, this );
-        context.disposeListener( RenderEvent.class, this );
+        
+        for ( TileGridRenderer r : renderer ) {
+            context.disposeListener( RenderEvent.class, r );
+            r.dispose( context );
+        }
         
         clear();
     }
@@ -108,30 +117,34 @@ public final class TileGridSystem
     }
     
     @Override
-    public void render( RenderEvent event ) {
-        int viewId = event.getViewId();
-        int layerId = event.getLayerId();
-        TileIterator iterator = iterator( viewId, layerId, event.getClip() );
-        if ( iterator == null ) {
-            return;
-        }
-        
-        switch ( getRenderMode( viewId, layerId ) ) {
-            case FAST_RENDERING: {
-                renderer.renderTileGrid( iterator );
-                break;
-            }
-            case FULL_RENDERING: {
-                renderer.renderTileGridAllData( iterator );
-                break;
-            }
-            default: {}
-        }
-    }
-
-    @Override
     public final boolean match( AspectBitSet aspect ) {
         return aspect.contains( ETile.TYPE_KEY );
+    }
+    
+    public final TileGridRenderer getRenderer( int id ) {
+        if ( renderer.contains( id ) ) {
+            return renderer.get( id );
+        }
+        
+        return null;
+    }
+
+    public final int getRendererId( String name ) {
+        for ( TileGridRenderer r : renderer ) {
+            if ( name.equals( r.getName() ) ) {
+                return r.getId();
+            }
+        }
+        
+        return -1;
+    }
+
+    public final void deleteRenderer( int id ) {
+        TileGridRenderer r = renderer.remove( id );
+        if ( r != null ) {
+            context.disposeListener( RenderEvent.class, r );
+            r.dispose( context );
+        }
     }
     
     public final boolean hasTileGrid( int viewId, int layerId ) {
@@ -199,23 +212,6 @@ public final class TileGridSystem
         tileGridOfViewsPerLayer.get( removed.getViewId() ).remove( removed.getLayerId() );
     };
     
-    private TileRenderMode getRenderMode( int viewId, int layerId ) {
-        TileGrid tileGrid = getTileGrid( viewId, layerId );
-        if ( tileGrid == null ) {
-            return TileRenderMode.FAST_RENDERING;
-        }
-        
-        return tileGrid.getRenderMode();
-    }
-    
-    private TileIterator iterator( int viewId, int layerId, Rectangle clip ) {
-        TileGrid tileGrid = getTileGrid( viewId, layerId );
-        if ( tileGrid == null ) {
-            return null;
-        }
-        return tileGrid.iterator( clip );
-    }
-    
     private final void registerEntity( int entityId, AspectBitSet entityAspect ) {
         ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
@@ -257,13 +253,15 @@ public final class TileGridSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new TileGridBuilderAdapter( this )
+            new TileGridBuilderAdapter( this ),
+            new TileGridRendererBuilderAdapter( this )
         };
     }
 
     @Override
     public final void clear() {
         tileGridOfViewsPerLayer.clear();
+        renderer.clear();
     }
     
     private final class TileGridBuilder extends SystemComponentBuilder {
@@ -301,6 +299,30 @@ public final class TileGridSystem
         }
     }
     
+    public final class TileGridRendererBuilder extends SystemComponentBuilder {
+        
+        private TileGridRendererBuilder() {}
+        
+        @Override
+        public final SystemComponentKey<TileGridRenderer> systemComponentKey() {
+            return TileGridRenderer.TYPE_KEY;
+        }
+
+        @Override
+        public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
+            checkType( componentType );
+            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
+            TileGridRenderer r = getInstance( context, componentId );
+            
+            r.fromAttributes( attributes );
+            
+            renderer.set( r.index(), r );
+            postInit( r, context );
+            
+            return r.getId();
+        }
+    }
+    
     private final class TileGridBuilderAdapter extends SystemBuilderAdapter<TileGrid> {
         public TileGridBuilderAdapter( TileGridSystem system ) {
             super( system, new TileGridBuilder() );
@@ -329,7 +351,37 @@ public final class TileGridSystem
         public final TileGrid getComponent( String name ) {
             return getTileGrid( name );
         }
+    }
+    
+    private final class TileGridRendererBuilderAdapter extends SystemBuilderAdapter<TileGridRenderer> {
+        public TileGridRendererBuilderAdapter( TileGridSystem system ) {
+            super( system, new TileGridRendererBuilder() );
+        }
+        @Override
+        public final SystemComponentKey<TileGridRenderer> componentTypeKey() {
+            return TileGridRenderer.TYPE_KEY;
+        }
+        @Override
+        public final TileGridRenderer getComponent( int id ) {
+            return getRenderer( id );
+        }
+        @Override
+        public final void deleteComponent( int id ) {
+            deleteRenderer( id );
+        }
+        @Override
+        public final Iterator<TileGridRenderer> getAll() {
+            return renderer.iterator();
+        }
         
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteRenderer( getRendererId( name ) );
+        }
+        @Override
+        public final TileGridRenderer getComponent( String name ) {
+            return getRenderer( getRendererId( name ) );
+        }
     }
 
 }

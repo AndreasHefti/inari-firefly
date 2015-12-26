@@ -1,28 +1,31 @@
 package com.inari.firefly.renderer;
 
-import com.inari.firefly.FFInitException;
+import com.inari.firefly.Disposable;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
+import com.inari.firefly.system.RenderEventListener;
+import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFGraphics;
 
-public abstract class BaseRenderer implements FFContextInitiable {
-    
+public abstract class BaseRenderer extends SystemComponent implements RenderEventListener, Disposable {
+
     protected FFGraphics graphics;
     protected EntitySystem entitySystem;
 
     protected final TransformDataCollector transformCollector = new TransformDataCollector();
-    
-    @Override
-    public void init( FFContext context ) throws FFInitException {
+
+    protected BaseRenderer( int id, FFContext context ) {
+        super( id );
+        
         graphics = context.getGraphics();
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
     }
     
     @Override
     public void dispose( FFContext context ) {
-    }
+        super.dispose();
+    };
     
     protected final void render( SpriteRenderable sprite ) {
         render( sprite, -1 );
