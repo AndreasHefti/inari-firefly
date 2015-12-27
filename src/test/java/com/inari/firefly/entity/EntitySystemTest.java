@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.FireFlyMock;
 import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.renderer.sprite.ESprite;
+import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.system.FFContext;
 
 public class EntitySystemTest {

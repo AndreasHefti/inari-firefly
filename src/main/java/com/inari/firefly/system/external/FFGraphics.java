@@ -18,10 +18,10 @@ package com.inari.firefly.system.external;
 import java.util.Iterator;
 
 import com.inari.commons.geom.Rectangle;
-import com.inari.firefly.renderer.ShaderAsset;
-import com.inari.firefly.renderer.SpriteRenderable;
-import com.inari.firefly.renderer.TextureAsset;
-import com.inari.firefly.renderer.sprite.SpriteAsset;
+import com.inari.firefly.graphics.ShaderAsset;
+import com.inari.firefly.graphics.SpriteRenderable;
+import com.inari.firefly.graphics.TextureAsset;
+import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.event.ViewEventListener;

@@ -3,7 +3,7 @@ package com.inari.firefly;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.inari.firefly.sound.SoundAsset;
+import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFAudio;
 

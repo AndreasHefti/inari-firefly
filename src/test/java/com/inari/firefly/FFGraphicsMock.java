@@ -6,10 +6,10 @@ import java.util.Iterator;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.renderer.ShaderAsset;
-import com.inari.firefly.renderer.SpriteRenderable;
-import com.inari.firefly.renderer.TextureAsset;
-import com.inari.firefly.renderer.sprite.SpriteAsset;
+import com.inari.firefly.graphics.ShaderAsset;
+import com.inari.firefly.graphics.SpriteRenderable;
+import com.inari.firefly.graphics.TextureAsset;
+import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.view.View;

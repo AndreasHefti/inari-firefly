@@ -24,8 +24,8 @@ import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.renderer.BlendMode;
-import com.inari.firefly.renderer.sprite.ESprite;
+import com.inari.firefly.graphics.BlendMode;
+import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.system.component.SystemComponent;
 
 public class View extends SystemComponent {

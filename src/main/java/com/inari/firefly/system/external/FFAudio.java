@@ -1,6 +1,6 @@
 package com.inari.firefly.system.external;
 
-import com.inari.firefly.sound.SoundAsset;
+import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.system.FFContextInitiable;
 
 public interface FFAudio extends FFContextInitiable {
