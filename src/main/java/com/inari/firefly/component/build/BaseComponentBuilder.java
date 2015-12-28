@@ -15,10 +15,11 @@
  ******************************************************************************/ 
 package com.inari.firefly.component.build;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
 
 import com.inari.commons.StringUtils;
@@ -109,25 +110,35 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
     }
 
     @Override
-    public final <T> ComponentBuilder add( AttributeKey<Collection<T>> key, T value ) {
+    public final <T> ComponentBuilder add( AttributeKey<T[]> key, T value ) {
+        List<T> list;
         if ( ! attributes.contains( key ) ) {
-            attributes.put( key, new ArrayList<T>() );
+            list = new ArrayList<T>();
+        } else {
+            list = Arrays.asList( attributes.getValue( key ) );
         }
         
-        Collection<T> list = attributes.getValue( key );
         list.add( value );
+        @SuppressWarnings( "unchecked" )
+        T[] array = (T[]) Array.newInstance( key.valueType(), list.size() );
+        attributes.put( key, array );
         
         return this;
     }
 
     @Override
-    public final <T> ComponentBuilder addAt( AttributeKey<List<T>> key, T value, int index ) {
+    public final <T> ComponentBuilder add( AttributeKey<T[]> key, T value, int index ) {
+        List<T> list;
         if ( ! attributes.contains( key ) ) {
-            attributes.put( key, new ArrayList<T>() );
+            list = new ArrayList<T>();
+        } else {
+            list = Arrays.asList( attributes.getValue( key ) );
         }
         
-        List<T> list = attributes.getValue( key );
         list.add( index, value );
+        @SuppressWarnings( "unchecked" )
+        T[] array = (T[]) Array.newInstance( key.valueType(), list.size() );
+        attributes.put( key, array );
         
         return this;
     }

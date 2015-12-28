@@ -39,14 +39,17 @@ public final class AnimationSystem
     public static final FFSystemTypeKey<AnimationSystem> SYSTEM_KEY = FFSystemTypeKey.create( AnimationSystem.class );
     
     private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
-        Animation.TYPE_KEY
+        Animation.TYPE_KEY,
+        AnimationResolver.TYPE_KEY
     };
 
     private final DynArray<Animation> animations;
+    private final DynArray<AnimationResolver> animationResolver;
 
     AnimationSystem() {
         super( SYSTEM_KEY );
         animations = new DynArray<Animation>();
+        animationResolver = new DynArray<AnimationResolver>();
     }
     
     @Override
@@ -74,11 +77,11 @@ public final class AnimationSystem
 
     @Override
     public void onAnimationEvent( AnimationEvent event ) {
-        Animation animation = animations.get( event.animationId );
-        if ( animation == null ) {
+        if ( !animations.contains( event.animationId ) ) {
             return;
         }
         
+        Animation animation = animations.get( event.animationId );
         switch ( event.type ) {
             case START_ANIMATION: {
                 animation.active = true;
@@ -100,7 +103,7 @@ public final class AnimationSystem
     }
 
     public final boolean isActive( int animationId ) {
-        if ( !exists( animationId ) ) {
+        if ( animationId < 0 || !animations.contains( animationId ) ) {
             return false;
         }
 
@@ -163,6 +166,33 @@ public final class AnimationSystem
         }
         return type.cast( animation );
     }
+    
+    public final AnimationResolver getAnimationResolver( int id ) {
+        if ( !animationResolver.contains( id ) ) {
+            return null;
+        }
+        
+        return animationResolver.get( id );
+    }
+
+    public final int getAnimationResolverId( String name ) {
+        for ( AnimationResolver resolver : animationResolver ) {
+            if ( name.equals( resolver.getName() ) ) {
+                return resolver.getId();
+            }
+        }
+        
+        return -1;
+    }
+
+    public final void deleteAnimationResolver( int id ) {
+        if ( !animationResolver.contains( id ) ) {
+            return;
+        }
+        
+        AnimationResolver resolver = animationResolver.remove( id );
+        resolver.dispose();
+    }
 
     public final float getValue( int animationId, int componentId, float currentValue ) {
         if ( !isActive( animationId ) ) {
@@ -200,6 +230,14 @@ public final class AnimationSystem
         disposeAnimation( animations.remove( animationId ) );
     }
     
+    public final int getAnimationId( int animationResolverId, int defaultValue ) {
+        if ( animationResolverId < 0 || !animationResolver.contains( animationResolverId ) ) {
+            return defaultValue;
+        }
+        
+        return animationResolver.get( animationResolverId ).getAnimationId();
+    }
+    
     public final AnimationBuilder getAnimationBuilder() {
         return new AnimationBuilder();
     }
@@ -220,7 +258,8 @@ public final class AnimationSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter[] {
-            new AnimationBuilderAdapter( this )
+            new AnimationBuilderAdapter( this ),
+            new AnimationResolverBuilderAdapter( this )
         };
     };
     
@@ -247,6 +286,31 @@ public final class AnimationSystem
             
             return animation.getId();
         }
+    }
+    
+    public final class AnimationResolverBuilder extends SystemComponentBuilder {
+        
+        private AnimationResolverBuilder() {}
+        
+        @Override
+        public final SystemComponentKey<AnimationResolver> systemComponentKey() {
+            return AnimationResolver.TYPE_KEY;
+        }
+
+        @Override
+        public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
+            checkType( componentType );
+            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
+            AnimationResolver resolver = getInstance( context, componentId );
+            
+            resolver.fromAttributes( attributes );
+            
+            animationResolver.set( resolver.index(), resolver );
+            postInit( resolver, context );
+            
+            return resolver.getId();
+        }
+        
     }
 
     private final class AnimationBuilderAdapter extends SystemBuilderAdapter<Animation> {
@@ -277,6 +341,37 @@ public final class AnimationSystem
         @Override
         public final Animation getComponent( String name ) {
             return getAnimation( getAnimationId( name ) );
+        }
+    }
+    
+    private final class AnimationResolverBuilderAdapter extends SystemBuilderAdapter<AnimationResolver> {
+        public AnimationResolverBuilderAdapter( AnimationSystem system ) {
+            super( system, new AnimationResolverBuilder() );
+        }
+        @Override
+        public final SystemComponentKey<AnimationResolver> componentTypeKey() {
+            return AnimationResolver.TYPE_KEY;
+        }
+        @Override
+        public final AnimationResolver getComponent( int id ) {
+            return getAnimationResolver( id );
+        }
+        @Override
+        public final void deleteComponent( int id ) {
+            deleteAnimationResolver( id );
+        }
+        @Override
+        public final Iterator<AnimationResolver> getAll() {
+            return animationResolver.iterator();
+        }
+        
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteAnimationResolver( getAnimationResolverId( name ) );
+        }
+        @Override
+        public final AnimationResolver getComponent( String name ) {
+            return getAnimationResolver( getAnimationResolverId( name ) );
         }
     }
 

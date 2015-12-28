@@ -267,7 +267,7 @@ public class AssetSystemTest {
         }
 
         @Override
-        public int getInstanceId() {
+        public int getInstanceId( int index ) {
             return 0;
         }
 
@@ -308,7 +308,7 @@ public class AssetSystemTest {
         }
 
         @Override
-        public int getInstanceId() {
+        public int getInstanceId( int index ) {
             // TODO Auto-generated method stub
             return 0;
         }

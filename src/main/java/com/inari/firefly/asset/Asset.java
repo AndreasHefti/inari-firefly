@@ -41,7 +41,11 @@ public abstract class Asset extends SystemComponent implements Loadable, Disposa
         super( assetIntId );
     }
     
-    public abstract int getInstanceId();
+    public final int getInstanceId() {
+        return getInstanceId( 0 );
+    }
+    
+    public abstract int getInstanceId( int index );
     
     @Override
     public final IndexedTypeKey indexedTypeKey() {

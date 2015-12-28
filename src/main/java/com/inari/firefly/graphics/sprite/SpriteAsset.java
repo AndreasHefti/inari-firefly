@@ -57,7 +57,7 @@ public final class SpriteAsset extends Asset {
     }
 
     @Override
-    public final int getInstanceId() {
+    public final int getInstanceId( int index ) {
         return spriteId;
     }
     

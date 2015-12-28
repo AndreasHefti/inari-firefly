@@ -33,7 +33,7 @@ public final class ShaderAsset extends Asset {
     }
     
     @Override
-    public final int getInstanceId() {
+    public final int getInstanceId( int index ) {
         return shaderId;
     }
     

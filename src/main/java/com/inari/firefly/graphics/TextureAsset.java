@@ -45,7 +45,7 @@ public final class TextureAsset extends Asset {
     }
     
     @Override
-    public final int getInstanceId() {
+    public final int getInstanceId( int index ) {
         return textureId;
     }
     

@@ -17,7 +17,6 @@ package com.inari.firefly.entity;
 
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.firefly.animation.AnimationSystem;
-import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
@@ -66,7 +65,7 @@ public abstract class EntityController extends Controller implements EntityActiv
     }
 
     @Override
-    public final void update( final FFTimer timer ) {
+    public void update( final FFTimer timer ) {
         for ( int i = 0; i < componentIds.length(); i++ ) {
             int entityId = componentIds.get( i );
             if ( entityId >= 0 ) {
@@ -74,9 +73,7 @@ public abstract class EntityController extends Controller implements EntityActiv
             }
         }
     }
-    
-    public abstract AttributeKey<?>[] getControlledAttribute();
-    
+
     protected abstract void update( final FFTimer timer, int entityId );
     
     private final boolean hasControllerId( int entityId ) {

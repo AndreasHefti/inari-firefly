@@ -56,7 +56,7 @@ public final class FontAsset extends Asset {
     }
 
     @Override
-    public final int getInstanceId() {
+    public final int getInstanceId( int index ) {
         throw new UnsupportedOperationException();
     }
 
