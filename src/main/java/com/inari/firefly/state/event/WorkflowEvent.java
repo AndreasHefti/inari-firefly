@@ -33,30 +33,26 @@ public final class WorkflowEvent extends Event<WorkflowEventListener> {
     
     public final int workflowId;
     public final String workflowName;
-    
-    public final int stateChangeId;
     public final String stateChangeName;
     
-    public final int sourceStateId;
-    public final int targetStateId;
+    public final String sourceStateName;
+    public final String targetStateName;
 
     public WorkflowEvent( 
         Type type, 
         int workflowId,
         String workflowName, 
-        int stateChangeId, 
         String stateChangeName, 
-        int sourceStateId, 
-        int targetStateId 
+        String sourceStateName, 
+        String targetStateName 
     ) {
         super( TYPE_KEY );
         this.type = type;
         this.workflowId = workflowId;
         this.workflowName = workflowName;
-        this.stateChangeId = stateChangeId;
         this.stateChangeName = stateChangeName;
-        this.sourceStateId = sourceStateId;
-        this.targetStateId = targetStateId;
+        this.sourceStateName = sourceStateName;
+        this.targetStateName = targetStateName;
     }
 
     @Override
@@ -64,25 +60,25 @@ public final class WorkflowEvent extends Event<WorkflowEventListener> {
         listener.onEvent( this );
     }
     
-    public static final WorkflowEvent createDoStateChangeEvent( String stateChangeName ) {
-        return new WorkflowEvent( Type.DO_STATE_CHANGE, -1, null, -1, stateChangeName, -1 , -1 );
+    public static final WorkflowEvent createDoStateChangeEvent( String workflowName, String stateChangeName ) {
+        return new WorkflowEvent( Type.DO_STATE_CHANGE, -1, workflowName, stateChangeName, null, null );
     }
 
-    public static final WorkflowEvent createWorkflowStartedEvent( int workflowId, int startStateId ) {
-        return new WorkflowEvent( Type.WORKFLOW_STARTED, workflowId, null, -1, null, startStateId , startStateId );
+    public static final WorkflowEvent createWorkflowStartedEvent( int workflowId, String workflowName, String initTaskName ) {
+        return new WorkflowEvent( Type.WORKFLOW_STARTED, workflowId, workflowName, null, null , initTaskName );
     }
 
-    public static final WorkflowEvent createStateChangedEvent( StateChange stateChange ) {
+    public static final WorkflowEvent createStateChangedEvent( int workflowId, String workflowName, StateChange stateChange ) {
         return new WorkflowEvent( 
-            Type.STATE_CHANGED, stateChange.getWorkflowId(), null, stateChange.getId(), 
-            stateChange.getName(), stateChange.getFromStateId() , stateChange.getToStateId() 
+            Type.STATE_CHANGED, workflowId, workflowName, 
+            stateChange.getName(), stateChange.getFromStateName() , stateChange.getToStateName() 
         );
     }
 
-    public static WorkflowEvent createWorkflowFinishedEvent( StateChange stateChange ) {
+    public static WorkflowEvent createWorkflowFinishedEvent( int workflowId, String workflowName, StateChange stateChange ) {
         return new WorkflowEvent( 
-            Type.WORKFLOW_FINISHED, stateChange.getWorkflowId(), null, stateChange.getId(), 
-            stateChange.getName(), stateChange.getFromStateId() , stateChange.getToStateId() 
+            Type.WORKFLOW_FINISHED, workflowId, workflowName, 
+            stateChange.getName(), stateChange.getFromStateName() , stateChange.getToStateName() 
         );
     }
 

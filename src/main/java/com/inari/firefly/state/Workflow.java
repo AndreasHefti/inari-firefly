@@ -16,6 +16,7 @@
 package com.inari.firefly.state;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Set;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
@@ -28,21 +29,30 @@ public final class Workflow extends SystemComponent {
     public static final SystemComponentKey<Workflow> TYPE_KEY = SystemComponentKey.create( Workflow.class );
     
     public static final AttributeKey<String> START_STATE_NAME = new AttributeKey<String>( "startStateName", String.class, Workflow.class );
-    public static final AttributeKey<Integer> INIT_TASK_ID = new AttributeKey<Integer>( "initTaskId", Integer.class, Workflow.class );
+    public static final AttributeKey<String> INIT_TASK_NAME = new AttributeKey<String>( "initTaskName", String.class, Workflow.class );
+    public static final AttributeKey<String[]> STATES = new AttributeKey<String[]>( "states", String[].class, Workflow.class );
+    public static final AttributeKey<StateChange[]> STATE_CHANGES = new AttributeKey<StateChange[]>( "stateChanges", StateChange[].class, Workflow.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         START_STATE_NAME,
-        INIT_TASK_ID
+        INIT_TASK_NAME,
+        STATES,
+        STATE_CHANGES
     };
     
     private String startStateName;
-    private int initTaskId;
-    private int currentStateId;
+    private String initTaskName;
+    private String[] states;
+    private StateChange[] stateChanges;
+    
+    private String currentStateName;
 
     Workflow( int workflowId ) {
         super( workflowId );
         startStateName = null;
-        initTaskId = -1;
-        currentStateId = -1;
+        initTaskName = null;
+        states = null;
+        stateChanges = null;
+        currentStateName = null;
     }
     
     @Override
@@ -51,19 +61,19 @@ public final class Workflow extends SystemComponent {
     }
     
     public final boolean isActive() {
-        return currentStateId >= 0;
+        return currentStateName != null;
     }
     
-    final void activate( int startStateId ) {
-        currentStateId = startStateId;
+    final void activate() {
+        currentStateName = startStateName;
     }
 
-    public final int getCurrentStateId() {
-        return currentStateId;
+    public final String getCurrentState() {
+        return currentStateName;
     }
-
-    final void setCurrentStateId( int currentStateId ) {
-        this.currentStateId = currentStateId;
+    
+    final void setCurrentState( String stateName ) {
+        currentStateName = stateName;
     }
 
     public final String getStartStateName() {
@@ -74,12 +84,42 @@ public final class Workflow extends SystemComponent {
         this.startStateName = startStateName;
     }
 
-    public final int getInitTaskId() {
-        return initTaskId;
+    public final String getInitTaskName() {
+        return initTaskName;
     }
 
-    public final void setInitTaskId( int initTaskId ) {
-        this.initTaskId = initTaskId;
+    public final void setInitTaskName( String initTaskName ) {
+        this.initTaskName = initTaskName;
+    }
+
+    public final String[] getStates() {
+        return states;
+    }
+
+    public final void setStates( String[] states ) {
+        this.states = states;
+    }
+
+    public final StateChange[] getStateChanges() {
+        return stateChanges;
+    }
+    
+    public final Iterator<StateChange> stateChangesForCurrentState() {
+        return new CurrentStateChangeIterator();
+    }
+
+    public final void setStateChanges( StateChange[] stateChanges ) {
+        this.stateChanges = stateChanges;
+    }
+    
+    public final StateChange getStateChangeForCurrentState( String stateChangeName ) {
+        for ( StateChange stateChange : stateChanges ) {
+            if ( stateChangeName.equals( stateChange.getName() ) && stateChange.getFromStateName().equals( currentStateName ) ) {
+                return stateChange;
+            }
+        }
+        
+        return null;
     }
 
     @Override
@@ -92,15 +132,55 @@ public final class Workflow extends SystemComponent {
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
+        
         startStateName = attributes.getValue( START_STATE_NAME, startStateName );
-        initTaskId = attributes.getValue( INIT_TASK_ID, initTaskId );
+        initTaskName = attributes.getValue( INIT_TASK_NAME, initTaskName );
+        states = attributes.getValue( STATES, states );
+        stateChanges = attributes.getValue( STATE_CHANGES, stateChanges );
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
+        
         attributes.put( START_STATE_NAME, startStateName );
-        attributes.put( INIT_TASK_ID, initTaskId );
+        attributes.put( INIT_TASK_NAME, initTaskName );
+        attributes.put( STATES, states );
+        attributes.put( STATE_CHANGES, stateChanges );
+    }
+    
+    private final class CurrentStateChangeIterator implements Iterator<StateChange> {
+        
+        private int nextIndex = -1;
+        
+        CurrentStateChangeIterator() {
+            findNextIndex();
+        }
+
+        @Override
+        public final boolean hasNext() {
+            return nextIndex < stateChanges.length;
+        }
+
+        @Override
+        public final StateChange next() {
+            StateChange result = stateChanges[ nextIndex ];
+            findNextIndex();
+            return result;
+        }
+
+        @Override
+        public final void remove() {
+            throw new UnsupportedOperationException();
+        }
+        
+        private final void findNextIndex() {
+            nextIndex++;
+            while( nextIndex < stateChanges.length && !stateChanges[ nextIndex ].fromStateName.equals( currentStateName ) ) {
+                nextIndex++;
+            }
+        }
+        
     }
 
 }

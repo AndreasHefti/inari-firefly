@@ -15,132 +15,62 @@
  ******************************************************************************/ 
 package com.inari.firefly.state;
 
-import java.util.Arrays;
-import java.util.Set;
+import com.inari.commons.config.StringConfigurable;
 
-import com.inari.commons.StringUtils;
-import com.inari.commons.lang.indexed.IndexedTypeKey;
-import com.inari.firefly.FFInitException;
-import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.component.SystemComponent;
+public final class StateChange implements StringConfigurable {
 
+    String name;
+    String fromStateName;
+    String toStateName;
+    String taskName;
+    StateChangeCondition condition;
+    
+    public StateChange( String name, String fromStateName, String toStateName ) {
+        this( name, fromStateName, toStateName, null, null );
+    }
+    
+    public StateChange( String name, String fromStateName, String toStateName, String taskName ) {
+        this( name, fromStateName, toStateName, taskName, null );
+    }
+    
+    public StateChange( String name, String fromStateName, String toStateName, String taskName, StateChangeCondition condition ) {
+        this.name = name;
+        this.fromStateName = fromStateName;
+        this.toStateName = toStateName;
+        this.taskName = taskName;
+        this.condition = condition;
+    }
+    
+    public final String getName() {
+        return name;
+    }
 
-public final class StateChange extends SystemComponent {
-    
-    public static final SystemComponentKey<StateChange> TYPE_KEY = SystemComponentKey.create( StateChange.class );
-    
-    public static final AttributeKey<Integer> WORKFLOW_ID = new AttributeKey<Integer>( "workflowId", Integer.class, StateChange.class );
-    public static final AttributeKey<Integer> FORM_STATE_ID = new AttributeKey<Integer>( "fromStateId", Integer.class, StateChange.class );
-    public static final AttributeKey<Integer> TO_STATE_ID = new AttributeKey<Integer>( "toStateId", Integer.class, StateChange.class );
-    public static final AttributeKey<String> CONDITION_TYPE_NAME = new AttributeKey<String>( "conditionTypeName", String.class, StateChange.class );
-    public static final AttributeKey<Integer> TASK_ID = new AttributeKey<Integer>( "taskId", Integer.class, StateChange.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
-        WORKFLOW_ID,
-        FORM_STATE_ID,
-        TO_STATE_ID,
-        CONDITION_TYPE_NAME,
-        TASK_ID
-    };
-    
-    private int fromStateId;
-    private int toStateId;
-    private int workflowId;
-    private StateChangeCondition condition;
-    private int taskId;
-    
-    protected StateChange( int stateChangeId ) {
-        super( stateChangeId );
-        fromStateId = -1;
-        toStateId = -1;
-        workflowId = -1;
-        condition = null;
-        taskId = -1;
+    public final String getFromStateName() {
+        return fromStateName;
     }
-    
-    @Override
-    public final IndexedTypeKey indexedTypeKey() {
-        return TYPE_KEY;
+
+    public final String getToStateName() {
+        return toStateName;
     }
-    
-    public final int getFromStateId() {
-        return fromStateId;
-    }
-    
-    public final void setFromStateId( int fromStateId ) {
-        this.fromStateId = fromStateId;
-    }
-    
-    public final int getToStateId() {
-        return toStateId;
-    }
-    
-    public final void setToStateId( int toStateId ) {
-        this.toStateId = toStateId;
-    }
-    
-    public final int getWorkflowId() {
-        return workflowId;
-    }
-    
-    public final void setWorkflowId( int workflowId ) {
-        this.workflowId = workflowId;
+
+    public final String getTaskName() {
+        return taskName;
     }
 
     public final StateChangeCondition getCondition() {
         return condition;
     }
 
-    public final void setCondition( StateChangeCondition condition ) {
-        this.condition = condition;
-    }
-
-    public final int getTaskId() {
-        return taskId;
-    }
-
-    public final void setTaskId( int taskId ) {
-        this.taskId = taskId;
+    @Override
+    public final void fromConfigString( String stringValue ) {
+        // TODO Auto-generated method stub
+        
     }
 
     @Override
-    public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
-    }
-
-    @Override
-    public final void fromAttributes( AttributeMap attributes ) {
-        super.fromAttributes( attributes );
-        
-        fromStateId = attributes.getValue( FORM_STATE_ID, fromStateId );
-        toStateId = attributes.getValue( TO_STATE_ID, toStateId );
-        workflowId = attributes.getValue( WORKFLOW_ID, workflowId );
-        
-        String conditionTypeName = attributes.getValue( CONDITION_TYPE_NAME );
-        if ( !StringUtils.isBlank( conditionTypeName ) ) {
-            try {
-                condition = (StateChangeCondition) Class.forName( conditionTypeName ).newInstance();
-            } catch ( Exception  e ) {
-                throw new FFInitException( "Failed to get Condition form type: " + conditionTypeName, e );
-            }
-        }
-        
-        taskId = attributes.getValue( TASK_ID, taskId );
-    }
-
-    @Override
-    public final void toAttributes( AttributeMap attributes ) {
-        super.toAttributes( attributes );
-        
-        attributes.put( FORM_STATE_ID, fromStateId );
-        attributes.put( TO_STATE_ID, toStateId );
-        attributes.put( WORKFLOW_ID, workflowId );
-        if ( condition != null ) {
-            attributes.put( CONDITION_TYPE_NAME, condition.getClass().getName() );
-        }
-        attributes.put( TASK_ID, taskId );
+    public final String toConfigString() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

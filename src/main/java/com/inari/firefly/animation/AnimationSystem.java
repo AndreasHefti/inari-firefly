@@ -144,6 +144,10 @@ public final class AnimationSystem
         return animations.get( animationId );
     }
     
+    public final <T extends Animation> T getAnimationAs( String animationName, Class<T> subType ) {
+        return getAnimationAs( getAnimationId( animationName ), subType );
+    }
+    
     public final <T extends Animation> T getAnimationAs( int animationId, Class<T> subType ) {
         if ( !animations.contains( animationId ) ) {
             return null;

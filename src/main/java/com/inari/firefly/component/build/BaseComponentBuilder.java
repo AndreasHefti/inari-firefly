@@ -115,7 +115,7 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
         if ( ! attributes.contains( key ) ) {
             list = new ArrayList<T>();
         } else {
-            list = Arrays.asList( attributes.getValue( key ) );
+            list = new ArrayList<T>( Arrays.asList( attributes.getValue( key ) ) );
         }
         
         list.add( value );
@@ -152,7 +152,7 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
         if ( ! attributes.contains( key ) ) {
             list = new ArrayList<T>();
         } else {
-            list = Arrays.asList( attributes.getValue( key ) );
+            list = new ArrayList<T>( Arrays.asList( attributes.getValue( key ) ) );
         }
         
         list.add( index, value );
