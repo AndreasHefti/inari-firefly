@@ -259,6 +259,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
         @Override
         public final int doBuild( int componentId, Class<?> subType, boolean activate ) {
             IndexedTypeSet components = entityProvider.getComponentTypeSet();
+            entityProvider.initAttributesOnController( (EntityAttributeMap) attributes );
             entityProvider.createComponents( components, (EntityAttributeMap) attributes );
 
             EntityPrefab prefab = new EntityPrefab( componentId );

@@ -22,6 +22,7 @@ public abstract class IntAnimation extends Animation {
         super( id );
     }
 
+    public abstract int getInitValue();
     public abstract int getValue( int component, int currentValue );
 
 }

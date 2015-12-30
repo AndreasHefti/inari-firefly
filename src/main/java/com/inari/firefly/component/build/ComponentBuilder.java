@@ -36,6 +36,7 @@ public interface ComponentBuilder {
     
     ComponentBuilder add( AttributeKey<IntBag> key, int value );
     <T> ComponentBuilder add( AttributeKey<T[]> key, T value );
+    <T> ComponentBuilder add( AttributeKey<T[]> key, T[] values );
     <T> ComponentBuilder add( AttributeKey<T[]> key, T value, int index );
     ComponentBuilder add( Attribute... attributes );
     

@@ -89,6 +89,10 @@ public final class AnimationSystem
             }
             case STOP_ANIMATION: {
                 animation.active = false;
+                break;
+            }
+            case FINISH_ANIMATION: {
+                animation.active = false;
                 animation.finished = true;
                 break;
             }
@@ -140,8 +144,20 @@ public final class AnimationSystem
         return animations.get( animationId );
     }
     
-    public final <T extends Animation> T getAnimationAs( int animationId, Class<T> animationType ) {
-        return animationType.cast( animations.get( animationId ) );
+    public final <T extends Animation> T getAnimationAs( int animationId, Class<T> subType ) {
+        if ( !animations.contains( animationId ) ) {
+            return null;
+        }
+        
+        return subType.cast( animations.get( animationId ) );
+    }
+    
+    public final <T extends AnimationResolver> T getAnimationResolverAs( int animationResolverId, Class<T> subType ) {
+        if ( !animationResolver.contains( animationResolverId ) ) {
+            return null;
+        }
+        
+        return subType.cast( animationResolver.get( animationResolverId ) );
     }
     
     public final int getAnimationId( String animationName ) {
@@ -242,6 +258,10 @@ public final class AnimationSystem
         return new AnimationBuilder();
     }
     
+    public final AnimationResolverBuilder getAnimationResolverBuilder() {
+        return new AnimationResolverBuilder();
+    }
+    
     @Override
     public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
@@ -283,6 +303,10 @@ public final class AnimationSystem
             
             animations.set( animation.index(), animation );
             postInit( animation, context );
+            
+            if ( activate ) {
+                animation.active = true;
+            }
             
             return animation.getId();
         }

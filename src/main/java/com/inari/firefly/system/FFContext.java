@@ -108,7 +108,7 @@ public final class FFContext {
                 FFSystem oldSystem = systems.remove( key.index() );
                 oldSystem.dispose( this );
             } else {
-                throw new FFInitException( "The System for key: " + key + " already exists" );
+                return;
             }
         }
         

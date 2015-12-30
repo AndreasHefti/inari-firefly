@@ -3,7 +3,6 @@ package com.inari.firefly.graphics.text;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.SpriteRenderable;
@@ -11,15 +10,9 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
 
 public final class DefaultTextRenderer extends TextRenderer {
-    
-    private static boolean singletonInstance = false;
 
     protected DefaultTextRenderer( int id, FFContext context ) {
         super( id, context );
-        if ( singletonInstance ) {
-            throw new FFInitException( "There is already an instance of DefaultTextRenderer and DefaultTextRenderer is a singleton" );
-        }
-        singletonInstance = true;
     }
 
     @Override

@@ -25,7 +25,6 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.state.event.WorkflowEvent;
-import com.inari.firefly.state.event.WorkflowEvent.Type;
 import com.inari.firefly.state.event.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
@@ -122,15 +121,15 @@ public class StateSystem
         }
         
         workflow.activate( startStateId );
-        context.notify( new WorkflowEvent( workflow.getId(), -1, Type.WORKFLOW_STARTED ) );
+        context.notify( WorkflowEvent.createWorkflowStartedEvent( workflow.getId(), startStateId ) );
     }
     
     @Override
     public void onEvent( WorkflowEvent event ) {
         switch ( event.type ) {
             case DO_STATE_CHANGE: {
-                Workflow workflow = ( event.workflowName != null )? getWorkflow( event.workflowName ): getWorkflow( event.workflowId );
                 StateChange stateChange = ( event.stateChangeName != null )? getStateChange( event.stateChangeName ): getStateChange( event.stateChangeId );
+                Workflow workflow = getWorkflow( stateChange.getWorkflowId() );
                 if ( workflow != null && stateChange != null ) {
                     doStateChange( workflow, stateChange );
                 }
@@ -178,9 +177,9 @@ public class StateSystem
         workflow.setCurrentStateId( toStateId );
         
         if ( toStateId >= 0 ) {
-            context.notify( new WorkflowEvent( workflow.getId(), stateChange.getId(), Type.STATE_CHANGED ) );
+            context.notify( WorkflowEvent.createStateChangedEvent( stateChange ) );
         } else {
-            context.notify( new WorkflowEvent( workflow.getId(), stateChange.getId(), Type.WORKFLOW_FINISHED ) );
+            context.notify( WorkflowEvent.createWorkflowFinishedEvent( stateChange ) );
         }
     }
     

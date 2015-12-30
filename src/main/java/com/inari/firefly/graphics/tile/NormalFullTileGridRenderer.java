@@ -1,6 +1,5 @@
 package com.inari.firefly.graphics.tile;
 
-import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
@@ -10,15 +9,9 @@ import com.inari.firefly.system.RenderEvent;
 public final class NormalFullTileGridRenderer extends TileGridRenderer {
     
     public static final String NAME = "NormalFullTileGridRenderer";
-
-    private static boolean singletonInstance = false;
     
     NormalFullTileGridRenderer( int id, FFContext context ) {
         super( id, context );
-        if ( singletonInstance ) {
-            throw new FFInitException( "There is already an instance of DefaultTileGridRenderer and DefaultTileGridRenderer is a singleton" );
-        }
-        singletonInstance = true;
     }
 
     @Override

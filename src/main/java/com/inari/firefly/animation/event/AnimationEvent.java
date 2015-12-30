@@ -23,7 +23,8 @@ public final class AnimationEvent extends Event<AnimationEventListener> {
     
     public enum Type {
         START_ANIMATION,
-        STOP_ANIMATION
+        STOP_ANIMATION,
+        FINISH_ANIMATION
     }
     
     public final int animationId;

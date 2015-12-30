@@ -85,4 +85,7 @@ public abstract class EntityController extends Controller implements EntityActiv
         return controllerComponent.controlledBy( index );
     }
 
+    public void initEntity( EntityAttributeMap attributes ) {
+        // NOOP
+    }
 }

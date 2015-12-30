@@ -3,12 +3,15 @@ package com.inari.firefly.entity;
 import java.util.ArrayDeque;
 import java.util.Set;
 
+import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.build.ComponentCreationException;
+import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
@@ -22,6 +25,8 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
     final DynArray<ArrayDeque<EntityComponent>> disposedComponents;
 
     private int componentSetCapacity = 20;
+    
+    private ControllerSystem controllerSystem;
 
     EntityProvider() {
         disposedComponentSets = new ArrayDeque<IndexedTypeSet>();
@@ -40,6 +45,8 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
 
     @Override
     public final void init( FFContext context ) throws FFInitException {
+        controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
+        
         Integer compSetCap = context.getProperty( FFContext.Properties.ENTITY_COMPONENT_SET_CAPACITY );
         if ( compSetCap != null ) {
             componentSetCapacity = compSetCap;
@@ -144,11 +151,25 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
     }
 
     void createComponents( IndexedTypeSet components, EntityAttributeMap attributes ) {
+
         Set<Class<? extends EntityComponent>> componentTypes = attributes.getEntityComponentTypes();
         for ( Class<? extends EntityComponent> componentType : componentTypes ) {
             EntityComponent component = getComponent( componentType );
             component.fromAttributes( attributes );
             components.set( component );
+        }
+    }
+
+    void initAttributesOnController( EntityAttributeMap attributes ) {
+        if ( !attributes.contains( EEntity.CONTROLLER_IDS ) ) {
+            return;
+        }
+        
+        IntBag controllerIds = attributes.getValue( EEntity.CONTROLLER_IDS );
+        IntIterator iterator = controllerIds.iterator();
+        while ( iterator.hasNext() ) {
+            EntityController controller = controllerSystem.getControllerAs( iterator.next(), EntityController.class );
+            controller.initEntity( attributes );
         }
     }
 
@@ -158,6 +179,11 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
         } catch ( Exception e ) {
             throw new ComponentCreationException( "Unknwon error while Component creation: " + componentType, e );
         }
+    }
+
+    public void initControlledAttributes(  ) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

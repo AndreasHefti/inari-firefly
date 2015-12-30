@@ -98,7 +98,7 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
 
         @Override
         public String toString() {
-            return "SystemComponent:" + type().getSimpleName() + "[" + index + "]";
+            return "SystemComponent:" + type().getSimpleName();
         }
 
         @SuppressWarnings( "unchecked" )

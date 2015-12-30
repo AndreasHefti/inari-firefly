@@ -5,6 +5,11 @@ public class TestAnimation extends FloatAnimation {
     protected TestAnimation( int id ) {
         super( id );
     }
+    
+    @Override
+    public final float getInitValue() {
+        return -1;
+    }
 
     @Override
     public float getValue( int componentId, float currentValue ) {

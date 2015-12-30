@@ -312,7 +312,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         @Override
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            Asset asset = getInstance( componentId );
+            Asset asset = getInstance( context, componentId );
             
             asset.fromAttributes( attributes );
             

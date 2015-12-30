@@ -120,7 +120,27 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
         
         list.add( value );
         @SuppressWarnings( "unchecked" )
-        T[] array = (T[]) Array.newInstance( key.valueType(), list.size() );
+        T[] array = (T[]) Array.newInstance( key.valueType().getComponentType(), list.size() );
+        array = list.toArray( array );
+        attributes.put( key, array );
+        
+        return this;
+    }
+    
+    @Override
+    public final <T> ComponentBuilder add( AttributeKey<T[]> key, T[] values ) {
+        List<T> list;
+        if ( ! attributes.contains( key ) ) {
+            list = new ArrayList<T>();
+        } else {
+            list = new ArrayList<T>( Arrays.asList( attributes.getValue( key ) ) );
+        }
+        
+        List<T> asList = Arrays.asList( values );
+        list.addAll( asList );
+        @SuppressWarnings( "unchecked" )
+        T[] array = (T[]) Array.newInstance( key.valueType().getComponentType(), list.size() );
+        array = list.toArray( array );
         attributes.put( key, array );
         
         return this;
@@ -137,7 +157,7 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
         
         list.add( index, value );
         @SuppressWarnings( "unchecked" )
-        T[] array = (T[]) Array.newInstance( key.valueType(), list.size() );
+        T[] array = list.toArray( (T[]) Array.newInstance( key.valueType().getComponentType(), list.size() ) );
         attributes.put( key, array );
         
         return this;

@@ -412,6 +412,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             } else {
                 IndexedTypeSet componentSet = entityProvider.getComponentTypeSet();
                 components.set( entityId, componentSet );
+                entityProvider.initAttributesOnController( (EntityAttributeMap) attributes );
                 entityProvider.createComponents( componentSet, (EntityAttributeMap) attributes );
                 aspectToCheck = componentSet.getAspect();
             }

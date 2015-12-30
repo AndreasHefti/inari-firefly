@@ -139,8 +139,6 @@ public final class SpriteViewSystem
     };
     
     final class SpriteRenderer extends BaseRenderer { 
-        
-        
     
         protected SpriteRenderer( FFContext context ) {
             super( 0, context );

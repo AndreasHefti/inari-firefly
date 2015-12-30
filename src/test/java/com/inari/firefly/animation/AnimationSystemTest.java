@@ -49,7 +49,7 @@ public class AnimationSystemTest {
         ffContext.toAttributes( attrs, Animation.TYPE_KEY );
 
         assertEquals(
-            "SystemComponent:Animation[9](0)::name:String=testAnimation, startTime:Long=10, looping:Boolean=false",
+            "SystemComponent:Animation(0)::name:String=testAnimation, startTime:Long=10, looping:Boolean=false",
             attrs.toString()
         );
 

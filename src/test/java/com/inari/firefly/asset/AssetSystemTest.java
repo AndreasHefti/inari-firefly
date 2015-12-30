@@ -57,7 +57,7 @@ public class AssetSystemTest {
         
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
-            "SystemComponent:Asset[2](0)::name:String=asset1", 
+            "SystemComponent:Asset(0)::name:String=asset1", 
             attrs.toString() 
         );
         
@@ -77,11 +77,11 @@ public class AssetSystemTest {
         
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
-            "SystemComponent:Asset[2](0)::name:String=asset1 "
-            + "SystemComponent:Asset[2](1)::name:String=asset2 "
-            + "SystemComponent:Asset[2](2)::name:String=asset3 "
-            + "SystemComponent:Asset[2](3)::name:String=asset4 "
-            + "SystemComponent:Asset[2](4)::name:String=asset5", 
+            "SystemComponent:Asset(0)::name:String=asset1 "
+            + "SystemComponent:Asset(1)::name:String=asset2 "
+            + "SystemComponent:Asset(2)::name:String=asset3 "
+            + "SystemComponent:Asset(3)::name:String=asset4 "
+            + "SystemComponent:Asset(4)::name:String=asset5", 
             attrs.toString() 
         );
         attrs.clear();
@@ -109,7 +109,7 @@ public class AssetSystemTest {
         attrs.clear();
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
-            "SystemComponent:Asset[2](0)::name:String=asset1", 
+            "SystemComponent:Asset(0)::name:String=asset1", 
             attrs.toString() 
         );
         
@@ -118,7 +118,7 @@ public class AssetSystemTest {
         attrs.clear();
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
-            "SystemComponent:Asset[2](0)::name:String=asset1", 
+            "SystemComponent:Asset(0)::name:String=asset1", 
             attrs.toString() 
         );
         assertEquals( 
@@ -190,7 +190,7 @@ public class AssetSystemTest {
         
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
-            "SystemComponent:Asset[2](1)::name:String=asset2", 
+            "SystemComponent:Asset(1)::name:String=asset2", 
             attrs.toString() 
         );
     }
@@ -223,14 +223,14 @@ public class AssetSystemTest {
         
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
-            "SystemComponent:Asset[2](1)::name:String=asset2 "
-            + "SystemComponent:Asset[2](2)::name:String=asset3 "
-            + "SystemComponent:Asset[2](3)::name:String=asset4 "
-            + "SystemComponent:Asset[2](4)::name:String=asset5 "
-            + "SystemComponent:Asset[2](21)::name:String=asset22 "
-            + "SystemComponent:Asset[2](22)::name:String=asset23 "
-            + "SystemComponent:Asset[2](23)::name:String=asset24 "
-            + "SystemComponent:Asset[2](24)::name:String=asset25", 
+            "SystemComponent:Asset(1)::name:String=asset2 "
+            + "SystemComponent:Asset(2)::name:String=asset3 "
+            + "SystemComponent:Asset(3)::name:String=asset4 "
+            + "SystemComponent:Asset(4)::name:String=asset5 "
+            + "SystemComponent:Asset(21)::name:String=asset22 "
+            + "SystemComponent:Asset(22)::name:String=asset23 "
+            + "SystemComponent:Asset(23)::name:String=asset24 "
+            + "SystemComponent:Asset(24)::name:String=asset25", 
             attrs.toString() 
         );
     }

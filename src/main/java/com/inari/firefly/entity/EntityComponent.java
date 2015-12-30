@@ -53,7 +53,7 @@ public abstract class EntityComponent implements Component, IndexedType {
         
         @Override
         public String toString() {
-            return "EntityComponentTypeKey:" + type().getSimpleName() + "[" + index + "]";
+            return "EntityComponentTypeKey:" + type().getSimpleName();
         }
         
         @SuppressWarnings( "unchecked" )
