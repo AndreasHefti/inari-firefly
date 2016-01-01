@@ -112,6 +112,16 @@ public final class Workflow extends SystemComponent {
         this.stateChanges = stateChanges;
     }
     
+    public final StateChange getStateChangeForTargetState( String targetStateName ) {
+        for ( StateChange stateChange : stateChanges ) {
+            if ( stateChange.getFromStateName().equals( currentStateName ) && targetStateName.equals( stateChange.toStateName ) ) {
+                return stateChange;
+            }
+        }
+        
+        return null;
+    }
+    
     public final StateChange getStateChangeForCurrentState( String stateChangeName ) {
         for ( StateChange stateChange : stateChanges ) {
             if ( stateChangeName.equals( stateChange.getName() ) && stateChange.getFromStateName().equals( currentStateName ) ) {

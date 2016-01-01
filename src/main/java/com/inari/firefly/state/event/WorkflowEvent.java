@@ -59,9 +59,32 @@ public final class WorkflowEvent extends Event<WorkflowEventListener> {
     public final void notify( WorkflowEventListener listener ) {
         listener.onEvent( this );
     }
-    
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "WorkflowEvent [type=" );
+        builder.append( type );
+        builder.append( ", workflowId=" );
+        builder.append( workflowId );
+        builder.append( ", workflowName=" );
+        builder.append( workflowName );
+        builder.append( ", stateChangeName=" );
+        builder.append( stateChangeName );
+        builder.append( ", sourceStateName=" );
+        builder.append( sourceStateName );
+        builder.append( ", targetStateName=" );
+        builder.append( targetStateName );
+        builder.append( "]" );
+        return builder.toString();
+    }
+
     public static final WorkflowEvent createDoStateChangeEvent( String workflowName, String stateChangeName ) {
         return new WorkflowEvent( Type.DO_STATE_CHANGE, -1, workflowName, stateChangeName, null, null );
+    }
+    
+    public static final WorkflowEvent createDoStateChangeEventTo( String workflowName, String targetStateName ) {
+        return new WorkflowEvent( Type.DO_STATE_CHANGE, -1, workflowName, null, null, targetStateName );
     }
 
     public static final WorkflowEvent createWorkflowStartedEvent( int workflowId, String workflowName, String initTaskName ) {
@@ -75,11 +98,13 @@ public final class WorkflowEvent extends Event<WorkflowEventListener> {
         );
     }
 
-    public static WorkflowEvent createWorkflowFinishedEvent( int workflowId, String workflowName, StateChange stateChange ) {
+    public static final WorkflowEvent createWorkflowFinishedEvent( int workflowId, String workflowName, StateChange stateChange ) {
         return new WorkflowEvent( 
             Type.WORKFLOW_FINISHED, workflowId, workflowName, 
             stateChange.getName(), stateChange.getFromStateName() , stateChange.getToStateName() 
         );
     }
+
+    
 
 }

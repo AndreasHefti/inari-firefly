@@ -109,15 +109,17 @@ public class StateSystem
                     throw new IllegalArgumentException( "No Workflow found for state change event: " + event );
                 }
                 
+                StateChange stateChange = null;
                 if ( event.stateChangeName != null ) {
-                    StateChange stateChange = workflow.getStateChangeForCurrentState( event.stateChangeName );
-                    if ( stateChange == null ) {
-                        throw new IllegalArgumentException( "No StateChange found for state change event: " + event + " on workflow" + workflow );
-                    }
-                    doStateChange( workflow, stateChange );
-                } else {
-                    throw new IllegalArgumentException( "No stateChangeName set for state change event: " + event );
+                    stateChange = workflow.getStateChangeForCurrentState( event.stateChangeName );
+                } else if ( event.targetStateName != null ){
+                    stateChange = workflow.getStateChangeForTargetState( event.targetStateName );
+                } 
+                
+                if ( stateChange == null ) {
+                    throw new IllegalArgumentException( "No StateChange found for state change event: " + event + " on workflow" + workflow );
                 }
+                doStateChange( workflow, stateChange );
                 break;
             }
             default: {}
@@ -220,6 +222,10 @@ public class StateSystem
         }
         
         return workflows.get( workflowId ).getCurrentState();
+    }
+    
+    public final String getCurrentState( String workflowName ) {
+        return getCurrentState( getWorkflowId( workflowName ) );
     }
     
     public final boolean hasWorkflow( int workflowId ) {
