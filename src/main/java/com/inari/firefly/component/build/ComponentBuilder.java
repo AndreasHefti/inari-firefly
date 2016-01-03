@@ -15,6 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.component.build;
 
+import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.Attribute;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -27,17 +28,17 @@ public interface ComponentBuilder {
     ComponentBuilder setAttributes( AttributeMap attributes );
     
     AttributeMap getAttributes();
-    
-    <T> ComponentBuilder set( AttributeKey<T> key, T value );
+
     ComponentBuilder set( AttributeKey<Float> key, float value );
     ComponentBuilder set( AttributeKey<Integer> key, int value );
     ComponentBuilder set( AttributeKey<Long> key, long value );
     ComponentBuilder set( AttributeKey<Double> key, double value );
+    <T> ComponentBuilder set( AttributeKey<T> key, T value );
+    <T> ComponentBuilder set( AttributeKey<DynArray<T>> key, T value, int index );
     
     ComponentBuilder add( AttributeKey<IntBag> key, int value );
     <T> ComponentBuilder add( AttributeKey<T[]> key, T value );
     <T> ComponentBuilder add( AttributeKey<T[]> key, T[] values );
-    <T> ComponentBuilder add( AttributeKey<T[]> key, T value, int index );
     ComponentBuilder add( Attribute... attributes );
     
     int build();

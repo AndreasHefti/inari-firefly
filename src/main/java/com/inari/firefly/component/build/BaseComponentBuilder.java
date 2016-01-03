@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.inari.commons.StringUtils;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.Component;
@@ -67,11 +68,7 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
         return attributes;
     }
 
-    @Override
-    public final <T> ComponentBuilder set( AttributeKey<T> key, T value ) {
-        attributes.putUntyped( key, value );
-        return this;
-    }
+    
     
     @Override
     public final ComponentBuilder set( AttributeKey<Float> key, float value ) {
@@ -94,6 +91,25 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
     @Override
     public final ComponentBuilder set( AttributeKey<Double> key, double value ) {
         attributes.put( key, value );
+        return this;
+    }
+    
+    @Override
+    public final <T> ComponentBuilder set( AttributeKey<T> key, T value ) {
+        attributes.putUntyped( key, value );
+        return this;
+    }
+    
+    @Override
+    public final <T> ComponentBuilder set( AttributeKey<DynArray<T>> key, T value, int index ) {
+        DynArray<T> array;
+        if ( ! attributes.contains( key ) ) {
+            array = new DynArray<T>();
+        } else {
+            array = attributes.getValue( key );
+        }
+        
+        array.set( index, value );
         return this;
     }
 
@@ -141,23 +157,6 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
         @SuppressWarnings( "unchecked" )
         T[] array = (T[]) Array.newInstance( key.valueType().getComponentType(), list.size() );
         array = list.toArray( array );
-        attributes.put( key, array );
-        
-        return this;
-    }
-
-    @Override
-    public final <T> ComponentBuilder add( AttributeKey<T[]> key, T value, int index ) {
-        List<T> list;
-        if ( ! attributes.contains( key ) ) {
-            list = new ArrayList<T>();
-        } else {
-            list = new ArrayList<T>( Arrays.asList( attributes.getValue( key ) ) );
-        }
-        
-        list.add( index, value );
-        @SuppressWarnings( "unchecked" )
-        T[] array = list.toArray( (T[]) Array.newInstance( key.valueType().getComponentType(), list.size() ) );
         attributes.put( key, array );
         
         return this;

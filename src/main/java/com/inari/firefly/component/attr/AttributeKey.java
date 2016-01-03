@@ -15,6 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.component.attr;
 
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.entity.EntityComponent;
 
@@ -90,6 +91,12 @@ public final class AttributeKey<T> {
             builder.append( componentType.getSimpleName() );
         }
         return builder.toString();
+    }
+    
+    @SuppressWarnings( { "rawtypes", "unchecked" } ) 
+    public static final <S> AttributeKey<DynArray<S>> createForDynArray( String name, Class<? extends Component> componentType ) {
+        AttributeKey<?> result = new AttributeKey<DynArray>( name, DynArray.class, componentType );
+        return (AttributeKey<DynArray<S>>) result;
     }
 
 }
