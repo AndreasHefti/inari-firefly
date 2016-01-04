@@ -17,25 +17,40 @@ package com.inari.firefly.animation.event;
 
 import com.inari.commons.event.Event;
 
+/** Event to operate Animation's
+ *  Use this to operate Animation's of all types. Animations can be started, stopped and finished. 
+ */
 public final class AnimationEvent extends Event<AnimationEventListener> {
     
+    /** The type key for AnimationEvent event type */
     public static final EventTypeKey TYPE_KEY = createTypeKey( AnimationEvent.class );
     
+    /** The available and supported types of AnimationEvent */
     public enum Type {
+        /** Starts an Animation ( if not already started ) */
         START_ANIMATION,
+        /** Stops a running Animation */
         STOP_ANIMATION,
+        /** Finishes an Animation wheter it is running or not. Finished Animations are celand up and removed/deleted */
         FINISH_ANIMATION
     }
     
+    /** The id of the Animation to do the action event */
     public final int animationId;
+    /** The type of AnimationEvent */ 
     public final Type type;
 
+    /** Create a new AnimationEvent with specifed type and animationId.
+     *  @param type the type of AnimationEvent
+     *  @param animationId the id of Animation instance to operate on
+     */
     public AnimationEvent( Type type, int animationId ) {
         super( TYPE_KEY );
         this.animationId = animationId;
         this.type = type;
     }
 
+    /** NOTE: this is called by the EventDispatcher on specified AnimationEvent. No need to call dis directly */
     @Override
     public final void notify( AnimationEventListener listener ) {
         listener.onAnimationEvent( this );
