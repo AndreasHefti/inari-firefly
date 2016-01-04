@@ -24,12 +24,32 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFTimer;
 
+/** General and abstract implementation of the Animation SystemComponent.
+ * 
+ *  An animation means always and only an manipulation of a single value during time.
+ * 
+ *  This component defines in general an animation with a start time and a looping flag 
+ *  and implements a general update mechanism for all kind of Animations to update the state of the 
+ *  animation. This update is called by the AnimationSystem that listens to the global update events
+ *  of the Firefly engine. 
+ * 
+ *  This is implemented by concrete value type implementation such as IntAnimation, FloatAnimation or a 
+ *  general generic ValueAnimation.
+ */
 public abstract class Animation extends SystemComponent {
     
+    /** The SystemComponent type key for Animation components */
     public static final SystemComponentKey<Animation> TYPE_KEY = SystemComponentKey.create( Animation.class );
     
+    /** The AttributeKey for startTime attribute that defines a time where an Animation 
+     *  is automatically started when living within the AnimationSystem.
+     * 
+     *  Use this if there is a concrete time where to start an Animation without use of AnimationEvent.
+     */
     public static final AttributeKey<Long> START_TIME = new AttributeKey<Long>( "startTime", Long.class, Animation.class );
+    /** The AttributeKey for the looping attributes that indicates wether the Animation is looping or not */
     public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Animation.class );
+    
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         START_TIME,
         LOOPING,
@@ -53,27 +73,32 @@ public abstract class Animation extends SystemComponent {
         return TYPE_KEY;
     }
 
+    /** Use this to get the startTime configured for this Animation */
     public final long getStartTime() {
         return startTime;
     }
 
+    /** Use this to set the start time for this Animation */
     public final void setStartTime( long startTime ) {
         this.startTime = startTime;
     }
 
+    /** Use this to indicate wether this Animation is looping or not */
     public final boolean isLooping() {
         return looping;
     }
 
+    /** Use this to set the looping indication for this Animation */
     public final void setLooping( boolean looping ) {
         this.looping = looping;
     }
 
+    /** Use this to indicates wether this Animation is active or not */
     public final boolean isActive() {
         return active;
     }
     
-    public final boolean isFinished() {
+    protected final boolean isFinished() {
         return finished;
     }
     
@@ -81,6 +106,13 @@ public abstract class Animation extends SystemComponent {
         active = true;
     }
     
+    /** This is called on every update by the AnimationSystem with the current FFTimer.
+     *  
+     *  This implementation deals with the start time of this Animation. If this Animation is not active
+     *  and the current time is after the start time the Animation is atomatically activated by this update.
+     * 
+     *  Override this do to other update stuff if needed for a concrete implementation of Animation.
+     */
     public void update( final FFTimer timer ) {
         if ( !active && timer.getTime() >= startTime ) {
             setActive();
