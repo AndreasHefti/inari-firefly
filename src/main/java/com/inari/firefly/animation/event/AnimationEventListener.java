@@ -15,7 +15,14 @@
  ******************************************************************************/ 
 package com.inari.firefly.animation.event;
 
+/** Implement this to receive AnimationEvent's when registerd to the EventDispatcher.
+ *  For default the AnimationSystem is implementing this to operate the AnimationEvent's
+ *  But there may be other use cases to listen to AnimationEvents to trigger some additional code
+ */
 public interface AnimationEventListener {
     
+    /** This is called by the EventDispatcher on a AnimationEvent of any kind
+     *  @param event the AnimationEvent instance
+     */
     void onAnimationEvent( AnimationEvent event );
 }
