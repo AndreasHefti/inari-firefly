@@ -32,7 +32,7 @@ public abstract class Controller extends SystemComponent implements Disposable {
     public static final SystemComponentKey<Controller> TYPE_KEY = SystemComponentKey.create( Controller.class );
     
     public static final AttributeKey<Float> UPDATE_RESOLUTION = new AttributeKey<Float>( "updateResolution", Float.class, Controller.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         UPDATE_RESOLUTION
     };
     

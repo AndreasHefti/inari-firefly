@@ -37,7 +37,7 @@ public final class ETransform extends EntityComponent {
     public static final AttributeKey<Float> SCALE_Y = new AttributeKey<Float>( "scaley", Float.class, ETransform.class );
     public static final AttributeKey<Float> ROTATION = new AttributeKey<Float>( "rotation", Float.class, ETransform.class );
     public static final AttributeKey<Integer> PARENT_ID = new AttributeKey<Integer>( "parentId", Integer.class, ETransform.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         VIEW_ID,
         LAYER_ID, 
         XPOSITION, 

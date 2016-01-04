@@ -50,7 +50,7 @@ public abstract class Animation extends SystemComponent {
     /** The AttributeKey for the looping attributes that indicates wether the Animation is looping or not */
     public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Animation.class );
     
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         START_TIME,
         LOOPING,
     };
@@ -98,11 +98,11 @@ public abstract class Animation extends SystemComponent {
         return active;
     }
     
-    protected final boolean isFinished() {
+    final boolean isFinished() {
         return finished;
     }
     
-    protected void setActive() {
+    void setActive() {
         active = true;
     }
     

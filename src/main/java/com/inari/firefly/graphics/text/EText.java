@@ -20,7 +20,7 @@ public class EText extends EntityComponent {
     public static final AttributeKey<String> TEXT_STRING = new AttributeKey<String>( "text_string", String.class, EText.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, EText.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, EText.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         RENDERER_ID,
         FONT_ID,
         TEXT,

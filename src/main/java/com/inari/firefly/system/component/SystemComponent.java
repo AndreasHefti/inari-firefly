@@ -31,7 +31,7 @@ import com.inari.firefly.component.attr.AttributeMap;
 public abstract class SystemComponent extends BaseIndexedObject implements IndexedType, NamedComponent {
 
     public static final AttributeKey<String> NAME = new AttributeKey<String>( "name", String.class, SystemComponent.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         NAME
     };
     

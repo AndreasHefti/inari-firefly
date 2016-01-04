@@ -22,7 +22,7 @@ public final class FontAsset extends Asset {
     public static final AttributeKey<Integer> CHAR_SPACE = new AttributeKey<Integer>( "charSpace", Integer.class, FontAsset.class );
     public static final AttributeKey<Integer> LINE_SPACE = new AttributeKey<Integer>( "lineSpace", Integer.class, FontAsset.class );
     public static final AttributeKey<Integer> DEFAULT_CHAR = new AttributeKey<Integer>( "defaultChar", Integer.class, FontAsset.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         TEXTURE_RESOURCE_NAME,
         CHAR_TEXTURE_MAP,
         CHAR_WIDTH,

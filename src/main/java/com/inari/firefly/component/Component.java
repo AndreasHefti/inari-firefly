@@ -28,7 +28,14 @@ import com.inari.firefly.component.attr.AttributeMap;
  *  a Component to an AttributeMap.
  *  
  *  Within this Component support all the Attributes of an Component can easily be exposed to or manipulated by other 
- *  systems within a generic but simple way.
+ *  systems or services within a generic but simple way.
+ *  Potential services may be: 
+ *   - A Component Builder framework that builds Components within the general component attribute interface
+ *   - A persistence service that gets all attribute values of a living component system, serialize the values and store it somehow to load and rebuild the system and components later
+ *   - A IDE that manages the components, shows the attributes as input fields in an inspector
+ *  
+ *  A Component can have be type- and/or object indexed. Therefore a ComponentKey is defined that combines this two key
+ *  components into one key that identifies a Component instance
  *  
  * @author andreashefti
  *
@@ -45,12 +52,33 @@ public interface Component {
      */
     public static final AttributeKey<String> INSTANCE_TYPE_NAME = new AttributeKey<String>( "instanceTypeName", String.class, Component.class );
     
+    /** Use this to get the ComponentKey of this Component that identifes the Component by type and instance */
     ComponentKey componentKey();
     
+    /** Use this to get a Set of all AttributeKey's supported by this Component instance. 
+     * 
+     *  For all this AttributeKey's can be set attribute values within a AttributeMap to the Component 
+     *  or get from the Component instance to a AttributeMap.
+     *  
+     *  This defines the external component information interface for external services. A external service can use this to verify 
+     *  which component attributes are available/supported by a specified component instance.
+     *  
+     * @return a Set of all AttributeKey's supported by this Component instance 
+     */
     Set<AttributeKey<?>> attributeKeys();
     
+    /** Use this to set values for the Components attributes within a AttributeMap.
+     *  All attributes that are defines within the map are set to the Component instance.
+     *  Component attributes that are not in the map or attributes of other Component types then this type are ignored.
+     *  
+     * @param attributes AttributeMap contains all attribute values to set to the Component instance
+     */
     void fromAttributes( AttributeMap attributes );
     
+    /** Use this to get all Component attribute values form this Component instance within a AttributeMap
+     * 
+     * @param attributes AttributeMap where all the attribute values are put into
+     */
     void toAttributes( AttributeMap attributes );
     
     // TODO add method to set/get single attribute?

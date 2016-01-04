@@ -13,7 +13,7 @@ public abstract class EntityAttributeController extends EntityController {
 
     public static final AttributeKey<Integer> ANIMATION_ID = new AttributeKey<Integer>( "animationId", Integer.class, EntityAttributeController.class );
     public static final AttributeKey<Integer> ANIMATION_RESOLVER_ID = new AttributeKey<Integer>( "animationResolverId", Integer.class, EntityAttributeController.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         ANIMATION_ID,
         ANIMATION_RESOLVER_ID
     };
