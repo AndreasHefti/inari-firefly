@@ -18,14 +18,17 @@ package com.inari.firefly.graphics.tile;
 import java.util.Iterator;
 
 import com.inari.commons.geom.Position;
+import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
+import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.component.ComponentSystem;
@@ -113,6 +116,7 @@ public final class TileGridSystem
     public final void onViewEvent( ViewEvent event ) {
         if ( event.eventType == Type.VIEW_DELETED ) {
             deleteAllTileGrid( event.view.index() );
+            return;
         }
     }
     
@@ -173,8 +177,27 @@ public final class TileGridSystem
         if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
             return null;
         }
+        
         DynArray<TileGrid> tileGridsForView = tileGridOfViewsPerLayer.get( viewId );
         return tileGridsForView.get( layerId );
+    }
+    
+    public final TileIterator getTiles( int viewId, int layerId, Rectangle bounds ) {
+        TileGrid tileGrid = getTileGrid( viewId, layerId );
+        if ( tileGrid == null ) {
+            return null;
+        }
+        
+        return tileGrid.iterator( bounds );
+    }
+    
+    public final TileIterator getTiles( int tileGridId, Rectangle bounds ) {
+        TileGrid tileGrid = getTileGrid( tileGridId );
+        if ( tileGrid == null ) {
+            return null;
+        }
+        
+        return tileGrid.iterator( bounds );
     }
 
     public final void deleteAllTileGrid( int viewId ) {
@@ -277,24 +300,24 @@ public final class TileGridSystem
             tileGrid.fromAttributes( attributes );
             int viewId = tileGrid.getViewId();
             int layerId = tileGrid.getLayerId();
+            
             if ( viewId < 0 ) {
-                viewId = 0;
-            } 
+                throw new FFInitException( "ViewId is mandatory for TileGrid" );
+            }
+            
             if ( layerId < 0 ) {
-                layerId = 0;
+                throw new FFInitException( "LayerId is mandatory for TileGrid" );
             }
             
-            DynArray<TileGrid> perLayer;
             if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
-                perLayer = new DynArray<TileGrid>();
-                tileGridOfViewsPerLayer.set( viewId, perLayer );
-            } else {
-                perLayer = tileGridOfViewsPerLayer.get( viewId );
+                tileGridOfViewsPerLayer.set( viewId, new DynArray<TileGrid>() );
             }
-            perLayer.set( layerId, tileGrid );
-            
+
             tileGrids.set( tileGrid.getId(), tileGrid );
-            
+            tileGridOfViewsPerLayer
+                .get( viewId )
+                .set( layerId, tileGrid );
+
             return tileGrid.getId();
         }
     }

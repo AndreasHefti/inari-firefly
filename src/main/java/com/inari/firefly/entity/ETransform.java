@@ -57,7 +57,7 @@ public final class ETransform extends EntityComponent {
     private float rotation;
     private int parentId;
     
-    public ETransform() {
+    ETransform() {
         super( TYPE_KEY );
         resetAttributes();
     }

@@ -92,6 +92,7 @@ public final class DefaultTextRenderer extends TextRenderer {
         public int getOrdering() {
             return 0;
         }
+
     }
 
 }

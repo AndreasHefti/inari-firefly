@@ -1,6 +1,5 @@
 package com.inari.firefly.graphics.tile;
 
-import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
@@ -28,8 +27,8 @@ public class NormalFastTileGridRenderer extends TileGridRenderer {
         }
         
         while( iterator.hasNext() ) {
-            ESprite sprite = entitySystem.getComponent( iterator.next(), ESprite.TYPE_KEY );
-            graphics.renderSprite( sprite, iterator.getWorldXPos(), iterator.getWorldYPos() );
+            ETile tile = entitySystem.getComponent( iterator.next(), ETile.TYPE_KEY );
+            graphics.renderSprite( tile, iterator.getWorldXPos(), iterator.getWorldYPos() );
         }
     }
 

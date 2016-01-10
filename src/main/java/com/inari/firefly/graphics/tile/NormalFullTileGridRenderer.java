@@ -1,7 +1,6 @@
 package com.inari.firefly.graphics.tile;
 
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
@@ -31,14 +30,14 @@ public final class NormalFullTileGridRenderer extends TileGridRenderer {
 
         while( iterator.hasNext() ) {
             int entityId = iterator.next();
-            ESprite sprite = entitySystem.getComponent( entityId, ESprite.TYPE_KEY );
+            ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
             ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
             
             transformCollector.set( transform );
             transformCollector.xpos += iterator.getWorldXPos();
             transformCollector.ypos += iterator.getWorldYPos();
             
-            render( sprite, transform.getParentId() );
+            render( tile, transform.getParentId() );
         }
     }
 
