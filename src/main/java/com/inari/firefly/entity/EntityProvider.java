@@ -1,5 +1,6 @@
 package com.inari.firefly.entity;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayDeque;
 import java.util.Set;
 
@@ -129,6 +130,11 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
         }
         return result;
     }
+    
+    public void initControlledAttributes() {
+        // TODO Auto-generated method stub
+        
+    }
 
     void disposeComponentSet( IndexedTypeSet components ) {
         for ( int i = 0; i < components.length(); i++ ) {
@@ -177,13 +183,17 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
         try {
             return componentType.newInstance();
         } catch ( Exception e ) {
-            throw new ComponentCreationException( "Unknwon error while Component creation: " + componentType, e );
+            try {
+                Constructor<C> declaredConstructor = componentType.getDeclaredConstructor();
+                boolean accessible = declaredConstructor.isAccessible();
+                declaredConstructor.setAccessible( true );
+                C instance = declaredConstructor.newInstance();
+                declaredConstructor.setAccessible( accessible );
+                return instance;
+            } catch ( Exception ee ) {
+                throw new ComponentCreationException( "Unknwon error while Component creation: " + componentType, e );
+            }
         }
-    }
-
-    public void initControlledAttributes(  ) {
-        // TODO Auto-generated method stub
-        
     }
 
 }

@@ -60,10 +60,4 @@ public interface FFGraphics extends FFContextInitiable, ViewEventListener {
     
     void flush( Iterator<View> virtualViews );
 
-    
-
-    
-
-    
-
 }

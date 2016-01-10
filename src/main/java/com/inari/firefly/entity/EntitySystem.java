@@ -375,8 +375,8 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         @Override
         protected void findNext() {
             while ( nextEntityId < activeEntities.size() ) {
-                nextEntityId++;
-                if ( getAspect( nextEntityId ).include( aspect ) ) {
+                nextEntityId = activeEntities.nextSetBit( nextEntityId + 1 );
+                if ( nextEntityId < 0 || getAspect( nextEntityId ).include( aspect ) ) {
                     return;
                 }
             }

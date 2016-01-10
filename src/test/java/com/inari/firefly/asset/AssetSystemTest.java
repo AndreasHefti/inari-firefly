@@ -11,9 +11,9 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.Disposable;
+import com.inari.firefly.EventDispatcherTestLog;
 import com.inari.firefly.FireFlyMock;
 import com.inari.firefly.asset.AssetSystem.AssetBuilder;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -89,9 +89,9 @@ public class AssetSystemTest {
     
     @Test
     public void testCreateLoadDisposeAndDeleteSingleAsset() {
-        FFContext ffContext = new FireFlyMock().getContext();
+        EventDispatcherTestLog eventLog = new EventDispatcherTestLog();
+        FFContext ffContext = new FireFlyMock( eventLog ).getContext();
         AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
-        IEventDispatcher eventDispatcher = ffContext.getEventDispatcher();
         
         service.init( ffContext );
         Attributes attrs = new Attributes();
@@ -102,8 +102,8 @@ public class AssetSystemTest {
             .build( TestAsset.class );
         
         assertEquals( 
-            "TestEventDispatcher [events=[ViewEvent [eventType=VIEW_CREATED, view=0], AssetEvent [eventType=ASSET_CREATED, assetId=0]]]", 
-            eventDispatcher.toString() 
+            "EventLog [events=[ViewEvent [eventType=VIEW_CREATED, view=0], AssetEvent [eventType=ASSET_CREATED, assetId=0]]]", 
+            eventLog.toString() 
         );
         
         attrs.clear();
@@ -122,11 +122,11 @@ public class AssetSystemTest {
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=["
+            "EventLog [events=["
             + "ViewEvent [eventType=VIEW_CREATED, view=0], "
             + "AssetEvent [eventType=ASSET_CREATED, assetId=0], "
             + "AssetEvent [eventType=ASSET_LOADED, assetId=0]]]", 
-            eventDispatcher.toString() 
+            eventLog.toString() 
         );
         
         service.disposeAsset( "asset1" );
@@ -134,12 +134,12 @@ public class AssetSystemTest {
         attrs.clear();
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
-            "TestEventDispatcher [events=["
+            "EventLog [events=["
             + "ViewEvent [eventType=VIEW_CREATED, view=0], "
             + "AssetEvent [eventType=ASSET_CREATED, assetId=0], "
             + "AssetEvent [eventType=ASSET_LOADED, assetId=0], "
             + "AssetEvent [eventType=ASSET_DISPOSED, assetId=0]]]", 
-            eventDispatcher.toString() 
+            eventLog.toString() 
         );
         
         service.deleteAsset( "asset1" );
@@ -150,13 +150,13 @@ public class AssetSystemTest {
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=["
+            "EventLog [events=["
             + "ViewEvent [eventType=VIEW_CREATED, view=0], "
             + "AssetEvent [eventType=ASSET_CREATED, assetId=0], "
             + "AssetEvent [eventType=ASSET_LOADED, assetId=0], "
             + "AssetEvent [eventType=ASSET_DISPOSED, assetId=0], "
             + "AssetEvent [eventType=ASSET_DELETED, assetId=0]]]", 
-            eventDispatcher.toString() 
+            eventLog.toString() 
         );
     }
     

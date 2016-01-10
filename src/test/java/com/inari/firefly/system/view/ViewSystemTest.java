@@ -8,10 +8,10 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.indexed.Indexer;
+import com.inari.firefly.EventDispatcherTestLog;
 import com.inari.firefly.FireFlyMock;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentCreationException;
@@ -22,8 +22,8 @@ public class ViewSystemTest {
     @Test
     public void testCreation() {
         Indexer.clear();
-        FFContext context = new FireFlyMock().getContext();
-        IEventDispatcher eventDispatcher = context.getEventDispatcher();
+        EventDispatcherTestLog eventLog = new EventDispatcherTestLog();
+        FFContext context = new FireFlyMock( eventLog ).getContext();
         ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
@@ -43,8 +43,8 @@ public class ViewSystemTest {
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=[ViewEvent [eventType=VIEW_CREATED, view=0]]]", 
-            eventDispatcher.toString() 
+            "EventLog [events=[ViewEvent [eventType=VIEW_CREATED, view=0]]]", 
+            eventLog.toString() 
         );
         
         assertFalse( viewSystem.hasViewports() );
@@ -62,8 +62,8 @@ public class ViewSystemTest {
     @Test
     public void testCreateViews() {
         Indexer.clear();
-        FFContext context = new FireFlyMock().getContext();
-        IEventDispatcher eventDispatcher = context.getEventDispatcher();
+        EventDispatcherTestLog eventLog = new EventDispatcherTestLog();
+        FFContext context = new FireFlyMock( eventLog ).getContext();
         ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
 
         Attributes attrs = new Attributes();
@@ -113,11 +113,11 @@ public class ViewSystemTest {
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=[" +
+            "EventLog [events=[" +
             "ViewEvent [eventType=VIEW_CREATED, view=0], " +
             "ViewEvent [eventType=VIEW_CREATED, view=1], " +
             "ViewEvent [eventType=VIEW_CREATED, view=2]]]", 
-            eventDispatcher.toString() 
+            eventLog.toString() 
         );
         
         assertTrue( viewSystem.hasViewports() );
@@ -144,8 +144,8 @@ public class ViewSystemTest {
     @Test
     public void testCreateLayersForBaseView() {
         Indexer.clear();
-        FFContext context = new FireFlyMock().getContext();
-        IEventDispatcher eventDispatcher = context.getEventDispatcher();
+        EventDispatcherTestLog eventLog = new EventDispatcherTestLog();
+        FFContext context = new FireFlyMock( eventLog ).getContext();
         ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
@@ -197,8 +197,8 @@ public class ViewSystemTest {
             attrs.toString() 
         );
         assertEquals( 
-            "TestEventDispatcher [events=[ViewEvent [eventType=VIEW_CREATED, view=0]]]", 
-            eventDispatcher.toString() 
+            "EventLog [events=[ViewEvent [eventType=VIEW_CREATED, view=0]]]", 
+            eventLog.toString() 
         );
         
         // try to build a layer for an inexistent view

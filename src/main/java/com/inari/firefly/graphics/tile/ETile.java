@@ -20,25 +20,38 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Position;
+import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
+import com.inari.firefly.graphics.BlendMode;
+import com.inari.firefly.graphics.SpriteRenderable;
+import com.inari.firefly.graphics.sprite.ESprite;
 
-public final class ETile extends EntityComponent {
+public final class ETile extends EntityComponent implements SpriteRenderable {
     
     public static final EntityComponentTypeKey<ETile> TYPE_KEY = EntityComponentTypeKey.create( ETile.class );
     
+    public static final AttributeKey<Integer> SPRITE_ID = new AttributeKey<Integer>( "spriteId", Integer.class, ESprite.class );
+    public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, ESprite.class );
+    public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ESprite.class );
     public static final AttributeKey<Boolean> MULTI_POSITION = new AttributeKey<Boolean>( "multiPosition", Boolean.class, ETile.class );
     public static final AttributeKey<Integer> GRID_X_POSITION = new AttributeKey<Integer>( "gridXPosition", Integer.class, ETile.class );
     public static final AttributeKey<Integer> GRID_Y_POSITION = new AttributeKey<Integer>( "gridYPosition", Integer.class, ETile.class );
     public static final AttributeKey<int[][]> GRID_POSITIONS = new AttributeKey<int[][]>( "gridPositions", int[][].class, ETile.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+        SPRITE_ID,
+        TINT_COLOR,
+        BLEND_MODE,
         MULTI_POSITION,
         GRID_X_POSITION,
         GRID_Y_POSITION,
         GRID_POSITIONS,
     };
     
+    private int spriteId;
+    private final RGBColor tintColor = new RGBColor();
+    private BlendMode blendMode;
     private boolean multiPosition;
     private final Position gridPosition = new Position();
     private final Set<Position> gridPositions = new HashSet<Position>();
@@ -50,10 +63,48 @@ public final class ETile extends EntityComponent {
 
     @Override
     public final void resetAttributes() {
+        spriteId = -1;
+        setTintColor( new RGBColor( 1, 1, 1, 1 ) );
+        blendMode = BlendMode.NONE;
         setGridXPos( 0 );
         setGridYPos( 0 );
         gridPositions.clear();
         multiPosition = false;
+    }
+    
+    @Override
+    public final int getSpriteId() {
+        return spriteId;
+    }
+
+    public final void setSpriteId( int spriteId ) {
+        this.spriteId = spriteId;
+    }
+    
+    @Override
+    public final int getOrdering() {
+        return 0;
+    }
+
+    @Override
+    public final RGBColor getTintColor() {
+        return tintColor;
+    }
+
+    public final void setTintColor( RGBColor tintColor ) {
+        this.tintColor.r = tintColor.r;
+        this.tintColor.g = tintColor.g;
+        this.tintColor.b = tintColor.b;
+        this.tintColor.a = tintColor.a;
+    }
+
+    @Override
+    public final BlendMode getBlendMode() {
+        return blendMode;
+    }
+
+    public final void setBlendMode( BlendMode blendMode ) {
+        this.blendMode = blendMode;
     }
 
     public final boolean isMultiPosition() {
@@ -98,6 +149,9 @@ public final class ETile extends EntityComponent {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
+        spriteId = attributes.getValue( SPRITE_ID, spriteId );
+        setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
+        blendMode = attributes.getValue( BLEND_MODE, blendMode );
         multiPosition = attributes.getValue( MULTI_POSITION, multiPosition );
         gridPosition.x = attributes.getValue( GRID_X_POSITION, gridPosition.x );
         gridPosition.y = attributes.getValue( GRID_Y_POSITION, gridPosition.y );
@@ -116,6 +170,9 @@ public final class ETile extends EntityComponent {
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
+        attributes.put( SPRITE_ID, spriteId );
+        attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
+        attributes.put( BLEND_MODE, blendMode );
         attributes.put( MULTI_POSITION, multiPosition );
         if ( multiPosition ) {
             int[][] result = new int[ gridPositions.size() ][ 2 ];

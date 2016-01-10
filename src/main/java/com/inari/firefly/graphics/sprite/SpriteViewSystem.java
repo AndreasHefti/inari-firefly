@@ -14,7 +14,6 @@ import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.graphics.BaseRenderer;
 import com.inari.firefly.graphics.SpriteRenderable;
-import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.RenderEvent;
@@ -66,7 +65,7 @@ public final class SpriteViewSystem
     
     @Override
     public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( ESprite.TYPE_KEY ) && !aspect.contains( ETile.TYPE_KEY );
+        return aspect.contains( ESprite.TYPE_KEY );
     }
     
     @Override
