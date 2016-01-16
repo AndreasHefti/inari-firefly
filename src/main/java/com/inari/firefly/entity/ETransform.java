@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.commons.geom.Vector2f;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
@@ -124,12 +123,13 @@ public final class ETransform extends EntityComponent {
         this.pivoty = pivoty;
     }
 
-    public final void move( Vector2f moveVector, boolean staticPivot ) {
-        xpos += moveVector.dx;
-        ypos += moveVector.dy;
+    public final void move( final float dx, final float dy, final boolean staticPivot ) {
+        xpos += dx;
+        ypos += dy;
+        
         if ( !staticPivot ) {
-            pivotx += moveVector.dx;
-            pivoty += moveVector.dy;
+            pivotx += dx;
+            pivoty += dy;
         }
     }
 

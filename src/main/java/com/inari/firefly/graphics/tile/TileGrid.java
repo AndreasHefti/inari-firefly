@@ -248,29 +248,29 @@ public final class TileGrid extends SystemComponent {
         }
     }
     
-    public final int getNeighbour( int xpos, int ypos, Direction direction) {
+    public final int getNeighbour( int xpos, int ypos, Direction direction ) {
         return getNeighbour( xpos, ypos, direction, 1, 1 );
     }
     
-    public final int getNeighbour( int xpos, int ypos, Direction direction, int xDistance, int yDistance ) {
-        switch ( direction.xDir ) {
-              case LEFT: {
-                  xpos--;
+    public final int getNeighbour( int xpos, int ypos, final Direction direction, final int xDistance, final int yDistance ) {
+        switch ( direction.horizontal ) {
+              case WEST: {
+                  xpos = xpos - xDistance;
                   break;
               }
-              case RIGHT: {
-                  xpos++;
+              case EAST: {
+                  xpos = xpos + xDistance;
                   break;
               }
               default: {}
         }
-        switch ( direction.yDir ) {
-            case UP: {
-                ypos--;
+        switch ( direction.vertical ) {
+            case NORTH: {
+                ypos = ypos + yDistance;
                 break;
             }
-            case DOWN: {
-                ypos++;
+            case SOUTH: {
+                ypos = ypos +yDistance;
                 break;
             }
             default: {}
