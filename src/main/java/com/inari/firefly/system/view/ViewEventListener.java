@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.entity.event;
+package com.inari.firefly.system.view;
 
-import com.inari.commons.event.AspectedEventListener;
 
-@Deprecated // check if this is really useful
-public interface EntityChangeListener extends AspectedEventListener {
-    
-    public void onEntityChangeEvent( EntityChangeEvent event );
+public interface ViewEventListener {
+
+    void onViewEvent( ViewEvent event );
 
 }

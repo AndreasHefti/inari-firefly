@@ -25,19 +25,19 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.entity.EntityActivationEvent;
+import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.entity.event.EntityActivationEvent;
-import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.view.ViewEvent;
+import com.inari.firefly.system.view.ViewEventListener;
+import com.inari.firefly.system.view.ViewEvent.Type;
 import com.inari.firefly.system.component.SystemComponentBuilder;
-import com.inari.firefly.system.view.event.ViewEvent;
-import com.inari.firefly.system.view.event.ViewEvent.Type;
-import com.inari.firefly.system.view.event.ViewEventListener;
 
 public final class TileGridSystem
     extends 

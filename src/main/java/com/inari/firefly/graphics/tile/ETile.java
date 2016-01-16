@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.inari.commons.geom.Position;
 import com.inari.commons.graphics.RGBColor;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -38,7 +39,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     public static final AttributeKey<Boolean> MULTI_POSITION = new AttributeKey<Boolean>( "multiPosition", Boolean.class, ETile.class );
     public static final AttributeKey<Integer> GRID_X_POSITION = new AttributeKey<Integer>( "gridXPosition", Integer.class, ETile.class );
     public static final AttributeKey<Integer> GRID_Y_POSITION = new AttributeKey<Integer>( "gridYPosition", Integer.class, ETile.class );
-    public static final AttributeKey<int[][]> GRID_POSITIONS = new AttributeKey<int[][]>( "gridPositions", int[][].class, ETile.class );
+    public static final AttributeKey<DynArray<Position>> GRID_POSITIONS = AttributeKey.createForDynArray( "gridPositions", ETile.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         SPRITE_ID,
         TINT_COLOR,
@@ -54,7 +55,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     private BlendMode blendMode;
     private boolean multiPosition;
     private final Position gridPosition = new Position();
-    private final Set<Position> gridPositions = new HashSet<Position>();
+    private final DynArray<Position> gridPositions = new DynArray<Position>( 10, 50 );
 
     public ETile() {
         super( TYPE_KEY );
@@ -138,7 +139,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         gridPosition.y = pos;
     }
 
-    public final Set<Position> getGridPositions() {
+    public final DynArray<Position> getGridPositions() {
         return gridPositions;
     }
 
@@ -155,16 +156,15 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         multiPosition = attributes.getValue( MULTI_POSITION, multiPosition );
         gridPosition.x = attributes.getValue( GRID_X_POSITION, gridPosition.x );
         gridPosition.y = attributes.getValue( GRID_Y_POSITION, gridPosition.y );
+        
+        gridPositions.clear();
         if ( multiPosition ) {
-            int[][] positions = attributes.getValue( GRID_POSITIONS );
-            if ( positions != null ) {
-                gridPositions.clear();
-                for ( int j = 0; j < positions.length; j++ ) {
-                    gridPositions.add( new Position( positions[ j ][ 0 ], positions[ j ][ 1 ] ) );
+            DynArray<Position> gp = attributes.getValue( GRID_POSITIONS );
+            if ( gp != null ) {
+                for ( Position pos : gp ) {
+                    gridPositions.add( pos );
                 }
             }
-        } else {
-            gridPositions.clear();
         }
     }
 
@@ -175,14 +175,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         attributes.put( BLEND_MODE, blendMode );
         attributes.put( MULTI_POSITION, multiPosition );
         if ( multiPosition ) {
-            int[][] result = new int[ gridPositions.size() ][ 2 ];
-            int index = 0;
-            for ( Position position : gridPositions ) {
-                result[ index ][ 0 ] = position.x;
-                result[ index ][ 1 ] = position.y;
-                index++;
-            }
-            attributes.put( GRID_POSITIONS, result );
+            attributes.put( GRID_POSITIONS, gridPositions );
         } else {
             attributes.put( GRID_X_POSITION, gridPosition.x );
             attributes.put( GRID_Y_POSITION, gridPosition.y );

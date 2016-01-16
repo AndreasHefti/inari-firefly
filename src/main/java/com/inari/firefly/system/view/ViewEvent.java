@@ -13,52 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.task.event;
+package com.inari.firefly.system.view;
 
 import com.inari.commons.event.Event;
 
-public final class TaskEvent extends Event<TaskEventListener> {
+public final class ViewEvent extends Event<ViewEventListener> {
     
-    public static final EventTypeKey TYPE_KEY = createTypeKey( TaskEvent.class );
+    public static final EventTypeKey TYPE_KEY = createTypeKey( ViewEvent.class );
     
-    public enum Type {
-        RUN_TASK,
-        REMOVE_TASK
+    public static enum Type {
+        VIEW_CREATED,
+        VIEW_ACTIVATED,
+        VIEW_DISPOSED,
+        VIEW_DELETED
     }
     
+    public final View view;
     public final Type eventType;
-    public final int taskId;
-    public final String taskName;
 
-    public TaskEvent( Type eventType, int taskId ) {
+    public ViewEvent( View view, Type eventType ) {
         super( TYPE_KEY );
         this.eventType = eventType;
-        this.taskId = taskId;
-        taskName = null; 
-    }
-    
-    public TaskEvent( Type eventType, String taskName ) {
-        super( TYPE_KEY );
-        this.eventType = eventType;
-        this.taskName = taskName;
-        taskId = -1; 
+        this.view = view;
     }
 
     @Override
-    public final void notify( TaskEventListener listener ) {
-        listener.onTaskEvent( this );
-        
+    public final void notify( ViewEventListener listener ) {
+        listener.onViewEvent( this );
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append( "TaskEvent [eventType=" );
+        builder.append( "ViewEvent [eventType=" );
         builder.append( eventType );
-        builder.append( ", taskId=" );
-        builder.append( taskId );
+        builder.append( ", view=" );
+        builder.append( view.index() );
         builder.append( "]" );
         return builder.toString();
     }
+
+    
 
 }

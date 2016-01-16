@@ -15,12 +15,8 @@
  ******************************************************************************/ 
 package com.inari.firefly.component.build;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.lang.list.DynArray;
@@ -32,8 +28,8 @@ import com.inari.firefly.component.attr.Attribute;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
-import com.inari.firefly.state.event.WorkflowEvent;
-import com.inari.firefly.state.event.WorkflowEventListener;
+import com.inari.firefly.state.WorkflowEvent;
+import com.inari.firefly.state.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.RenderEvent;
@@ -126,39 +122,50 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
     }
 
     @Override
-    public final <T> ComponentBuilder add( AttributeKey<T[]> key, T value ) {
-        List<T> list;
+    public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value ) {
+        DynArray<T> list;
         if ( ! attributes.contains( key ) ) {
-            list = new ArrayList<T>();
+            list = new DynArray<T>( 10, 10 );
+            attributes.put( key, list );
         } else {
-            list = new ArrayList<T>( Arrays.asList( attributes.getValue( key ) ) );
+            list = attributes.getValue( key );
         }
         
         list.add( value );
-        @SuppressWarnings( "unchecked" )
-        T[] array = (T[]) Array.newInstance( key.valueType().getComponentType(), list.size() );
-        array = list.toArray( array );
-        attributes.put( key, array );
-        
         return this;
     }
     
     @Override
-    public final <T> ComponentBuilder add( AttributeKey<T[]> key, T[] values ) {
-        List<T> list;
+    public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values ) {
+        DynArray<T> list;
         if ( ! attributes.contains( key ) ) {
-            list = new ArrayList<T>();
+            list = new DynArray<T>( 10, 10 );
+            attributes.put( key, list );
         } else {
-            list = new ArrayList<T>( Arrays.asList( attributes.getValue( key ) ) );
+            list = attributes.getValue( key );
         }
         
-        List<T> asList = Arrays.asList( values );
-        list.addAll( asList );
-        @SuppressWarnings( "unchecked" )
-        T[] array = (T[]) Array.newInstance( key.valueType().getComponentType(), list.size() );
-        array = list.toArray( array );
-        attributes.put( key, array );
+        for ( int i = 0; i < values.length; i++ ) {
+            list.add( values[ i ] );
+        }
+        return this;
+    }
+    
+    @Override
+    public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<T> values ) {
+        DynArray<T> list;
+        if ( ! attributes.contains( key ) ) {
+            list = new DynArray<T>( 10, 10 );
+            attributes.put( key, list );
+        } else {
+            list = attributes.getValue( key );
+        }
         
+        for ( int i = 0; i < values.capacity(); i++ ) {
+            if ( values.contains( i ) ) {
+                list.add( values.get( i ) );
+            }
+        }
         return this;
     }
 

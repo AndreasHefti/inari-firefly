@@ -1,4 +1,4 @@
-package com.inari.firefly.entity;
+package com.inari.firefly.entity.prefab;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.system.component.SystemComponent;

@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.state.event;
+package com.inari.firefly.asset;
 
-public interface WorkflowEventListener {
-    
-    void onEvent( WorkflowEvent event );
+
+public interface AssetEventListener {
+
+    void onAssetEvent( AssetEvent event );
     
 }

@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
@@ -30,8 +31,8 @@ public final class Workflow extends SystemComponent {
     
     public static final AttributeKey<String> START_STATE_NAME = new AttributeKey<String>( "startStateName", String.class, Workflow.class );
     public static final AttributeKey<String> INIT_TASK_NAME = new AttributeKey<String>( "initTaskName", String.class, Workflow.class );
-    public static final AttributeKey<String[]> STATES = new AttributeKey<String[]>( "states", String[].class, Workflow.class );
-    public static final AttributeKey<StateChange[]> STATE_CHANGES = new AttributeKey<StateChange[]>( "stateChanges", StateChange[].class, Workflow.class );
+    public static final AttributeKey<DynArray<String>> STATES = AttributeKey.createForDynArray( "states", Workflow.class );
+    public static final AttributeKey<DynArray<StateChange>> STATE_CHANGES = AttributeKey.createForDynArray( "stateChanges", Workflow.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         START_STATE_NAME,
         INIT_TASK_NAME,
@@ -41,8 +42,8 @@ public final class Workflow extends SystemComponent {
     
     private String startStateName;
     private String initTaskName;
-    private String[] states;
-    private StateChange[] stateChanges;
+    private DynArray<String> states;
+    private DynArray<StateChange> stateChanges;
     
     private String currentStateName;
 
@@ -92,15 +93,15 @@ public final class Workflow extends SystemComponent {
         this.initTaskName = initTaskName;
     }
 
-    public final String[] getStates() {
+    public final DynArray<String> getStates() {
         return states;
     }
 
-    public final void setStates( String[] states ) {
+    public final void setStates( DynArray<String> states ) {
         this.states = states;
     }
 
-    public final StateChange[] getStateChanges() {
+    public final DynArray<StateChange> getStateChanges() {
         return stateChanges;
     }
     
@@ -108,7 +109,7 @@ public final class Workflow extends SystemComponent {
         return new CurrentStateChangeIterator();
     }
 
-    public final void setStateChanges( StateChange[] stateChanges ) {
+    public final void setStateChanges( DynArray<StateChange> stateChanges ) {
         this.stateChanges = stateChanges;
     }
     
@@ -169,12 +170,12 @@ public final class Workflow extends SystemComponent {
 
         @Override
         public final boolean hasNext() {
-            return nextIndex < stateChanges.length;
+            return stateChanges != null && nextIndex < stateChanges.capacity();
         }
 
         @Override
         public final StateChange next() {
-            StateChange result = stateChanges[ nextIndex ];
+            StateChange result = stateChanges.get( nextIndex );
             findNextIndex();
             return result;
         }
@@ -186,7 +187,7 @@ public final class Workflow extends SystemComponent {
         
         private final void findNextIndex() {
             nextIndex++;
-            while( nextIndex < stateChanges.length && !stateChanges[ nextIndex ].fromStateName.equals( currentStateName ) ) {
+            while( nextIndex < stateChanges.capacity() && !( stateChanges.contains( nextIndex ) && stateChanges.get( nextIndex ).fromStateName.equals( currentStateName ) ) ) {
                 nextIndex++;
             }
         }

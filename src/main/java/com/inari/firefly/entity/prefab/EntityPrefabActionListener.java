@@ -1,4 +1,4 @@
-package com.inari.firefly.entity.event;
+package com.inari.firefly.entity.prefab;
 
 public interface EntityPrefabActionListener {
 

@@ -23,7 +23,6 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.event.AssetEvent;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;

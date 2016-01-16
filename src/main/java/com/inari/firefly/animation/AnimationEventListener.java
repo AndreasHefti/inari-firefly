@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.animation.event;
+package com.inari.firefly.animation;
 
 /** Implement this to receive AnimationEvent's when registerd to the EventDispatcher.
  *  For default the AnimationSystem is implementing this to operate the AnimationEvent's

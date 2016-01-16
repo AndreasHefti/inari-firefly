@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.entity.event;
+package com.inari.firefly.state;
 
-import com.inari.commons.event.AspectedEventListener;
-
-public interface EntityActivationListener extends AspectedEventListener {
-
-    public void onEntityActivationEvent( EntityActivationEvent event );
-
+public interface WorkflowEventListener {
+    
+    void onEvent( WorkflowEvent event );
+    
 }

@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.state.event;
+package com.inari.firefly.state;
 
 import com.inari.commons.event.Event;
-import com.inari.firefly.state.StateChange;
 
 public final class WorkflowEvent extends Event<WorkflowEventListener> {
     

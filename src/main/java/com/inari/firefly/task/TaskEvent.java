@@ -13,47 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system.view.event;
+package com.inari.firefly.task;
 
 import com.inari.commons.event.Event;
-import com.inari.firefly.system.view.View;
 
-public final class ViewEvent extends Event<ViewEventListener> {
+public final class TaskEvent extends Event<TaskEventListener> {
     
-    public static final EventTypeKey TYPE_KEY = createTypeKey( ViewEvent.class );
+    public static final EventTypeKey TYPE_KEY = createTypeKey( TaskEvent.class );
     
-    public static enum Type {
-        VIEW_CREATED,
-        VIEW_ACTIVATED,
-        VIEW_DISPOSED,
-        VIEW_DELETED
+    public enum Type {
+        RUN_TASK,
+        REMOVE_TASK
     }
     
-    public final View view;
     public final Type eventType;
+    public final int taskId;
+    public final String taskName;
 
-    public ViewEvent( View view, Type eventType ) {
+    public TaskEvent( Type eventType, int taskId ) {
         super( TYPE_KEY );
         this.eventType = eventType;
-        this.view = view;
+        this.taskId = taskId;
+        taskName = null; 
+    }
+    
+    public TaskEvent( Type eventType, String taskName ) {
+        super( TYPE_KEY );
+        this.eventType = eventType;
+        this.taskName = taskName;
+        taskId = -1; 
     }
 
     @Override
-    public final void notify( ViewEventListener listener ) {
-        listener.onViewEvent( this );
+    public final void notify( TaskEventListener listener ) {
+        listener.onTaskEvent( this );
+        
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append( "ViewEvent [eventType=" );
+        builder.append( "TaskEvent [eventType=" );
         builder.append( eventType );
-        builder.append( ", view=" );
-        builder.append( view.index() );
+        builder.append( ", taskId=" );
+        builder.append( taskId );
         builder.append( "]" );
         return builder.toString();
     }
-
-    
 
 }

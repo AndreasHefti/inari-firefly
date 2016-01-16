@@ -13,50 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.entity.event;
+package com.inari.firefly.asset;
 
-import com.inari.commons.event.AspectedEvent;
-import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.event.Event;
 
-public final class EntityActivationEvent extends AspectedEvent<EntityActivationListener> {
+public final class AssetEvent extends Event<AssetEventListener> {
     
-    public static final EventTypeKey TYPE_KEY = createTypeKey( EntityActivationEvent.class );
+    public static final EventTypeKey TYPE_KEY = createTypeKey( AssetEvent.class );
     
-    public enum Type {
-        ENTITY_ACTIVATED,
-        ENTITY_DEACTIVATED
+    public static enum Type {
+        ASSET_CREATED,
+        ASSET_LOADED,
+        ASSET_DISPOSED,
+        ASSET_DELETED
     }
     
-    public final int entityId;
-    public final AspectBitSet aspect;
+    public final Asset asset;
     public final Type eventType;
 
-    public EntityActivationEvent( int entityId, AspectBitSet aspect, Type eventType ) {
+    public AssetEvent( Asset asset, Type eventType ) {
         super( TYPE_KEY );
-        this.entityId = entityId;
-        this.aspect = aspect;
+        this.asset = asset;
         this.eventType = eventType;
     }
 
     @Override
-    public final AspectBitSet getAspect() {
-        return aspect;
-    }
-
-    @Override
-    public final void notify( EntityActivationListener listener ) {
-        listener.onEntityActivationEvent( this );
+    public final void notify( AssetEventListener listener ) {
+        listener.onAssetEvent( this );
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append( "EntityActivationEvent [eventType=" );
+        builder.append( "AssetEvent [eventType=" );
         builder.append( eventType );
-        builder.append( ", entityId=" );
-        builder.append( entityId );
-        builder.append( ", aspect=" );
-        builder.append( aspect );
+        builder.append( ", assetId=" );
+        builder.append( asset.getId() );
         builder.append( "]" );
         return builder.toString();
     }

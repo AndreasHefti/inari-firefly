@@ -37,8 +37,9 @@ public interface ComponentBuilder {
     <T> ComponentBuilder set( AttributeKey<DynArray<T>> key, T value, int index );
     
     ComponentBuilder add( AttributeKey<IntBag> key, int value );
-    <T> ComponentBuilder add( AttributeKey<T[]> key, T value );
-    <T> ComponentBuilder add( AttributeKey<T[]> key, T[] values );
+    <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value );
+    <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values );
+    <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<T> values );
     ComponentBuilder add( Attribute... attributes );
     
     int build();

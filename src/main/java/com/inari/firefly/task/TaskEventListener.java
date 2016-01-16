@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.asset.event;
+package com.inari.firefly.task;
 
+public interface TaskEventListener {
 
-public interface AssetEventListener {
+    public void onTaskEvent( TaskEvent taskEvent );
 
-    void onAssetEvent( AssetEvent event );
-    
 }

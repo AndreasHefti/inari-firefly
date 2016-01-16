@@ -24,7 +24,7 @@ import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.view.View;
-import com.inari.firefly.system.view.event.ViewEventListener;
+import com.inari.firefly.system.view.ViewEventListener;
 
 public interface FFGraphics extends FFContextInitiable, ViewEventListener {
     

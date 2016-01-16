@@ -18,8 +18,6 @@ package com.inari.firefly.entity;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.control.Controller;
-import com.inari.firefly.entity.event.EntityActivationEvent;
-import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 

@@ -1,12 +1,11 @@
 package com.inari.firefly.graphics.sprite;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
@@ -19,21 +18,21 @@ import com.inari.firefly.system.external.FFGraphics;
 public final class SpriteGroupAsset extends Asset {
     
     public static final AttributeKey<Integer> TEXTURE_ASSET_ID = new AttributeKey<Integer>( "textureAssetId", Integer.class, Asset.class );
-    public static final AttributeKey<Rectangle[]> TEXTURE_REGIONS  = new AttributeKey<Rectangle[]>( "textureRegions", Rectangle[].class, Asset.class );
+    public static final AttributeKey<DynArray<Rectangle>> TEXTURE_REGIONS  = AttributeKey.createForDynArray( "textureRegions", Asset.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
         TEXTURE_ASSET_ID,
         TEXTURE_REGIONS
     } ) );
     
     private int textureAssetId;
-    private final List<Rectangle> textureRegions;
+    private final DynArray<Rectangle> textureRegions;
     
     private int[] spriteIds;
     
     protected SpriteGroupAsset( int assetIntId ) {
         super( assetIntId );
         textureAssetId = -1;
-        textureRegions = new ArrayList<Rectangle>();
+        textureRegions = new DynArray<Rectangle>( 10, 10 );
         spriteIds = null;
     }
 
@@ -55,11 +54,11 @@ public final class SpriteGroupAsset extends Asset {
         this.textureAssetId = textureAssetId;
     }
 
-    public final List<Rectangle> getTextureRegions() {
+    public final DynArray<Rectangle> getTextureRegions() {
         return textureRegions;
     }
     
-    public final void setTextureRegions( List<Rectangle> textureRegions ) {
+    public final void setTextureRegions( DynArray<Rectangle> textureRegions ) {
         checkNotAlreadyLoaded();
         
         this.textureRegions.clear();
@@ -67,7 +66,9 @@ public final class SpriteGroupAsset extends Asset {
             return;
         }
         
-        this.textureRegions.addAll( textureRegions );
+        for ( Rectangle textureRegion : textureRegions ) {
+            this.textureRegions.add( textureRegion );
+        }
     }
     
     public final SpriteGroupAsset addTextureRegion( Rectangle textureRegion ) {
@@ -76,9 +77,9 @@ public final class SpriteGroupAsset extends Asset {
         return this;
     }
     
-    public final SpriteGroupAsset addTextureRegion( Rectangle textureRegion, int index ) {
+    public final SpriteGroupAsset setTextureRegion( Rectangle textureRegion, int index ) {
         checkNotAlreadyLoaded();
-        textureRegions.add( index, textureRegion );
+        textureRegions.set( index, textureRegion );
         return this;
     }
 
@@ -95,19 +96,14 @@ public final class SpriteGroupAsset extends Asset {
         super.fromAttributes( attributes );
         
         textureAssetId = attributes.getValue( TEXTURE_ASSET_ID, textureAssetId );
-        Rectangle[] regions = attributes.getValue( TEXTURE_REGIONS );
-        if ( regions != null ) {
-            setTextureRegions( Arrays.asList( regions ) );
-        }
+        setTextureRegions( attributes.getValue( TEXTURE_REGIONS ) );
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         attributes.put( TEXTURE_ASSET_ID, textureAssetId );
-        
-        Rectangle[] regions = new Rectangle[ textureRegions.size() ];
-        attributes.put( TEXTURE_REGIONS, textureRegions.toArray( regions ) );
+        attributes.put( TEXTURE_REGIONS, textureRegions );
     }
 
     @Override

@@ -31,7 +31,6 @@ import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
-import com.inari.firefly.system.view.event.ViewEvent;
 
 public final class ViewSystem extends ComponentSystem<ViewSystem> {
 

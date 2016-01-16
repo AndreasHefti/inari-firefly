@@ -25,8 +25,6 @@ import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
-import com.inari.firefly.task.event.TaskEvent;
-import com.inari.firefly.task.event.TaskEventListener;
 
 public final class TaskSystem extends ComponentSystem<TaskSystem> implements TaskEventListener {
     

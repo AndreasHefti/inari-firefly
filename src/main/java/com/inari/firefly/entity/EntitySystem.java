@@ -31,9 +31,8 @@ import com.inari.firefly.component.Component.ComponentKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.entity.EntityActivationEvent.Type;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
-import com.inari.firefly.entity.event.EntityActivationEvent;
-import com.inari.firefly.entity.event.EntityActivationEvent.Type;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
@@ -157,8 +156,9 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
 
         inactiveEntities.clear( entityId );
         IndexedTypeSet componentsToRestore = components.remove( entityId );
-
         entityProvider.disposeComponentSet( componentsToRestore );
+        
+        Indexer.disposeObjectIndex( Entity.class, entityId );
     }
     
     public final void delete( String entityName ) {

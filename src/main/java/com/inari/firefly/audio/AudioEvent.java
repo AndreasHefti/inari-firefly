@@ -13,45 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.asset.event;
+package com.inari.firefly.audio;
 
 import com.inari.commons.event.Event;
-import com.inari.firefly.asset.Asset;
 
-public final class AssetEvent extends Event<AssetEventListener> {
+public final class AudioEvent extends Event<AudioEventListener> {
     
-    public static final EventTypeKey TYPE_KEY = createTypeKey( AssetEvent.class );
+    public static final EventTypeKey TYPE_KEY = createTypeKey( AudioEvent.class );
     
-    public static enum Type {
-        ASSET_CREATED,
-        ASSET_LOADED,
-        ASSET_DISPOSED,
-        ASSET_DELETED
+    public enum Type {
+        PLAY_SOUND,
+        STOP_PLAYING
     }
     
-    public final Asset asset;
+    public final int soundId;
+    public final String name;
     public final Type eventType;
 
-    public AssetEvent( Asset asset, Type eventType ) {
+    public AudioEvent( int soundId, Type eventType ) {
         super( TYPE_KEY );
-        this.asset = asset;
+        this.soundId = soundId;
+        this.name = null;
+        this.eventType = eventType;
+    }
+    
+    public AudioEvent( String name, Type eventType ) {
+        super( TYPE_KEY );
+        this.soundId = -1;
+        this.name = name;
         this.eventType = eventType;
     }
 
     @Override
-    public final void notify( AssetEventListener listener ) {
-        listener.onAssetEvent( this );
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "AssetEvent [eventType=" );
-        builder.append( eventType );
-        builder.append( ", assetId=" );
-        builder.append( asset.getId() );
-        builder.append( "]" );
-        return builder.toString();
+    public final void notify( AudioEventListener listener ) {
+        listener.onSoundEvent( this );
     }
 
 }

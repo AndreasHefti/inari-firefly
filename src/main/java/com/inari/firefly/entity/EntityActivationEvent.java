@@ -13,38 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.entity.event;
+package com.inari.firefly.entity;
 
 import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.lang.aspect.AspectBitSet;
 
-@Deprecated // check if this is really useful
-public abstract class EntityChangeEvent extends AspectedEvent<EntityChangeListener> {
+public final class EntityActivationEvent extends AspectedEvent<EntityActivationListener> {
     
-    public static final EventTypeKey TYPE_KEY = createTypeKey( EntityChangeEvent.class );
+    public static final EventTypeKey TYPE_KEY = createTypeKey( EntityActivationEvent.class );
     
     public enum Type {
-        COMPONENT_ADDED,
-        COMPONENT_CHANGED,
-        COMPONENT_REMOVED
+        ENTITY_ACTIVATED,
+        ENTITY_DEACTIVATED
     }
     
     public final int entityId;
-    public final int componentId;
     public final AspectBitSet aspect;
-    public final Type type;
+    public final Type eventType;
     
-    public EntityChangeEvent( int entityId, int componentId, AspectBitSet aspect, Type type ) {
+    public EntityActivationEvent( int entityId, AspectBitSet aspect, Type eventType ) {
         super( TYPE_KEY );
         this.entityId = entityId;
-        this.componentId = componentId;
         this.aspect = aspect;
-        this.type = type;
+        this.eventType = eventType;
     }
 
     @Override
-    public AspectBitSet getAspect() {
+    public final AspectBitSet getAspect() {
         return aspect;
+    }
+
+    @Override
+    public final void notify( EntityActivationListener listener ) {
+        listener.onEntityActivationEvent( this );
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "EntityActivationEvent [eventType=" );
+        builder.append( eventType );
+        builder.append( ", entityId=" );
+        builder.append( entityId );
+        builder.append( ", aspect=" );
+        builder.append( aspect );
+        builder.append( "]" );
+        return builder.toString();
     }
 
 }

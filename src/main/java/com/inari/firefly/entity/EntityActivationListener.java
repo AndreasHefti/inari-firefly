@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.task.event;
+package com.inari.firefly.entity;
 
-public interface TaskEventListener {
+import com.inari.commons.event.AspectedEventListener;
 
-    public void onTaskEvent( TaskEvent taskEvent );
+public interface EntityActivationListener extends AspectedEventListener {
+
+    public void onEntityActivationEvent( EntityActivationEvent event );
 
 }

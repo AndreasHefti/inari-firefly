@@ -15,8 +15,6 @@
  ******************************************************************************/ 
 package com.inari.firefly.audio;
 
-import com.inari.firefly.audio.event.AudioEvent;
-import com.inari.firefly.audio.event.AudioEventListener;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;

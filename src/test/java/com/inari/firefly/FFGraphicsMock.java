@@ -13,7 +13,7 @@ import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.view.View;
-import com.inari.firefly.system.view.event.ViewEvent;
+import com.inari.firefly.system.view.ViewEvent;
 
 public class FFGraphicsMock implements FFGraphics {
     

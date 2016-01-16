@@ -130,13 +130,8 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
         }
         return result;
     }
-    
-    public void initControlledAttributes() {
-        // TODO Auto-generated method stub
-        
-    }
 
-    void disposeComponentSet( IndexedTypeSet components ) {
+    public void disposeComponentSet( IndexedTypeSet components ) {
         for ( int i = 0; i < components.length(); i++ ) {
             EntityComponent component = components.get( i );
             if ( component != null ) {
@@ -156,7 +151,7 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
         disposedComponentSets.add( components );
     }
 
-    void createComponents( IndexedTypeSet components, EntityAttributeMap attributes ) {
+    public void createComponents( IndexedTypeSet components, EntityAttributeMap attributes ) {
 
         Set<Class<? extends EntityComponent>> componentTypes = attributes.getEntityComponentTypes();
         for ( Class<? extends EntityComponent> componentType : componentTypes ) {
@@ -166,7 +161,7 @@ public final class EntityProvider implements FFSystem, FFContextInitiable  {
         }
     }
 
-    void initAttributesOnController( EntityAttributeMap attributes ) {
+    public void initAttributesOnController( EntityAttributeMap attributes ) {
         if ( !attributes.contains( EEntity.CONTROLLER_IDS ) ) {
             return;
         }

@@ -1,4 +1,4 @@
-package com.inari.firefly.entity;
+package com.inari.firefly.entity.prefab;
 
 import java.util.ArrayDeque;
 import java.util.Iterator;
@@ -6,8 +6,10 @@ import java.util.Iterator;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.entity.event.EntityPrefabActionEvent;
-import com.inari.firefly.entity.event.EntityPrefabActionListener;
+import com.inari.firefly.entity.EntityAttributeMap;
+import com.inari.firefly.entity.EntityComponent;
+import com.inari.firefly.entity.EntityProvider;
+import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
@@ -168,13 +170,13 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
 
         IndexedTypeSet components = entitySystem.getComponents( entityId );
         components.clear();
-        IndexedTypeSet newComponents = getComponents( prefabId );
+        IndexedTypeSet newComponents = copyComponents( prefabComponents.get( prefabId ) );
+        components.setAll( newComponents );
         if ( attributes != null && ! attributes.isEmpty() ) {
-            for( EntityComponent component : newComponents.<EntityComponent>getIterable() ) {
-                component.toAttributes( attributeMap );
+            for ( EntityComponent component : newComponents.<EntityComponent>getIterable() ) {
+                component.fromAttributes( attributes );
             }
         }
-        entitySystem.components.set( entityId, newComponents );
 
         if ( activation ) {
             entitySystem.activateEntity( entityId );
