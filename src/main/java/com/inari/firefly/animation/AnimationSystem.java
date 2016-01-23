@@ -31,8 +31,7 @@ public final class AnimationSystem
     extends 
         ComponentSystem<AnimationSystem>
     implements
-        UpdateEventListener, 
-        AnimationEventListener {
+        UpdateEventListener {
     
     public static final FFSystemTypeKey<AnimationSystem> SYSTEM_KEY = FFSystemTypeKey.create( AnimationSystem.class );
     
@@ -55,7 +54,7 @@ public final class AnimationSystem
         super.init( context );
         
         context.registerListener( UpdateEvent.class, this );
-        context.registerListener( AnimationEvent.class, this );
+        context.registerListener( AnimationSystemEvent.class, this );
     }
     
     @Override
@@ -63,18 +62,17 @@ public final class AnimationSystem
         clear();
         
         context.disposeListener( UpdateEvent.class, this );
-        context.disposeListener( AnimationEvent.class, this );
+        context.disposeListener( AnimationSystemEvent.class, this );
     }
     
     public final void clear() {
         for ( Animation animation : animations ) {
-            disposeAnimation( animation );
+            disposeSystemComponent( animation );
         }
         animations.clear();
     }
 
-    @Override
-    public void onAnimationEvent( AnimationEvent event ) {
+    final void onAnimationEvent( AnimationSystemEvent event ) {
         if ( !animations.contains( event.animationId ) ) {
             return;
         }
@@ -245,7 +243,7 @@ public final class AnimationSystem
             return;
         }
         
-        disposeAnimation( animations.remove( animationId ) );
+        disposeSystemComponent( animations.remove( animationId ) );
     }
     
     public final int getAnimationId( int animationResolverId, int defaultValue ) {
@@ -269,13 +267,6 @@ public final class AnimationSystem
         return SUPPORTED_COMPONENT_TYPES;
     }
     
-    private final void disposeAnimation( Animation animation ) {
-        if ( animation == null ) {
-            return;
-        }
-
-        animation.dispose();
-    }
 
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {

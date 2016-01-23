@@ -28,12 +28,8 @@ import com.inari.firefly.component.attr.Attribute;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
-import com.inari.firefly.state.WorkflowEvent;
-import com.inari.firefly.state.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
-import com.inari.firefly.system.RenderEvent;
-import com.inari.firefly.system.RenderEventListener;
 
 public abstract class BaseComponentBuilder implements ComponentBuilder {
     
@@ -365,12 +361,6 @@ public abstract class BaseComponentBuilder implements ComponentBuilder {
     protected final void postInit( Component component, FFContext context ) {
         if ( component instanceof FFContextInitiable ) {
             ( (FFContextInitiable) component ).init( context );
-        }
-        if ( component instanceof WorkflowEventListener ) {
-            context.registerListener( WorkflowEvent.class, (WorkflowEventListener) component );
-        }
-        if ( component instanceof RenderEventListener ) {
-            context.registerListener( RenderEvent.class, (RenderEventListener) component );
         }
     }
 

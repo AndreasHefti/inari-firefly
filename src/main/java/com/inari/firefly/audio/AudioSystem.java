@@ -22,6 +22,7 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.build.ComponentCreationException;
+import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
@@ -31,9 +32,7 @@ import com.inari.firefly.system.external.FFAudio;
 
 public final class AudioSystem
     extends
-        ComponentSystem<AudioSystem>
-    implements 
-        AudioEventListener {
+        ComponentSystem<AudioSystem> {
     
     public static final FFSystemTypeKey<AudioSystem> SYSTEM_KEY = FFSystemTypeKey.create( AudioSystem.class );
     
@@ -42,6 +41,7 @@ public final class AudioSystem
     };
 
     private AssetSystem assetSystem;
+    private ControllerSystem controllerSystem;
     private FFAudio audio;
     
     private final DynArray<Sound> sounds;
@@ -56,16 +56,17 @@ public final class AudioSystem
         super.init( context );
         
         assetSystem = context.getSystem( AssetSystem. SYSTEM_KEY );
+        controllerSystem = context.getSystem( ControllerSystem. SYSTEM_KEY );
         audio = context.getAudio();
         
-        context.registerListener( AudioEvent.class, this );
+        context.registerListener( AudioSystemEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
         clear();
         
-        context.disposeListener( AudioEvent.class, this );
+        context.disposeListener( AudioSystemEvent.class, this );
     }
 
     public final void clear() {
@@ -117,8 +118,7 @@ public final class AudioSystem
         return sound.getId();
     }
 
-    @Override
-    public final void onSoundEvent( AudioEvent event ) {
+    final void onSoundEvent( AudioSystemEvent event ) {
         Sound sound;
         if ( event.name!= null ) {
             sound = getSound( event.name );
@@ -132,36 +132,54 @@ public final class AudioSystem
         
         switch ( event.eventType ) {
             case PLAY_SOUND : {
-                if ( sound.streaming ) {
-                    audio.playMusic( 
-                        sound.getSoundId(), 
-                        sound.isLooping(), 
-                        sound.getVolume(), 
-                        sound.getPan() 
-                    );
-                } else {
-                    sound.instanceId = audio.playSound( 
-                        sound.getSoundId(), 
-                        sound.getChannel(), 
-                        sound.isLooping(), 
-                        sound.getVolume(), 
-                        sound.getPitch(), 
-                        sound.getPan() 
-                    );
-                } 
+                playSound( sound ); 
                 break;
             }
             case STOP_PLAYING : {
-                if ( sound.streaming ) {
-                    audio.stopMusic( sound.getSoundId() );
-                } else {
-                    audio.stopSound( sound.getSoundId(), sound.instanceId );
-                } 
+                stopPlaying( sound ); 
                 break;
             }
         }
     }
     
+    private final void stopPlaying( Sound sound ) {
+        if ( sound.streaming ) {
+            audio.stopMusic( sound.getSoundId() );
+        } else {
+            audio.stopSound( sound.getSoundId(), sound.instanceId );
+        }
+        
+        int controllerId = sound.getControllerId();
+        if ( controllerId >= 0 ) {
+            controllerSystem.removeControlledComponentId( controllerId, sound.soundId );
+        }
+    }
+
+    private final void playSound( Sound sound ) {
+        if ( sound.streaming ) {
+            audio.playMusic( 
+                sound.getSoundId(), 
+                sound.isLooping(), 
+                sound.getVolume(), 
+                sound.getPan() 
+            );
+        } else {
+            sound.instanceId = audio.playSound( 
+                sound.getSoundId(), 
+                sound.getChannel(), 
+                sound.isLooping(), 
+                sound.getVolume(), 
+                sound.getPitch(), 
+                sound.getPan() 
+            );
+        }
+        
+        int controllerId = sound.getControllerId();
+        if ( controllerId >= 0 ) {
+            controllerSystem.addControlledComponentId( controllerId, sound.soundId );
+        }
+    }
+
     public final SoundBuilder getSoundBuilder() {
         return new SoundBuilder();
     }

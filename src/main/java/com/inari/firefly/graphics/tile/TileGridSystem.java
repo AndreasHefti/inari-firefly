@@ -79,6 +79,7 @@ public final class TileGridSystem
 
         context.registerListener( ViewEvent.class, this );
         context.registerListener( EntityActivationEvent.class, this );
+        context.registerListener( TileSystemEvent.class, this );
     }
 
     public final TileGridRendererBuilder getRendererBuilder() {
@@ -89,6 +90,7 @@ public final class TileGridSystem
     public final void dispose( FFContext context ) {
         context.disposeListener( ViewEvent.class, this );
         context.disposeListener( EntityActivationEvent.class, this );
+        context.disposeListener( TileSystemEvent.class, this );
         
         for ( TileGridRenderer r : renderer ) {
             context.disposeListener( RenderEvent.class, r );
@@ -96,6 +98,37 @@ public final class TileGridSystem
         }
         
         clear();
+    }
+    
+    final void tileGridEvent( TileSystemEvent event ) {
+        switch ( event.type ) {
+            case MULTIPOSITION_ADD: {
+                addMultiTilePosition( 
+                    event.tileGridId, event.entityId,
+                    event.gridPosition.x, event.gridPosition.y 
+                );
+                break;
+            }
+            case MULTIPOSITION_REMOVE: {
+                removeMultiTilePosition( 
+                    event.tileGridId, event.entityId,
+                    event.gridPosition.x, event.gridPosition.y 
+                );
+                break;
+            }
+        }
+    }
+
+    public final void removeMultiTilePosition( int tileGridId, int entityId, int x, int y ) {
+        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
+        tile.getGridPositions().remove( new Position( x, y ) );
+        getTileGrid( tileGridId ).reset( x, y );
+    }
+
+    public final void addMultiTilePosition( int tileGridId, int entityId, int x, int y ) {
+        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
+        tile.getGridPositions().add( new Position( x, y ) );
+        getTileGrid( tileGridId ).set( entityId, x, y );
     }
 
     @Override
@@ -205,6 +238,7 @@ public final class TileGridSystem
             DynArray<TileGrid> toRemove = tileGridOfViewsPerLayer.remove( viewId );
             for ( TileGrid tileGrid : toRemove ) {
                 tileGrids.remove( tileGrid.index() );
+                disposeSystemComponent( tileGrid );
             }
         }
     }
@@ -224,6 +258,7 @@ public final class TileGridSystem
         
         TileGrid removed = tileGridsForView.remove( layerId );
         tileGrids.remove( removed.index() );
+        disposeSystemComponent( removed );
     }
     
     public final void deleteTileGrid( int tileGridId ) {

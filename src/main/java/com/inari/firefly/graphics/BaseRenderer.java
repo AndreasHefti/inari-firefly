@@ -4,6 +4,7 @@ import com.inari.firefly.Disposable;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFGraphics;
@@ -20,11 +21,13 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
         
         graphics = context.getGraphics();
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        context.registerListener( RenderEvent.class, this );
     }
     
     @Override
     public void dispose( FFContext context ) {
         super.dispose();
+        context.disposeListener( RenderEvent.class, this );
     };
     
     protected final void render( SpriteRenderable sprite ) {

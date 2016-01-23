@@ -14,12 +14,15 @@ import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.FFInitException;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.ContextComponent;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.graphics.TextureAsset;
+import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFSystem.FFSystemTypeKey;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
@@ -142,7 +145,24 @@ public final class FFContext {
     }
     
     //---- SystemComponent adaption ----
+    
+    public final int getTextureId( String textureName ) {
+        Asset asset = getSystemComponent( TextureAsset.TYPE_KEY, textureName );
+        if ( asset == null ) {
+            return -1;
+        }
+        
+        return asset.getInstanceId();
+    }
 
+    public final int getSpriteId( String textureName ) {
+        Asset asset = getSystemComponent( SpriteAsset.TYPE_KEY, textureName );
+        if ( asset == null ) {
+            return -1;
+        }
+        
+        return asset.getInstanceId();
+    }
 
     public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, int componentId ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
@@ -184,8 +204,11 @@ public final class FFContext {
         builderHelper.deleteComponent( componentId );
     }
     
-    
-    
+    public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, String componentName ) {
+        SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
+        builderHelper.deleteComponent( componentName );
+    }
+
     public final <T extends ContextComponent> T getContextComponent( TypedKey<T> componentKey ) {
         return componentKey.cast(contextComponents.get( componentKey ) );
     }
@@ -212,6 +235,10 @@ public final class FFContext {
     
     public final <T extends EntityComponent> T getEntityComponent( int entityId, EntityComponentTypeKey<T> typeKey ) {
         return entitySystem.getComponent( entityId, typeKey );
+    }
+    
+    public final void activateEntity( int entityId ) {
+        entitySystem.activateEntity( entityId );
     }
     
     public final void deactivateEntity( int entityId ) {

@@ -26,15 +26,13 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.task.TaskEvent;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public class StateSystem
     extends
         ComponentSystem<StateSystem>
     implements 
-        UpdateEventListener,
-        WorkflowEventListener {
+        UpdateEventListener {
     
     public static final FFSystemTypeKey<StateSystem> SYSTEM_KEY = FFSystemTypeKey.create( StateSystem.class );
     
@@ -43,8 +41,7 @@ public class StateSystem
     };
 
     private final DynArray<Workflow> workflows;
-    
-    private int updateStep = 1;
+
 
     public StateSystem() {
         super( SYSTEM_KEY );
@@ -56,23 +53,15 @@ public class StateSystem
         super.init( context );
         
         context.registerListener( UpdateEvent.class, this );
-        context.registerListener( WorkflowEvent.class, this );
+        context.registerListener( StateSystemEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
         context.disposeListener( UpdateEvent.class, this );
-        context.disposeListener( WorkflowEvent.class, this );
+        context.disposeListener( StateSystemEvent.class, this );
         
         clear();
-    }
-
-    public final int getUpdateStep() {
-        return updateStep;
-    }
-
-    public final void setUpdateStep( int updateStep ) {
-        this.updateStep = updateStep;
     }
 
     public final void clear() {
@@ -88,18 +77,12 @@ public class StateSystem
         if ( workflow == null || workflow.isActive() ) {
             return;
         }
-
-        String initTaskName = workflow.getInitTaskName();
-        if ( initTaskName != null ) {
-            context.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, initTaskName ) );
-        }
         
         workflow.activate();
-        context.notify( WorkflowEvent.createWorkflowStartedEvent( workflow.getId(), workflow.getName(), initTaskName ) );
+        context.notify( WorkflowEvent.createWorkflowStartedEvent( workflow.getId(), workflow.getName(), workflow.getCurrentState() ) );
     }
     
-    @Override
-    public void onEvent( WorkflowEvent event ) {
+    final void onEvent( StateSystemEvent event ) {
         switch ( event.type ) {
             case DO_STATE_CHANGE: {
                 Workflow workflow = ( event.workflowName != null )? getWorkflow( event.workflowName ) : getWorkflow( event.workflowId );
@@ -153,11 +136,6 @@ public class StateSystem
     }
 
     private void doStateChange( Workflow workflow, StateChange stateChange ) {
-        String taskName = stateChange.getTaskName();
-        if ( taskName != null ) {
-            context.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, taskName ) );
-        }
-        
         String toStateName = stateChange.getToStateName();
         workflow.setCurrentState( toStateName );
         

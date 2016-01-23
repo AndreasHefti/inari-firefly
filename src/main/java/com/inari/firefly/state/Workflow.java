@@ -30,18 +30,15 @@ public final class Workflow extends SystemComponent {
     public static final SystemComponentKey<Workflow> TYPE_KEY = SystemComponentKey.create( Workflow.class );
     
     public static final AttributeKey<String> START_STATE_NAME = new AttributeKey<String>( "startStateName", String.class, Workflow.class );
-    public static final AttributeKey<String> INIT_TASK_NAME = new AttributeKey<String>( "initTaskName", String.class, Workflow.class );
     public static final AttributeKey<DynArray<String>> STATES = AttributeKey.createForDynArray( "states", Workflow.class );
     public static final AttributeKey<DynArray<StateChange>> STATE_CHANGES = AttributeKey.createForDynArray( "stateChanges", Workflow.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         START_STATE_NAME,
-        INIT_TASK_NAME,
         STATES,
         STATE_CHANGES
     };
     
     private String startStateName;
-    private String initTaskName;
     private DynArray<String> states;
     private DynArray<StateChange> stateChanges;
     
@@ -50,7 +47,6 @@ public final class Workflow extends SystemComponent {
     Workflow( int workflowId ) {
         super( workflowId );
         startStateName = null;
-        initTaskName = null;
         states = null;
         stateChanges = null;
         currentStateName = null;
@@ -83,14 +79,6 @@ public final class Workflow extends SystemComponent {
 
     public final void setStartStateName( String startStateName ) {
         this.startStateName = startStateName;
-    }
-
-    public final String getInitTaskName() {
-        return initTaskName;
-    }
-
-    public final void setInitTaskName( String initTaskName ) {
-        this.initTaskName = initTaskName;
     }
 
     public final DynArray<String> getStates() {
@@ -145,7 +133,6 @@ public final class Workflow extends SystemComponent {
         super.fromAttributes( attributes );
         
         startStateName = attributes.getValue( START_STATE_NAME, startStateName );
-        initTaskName = attributes.getValue( INIT_TASK_NAME, initTaskName );
         states = attributes.getValue( STATES, states );
         stateChanges = attributes.getValue( STATE_CHANGES, stateChanges );
     }
@@ -155,7 +142,6 @@ public final class Workflow extends SystemComponent {
         super.toAttributes( attributes );
         
         attributes.put( START_STATE_NAME, startStateName );
-        attributes.put( INIT_TASK_NAME, initTaskName );
         attributes.put( STATES, states );
         attributes.put( STATE_CHANGES, stateChanges );
     }

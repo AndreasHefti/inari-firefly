@@ -16,7 +16,7 @@ import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> implements EntityPrefabActionListener {
+public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     
     public static final FFSystemTypeKey<EntityPrefabSystem> SYSTEM_KEY = FFSystemTypeKey.create( EntityPrefabSystem.class );
     
@@ -51,14 +51,14 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
         
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         entityProvider = context.getSystem( EntityProvider.SYSTEM_KEY );
-        context.registerListener( EntityPrefabActionEvent.class, this );
+        context.registerListener( EntityPrefabSystemEvent.class, this );
     }
     
     @Override
     public void dispose( FFContext context ) {
         clear();
         
-        context.disposeListener( EntityPrefabActionEvent.class, this );
+        context.disposeListener( EntityPrefabSystemEvent.class, this );
     }
     
     public final  void clear() {
@@ -97,8 +97,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> impl
         deletePrefab( prefab );
     }
 
-    @Override
-    public void onPrefabAction( EntityPrefabActionEvent event ) {
+    final void onPrefabAction( EntityPrefabSystemEvent event ) {
         switch ( event.type ) {
             case CREATE_ENTITY: {
                 activateOne( event.prefabId, event.attributes );

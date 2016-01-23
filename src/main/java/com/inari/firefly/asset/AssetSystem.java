@@ -83,7 +83,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         return subType.cast( asset );
     }
     
-    public final int getAssetInstaceId( int assetId ) {
+    public final int getAssetInstanceId( int assetId ) {
         return getAssetInstanceId( getAsset( assetId ) );
     }
     

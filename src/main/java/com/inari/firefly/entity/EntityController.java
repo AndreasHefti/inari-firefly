@@ -21,7 +21,7 @@ import com.inari.firefly.control.Controller;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
-
+// TODO think about add and remove entityIds directly in the EntitySystem instead of listening to EntityActivationListener
 public abstract class EntityController extends Controller implements EntityActivationListener {
     
     protected FFContext context;

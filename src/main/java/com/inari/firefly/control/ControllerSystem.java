@@ -95,7 +95,7 @@ public final class ControllerSystem
         
         Controller removed = controller.remove( controllerId );
         if ( removed != null ) {
-            disposeController( removed );
+            disposeSystemComponent( removed );
         }
     }
     
@@ -116,10 +116,24 @@ public final class ControllerSystem
         
         return -1;
     }
+    
+    public final void addControlledComponentId( int controllerId, int componentId ) {
+        if ( !controller.contains( controllerId ) ) {
+            return;
+        }
+        controller.get( controllerId ).addComponentId( componentId );
+    }
+    
+    public final void removeControlledComponentId( int controllerId, int componentId ) {
+        if ( !controller.contains( controllerId ) ) {
+            return;
+        }
+        controller.get( controllerId ).removeComponentId( componentId );
+    }
 
     public final void clear() {
         for ( Controller c : controller ) {
-            disposeController( c );
+            disposeSystemComponent( c );
         }
         controller.clear();
     }
@@ -149,12 +163,6 @@ public final class ControllerSystem
             new ControllerBuilderAdapter( this )
         };
     }
-    
-    private final void disposeController( Controller c ) {
-        c.dispose( context );
-        c.dispose();
-    }
-    
 
     public final class ControllerBuilder extends SystemComponentBuilder {
         
@@ -206,4 +214,5 @@ public final class ControllerSystem
         }
         
     }
+
 }

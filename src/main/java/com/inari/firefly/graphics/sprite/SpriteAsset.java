@@ -120,7 +120,7 @@ public final class SpriteAsset extends Asset {
             return this;
         }
         
-        textureId = context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetInstaceId( textureAssetId );
+        textureId = context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetInstanceId( textureAssetId );
         spriteId = context.getGraphics().createSprite( this );
         
         return this;

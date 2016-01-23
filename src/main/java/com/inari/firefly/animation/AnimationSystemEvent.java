@@ -20,10 +20,10 @@ import com.inari.commons.event.Event;
 /** Event to operate Animation's
  *  Use this to operate Animation's of all types. Animations can be started, stopped and finished. 
  */
-public final class AnimationEvent extends Event<AnimationEventListener> {
+public final class AnimationSystemEvent extends Event<AnimationSystem> {
     
     /** The type key for AnimationEvent event type */
-    public static final EventTypeKey TYPE_KEY = createTypeKey( AnimationEvent.class );
+    public static final EventTypeKey TYPE_KEY = createTypeKey( AnimationSystemEvent.class );
     
     /** The available and supported types of AnimationEvent */
     public enum Type {
@@ -44,7 +44,7 @@ public final class AnimationEvent extends Event<AnimationEventListener> {
      *  @param type the type of AnimationEvent
      *  @param animationId the id of Animation instance to operate on
      */
-    public AnimationEvent( Type type, int animationId ) {
+    public AnimationSystemEvent( Type type, int animationId ) {
         super( TYPE_KEY );
         this.animationId = animationId;
         this.type = type;
@@ -52,7 +52,7 @@ public final class AnimationEvent extends Event<AnimationEventListener> {
 
     /** NOTE: this is called by the EventDispatcher on specified AnimationEvent. No need to call dis directly */
     @Override
-    public final void notify( AnimationEventListener listener ) {
+    public final void notify( AnimationSystem listener ) {
         listener.onAnimationEvent( this );
     }
 

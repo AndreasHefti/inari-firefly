@@ -18,7 +18,6 @@ package com.inari.firefly.task;
 import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
@@ -26,31 +25,34 @@ import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public final class TaskSystem extends ComponentSystem<TaskSystem> implements TaskEventListener {
+public final class TaskSystem extends ComponentSystem<TaskSystem> {
     
     public static final FFSystemTypeKey<TaskSystem> SYSTEM_KEY = FFSystemTypeKey.create( TaskSystem.class );
     
     private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Task.TYPE_KEY,
+        TaskTrigger.TYPE_KEY
     };
 
     private final DynArray<Task> tasks;
+    private final DynArray<TaskTrigger> triggers;
     
     TaskSystem() {
         super( SYSTEM_KEY );
         tasks = new DynArray<Task>();
+        triggers = new DynArray<TaskTrigger>();
     }
 
     @Override
     public final void init( FFContext context ) {
         super.init( context );
         
-        context.registerListener( TaskEvent.class, this );
+        context.registerListener( TaskSystemEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( TaskEvent.class, this );
+        context.disposeListener( TaskSystemEvent.class, this );
         clear();
     }
     
@@ -73,10 +75,14 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
 
     public final void clear() {
         for ( Task task : tasks ) {
-            deleteTask( task );
+            disposeSystemComponent( task );
+        }
+        for ( TaskTrigger trigger : triggers ) {
+            disposeSystemComponent( trigger );
         }
         
         tasks.clear();
+        triggers.clear();
     }
     
     public final int getTaskId( String taskName ) {
@@ -96,19 +102,35 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
     public final void deleteTask( int taskId ) {
         Task remove = tasks.remove( taskId );
         if ( remove != null ) {
-            deleteTask( remove );
+            disposeSystemComponent( remove );
+        }
+    }
+    
+    public final void deleteTaskTrigger( int taskTriggerId ) {
+        TaskTrigger remove = triggers.remove( taskTriggerId );
+        if ( remove != null ) {
+            disposeSystemComponent( remove );
         }
     }
 
-    private void deleteTask( Task task ) {
-        if ( task instanceof Disposable ) {
-            ( (Disposable) task ).dispose( context );
+    public final TaskTrigger getTaskTrigger( int taskTriggerId ) {
+        if ( !triggers.contains( taskTriggerId ) ) {
+            return null;
         }
-        task.dispose();
+        return triggers.get( taskTriggerId );
     }
 
-    @Override
-    public final void onTaskEvent( TaskEvent taskEvent ) {
+    public final int getTaskTriggerId( String name ) {
+        for ( TaskTrigger trigger : triggers ) {
+            if ( name.equals( trigger.getName() ) ) {
+                return trigger.getId();
+            }
+        }
+        
+        return -1;
+    }
+
+    final void onTaskEvent( TaskSystemEvent taskEvent ) {
         switch ( taskEvent.eventType ) {
             case RUN_TASK: {
                 Task task;
@@ -136,6 +158,10 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
     public final TaskBuilder getTaskBuilder() {
         return new TaskBuilder();
     }
+    
+    public final TaskTriggerBuilder getTaskTriggerBuilder() {
+        return new TaskTriggerBuilder();
+    }
 
     @Override
     public final SystemComponentKey<?>[] supportedComponentTypes() {
@@ -145,7 +171,8 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new TaskBuilderAdapter( this )
+            new TaskBuilderAdapter( this ),
+            new TaskTriggerBuilderAdapter( this )
         };
     }
 
@@ -165,6 +192,26 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
             result.fromAttributes( attributes );
             
             tasks.set( result.getId(), result );
+            postInit( result, context );
+            return result.getId();
+        }
+    }
+    
+    public final class TaskTriggerBuilder extends SystemComponentBuilder {
+
+        @Override
+        public final SystemComponentKey<TaskTrigger> systemComponentKey() {
+            return TaskTrigger.TYPE_KEY;
+        }
+        
+        @Override
+        public final int doBuild( int componentId, Class<?> taskTriggerType, boolean activate ) {
+            attributes.put( Component.INSTANCE_TYPE_NAME, taskTriggerType.getName() );
+            
+            TaskTrigger result = getInstance( context, componentId );
+            result.fromAttributes( attributes );
+            
+            triggers.set( result.getId(), result );
             postInit( result, context );
             return result.getId();
         }
@@ -200,4 +247,34 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> implements Tas
         }
     }
     
+    private final class TaskTriggerBuilderAdapter extends SystemBuilderAdapter<TaskTrigger> {
+        public TaskTriggerBuilderAdapter( TaskSystem system ) {
+            super( system, new TaskTriggerBuilder() );
+        }
+        @Override
+        public final SystemComponentKey<TaskTrigger> componentTypeKey() {
+            return TaskTrigger.TYPE_KEY;
+        }
+        @Override
+        public final TaskTrigger getComponent( int id ) {
+            return triggers.get( id );
+        }
+        @Override
+        public final Iterator<TaskTrigger> getAll() {
+            return triggers.iterator();
+        }
+        @Override
+        public final void deleteComponent( int id ) {
+            deleteTaskTrigger( id );
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteTaskTrigger( getTaskTriggerId( name ) );
+        }
+        @Override
+        public final TaskTrigger getComponent( String name ) {
+            return getTaskTrigger( getTaskTriggerId( name ) );
+        }
+    }
+
 }

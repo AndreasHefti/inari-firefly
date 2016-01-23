@@ -17,9 +17,9 @@ package com.inari.firefly.task;
 
 import com.inari.commons.event.Event;
 
-public final class TaskEvent extends Event<TaskEventListener> {
+public final class TaskSystemEvent extends Event<TaskSystem> {
     
-    public static final EventTypeKey TYPE_KEY = createTypeKey( TaskEvent.class );
+    public static final EventTypeKey TYPE_KEY = createTypeKey( TaskSystemEvent.class );
     
     public enum Type {
         RUN_TASK,
@@ -30,14 +30,14 @@ public final class TaskEvent extends Event<TaskEventListener> {
     public final int taskId;
     public final String taskName;
 
-    public TaskEvent( Type eventType, int taskId ) {
+    public TaskSystemEvent( Type eventType, int taskId ) {
         super( TYPE_KEY );
         this.eventType = eventType;
         this.taskId = taskId;
         taskName = null; 
     }
     
-    public TaskEvent( Type eventType, String taskName ) {
+    public TaskSystemEvent( Type eventType, String taskName ) {
         super( TYPE_KEY );
         this.eventType = eventType;
         this.taskName = taskName;
@@ -45,7 +45,7 @@ public final class TaskEvent extends Event<TaskEventListener> {
     }
 
     @Override
-    public final void notify( TaskEventListener listener ) {
+    public final void notify( TaskSystem listener ) {
         listener.onTaskEvent( this );
         
     }

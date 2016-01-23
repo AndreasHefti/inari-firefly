@@ -16,6 +16,7 @@
 package com.inari.firefly.system.component;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
+import com.inari.firefly.Disposable;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.system.FFContext;
@@ -52,8 +53,20 @@ public abstract class ComponentSystem<T extends ComponentSystem<T>> implements F
         this.context = context;
     }
     
-    public ComponentBuilder getComponentBuilder( SystemComponentKey<?> componentTypeKey ) {
+    public final ComponentBuilder getComponentBuilder( SystemComponentKey<?> componentTypeKey ) {
         return context.getComponentBuilder( componentTypeKey );
+    }
+    
+    protected final void disposeSystemComponent( SystemComponent component ) {
+        if ( component == null ) {
+            return;
+        }
+        
+        if ( component instanceof Disposable ) {
+            ( (Disposable) component ).dispose( context );
+        }
+
+        component.dispose();
     }
 
     public abstract SystemComponentKey<?>[] supportedComponentTypes();

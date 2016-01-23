@@ -17,9 +17,9 @@ package com.inari.firefly.audio;
 
 import com.inari.commons.event.Event;
 
-public final class AudioEvent extends Event<AudioEventListener> {
+public final class AudioSystemEvent extends Event<AudioSystem> {
     
-    public static final EventTypeKey TYPE_KEY = createTypeKey( AudioEvent.class );
+    public static final EventTypeKey TYPE_KEY = createTypeKey( AudioSystemEvent.class );
     
     public enum Type {
         PLAY_SOUND,
@@ -30,14 +30,14 @@ public final class AudioEvent extends Event<AudioEventListener> {
     public final String name;
     public final Type eventType;
 
-    public AudioEvent( int soundId, Type eventType ) {
+    public AudioSystemEvent( int soundId, Type eventType ) {
         super( TYPE_KEY );
         this.soundId = soundId;
         this.name = null;
         this.eventType = eventType;
     }
     
-    public AudioEvent( String name, Type eventType ) {
+    public AudioSystemEvent( String name, Type eventType ) {
         super( TYPE_KEY );
         this.soundId = -1;
         this.name = name;
@@ -45,7 +45,7 @@ public final class AudioEvent extends Event<AudioEventListener> {
     }
 
     @Override
-    public final void notify( AudioEventListener listener ) {
+    public final void notify( AudioSystem listener ) {
         listener.onSoundEvent( this );
     }
 

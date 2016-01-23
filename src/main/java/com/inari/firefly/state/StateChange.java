@@ -22,22 +22,16 @@ public final class StateChange implements StringConfigurable {
     String name;
     String fromStateName;
     String toStateName;
-    String taskName;
     StateChangeCondition condition;
     
     public StateChange( String name, String fromStateName, String toStateName ) {
-        this( name, fromStateName, toStateName, null, null );
+        this( name, fromStateName, toStateName, null );
     }
-    
-    public StateChange( String name, String fromStateName, String toStateName, String taskName ) {
-        this( name, fromStateName, toStateName, taskName, null );
-    }
-    
-    public StateChange( String name, String fromStateName, String toStateName, String taskName, StateChangeCondition condition ) {
+
+    public StateChange( String name, String fromStateName, String toStateName, StateChangeCondition condition ) {
         this.name = name;
         this.fromStateName = fromStateName;
         this.toStateName = toStateName;
-        this.taskName = taskName;
         this.condition = condition;
     }
     
@@ -51,10 +45,6 @@ public final class StateChange implements StringConfigurable {
 
     public final String getToStateName() {
         return toStateName;
-    }
-
-    public final String getTaskName() {
-        return taskName;
     }
 
     public final StateChangeCondition getCondition() {

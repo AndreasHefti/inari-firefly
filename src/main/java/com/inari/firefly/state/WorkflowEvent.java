@@ -22,7 +22,6 @@ public final class WorkflowEvent extends Event<WorkflowEventListener> {
     public static final EventTypeKey TYPE_KEY = createTypeKey( WorkflowEvent.class );
     
     public enum Type {
-        DO_STATE_CHANGE,
         WORKFLOW_STARTED,
         STATE_CHANGED,
         WORKFLOW_FINISHED
@@ -78,16 +77,8 @@ public final class WorkflowEvent extends Event<WorkflowEventListener> {
         return builder.toString();
     }
 
-    public static final WorkflowEvent createDoStateChangeEvent( String workflowName, String stateChangeName ) {
-        return new WorkflowEvent( Type.DO_STATE_CHANGE, -1, workflowName, stateChangeName, null, null );
-    }
-    
-    public static final WorkflowEvent createDoStateChangeEventTo( String workflowName, String targetStateName ) {
-        return new WorkflowEvent( Type.DO_STATE_CHANGE, -1, workflowName, null, null, targetStateName );
-    }
-
-    public static final WorkflowEvent createWorkflowStartedEvent( int workflowId, String workflowName, String initTaskName ) {
-        return new WorkflowEvent( Type.WORKFLOW_STARTED, workflowId, workflowName, null, null , initTaskName );
+    public static final WorkflowEvent createWorkflowStartedEvent( int workflowId, String workflowName, String startStateName ) {
+        return new WorkflowEvent( Type.WORKFLOW_STARTED, workflowId, workflowName, null, null, startStateName );
     }
 
     public static final WorkflowEvent createStateChangedEvent( int workflowId, String workflowName, StateChange stateChange ) {
@@ -103,7 +94,5 @@ public final class WorkflowEvent extends Event<WorkflowEventListener> {
             stateChange.getName(), stateChange.getFromStateName() , stateChange.getToStateName() 
         );
     }
-
-    
 
 }

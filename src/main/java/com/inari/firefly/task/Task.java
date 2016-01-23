@@ -29,7 +29,7 @@ public abstract class Task extends SystemComponent {
     public static final SystemComponentKey<Task> TYPE_KEY = SystemComponentKey.create( Task.class );
 
     public static final AttributeKey<Boolean> REMOVE_AFTER_RUN = new AttributeKey<Boolean>( "removeAfterRun", Boolean.class, Task.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         REMOVE_AFTER_RUN
     };
     

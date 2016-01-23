@@ -4,9 +4,9 @@ import com.inari.commons.event.Event;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityAttributeMap;
 
-public final class EntityPrefabActionEvent extends Event<EntityPrefabActionListener> {
+public final class EntityPrefabSystemEvent extends Event<EntityPrefabSystem> {
     
-    public static final EventTypeKey TYPE_KEY = createTypeKey( EntityPrefabActionEvent.class );
+    public static final EventTypeKey TYPE_KEY = createTypeKey( EntityPrefabSystemEvent.class );
 
     public enum Type {
         CREATE_ENTITY,
@@ -21,7 +21,7 @@ public final class EntityPrefabActionEvent extends Event<EntityPrefabActionListe
     public final int number;
     public final boolean activation;
 
-    protected EntityPrefabActionEvent( Type type, int prefabId, int entityId, int number, boolean activation ) {
+    protected EntityPrefabSystemEvent( Type type, int prefabId, int entityId, int number, boolean activation ) {
         super( TYPE_KEY );
         this.type = type;
         this.prefabId = prefabId;
@@ -35,7 +35,7 @@ public final class EntityPrefabActionEvent extends Event<EntityPrefabActionListe
     }
 
     @Override
-    public final void notify( EntityPrefabActionListener listener ) {
+    public final void notify( EntityPrefabSystem listener ) {
         listener.onPrefabAction( this );
     }
 }
