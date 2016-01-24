@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
@@ -29,11 +30,14 @@ public abstract class Task extends SystemComponent {
     public static final SystemComponentKey<Task> TYPE_KEY = SystemComponentKey.create( Task.class );
 
     public static final AttributeKey<Boolean> REMOVE_AFTER_RUN = new AttributeKey<Boolean>( "removeAfterRun", Boolean.class, Task.class );
+    public static final AttributeKey<DynArray<TaskTrigger>> TRIGGERS = AttributeKey.createForDynArray( "triggers", Task.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
-        REMOVE_AFTER_RUN
+        REMOVE_AFTER_RUN,
+        TRIGGERS
     };
     
     private boolean removeAfterRun;
+    private DynArray<TaskTrigger> triggers;
     
     protected Task( int id ) {
         super( id );
@@ -51,7 +55,15 @@ public abstract class Task extends SystemComponent {
     public final void setRemoveAfterRun( boolean removeAfterRun ) {
         this.removeAfterRun = removeAfterRun;
     }
-    
+
+    final DynArray<TaskTrigger> getTriggers() {
+        return triggers;
+    }
+
+    final void setTriggers( DynArray<TaskTrigger> triggers ) {
+        this.triggers = triggers;
+    }
+
     @Override
     public Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
@@ -64,6 +76,7 @@ public abstract class Task extends SystemComponent {
         super.fromAttributes( attributes );
         
         removeAfterRun = attributes.getValue( REMOVE_AFTER_RUN, removeAfterRun );
+        triggers = attributes.getValue( TRIGGERS, triggers );
     }
 
     @Override
@@ -71,6 +84,7 @@ public abstract class Task extends SystemComponent {
         super.toAttributes( attributes );
         
         attributes.put( REMOVE_AFTER_RUN, removeAfterRun );
+        attributes.put( TRIGGERS, triggers );
     }
 
     public abstract void run( FFContext context );

@@ -89,8 +89,23 @@ public class EntitySystemTest {
         assertEquals( "1", String.valueOf( entitySystem.components.size() ) );
         testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         assertEquals(
-            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=0 "
-            + "SystemComponent:Entity(0)::viewId:Integer:ETransform=1, layerId:Integer:ETransform=0, xpos:Float:ETransform=234.0, ypos:Float:ETransform=134.0, pivotx:Float:ETransform=0.0, pivoty:Float:ETransform=0.0, scalex:Float:ETransform=1.0, scaley:Float:ETransform=1.0, rotation:Float:ETransform=0.0, parentId:Integer:ETransform=-1, spriteId:Integer:ESprite=555, ordering:Integer:ESprite=0, tintColor:RGBColor:ESprite=[r=1.0,g=1.0,b=1.0,a=1.0], blendMode:BlendMode:ESprite=NONE", 
+            "SystemComponent:Entity(-1)::"
+            + "ACTIVE_ENTITY_IDS:String=0 SystemComponent:Entity(0)::"
+            + "viewId:Integer:ETransform=1, "
+            + "layerId:Integer:ETransform=0,"
+            + " xpos:Float:ETransform=234.0, "
+            + "ypos:Float:ETransform=134.0, "
+            + "pivotx:Float:ETransform=0.0, "
+            + "pivoty:Float:ETransform=0.0, "
+            + "staticPivot:Boolean:ETransform=false, "
+            + "scalex:Float:ETransform=1.0, "
+            + "scaley:Float:ETransform=1.0, "
+            + "rotation:Float:ETransform=0.0, "
+            + "parentId:Integer:ETransform=-1, "
+            + "spriteId:Integer:ESprite=555, "
+            + "ordering:Integer:ESprite=0, "
+            + "tintColor:RGBColor:ESprite=[r=1.0,g=1.0,b=1.0,a=1.0], "
+            + "blendMode:BlendMode:ESprite=NONE", 
             attrs.toString()
         );
         

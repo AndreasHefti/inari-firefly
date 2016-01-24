@@ -31,16 +31,13 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
     
     private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Task.TYPE_KEY,
-        TaskTrigger.TYPE_KEY
     };
 
     private final DynArray<Task> tasks;
-    private final DynArray<TaskTrigger> triggers;
     
     TaskSystem() {
         super( SYSTEM_KEY );
         tasks = new DynArray<Task>();
-        triggers = new DynArray<TaskTrigger>();
     }
 
     @Override
@@ -77,12 +74,8 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         for ( Task task : tasks ) {
             disposeSystemComponent( task );
         }
-        for ( TaskTrigger trigger : triggers ) {
-            disposeSystemComponent( trigger );
-        }
         
         tasks.clear();
-        triggers.clear();
     }
     
     public final int getTaskId( String taskName ) {
@@ -100,35 +93,20 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
     }
     
     public final void deleteTask( int taskId ) {
-        Task remove = tasks.remove( taskId );
-        if ( remove != null ) {
-            disposeSystemComponent( remove );
-        }
-    }
-    
-    public final void deleteTaskTrigger( int taskTriggerId ) {
-        TaskTrigger remove = triggers.remove( taskTriggerId );
-        if ( remove != null ) {
-            disposeSystemComponent( remove );
-        }
-    }
+        Task task = tasks.remove( taskId );
 
-    public final TaskTrigger getTaskTrigger( int taskTriggerId ) {
-        if ( !triggers.contains( taskTriggerId ) ) {
-            return null;
-        }
-        return triggers.get( taskTriggerId );
-    }
-
-    public final int getTaskTriggerId( String name ) {
-        for ( TaskTrigger trigger : triggers ) {
-            if ( name.equals( trigger.getName() ) ) {
-                return trigger.getId();
+        if ( task != null ) {
+            DynArray<TaskTrigger> triggers = task.getTriggers();
+            if ( triggers != null ) {
+                for ( TaskTrigger trigger : triggers ) {
+                    trigger.dispose( context );
+                }
             }
+            
+            disposeSystemComponent( task );
         }
-        
-        return -1;
     }
+
 
     final void onTaskEvent( TaskSystemEvent taskEvent ) {
         switch ( taskEvent.eventType ) {
@@ -154,13 +132,8 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         }
     }
 
-    
     public final TaskBuilder getTaskBuilder() {
         return new TaskBuilder();
-    }
-    
-    public final TaskTriggerBuilder getTaskTriggerBuilder() {
-        return new TaskTriggerBuilder();
     }
 
     @Override
@@ -171,8 +144,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new TaskBuilderAdapter( this ),
-            new TaskTriggerBuilderAdapter( this )
+            new TaskBuilderAdapter( this )
         };
     }
 
@@ -188,32 +160,20 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         public final int doBuild( int componentId, Class<?> taskType, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, taskType.getName() );
             
-            Task result = getInstance( context, componentId );
-            result.fromAttributes( attributes );
+            Task task = getInstance( context, componentId );
+            task.fromAttributes( attributes );
             
-            tasks.set( result.getId(), result );
-            postInit( result, context );
-            return result.getId();
-        }
-    }
-    
-    public final class TaskTriggerBuilder extends SystemComponentBuilder {
-
-        @Override
-        public final SystemComponentKey<TaskTrigger> systemComponentKey() {
-            return TaskTrigger.TYPE_KEY;
-        }
-        
-        @Override
-        public final int doBuild( int componentId, Class<?> taskTriggerType, boolean activate ) {
-            attributes.put( Component.INSTANCE_TYPE_NAME, taskTriggerType.getName() );
+            tasks.set( task.getId(), task );
+            postInit( task, context );
             
-            TaskTrigger result = getInstance( context, componentId );
-            result.fromAttributes( attributes );
+            DynArray<TaskTrigger> triggers = task.getTriggers();
+            if ( triggers != null ) {
+                for ( TaskTrigger trigger : triggers ) {
+                    trigger.connect( context, task );
+                }
+            }
             
-            triggers.set( result.getId(), result );
-            postInit( result, context );
-            return result.getId();
+            return task.getId();
         }
     }
     
@@ -244,36 +204,6 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         @Override
         public final Task getComponent( String name ) {
             return getTask( getTaskId( name ) );
-        }
-    }
-    
-    private final class TaskTriggerBuilderAdapter extends SystemBuilderAdapter<TaskTrigger> {
-        public TaskTriggerBuilderAdapter( TaskSystem system ) {
-            super( system, new TaskTriggerBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<TaskTrigger> componentTypeKey() {
-            return TaskTrigger.TYPE_KEY;
-        }
-        @Override
-        public final TaskTrigger getComponent( int id ) {
-            return triggers.get( id );
-        }
-        @Override
-        public final Iterator<TaskTrigger> getAll() {
-            return triggers.iterator();
-        }
-        @Override
-        public final void deleteComponent( int id ) {
-            deleteTaskTrigger( id );
-        }
-        @Override
-        public final void deleteComponent( String name ) {
-            deleteTaskTrigger( getTaskTriggerId( name ) );
-        }
-        @Override
-        public final TaskTrigger getComponent( String name ) {
-            return getTaskTrigger( getTaskTriggerId( name ) );
         }
     }
 

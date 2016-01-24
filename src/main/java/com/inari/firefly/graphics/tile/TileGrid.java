@@ -18,6 +18,7 @@ package com.inari.firefly.graphics.tile;
 import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.geom.Vector2f;
@@ -69,6 +70,9 @@ public final class TileGrid extends SystemComponent {
     private boolean spherical;
     
     protected int[][] grid;
+    
+    private final Rectangle normalisedBounds = new Rectangle( 0, 0, 0, 0 );
+    private final Rectangle tmpClip = new Rectangle();
     
     protected TileGrid( int id ) {
         super( id );
@@ -280,11 +284,20 @@ public final class TileGrid extends SystemComponent {
     }
     
     public final TileIterator iterator() {
-        return new TileIterator( new Rectangle( -1, 0, width, height ) );
+        return new TileIterator( new Rectangle( 0, 0, width, height ) );
     }
     
     public final TileIterator iterator( Rectangle worldClip ) {
-        return new TileIterator( new Rectangle( -1, 0, width, height ) );
+        //return new TileIterator( new Rectangle( 0, 0, width, height ) );
+        return new TileIterator( mapWorldClipToTileGridClip( worldClip ) );
+    }
+
+    final Rectangle mapWorldClipToTileGridClip( Rectangle worldClip ) {
+        tmpClip.x = (int) Math.floor( (double) ( worldClip.x - worldXPos ) / cellWidth );
+        tmpClip.y = (int) Math.floor( (double) ( worldClip.y - worldYPos ) / cellHeight );
+        tmpClip.width = (int) Math.ceil( (double) worldClip.width / cellWidth ) + 1;
+        tmpClip.height = (int) Math.ceil( (double) worldClip.height / cellHeight ) + 1;
+        return GeomUtils.intersection( tmpClip, normalisedBounds );
     }
 
     private void createGrid() {
@@ -304,16 +317,25 @@ public final class TileGrid extends SystemComponent {
                 System.arraycopy( old[ y ], 0, grid[ y ], 0, lowerWidth );
             }
         }
+        
+        normalisedBounds.width = width;
+        normalisedBounds.height = height;
     }
     
     public final class TileIterator implements IntIterator {
         
+        private final int xorig;
+        private final int xsize;
+        private final int ysize;
         private final Rectangle clip;
         private final Vector2f worldPosition;
         private boolean hasNext = true;
         
         private TileIterator( Rectangle clip ) {
-            this.clip = clip;
+            xorig = clip.x;
+            xsize = clip.x + clip.width;
+            ysize = clip.y + clip.height;
+            this.clip = clip; 
             worldPosition = new Vector2f();
             findNext();
         }
@@ -327,6 +349,7 @@ public final class TileGrid extends SystemComponent {
         public final int next() {
             int result = grid[ clip.y ][ clip.x ];
             calcWorldPosition();
+            clip.x++;
             findNext();
             return result;
         }
@@ -340,15 +363,14 @@ public final class TileGrid extends SystemComponent {
         }
 
         private void findNext() {
-            clip.x++;
-            while ( clip.y < clip.height ) {
-                while( clip.x < clip.width ) {
+            while ( clip.y < ysize ) {
+                while( clip.x < xsize ) {
                     if ( grid[ clip.y ][ clip.x ] != NULL_VALUE ) {
                         return;
                     }
                     clip.x++;
                 }
-                clip.x = 0;
+                clip.x = xorig;
                 clip.y++;
             }
             hasNext = false;

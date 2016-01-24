@@ -21,6 +21,7 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.entity.EntitySystem.EntityBuilder;
 import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFSystem.FFSystemTypeKey;
@@ -231,6 +232,10 @@ public final class FFContext {
         }
         
         return systemBuilderAdapter.get( id ).getComponentBuilder();
+    }
+    
+    public final EntityBuilder getEntityBuilder() {
+        return entitySystem.getEntityBuilder();
     }
     
     public final <T extends EntityComponent> T getEntityComponent( int entityId, EntityComponentTypeKey<T> typeKey ) {
