@@ -8,29 +8,20 @@ import static org.junit.Assert.fail;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.Disposable;
-import com.inari.firefly.EventDispatcherTestLog;
-import com.inari.firefly.FireFlyMock;
+import com.inari.firefly.FFTest;
 import com.inari.firefly.asset.AssetSystem.AssetBuilder;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.system.FFContext;
 
-public class AssetSystemTest {
-    
-    @Before
-    public void clear() {
-        Indexer.clear();
-    }
+public class AssetSystemTest extends FFTest {
     
     @Test
     public void testCreation() {
-        FFContext ffContext = new FireFlyMock().getContext();
         ffContext.getSystem( AssetSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
@@ -44,7 +35,6 @@ public class AssetSystemTest {
 
     @Test
     public void testBuildAsset() {
-        FFContext ffContext = new FireFlyMock().getContext();
         AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
         
         service.init( ffContext );
@@ -89,8 +79,6 @@ public class AssetSystemTest {
     
     @Test
     public void testCreateLoadDisposeAndDeleteSingleAsset() {
-        EventDispatcherTestLog eventLog = new EventDispatcherTestLog();
-        FFContext ffContext = new FireFlyMock( eventLog ).getContext();
         AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
         
         service.init( ffContext );
@@ -102,7 +90,7 @@ public class AssetSystemTest {
             .build( TestAsset.class );
         
         assertEquals( 
-            "EventLog [events=[ViewEvent [eventType=VIEW_CREATED, view=0], AssetEvent [eventType=ASSET_CREATED, assetId=0]]]", 
+            "EventLog [events=[AssetEvent [eventType=ASSET_CREATED, assetId=0]]]", 
             eventLog.toString() 
         );
         
@@ -123,7 +111,6 @@ public class AssetSystemTest {
         );
         assertEquals( 
             "EventLog [events=["
-            + "ViewEvent [eventType=VIEW_CREATED, view=0], "
             + "AssetEvent [eventType=ASSET_CREATED, assetId=0], "
             + "AssetEvent [eventType=ASSET_LOADED, assetId=0]]]", 
             eventLog.toString() 
@@ -135,7 +122,6 @@ public class AssetSystemTest {
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
             "EventLog [events=["
-            + "ViewEvent [eventType=VIEW_CREATED, view=0], "
             + "AssetEvent [eventType=ASSET_CREATED, assetId=0], "
             + "AssetEvent [eventType=ASSET_LOADED, assetId=0], "
             + "AssetEvent [eventType=ASSET_DISPOSED, assetId=0]]]", 
@@ -151,7 +137,6 @@ public class AssetSystemTest {
         );
         assertEquals( 
             "EventLog [events=["
-            + "ViewEvent [eventType=VIEW_CREATED, view=0], "
             + "AssetEvent [eventType=ASSET_CREATED, assetId=0], "
             + "AssetEvent [eventType=ASSET_LOADED, assetId=0], "
             + "AssetEvent [eventType=ASSET_DISPOSED, assetId=0], "
@@ -162,9 +147,7 @@ public class AssetSystemTest {
     
     @Test
     public void testPreventingOfUseOfIdTwice() {
-        FFContext ffContext = new FireFlyMock().getContext();
         AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
-        
         Attributes attrs = new Attributes();
         
         service.getAssetBuilder()
@@ -183,7 +166,7 @@ public class AssetSystemTest {
                 e.getMessage() 
             );
             assertEquals( 
-                "The Object index: 1 is already used by another Object!", 
+                "The Object: com.inari.firefly.asset.Asset index: 1 is already used by another Object!", 
                 e.getCause().getMessage() 
            );
         }
@@ -197,7 +180,6 @@ public class AssetSystemTest {
     
     @Test
     public void testDifferentTypes() {
-        FFContext ffContext = new FireFlyMock().getContext();
         AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();

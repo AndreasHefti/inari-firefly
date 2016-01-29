@@ -3,26 +3,17 @@ package com.inari.firefly.animation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import com.inari.commons.lang.indexed.Indexer;
-import com.inari.firefly.FireFlyMock;
+import com.inari.firefly.FFTest;
 import com.inari.firefly.TestTimer;
 import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 
-public class AnimationSystemTest {
-    
-    @Before
-    public void init() {
-        Indexer.clear();
-    }
+public class AnimationSystemTest extends FFTest {
 
     @Test
     public void testCreationWithinContext() {
-        FFContext ffContext = new FireFlyMock().getContext();
         ffContext.getSystem( AnimationSystem.SYSTEM_KEY );
 
         Attributes attrs = new Attributes();
@@ -36,7 +27,6 @@ public class AnimationSystemTest {
 
     @Test
     public void testOneAnimation() {
-        FFContext ffContext = new FireFlyMock().getContext();
         AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.SYSTEM_KEY );
 
         animationSystem.getAnimationBuilder()
@@ -61,7 +51,6 @@ public class AnimationSystemTest {
 
     @Test
     public void testUpdate() {
-        FFContext ffContext = new FireFlyMock().getContext();
         AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.SYSTEM_KEY );
 
         animationSystem.getAnimationBuilder(  )

@@ -81,9 +81,9 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     
     @Override
     public void dispose( FFContext context ) {
-        activeEntities.clear();
-        inactiveEntities.clear();
-        components.clear();
+        clear();
+        
+        
     }
     
     public final EntityBuilder getEntityBuilder() {
@@ -154,10 +154,14 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             return;
         }
 
+        deleteSilently( entityId );
+    }
+    
+    private final void deleteSilently( int entityId ) {
+        activeEntities.clear( entityId );
         inactiveEntities.clear( entityId );
         IndexedTypeSet componentsToRestore = components.remove( entityId );
         entityProvider.disposeComponentSet( componentsToRestore );
-        
         Indexer.disposeObjectIndex( Entity.class, entityId );
     }
     
@@ -174,7 +178,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         }
     }
 
-    public final void deleteAll() {
+    public final void deleteAllActive() {
         for ( int i = activeEntities.nextSetBit( 0 ); i >= 0; i = activeEntities.nextSetBit( i+1 ) ) {
             delete( i );
         }
@@ -182,7 +186,16 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     
     @Override
     public final void clear() {
-        deleteAll();
+        for ( int i = activeEntities.nextSetBit( 0 ); i >= 0; i = activeEntities.nextSetBit( i+1 ) ) {
+            deleteSilently( i );
+        }
+        for ( int i = inactiveEntities.nextSetBit( 0 ); i >= 0; i = inactiveEntities.nextSetBit( i+1 ) ) {
+            deleteSilently( i );
+        }
+        
+        activeEntities.clear();
+        inactiveEntities.clear();
+        components.clear();
     }
     
     public final int getEntityId( String name ) {
@@ -470,7 +483,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         @Override
         public final void fromAttributes( Attributes attributes, BuildType buildType ) {
             if ( buildType == BuildType.CLEAR_OLD ) {
-                deleteAll();
+                deleteAllActive();
             }
             
             EntityBuilder entityBuilder = getEntityBuilder();

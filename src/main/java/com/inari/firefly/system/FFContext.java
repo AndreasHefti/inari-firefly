@@ -322,7 +322,7 @@ public final class FFContext {
         this.exit = true;
     }
 
-    final void dispose() {
+    public final void dispose() {
         for ( ContextComponent component : contextComponents.values() ) {
             if ( component instanceof Disposable ) {
                 ( (Disposable) component ).dispose( this );

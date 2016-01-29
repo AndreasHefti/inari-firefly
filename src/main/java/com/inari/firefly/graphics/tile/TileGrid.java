@@ -71,7 +71,7 @@ public final class TileGrid extends SystemComponent {
     
     protected int[][] grid;
     
-    private final Rectangle normalisedBounds = new Rectangle( 0, 0, 0, 0 );
+    private final Rectangle normalisedWorldBounds = new Rectangle( 0, 0, 0, 0 );
     private final Rectangle tmpClip = new Rectangle();
     
     protected TileGrid( int id ) {
@@ -291,14 +291,14 @@ public final class TileGrid extends SystemComponent {
         return new TileIterator( mapWorldClipToTileGridClip( worldClip ) );
     }
 
-    final Rectangle mapWorldClipToTileGridClip( Rectangle worldClip ) {
+    final Rectangle mapWorldClipToTileGridClip( final Rectangle worldClip ) {
         tmpClip.x = (int) Math.floor( (double) ( worldClip.x - worldXPos ) / cellWidth );
         tmpClip.y = (int) Math.floor( (double) ( worldClip.y - worldYPos ) / cellHeight );
         int x2 = (int) Math.ceil( (double) ( worldClip.x - worldXPos + worldClip.width ) / cellWidth );
         int y2 = (int) Math.ceil( (double) ( worldClip.y - worldYPos + worldClip.height ) / cellHeight );
         tmpClip.width = x2 - tmpClip.x;
         tmpClip.height = y2 - tmpClip.y;
-        return GeomUtils.intersection( tmpClip, normalisedBounds );
+        return GeomUtils.intersection( tmpClip, normalisedWorldBounds );
     }
 
     private void createGrid() {
@@ -319,8 +319,8 @@ public final class TileGrid extends SystemComponent {
             }
         }
         
-        normalisedBounds.width = width;
-        normalisedBounds.height = height;
+        normalisedWorldBounds.width = width;
+        normalisedWorldBounds.height = height;
     }
     
     public final class TileIterator implements IntIterator {

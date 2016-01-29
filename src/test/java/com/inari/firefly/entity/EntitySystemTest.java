@@ -2,29 +2,20 @@ package com.inari.firefly.entity;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import com.inari.commons.lang.indexed.Indexer;
-import com.inari.firefly.FireFlyMock;
+import com.inari.firefly.FFTest;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.graphics.sprite.ESprite;
-import com.inari.firefly.system.FFContext;
 
-public class EntitySystemTest {
-    
-    @Before
-    public void init() {
-        Indexer.clear();
-    }
+public class EntitySystemTest extends FFTest {
     
     @Test
     public void testCreation() {
-        FFContext testContext = new FireFlyMock().getContext();
-        EntitySystem entitySystem = testContext.getSystem( EntitySystem.SYSTEM_KEY );
+        EntitySystem entitySystem = ffContext.getSystem( EntitySystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
-        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
+        ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
             "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
@@ -39,10 +30,10 @@ public class EntitySystemTest {
         
         
         entitySystem = new EntitySystem();
-        entitySystem.init( testContext );
+        entitySystem.init( ffContext );
         
         attrs = new Attributes();
-        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
+        ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
             "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
@@ -52,11 +43,10 @@ public class EntitySystemTest {
     
     @Test
     public void testCreationWithinContext() {
-        FFContext testContext = new FireFlyMock().getContext();
-        testContext.getSystem( EntitySystem.SYSTEM_KEY );
+        ffContext.getSystem( EntitySystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
-        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
+        ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
             "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
@@ -66,11 +56,10 @@ public class EntitySystemTest {
     
     @Test
     public void testCreateAndDelete() {
-        FFContext testContext = new FireFlyMock().getContext();
-        EntitySystem entitySystem = testContext.getSystem( EntitySystem.SYSTEM_KEY );
+        EntitySystem entitySystem = ffContext.getSystem( EntitySystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
-        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
+        ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
             "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
@@ -87,7 +76,7 @@ public class EntitySystemTest {
         assertEquals( "1", String.valueOf( entitySystem.activeEntities.cardinality() ) );
         assertEquals( "0", String.valueOf( entitySystem.inactiveEntities.cardinality() ) );
         assertEquals( "1", String.valueOf( entitySystem.components.size() ) );
-        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
+        ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         assertEquals(
             "SystemComponent:Entity(-1)::"
             + "ACTIVE_ENTITY_IDS:String=0 SystemComponent:Entity(0)::"
@@ -116,7 +105,7 @@ public class EntitySystemTest {
         assertEquals( "0", String.valueOf( entitySystem.inactiveEntities.cardinality() ) );
         assertEquals( "0", String.valueOf( entitySystem.components.size() ) );
         attrs = new Attributes();
-        testContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
+        ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         assertEquals( 
             "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
             attrs.toString()

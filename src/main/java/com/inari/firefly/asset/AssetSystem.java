@@ -192,7 +192,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     
     public final void clear() {
         for ( Asset asset : assets ) {
-            disposeAsset( asset );
+            deleteAsset( asset );
         }
         
         assets.clear();

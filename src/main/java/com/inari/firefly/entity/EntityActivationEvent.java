@@ -55,8 +55,6 @@ public final class EntityActivationEvent extends AspectedEvent<EntityActivationL
         builder.append( eventType );
         builder.append( ", entityId=" );
         builder.append( entityId );
-        builder.append( ", aspect=" );
-        builder.append( aspect );
         builder.append( "]" );
         return builder.toString();
     }

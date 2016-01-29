@@ -4,32 +4,25 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.inari.commons.event.EventDispatcher;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
-import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FireFly;
 import com.inari.firefly.system.external.FFGraphics;
 
-public class SystemTests {
+public class SystemTests extends FFTest {
     
     private static final String TEXTURE_ASSET_NAME = "boulderDashTextureAsset";
     private static final String SPRITE_ASSET_NAME = "spriteAsset";
     
     @Test
     public void createTextureAndSpriteAndOneEntity() {
-        Indexer.clear();
-        FireFly firefly = new FireFlyMock( new EventDispatcher() );
-        FFContext context = firefly.getContext();
-        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
-        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        FFGraphics lowerSystemMock = context.getGraphics();
+        AssetSystem assetSystem = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
+        EntitySystem entitySystem = ffContext.getSystem( EntitySystem.SYSTEM_KEY );
+        FFGraphics lowerSystemMock = ffContext.getGraphics();
         
         assetSystem
             .getAssetBuilder()

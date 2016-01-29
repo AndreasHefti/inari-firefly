@@ -10,25 +10,19 @@ import org.junit.Test;
 
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.indexed.Indexer;
-import com.inari.firefly.EventDispatcherTestLog;
-import com.inari.firefly.FireFlyMock;
+import com.inari.firefly.FFTest;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.system.FFContext;
 
-public class ViewSystemTest {
+public class ViewSystemTest extends FFTest {
 
     @Test
     public void testCreation() {
-        Indexer.clear();
-        EventDispatcherTestLog eventLog = new EventDispatcherTestLog();
-        FFContext context = new FireFlyMock( eventLog ).getContext();
-        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
+        ViewSystem viewSystem = ffContext.getSystem( ViewSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
         
-        context.toAttributes( attrs, View.TYPE_KEY );
+        ffContext.toAttributes( attrs, View.TYPE_KEY );
         assertEquals( 
             "SystemComponent:View(0)::" +
             "name:String=BASE_VIEW, " +
@@ -43,7 +37,7 @@ public class ViewSystemTest {
             attrs.toString() 
         );
         assertEquals( 
-            "EventLog [events=[ViewEvent [eventType=VIEW_CREATED, view=0]]]", 
+            "EventLog [events=[]]", 
             eventLog.toString() 
         );
         
@@ -61,10 +55,7 @@ public class ViewSystemTest {
     
     @Test
     public void testCreateViews() {
-        Indexer.clear();
-        EventDispatcherTestLog eventLog = new EventDispatcherTestLog();
-        FFContext context = new FireFlyMock( eventLog ).getContext();
-        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
+        ViewSystem viewSystem = ffContext.getSystem( ViewSystem.SYSTEM_KEY );
 
         Attributes attrs = new Attributes();
         
@@ -78,7 +69,7 @@ public class ViewSystemTest {
             .set( View.WORLD_POSITION, new Position( 0, 0 ) )
             .build( 2 );
         
-        context.toAttributes( attrs, View.TYPE_KEY );
+        ffContext.toAttributes( attrs, View.TYPE_KEY );
         assertEquals( 
             "SystemComponent:View(0)::" +
             "name:String=BASE_VIEW, " +
@@ -114,7 +105,6 @@ public class ViewSystemTest {
         );
         assertEquals( 
             "EventLog [events=[" +
-            "ViewEvent [eventType=VIEW_CREATED, view=0], " +
             "ViewEvent [eventType=VIEW_CREATED, view=1], " +
             "ViewEvent [eventType=VIEW_CREATED, view=2]]]", 
             eventLog.toString() 
@@ -143,10 +133,7 @@ public class ViewSystemTest {
     
     @Test
     public void testCreateLayersForBaseView() {
-        Indexer.clear();
-        EventDispatcherTestLog eventLog = new EventDispatcherTestLog();
-        FFContext context = new FireFlyMock( eventLog ).getContext();
-        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
+        ViewSystem viewSystem = ffContext.getSystem( ViewSystem.SYSTEM_KEY );
         
         Attributes attrs = new Attributes();
         
@@ -173,7 +160,7 @@ public class ViewSystemTest {
             .set( Layer.NAME, "Layer3" )
             .build();
         
-        context.toAttributes( attrs, View.TYPE_KEY, Layer.TYPE_KEY );
+        ffContext.toAttributes( attrs, View.TYPE_KEY, Layer.TYPE_KEY );
         assertEquals( 
             "SystemComponent:View(0)::" +
             "name:String=BASE_VIEW, " +
@@ -197,7 +184,7 @@ public class ViewSystemTest {
             attrs.toString() 
         );
         assertEquals( 
-            "EventLog [events=[ViewEvent [eventType=VIEW_CREATED, view=0]]]", 
+            "EventLog [events=[]]", 
             eventLog.toString() 
         );
         

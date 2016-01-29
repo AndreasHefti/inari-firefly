@@ -61,6 +61,9 @@ public final class SpriteViewSystem
         
         context.disposeListener( RenderEvent.class, spriteRenderer );
         context.disposeListener( EntityActivationEvent.class, this );
+        
+        spriteRenderer.dispose( context );
+        spriteRenderer.dispose();
     }
     
     @Override
