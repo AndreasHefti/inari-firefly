@@ -16,7 +16,6 @@
 package com.inari.firefly.entity;
 
 import com.inari.commons.lang.aspect.AspectBitSet;
-import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
@@ -25,12 +24,10 @@ import com.inari.firefly.system.external.FFTimer;
 public abstract class EntityController extends Controller implements EntityActivationListener {
     
     protected FFContext context;
-    protected AnimationSystem animationSystem;
     
     protected EntityController( int id, FFContext context ) {
         super( id );
         this.context = context;
-        animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         
         context.registerListener( EntityActivationEvent.class, this );
     }

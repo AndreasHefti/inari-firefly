@@ -126,10 +126,4 @@ public class AnimationSystemTest {
         assertFalse( animationSystem.exists( 0 ) );
     }
 
-//    private FFContext getTestFFContext() {
-//        return 
-////        initMap.put( FFContext.EVENT_DISPATCHER, EventDispatcherMock.class );
-////        FFContext result = new FFContextImpl( initMap, true );
-////        return result;
-//    }
 }

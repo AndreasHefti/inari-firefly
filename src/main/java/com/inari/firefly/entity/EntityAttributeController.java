@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
@@ -69,7 +70,7 @@ public abstract class EntityAttributeController extends EntityController {
     
     @Override
     public final void update( final FFTimer timer ) {
-        animationId = animationSystem.getAnimationId( animationResolverId, animationId );
+        animationId = context.getSystem( AnimationSystem.SYSTEM_KEY ).getAnimationId( animationResolverId, animationId );
         super.update( timer );
     }
 

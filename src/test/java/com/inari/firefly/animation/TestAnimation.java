@@ -1,5 +1,7 @@
 package com.inari.firefly.animation;
 
+import com.inari.firefly.system.external.FFTimer;
+
 public class TestAnimation extends FloatAnimation {
 
     protected TestAnimation( int id ) {
@@ -27,5 +29,11 @@ public class TestAnimation extends FloatAnimation {
         sb.append( ", finished=" ).append( finished );
         sb.append( '}' );
         return sb.toString();
+    }
+
+    @Override
+    public void update( FFTimer timer ) {
+        // TODO Auto-generated method stub
+        
     }
 }

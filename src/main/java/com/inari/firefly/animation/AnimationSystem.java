@@ -110,28 +110,27 @@ public final class AnimationSystem
         Animation animation = animations.get( animationId );
         return animation.isActive();
     }
-    
-    public boolean isFinished( int animationId ) {
-        if ( !exists( animationId ) ) {
-            return true;
-        }
-
-        Animation animation = animations.get( animationId );
-        return animation.isFinished();
-    }
 
     @Override
     public final void update( UpdateEvent event ) {
         for ( int i = 0; i < animations.capacity(); i++ ) {
             Animation animation = animations.get( i );
             if ( animation != null ) {
+                if ( animation.active ) {
+                    animation.systemUpdate( event.timer );
+                    continue;
+                }
+                
                 if ( animation.finished ) {
                     animations.remove( animation.index() );
                     animation.dispose();
                     continue;
                 }
-
-                animation.update( event.timer );
+                
+                if ( animation.startTime > 0 && event.timer.getTime() >= animation.startTime ) {
+                    animation.activate();
+                    continue;
+                }
             }
         }
     }

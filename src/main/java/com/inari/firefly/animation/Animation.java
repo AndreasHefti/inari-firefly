@@ -47,7 +47,7 @@ public abstract class Animation extends SystemComponent {
      *  Use this if there is a concrete time where to start an Animation without use of AnimationEvent.
      */
     public static final AttributeKey<Long> START_TIME = new AttributeKey<Long>( "startTime", Long.class, Animation.class );
-    /** The AttributeKey for the looping attributes that indicates wether the Animation is looping or not */
+    /** The AttributeKey for the looping attributes that indicates whether the Animation is looping or not */
     public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Animation.class );
     
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
@@ -57,8 +57,12 @@ public abstract class Animation extends SystemComponent {
     
     protected long startTime;
     protected boolean looping;
-    protected boolean active;
-    protected boolean finished;
+    
+    boolean active;
+    boolean finished;
+    
+    protected long startedTime;
+    protected long runningTime;
 
     Animation( int id ) {
         super( id );
@@ -98,12 +102,22 @@ public abstract class Animation extends SystemComponent {
         return active;
     }
     
-    final boolean isFinished() {
+    public final boolean isFinished() {
         return finished;
     }
     
-    void setActive() {
+    public final void finish() {
+        reset();
+        finished = true;
+    }
+    
+    public final void activate() {
         active = true;
+    }
+
+    final void systemUpdate( final FFTimer timer ) {
+        runningTime += timer.getTimeElapsed();
+        update( timer );
     }
     
     /** This is called on every update by the AnimationSystem with the current FFTimer.
@@ -113,10 +127,13 @@ public abstract class Animation extends SystemComponent {
      * 
      *  Override this do to other update stuff if needed for a concrete implementation of Animation.
      */
-    public void update( final FFTimer timer ) {
-        if ( !active && timer.getTime() >= startTime ) {
-            setActive();
-        }
+    public abstract void update( final FFTimer timer );
+    
+    public void reset() {
+        active = false;
+        finished = false;
+        startedTime = -1;
+        runningTime = 0;
     }
 
     @Override

@@ -288,15 +288,16 @@ public final class TileGrid extends SystemComponent {
     }
     
     public final TileIterator iterator( Rectangle worldClip ) {
-        //return new TileIterator( new Rectangle( 0, 0, width, height ) );
         return new TileIterator( mapWorldClipToTileGridClip( worldClip ) );
     }
 
     final Rectangle mapWorldClipToTileGridClip( Rectangle worldClip ) {
         tmpClip.x = (int) Math.floor( (double) ( worldClip.x - worldXPos ) / cellWidth );
         tmpClip.y = (int) Math.floor( (double) ( worldClip.y - worldYPos ) / cellHeight );
-        tmpClip.width = (int) Math.ceil( (double) worldClip.width / cellWidth ) + 1;
-        tmpClip.height = (int) Math.ceil( (double) worldClip.height / cellHeight ) + 1;
+        int x2 = (int) Math.ceil( (double) ( worldClip.x - worldXPos + worldClip.width ) / cellWidth );
+        int y2 = (int) Math.ceil( (double) ( worldClip.y - worldYPos + worldClip.height ) / cellHeight );
+        tmpClip.width = x2 - tmpClip.x;
+        tmpClip.height = y2 - tmpClip.y;
         return GeomUtils.intersection( tmpClip, normalisedBounds );
     }
 

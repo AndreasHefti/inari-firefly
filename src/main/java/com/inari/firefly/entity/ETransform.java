@@ -139,10 +139,10 @@ public final class ETransform extends EntityComponent {
         xpos += dx;
         ypos += dy;
         
-        if ( !staticPivot ) {
-            pivotx += dx;
-            pivoty += dy;
-        }
+//        if ( !staticPivot ) {
+//            pivotx += dx;
+//            pivoty += dy;
+//        }
     }
 
     public final float getScalex() {

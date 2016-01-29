@@ -32,8 +32,8 @@ import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.external.FFAudio;
 import com.inari.firefly.system.external.FFGraphics;
-import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFInput;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class FFContext {
 

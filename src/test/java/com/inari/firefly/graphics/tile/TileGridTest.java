@@ -606,8 +606,8 @@ public class TileGridTest {
         
         Rectangle worldClip5 = new Rectangle( -50, -50, 100, 100 );
         Rectangle tileGridClip5 = tileGrid.mapWorldClipToTileGridClip( worldClip5 );
-        assertEquals( "[x=0,y=0,width=6,height=6]", tileGridClip5.toString() );
-        assertEquals( "36", String.valueOf( tileGridClip5.area() ) );
+        assertEquals( "[x=0,y=0,width=5,height=5]", tileGridClip5.toString() );
+        assertEquals( "25", String.valueOf( tileGridClip5.area() ) );
         
         Rectangle worldClip6 = new Rectangle( 50, 50, 100, 100 );
         Rectangle tileGridClip6 = tileGrid.mapWorldClipToTileGridClip( worldClip6 );
