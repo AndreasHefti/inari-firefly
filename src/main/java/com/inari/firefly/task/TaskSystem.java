@@ -107,28 +107,15 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         }
     }
 
-
-    final void onTaskEvent( TaskSystemEvent taskEvent ) {
-        switch ( taskEvent.eventType ) {
-            case RUN_TASK: {
-                Task task;
-                if ( taskEvent.taskName != null ) {
-                    task = tasks.get( getTaskId( taskEvent.taskName ) );
-                } else {
-                    task = tasks.get( taskEvent.taskId );
-                }
-                if ( task != null ) {
-                    task.run( context );
-                    if ( task.removeAfterRun() && tasks.contains( taskEvent.taskId ) ) {
-                        tasks.remove( taskEvent.taskId );
-                    }
-                }
-                break;
-            }
-            case REMOVE_TASK: {
-                tasks.remove( taskEvent.taskId );
-                break;
-            }
+    public final void runTask( int taskId ) {
+        if ( !tasks.contains( taskId ) ) {
+            return;
+        }
+        
+        Task task = tasks.get( taskId );
+        task.run( context );
+        if ( task.removeAfterRun() && tasks.contains( taskId ) ) {
+            tasks.remove( taskId );
         }
     }
 

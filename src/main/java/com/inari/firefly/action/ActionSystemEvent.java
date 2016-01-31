@@ -17,7 +17,7 @@ public final class ActionSystemEvent extends Event<ActionSystem> {
 
     @Override
     public final void notify( ActionSystem listener ) {
-        listener.notifyActionEvent( this );
+        listener.performAction( actionId, entityId );
     }
 
 }

@@ -26,9 +26,23 @@ public final class TileSystemEvent extends Event<TileGridSystem> {
     }
 
     @Override
-    public final void notify( TileGridSystem listener ) {
-        listener.tileGridEvent( this );
-        
+    public final void notify( final TileGridSystem listener ) {
+        switch ( type ) {
+            case MULTIPOSITION_ADD: {
+                listener.addMultiTilePosition( 
+                    tileGridId, entityId,
+                    gridPosition.x, gridPosition.y 
+                );
+                break;
+            }
+            case MULTIPOSITION_REMOVE: {
+                listener.removeMultiTilePosition( 
+                    tileGridId, entityId,
+                    gridPosition.x, gridPosition.y 
+                );
+                break;
+            }
+        }
     }
 
 }

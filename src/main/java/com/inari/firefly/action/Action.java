@@ -17,5 +17,5 @@ public abstract class Action extends SystemComponent implements FFContextInitiab
         return TYPE_KEY;
     }
     
-    public abstract void performAction( int entityId );
+    public abstract void action( int entityId );
 }

@@ -96,23 +96,6 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
         
         deletePrefab( prefab );
     }
-
-    final void onPrefabAction( EntityPrefabSystemEvent event ) {
-        switch ( event.type ) {
-            case CREATE_ENTITY: {
-                activateOne( event.prefabId, event.attributes );
-                break;
-            }
-            case CACHE_PREFABS: {
-                cacheComponents( event.prefabId, event.number );
-                break;
-            }
-            case REBUILD_ENTITY: {
-                rebuildEntity( event.prefabId, event.entityId, event.attributes, event.activation );
-                break;
-            }
-        }
-    }
     
     public final Iterator<String> getPrefabNames() {
         return prefabNames.iterator();
@@ -155,14 +138,14 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
             .build();
     }
 
-    public final int buildOne( int prefabId, EntityAttributeMap attributes ) {
+    public final int buildOne( final int prefabId, final EntityAttributeMap attributes ) {
         return entitySystem.getEntityBuilder()
             .setPrefabComponents( getComponents( prefabId ) )
             .setAttributes( attributes )
             .build();
     }
 
-    public final void rebuildEntity( int prefabId, int entityId, EntityAttributeMap attributes, boolean activation ) {
+    public final void rebuildEntity( final int prefabId, final int entityId, final EntityAttributeMap attributes, final boolean activation ) {
         if ( activation ) {
             entitySystem.deactivateEntity( entityId );
         }
@@ -182,7 +165,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
         }
     }
 
-    public final int activateOne( int prefabId, EntityAttributeMap attributes ) {
+    public final int activateOne( final int prefabId, final EntityAttributeMap attributes ) {
         int newEntityId = buildOne( prefabId, attributes );
         if ( newEntityId >= 0 ) {
             entitySystem.activateEntity( newEntityId );

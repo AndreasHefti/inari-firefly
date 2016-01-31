@@ -81,31 +81,6 @@ public class StateSystem
         workflow.activate();
         context.notify( WorkflowEvent.createWorkflowStartedEvent( workflow.getId(), workflow.getName(), workflow.getCurrentState() ) );
     }
-    
-    final void onEvent( StateSystemEvent event ) {
-        switch ( event.type ) {
-            case DO_STATE_CHANGE: {
-                Workflow workflow = ( event.workflowName != null )? getWorkflow( event.workflowName ) : getWorkflow( event.workflowId );
-                if ( workflow == null ) {
-                    throw new IllegalArgumentException( "No Workflow found for state change event: " + event );
-                }
-                
-                StateChange stateChange = null;
-                if ( event.stateChangeName != null ) {
-                    stateChange = workflow.getStateChangeForCurrentState( event.stateChangeName );
-                } else if ( event.targetStateName != null ){
-                    stateChange = workflow.getStateChangeForTargetState( event.targetStateName );
-                } 
-                
-                if ( stateChange == null ) {
-                    throw new IllegalArgumentException( "No StateChange found for state change event: " + event + " on workflow" + workflow );
-                }
-                doStateChange( workflow, stateChange );
-                break;
-            }
-            default: {}
-        }
-    }
 
     @Override
     public final void update( UpdateEvent event ) {
@@ -134,8 +109,18 @@ public class StateSystem
             }
         }
     }
+    
+    public final void doStateChange( final int workflowId, final String stateChangeName ) {
+        Workflow workflow = getWorkflow( workflowId );
+        doStateChange( workflow, workflow.getStateChangeForCurrentState( stateChangeName ) );
+    }
+    
+    public final void changeState( final int workflowId, final String targetStateName ) {
+        Workflow workflow = getWorkflow( workflowId );
+        doStateChange( workflow, workflow.getStateChangeForTargetState( targetStateName ) );
+    }
 
-    private void doStateChange( Workflow workflow, StateChange stateChange ) {
+    private final void doStateChange( final Workflow workflow, final StateChange stateChange ) {
         String toStateName = stateChange.getToStateName();
         workflow.setCurrentState( toStateName );
         

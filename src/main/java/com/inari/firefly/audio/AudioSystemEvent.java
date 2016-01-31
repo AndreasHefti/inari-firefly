@@ -46,7 +46,24 @@ public final class AudioSystemEvent extends Event<AudioSystem> {
 
     @Override
     public final void notify( AudioSystem listener ) {
-        listener.onSoundEvent( this );
+        switch ( eventType ) {
+            case PLAY_SOUND : {
+                if ( soundId >= 0 ) {
+                    listener.playSound( soundId ); 
+                } else {
+                    listener.playSound( name ); 
+                }
+                break;
+            }
+            case STOP_PLAYING : {
+                if ( soundId >= 0 ) {
+                    listener.stopPlaying( soundId ); 
+                } else {
+                    listener.stopPlaying( name ); 
+                }
+                break;
+            }
+        }
     }
 
 }

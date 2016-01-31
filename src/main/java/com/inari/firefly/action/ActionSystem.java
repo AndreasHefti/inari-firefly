@@ -88,15 +88,11 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
         
         actions.clear();
     }
-
-    final void notifyActionEvent( ActionSystemEvent event ) {
-        performAction( event.actionId, event.entityId );
-    }
     
     public final void performAction( int actionId, int entityId ) {
         Action action = actions.get( actionId );
         if ( action != null ) {
-            action.performAction( entityId );
+            action.action( entityId );
         }
     }
 

@@ -117,32 +117,17 @@ public final class AudioSystem
         }
         return sound.getId();
     }
+    
+    public final void stopPlaying( String soundName ) {
+        stopPlaying( getSoundId( soundName ) );
+    }
 
-    final void onSoundEvent( AudioSystemEvent event ) {
-        Sound sound;
-        if ( event.name!= null ) {
-            sound = getSound( event.name );
-        } else {
-            sound = getSound( event.soundId );
-        }
-        
-        if ( sound == null ) {
+    public final void stopPlaying( int soundId ) {
+        if ( !sounds.contains( soundId ) ) {
             return;
         }
         
-        switch ( event.eventType ) {
-            case PLAY_SOUND : {
-                playSound( sound ); 
-                break;
-            }
-            case STOP_PLAYING : {
-                stopPlaying( sound ); 
-                break;
-            }
-        }
-    }
-    
-    private final void stopPlaying( Sound sound ) {
+        Sound sound = sounds.get( soundId );
         if ( sound.streaming ) {
             audio.stopMusic( sound.getSoundId() );
         } else {
@@ -154,8 +139,17 @@ public final class AudioSystem
             controllerSystem.removeControlledComponentId( controllerId, sound.soundId );
         }
     }
+    
+    public final void playSound( String soundName ) {
+        playSound( getSoundId( soundName ) );
+    }
 
-    private final void playSound( Sound sound ) {
+    public final void playSound( int soundId ) {
+        if ( !sounds.contains( soundId ) ) {
+            return;
+        }
+        
+        Sound sound = sounds.get( soundId );
         if ( sound.streaming ) {
             audio.playMusic( 
                 sound.getSoundId(), 

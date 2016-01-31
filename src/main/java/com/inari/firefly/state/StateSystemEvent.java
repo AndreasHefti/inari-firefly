@@ -38,7 +38,22 @@ public final class StateSystemEvent extends Event<StateSystem> {
 
     @Override
     public final void notify( StateSystem listener ) {
-        listener.onEvent( this );
+        switch ( type ) {
+            case DO_STATE_CHANGE: {
+                int wId = workflowId;
+                if ( wId < 0 ) {
+                    wId = listener.getWorkflowId( workflowName );
+                }
+                
+                if ( stateChangeName != null ) {
+                    listener.doStateChange( wId, stateChangeName );
+                } else if ( targetStateName != null ) {
+                    listener.changeState( wId, targetStateName );
+                }
+                break;
+            }
+            default: {}
+        }
     }
     
     public static final StateSystemEvent createDoStateChangeEvent( String workflowName, String stateChangeName ) {

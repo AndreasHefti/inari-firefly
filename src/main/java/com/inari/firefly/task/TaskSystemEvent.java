@@ -46,8 +46,24 @@ public final class TaskSystemEvent extends Event<TaskSystem> {
 
     @Override
     public final void notify( TaskSystem listener ) {
-        listener.onTaskEvent( this );
-        
+        switch ( eventType ) {
+            case RUN_TASK: {
+               if ( taskId >= 0 ) {
+                   listener.runTask( taskId );
+               } else {
+                   listener.runTask( listener.getTaskId( taskName ) );
+               }
+               break;
+            }
+            case REMOVE_TASK: {
+                if ( taskId >= 0 ) {
+                    listener.deleteTask( taskId );
+                } else {
+                    listener.deleteTask( listener.getTaskId( taskName ) );
+                }
+                break;
+            }
+        }
     }
 
     @Override

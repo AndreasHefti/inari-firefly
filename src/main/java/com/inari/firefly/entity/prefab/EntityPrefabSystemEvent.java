@@ -35,7 +35,20 @@ public final class EntityPrefabSystemEvent extends Event<EntityPrefabSystem> {
     }
 
     @Override
-    public final void notify( EntityPrefabSystem listener ) {
-        listener.onPrefabAction( this );
+    public final void notify( final EntityPrefabSystem listener ) {
+        switch ( type ) {
+            case CREATE_ENTITY: {
+                listener.activateOne( prefabId, attributes );
+                break;
+            }
+            case CACHE_PREFABS: {
+                listener.cacheComponents( prefabId, number );
+                break;
+            }
+            case REBUILD_ENTITY: {
+                listener.rebuildEntity( prefabId, entityId, attributes, activation );
+                break;
+            }
+        }
     }
 }

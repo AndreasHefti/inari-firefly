@@ -99,33 +99,14 @@ public final class TileGridSystem
         
         clear();
     }
-    
-    final void tileGridEvent( TileSystemEvent event ) {
-        switch ( event.type ) {
-            case MULTIPOSITION_ADD: {
-                addMultiTilePosition( 
-                    event.tileGridId, event.entityId,
-                    event.gridPosition.x, event.gridPosition.y 
-                );
-                break;
-            }
-            case MULTIPOSITION_REMOVE: {
-                removeMultiTilePosition( 
-                    event.tileGridId, event.entityId,
-                    event.gridPosition.x, event.gridPosition.y 
-                );
-                break;
-            }
-        }
-    }
 
-    public final void removeMultiTilePosition( int tileGridId, int entityId, int x, int y ) {
+    final void removeMultiTilePosition( final int tileGridId, final int entityId, final int x, final int y ) {
         ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         tile.getGridPositions().remove( new Position( x, y ) );
         getTileGrid( tileGridId ).reset( x, y );
     }
 
-    public final void addMultiTilePosition( int tileGridId, int entityId, int x, int y ) {
+    final void addMultiTilePosition( final int tileGridId, final int entityId, final int x, final int y ) {
         ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         tile.getGridPositions().add( new Position( x, y ) );
         getTileGrid( tileGridId ).set( entityId, x, y );
