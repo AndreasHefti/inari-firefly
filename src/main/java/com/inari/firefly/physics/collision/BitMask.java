@@ -116,19 +116,23 @@ public final class BitMask extends SystemComponent {
         return false;
     }
     
-    public final boolean intersects( Rectangle region ) {
-        return intersects( 0, 0, region, false );
+    public final boolean intersects( final Rectangle region ) {
+        return intersectsRegion( region.x, region.y, region.width, region.height, false );
     }
     
-    public final boolean intersects( int xOffset, int yOffset, Rectangle region ) {
-        return intersects( xOffset, yOffset, region, false );
+    public final boolean intersects( final int xOffset, final int yOffset, final Rectangle region ) {
+        return intersectsRegion( xOffset + region.x, yOffset + region.y, region.width, region.height, false );
     }
     
-    public final boolean intersects( int xOffset, int yOffset, Rectangle otherRegion, boolean cornerCheck ) {
-        tempRegion.x = otherRegion.x + xOffset;
-        tempRegion.y = otherRegion.y + yOffset;
-        tempRegion.width = otherRegion.width;
-        tempRegion.height = otherRegion.height;
+    public final boolean intersectsRegion( final int xOffset, final int yOffset, final int width, final int height ) {
+        return intersectsRegion( xOffset, yOffset, width, height, false );
+    }
+    
+    public final boolean intersectsRegion( final int xOffset, final int yOffset, final int width, final int height, final boolean cornerCheck ) {
+        tempRegion.x = xOffset;
+        tempRegion.y = yOffset;
+        tempRegion.width = width;
+        tempRegion.height = height;
         GeomUtils.intersection( region, tempRegion, intersectionRegion );
         
         if ( cornerCheck ) {
@@ -143,9 +147,9 @@ public final class BitMask extends SystemComponent {
         }
     }
 
-    public final boolean intersects( int xOffset, int yOffset, BitMask other ) {
-        tempRegion.x = other.region.x + xOffset;
-        tempRegion.y = other.region.y + yOffset;
+    public final boolean intersects( final int xOffset, final int yOffset, final BitMask other ) {
+        tempRegion.x = xOffset;
+        tempRegion.y = yOffset;
         tempRegion.width = other.region.width;
         tempRegion.height = other.region.height;
         GeomUtils.intersection( region, tempRegion, intersectionRegion );

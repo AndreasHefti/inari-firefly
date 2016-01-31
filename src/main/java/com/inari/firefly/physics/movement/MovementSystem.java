@@ -82,7 +82,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
             if ( !calculateMovement( movement ) ) {
                 continue;
             }
-            
+
             ETransform transform = components.get( ETransform.TYPE_KEY );
             transform.move( movement.velocity.dx, movement.velocity.dy );
 

@@ -144,6 +144,8 @@ public final class CollisionSystem
             tmpTileGridBounds.width = tmpCollisionBounds1.width + 2;
             tmpTileGridBounds.height = tmpCollisionBounds1.height + 2;
             
+            collisionEvent.clear( entityId );
+            
             checkTileCollision( entityId, bitmaskId1, viewId, layerId );
             checkSpriteCollision( entityId, bitmaskId1, viewId, layerId );
             
@@ -157,7 +159,11 @@ public final class CollisionSystem
                     checkTileCollision( entityId, bitmaskId1, viewId, layerId2 );
                     checkSpriteCollision( entityId, bitmaskId1, viewId, layerId2 );
                 }
-             }
+            }
+            
+            if ( collisionEvent.size > 0 ) {
+                context.notify( collisionEvent );
+            }
         }
     }
 
@@ -237,47 +243,38 @@ public final class CollisionSystem
     }
     
     private final void checkCollision( final int bitmaskId1, final int bitmaskId2, final int entityId1, final int entityId2 ) {
-        GeomUtils.intersection( tmpCollisionBounds1, tmpCollisionBounds2, collisionEvent.collisionIntersectionBounds );
-        collisionEvent.collisionIntersectionBounds.x -= tmpCollisionBounds1.x;
-        collisionEvent.collisionIntersectionBounds.y -= tmpCollisionBounds1.y;
-
-        if ( bitmaskId1 < 0 && bitmaskId2 < 0 ) {
-            notify( entityId1, entityId2, null );
+        final Rectangle intersection = collisionEvent.setIntersection( tmpCollisionBounds1, tmpCollisionBounds2 );
+        
+        if ( intersection.width <= 0 && intersection.height <= 0 ) {
             return;
         }
+        
+        if ( intersection.area() <= 0 || bitmaskId1 < 0 && bitmaskId2 < 0 ) {
+            collisionEvent.add( entityId2, null );
+            return;
+        }
+        
+        int xOffset = tmpCollisionBounds1.x - tmpCollisionBounds2.x;
+        int yOffset = tmpCollisionBounds1.y - tmpCollisionBounds2.y;
         
         BitMask bitmask1 = ( bitmaskId1 < 0 )? null : bitmasks.get( bitmaskId1 );
         BitMask bitmask2 = ( bitmaskId2 < 0 )? null : bitmasks.get( bitmaskId2 );
         
-        if ( bitmask1 != null && bitmask2 != null && bitmask2.intersects( tmpCollisionBounds2.x, tmpCollisionBounds2.y, bitmask1 ) ) {
-            notify( entityId1, entityId2, bitmask2 );
+        if ( bitmask1 != null && bitmask2 != null && bitmask2.intersects( xOffset, yOffset, bitmask1 ) ) {
+            collisionEvent.add( entityId2, bitmask2.intersectionMask );
             return;
         }
         
-        if ( bitmask1 == null && bitmask2 != null && bitmask2.intersects( tmpCollisionBounds2 ) ) {
-            notify( entityId1, entityId2, bitmask2 );
+        if ( bitmask1 == null && bitmask2 != null && bitmask2.intersectsRegion( xOffset, yOffset, tmpCollisionBounds1.width, tmpCollisionBounds1.height ) ) {
+            collisionEvent.add( entityId2, bitmask2.intersectionMask );
             return;
         }
         
-        if ( bitmask1 != null && bitmask2 == null && bitmask1.intersects( -tmpCollisionBounds2.x, -tmpCollisionBounds2.y, tmpCollisionBounds1 ) ) {
-            notify( entityId1, entityId2, bitmask2 );
+        if ( bitmask1 != null && bitmask2 == null && bitmask1.intersects( -xOffset, -yOffset, tmpCollisionBounds1 ) ) {
+            collisionEvent.add( entityId2, bitmask1.intersectionMask );
             return;
         }
     }
-
-    private void notify( final int entityId1, final int entityId2, final BitMask intersection ) {
-        collisionEvent.movedEntityId = entityId1;
-        collisionEvent.collidingEntityId = entityId2;
-        collisionEvent.collisionIntersectionMask = ( intersection != null )? intersection.intersectionMask: null;
-        context.notify( collisionEvent );
-    }
-    
-//    private final void setTmpBounds( final Rectangle bounds, float x, float y, final int width, final int height ) {
-//        bounds.x = (int) x;
-//        bounds.y = (int) y;
-//        bounds.width = width;
-//        bounds.height = height;
-//    }
     
     public final BitMask getBitMask( int bitMaskId ) {
         if ( !bitmasks.contains( bitMaskId ) ) {

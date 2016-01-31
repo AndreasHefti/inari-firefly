@@ -17,18 +17,23 @@ package com.inari.firefly.physics.collision;
 
 import java.util.BitSet;
 
+import com.inari.commons.GeomUtils;
 import com.inari.commons.event.Event;
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.list.DynArray;
 
 public final class CollisionEvent extends Event<CollisionEventListener> {
     
     public static final EventTypeKey TYPE_KEY = createTypeKey( CollisionEvent.class );
     
     int movedEntityId;
-    int collidingEntityId;
     
-    Rectangle collisionIntersectionBounds = new Rectangle();
-    BitSet collisionIntersectionMask;
+    CollisionData maxWithData;
+    CollisionData maxHeightData;
+    
+    int size = 0;
+    final DynArray<CollisionData> collisionData = new DynArray<CollisionData>();
+    
 
     CollisionEvent() {
         super( TYPE_KEY );
@@ -37,17 +42,65 @@ public final class CollisionEvent extends Event<CollisionEventListener> {
     public final int getMovedEntityId() {
         return movedEntityId;
     }
-
-    public final int getCollidingEntityId() {
-        return collidingEntityId;
+    
+    public final int size() {
+        return size;
     }
 
-    public final Rectangle getCollisionIntersectionBounds() {
-        return collisionIntersectionBounds;
+    public final CollisionData getCollisionData( int index ) {
+        if ( collisionData.contains( index ) ) {
+            return collisionData.get( index );
+        }
+        
+        return null;
     }
+    
+    public final CollisionData getMaxWidthCollisionData() {
+        return maxWithData;
+    }
+    
+    public final CollisionData getMaxHeightCollisionData() {
+        return maxHeightData;
+    }
+    
+    final Rectangle setIntersection( final Rectangle bounds1, final Rectangle bounds2 ) {
+        if ( !collisionData.contains( size ) ) {
+            collisionData.set( size, new CollisionData() );
+        }
+        
+        CollisionData cd = collisionData.get( size );
+        GeomUtils.intersection( bounds1, bounds2, cd.intersectionBounds );
+        cd.intersectionBounds.x -= bounds1.x;
+        cd.intersectionBounds.y -= bounds1.y;
+        
+        if ( maxWithData == null || maxWithData.intersectionBounds.width <= cd.intersectionBounds.width ) {
+            maxWithData = cd;
+        } 
+        if ( maxHeightData == null || maxHeightData.intersectionBounds.height <= cd.intersectionBounds.height ) {
+            maxHeightData = cd;
+        } 
+        
+        return cd.intersectionBounds;
+    }
+    
+    
+    
+    final void add( final int collidingEntityId, final BitSet intersectionMask ) {
+        CollisionData cd = collisionData.get( size );
+        cd.collidingEntityId = collidingEntityId;
+        cd.intersectionMask = intersectionMask;
 
-    public final BitSet getCollisionIntersectionMask() {
-        return collisionIntersectionMask;
+        size++;
+    }
+    
+    final void clear( int movedEntityId ) {
+        this.movedEntityId = movedEntityId;
+        size = 0; 
+        maxWithData = null;
+        maxHeightData = null;
+        for ( CollisionData cd : collisionData ) {
+            cd.clear();
+        }
     }
 
     @Override
@@ -60,14 +113,43 @@ public final class CollisionEvent extends Event<CollisionEventListener> {
         StringBuilder builder = new StringBuilder();
         builder.append( "CollisionEvent [movedEntityId=" );
         builder.append( movedEntityId );
-        builder.append( ", collidingEntityId=" );
-        builder.append( collidingEntityId );
-        builder.append( ", collisionIntersectionBounds=" );
-        builder.append( collisionIntersectionBounds );
-        builder.append( ", collisionIntersectionMask=" );
-        builder.append( collisionIntersectionMask );
+        builder.append( ", " );
+        builder.append( collisionData );
         builder.append( "]" );
         return builder.toString();
+    }
+    
+    public final class CollisionData {
+        
+        public int collidingEntityId;
+        public Rectangle intersectionBounds = new Rectangle();
+        public BitSet intersectionMask;
+        
+        CollisionData() {
+            clear();
+        }
+        
+        final void clear() {
+            collidingEntityId = -1;
+            intersectionBounds.x = 0;
+            intersectionBounds.y = 0;
+            intersectionBounds.width = 0;
+            intersectionBounds.height = 0;
+            intersectionMask = null;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append( "CollisionData [collidingEntityId=" );
+            builder.append( collidingEntityId );
+            builder.append( ", intersectionBounds=" );
+            builder.append( intersectionBounds );
+            builder.append( ", intersectionMask=" );
+            builder.append( intersectionMask );
+            builder.append( "]" );
+            return builder.toString();
+        }
     }
 
 }

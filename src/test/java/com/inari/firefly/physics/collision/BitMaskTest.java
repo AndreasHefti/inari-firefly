@@ -390,7 +390,7 @@ public class BitMaskTest extends FFTest {
         
         Rectangle otherRegion = new Rectangle( -10, -10, 17, 17 );
         
-        assertFalse( pp1.intersects( 0, 0, otherRegion, true ) );
+        assertFalse( pp1.intersectsRegion( otherRegion.x, otherRegion.y, otherRegion.width, otherRegion.height, true ) );
         assertTrue( pp1.intersects( otherRegion ) );
         
         pp1.dispose();
