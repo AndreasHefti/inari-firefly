@@ -87,7 +87,7 @@ public abstract class Animation extends SystemComponent {
         this.startTime = startTime;
     }
 
-    /** Use this to indicate wether this Animation is looping or not */
+    /** Use this to indicate whether this Animation is looping or not */
     public final boolean isLooping() {
         return looping;
     }
@@ -111,9 +111,14 @@ public abstract class Animation extends SystemComponent {
         finished = true;
     }
     
-    public final void activate() {
+    public final void activate( final FFTimer timer  ) {
+        startedTime = timer.getTime();
         active = true;
     }
+    
+    public final void stop() {
+        active = false;
+    } 
 
     final void systemUpdate( final FFTimer timer ) {
         runningTime += timer.getTimeElapsed();

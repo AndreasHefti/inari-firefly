@@ -52,7 +52,11 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
                 transformCollector.rotation
             );
         } else {
-            graphics.renderSprite( sprite, transformCollector.xpos, transformCollector.ypos );
+            graphics.renderSprite( 
+                sprite, 
+                transformCollector.xpos, 
+                transformCollector.ypos
+            );
         }
     }
     

@@ -117,23 +117,26 @@ public final class BitMask extends SystemComponent {
     }
     
     public final boolean intersects( final Rectangle region ) {
-        return intersectsRegion( region.x, region.y, region.width, region.height, false );
+        return intersectsRegion( region, false );
     }
     
     public final boolean intersects( final int xOffset, final int yOffset, final Rectangle region ) {
-        return intersectsRegion( xOffset + region.x, yOffset + region.y, region.width, region.height, false );
+        tempRegion.x = xOffset + region.x;
+        tempRegion.y = yOffset + region.y;
+        return intersectsRegion( tempRegion, false );
     }
     
     public final boolean intersectsRegion( final int xOffset, final int yOffset, final int width, final int height ) {
-        return intersectsRegion( xOffset, yOffset, width, height, false );
-    }
-    
-    public final boolean intersectsRegion( final int xOffset, final int yOffset, final int width, final int height, final boolean cornerCheck ) {
         tempRegion.x = xOffset;
         tempRegion.y = yOffset;
         tempRegion.width = width;
         tempRegion.height = height;
-        GeomUtils.intersection( region, tempRegion, intersectionRegion );
+        return intersectsRegion( tempRegion, false );
+    }
+    
+    protected final boolean intersectsRegion( final Rectangle checkRegion, final boolean cornerCheck ) {
+        
+        GeomUtils.intersection( region, checkRegion, intersectionRegion );
         
         if ( cornerCheck ) {
             return intersects( intersectionRegion.x, intersectionRegion.y ) ||
@@ -141,11 +144,12 @@ public final class BitMask extends SystemComponent {
                    intersects( intersectionRegion.x, intersectionRegion.y + intersectionRegion.height ) ||
                    intersects( intersectionRegion.x + intersectionRegion.width, intersectionRegion.y + intersectionRegion.height );
         } else {
-            intersectionMask.clear();
-            setRegion( region, intersectionMask, intersectionRegion );
-            return bits.intersects( intersectionMask );
+            GeomUtils.bitMaskIntersection( bits, region, intersectionRegion, intersectionMask );
+            return !intersectionMask.isEmpty();
         }
     }
+
+    
 
     public final boolean intersects( final int xOffset, final int yOffset, final BitMask other ) {
         tempRegion.x = xOffset;
@@ -153,22 +157,20 @@ public final class BitMask extends SystemComponent {
         tempRegion.width = other.region.width;
         tempRegion.height = other.region.height;
         GeomUtils.intersection( region, tempRegion, intersectionRegion );
-        intersectionMask.clear();
         
+        intersectionMask.clear();
         int otherX = ( xOffset >= 0 )? 0 : -xOffset;
         int otherY = ( yOffset >= 0 )? 0 : -yOffset;
-        for ( int y = intersectionRegion.y; y < intersectionRegion.y + intersectionRegion.height; y++ ) {
-            for ( int x = intersectionRegion.x; x < intersectionRegion.x + intersectionRegion.width; x++ ) {
-                int index = y * region.width + x;
-                int otherIndex = otherY * other.region.width + otherX;
-                intersectionMask.set( index, other.bits.get( otherIndex ) );
-                otherX++;
+        for ( int y = 0; y < intersectionRegion.height; y++ ) {
+            for ( int x = 0; x < intersectionRegion.width; x++ ) {
+                int pos1 = y * intersectionRegion.width + x;
+                int pos2 = ( ( intersectionRegion.y + y ) * region.width ) + intersectionRegion.x + x;
+                int pos3 = ( ( intersectionRegion.y + y + otherY ) * region.width ) + intersectionRegion.x + x + otherX;
+                intersectionMask.set( pos1, bits.get( pos2 ) && other.bits.get( pos3 ) );
             }
-            otherX = 0;
-            otherY++;
         }
         
-        return bits.intersects( intersectionMask );
+        return !intersectionMask.isEmpty();
     }
 
     public final void setPixelRegion( Rectangle region ) {

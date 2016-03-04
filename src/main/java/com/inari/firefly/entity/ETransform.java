@@ -138,11 +138,33 @@ public final class ETransform extends EntityComponent {
     public final void move( final float dx, final float dy ) {
         xpos += dx;
         ypos += dy;
-        
-//        if ( !staticPivot ) {
-//            pivotx += dx;
-//            pivoty += dy;
-//        }
+        if ( !staticPivot ) {
+            pivotx += dx;
+            pivoty += dy;
+        }
+    }
+    
+    public final void moveCeilX( final int dx ) {
+        xpos = (float) Math.ceil( xpos ) + dx;
+        if ( !staticPivot ) {
+            pivotx = (float) Math.ceil( pivotx ) + dx;
+        }
+    }
+    
+    public final void moveCeilY( final int dy ) {
+        ypos = (float) Math.ceil( ypos ) + dy;
+        if ( !staticPivot ) {
+            pivoty = (float) Math.ceil( pivoty ) + dy;
+        }
+    }
+    
+    public final void moveCeil( final int dx, final int dy ) {
+        xpos = (float) Math.ceil( xpos ) + dx;
+        ypos = (float) Math.ceil( ypos ) + dy;
+        if ( !staticPivot ) {
+            pivotx = (float) Math.ceil( pivotx ) + dx;
+            pivoty = (float) Math.ceil( pivoty ) + dy;
+        }
     }
 
     public final float getScalex() {

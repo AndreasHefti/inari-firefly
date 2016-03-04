@@ -47,7 +47,7 @@ public final class EMovement extends EntityComponent {
     final Vector2f velocity = new Vector2f( 0, 0 );
     float updateResolution;
 
-    final BitSet contact;
+    private final BitSet contact;
     private UpdateScheduler updateScheduler = null;
 
     public EMovement() {

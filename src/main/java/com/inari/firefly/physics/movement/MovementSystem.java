@@ -99,8 +99,17 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
         if ( ( movement.velocity.dy < 0 && movement.hasContact( Orientation.NORTH ) ) || 
              ( movement.velocity.dy > 0 && movement.hasContact( Orientation.SOUTH ) ) ) {
             movement.velocity.dy = 0;
-        } 
-           
+        }
+        
+        if ( movement.velocity.dx != 0 ) {
+            movement.removeContact( Orientation.NORTH  );
+            movement.removeContact( Orientation.SOUTH  );
+        }
+        if ( movement.velocity.dy != 0 ) {
+            movement.removeContact( Orientation.WEST  );
+            movement.removeContact( Orientation.EAST  );
+        }
+        
         return movement.velocity.dx != 0 || movement.velocity.dy != 0;
     }
 

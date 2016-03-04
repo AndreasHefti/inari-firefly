@@ -347,8 +347,33 @@ public class BitMaskTest extends FFTest {
         );
         assertFalse( pp2.intersects( new Rectangle( 0, 0, 1, 1 ) ) );
         assertTrue( pp2.intersects( new Rectangle( 5, 5, 1, 1 ) ) );
+        assertEquals( 
+            "1", 
+            StringUtils.bitsetToString( pp2.intersectionMask, pp2.intersectionRegion.width, pp2.intersectionRegion.height ) 
+        );
         assertTrue( pp2.intersects( new Rectangle( 0, 0, 10, 10 ) ) );
+        assertEquals( 
+            "0000000000\n" + 
+            "0000000000\n" + 
+            "0000000000\n" + 
+            "0000000000\n" + 
+            "0000000000\n" + 
+            "1111111111\n" + 
+            "1111111111\n" + 
+            "1111111111\n" + 
+            "1111111111\n" + 
+            "1111111111", 
+            StringUtils.bitsetToString( pp2.intersectionMask, pp2.intersectionRegion.width, pp2.intersectionRegion.height ) 
+        );
         assertTrue( pp2.intersects( new Rectangle( 2, 3, 4, 5 ) ) );
+        assertEquals( 
+            "0000\n" + 
+            "0000\n" + 
+            "1111\n" + 
+            "1111\n" + 
+            "1111", 
+            StringUtils.bitsetToString( pp2.intersectionMask, pp2.intersectionRegion.width, pp2.intersectionRegion.height ) 
+        );
         assertFalse( pp2.intersects( new Rectangle( -3, 0, 50, 4 ) ) );
         
         assertEquals( 
@@ -367,9 +392,41 @@ public class BitMaskTest extends FFTest {
         );
         assertFalse( pp3.intersects( new Rectangle( 0, 0, 1, 1 ) ) );
         assertTrue( pp3.intersects( new Rectangle( 5, 5, 1, 1 ) ) );
+        assertEquals( 
+            "1", 
+            StringUtils.bitsetToString( pp3.intersectionMask, pp3.intersectionRegion.width, pp3.intersectionRegion.height ) 
+        );
         assertTrue( pp3.intersects( new Rectangle( 0, 0, 10, 10 ) ) );
+        assertEquals( 
+            "0000000001\n" + 
+            "0000000011\n" + 
+            "0000000111\n" + 
+            "0000001111\n" + 
+            "0000011111\n" + 
+            "0000111111\n" + 
+            "0001111111\n" + 
+            "0011111111\n" + 
+            "0111111111\n" + 
+            "1111111111", 
+            StringUtils.bitsetToString( pp3.intersectionMask, pp3.intersectionRegion.width, pp3.intersectionRegion.height ) 
+        );
         assertTrue( pp3.intersects( new Rectangle( 2, 3, 4, 5 ) ) );
+        assertEquals( 
+            "0000\n" + 
+            "0001\n" + 
+            "0011\n" + 
+            "0111\n" + 
+            "1111", 
+            StringUtils.bitsetToString( pp3.intersectionMask, pp3.intersectionRegion.width, pp3.intersectionRegion.height ) 
+        );
         assertTrue( pp3.intersects( new Rectangle( -3, 0, 50, 4 ) ) );
+        assertEquals( 
+            "0000000001\n" + 
+            "0000000011\n" + 
+            "0000000111\n" + 
+            "0000001111", 
+            StringUtils.bitsetToString( pp3.intersectionMask, pp3.intersectionRegion.width, pp3.intersectionRegion.height ) 
+        );
         
         // difference between with or without cornerCheck
         pp1.setPixelRegion( new Rectangle( 5, 5, 5, 2 ) );
@@ -390,7 +447,7 @@ public class BitMaskTest extends FFTest {
         
         Rectangle otherRegion = new Rectangle( -10, -10, 17, 17 );
         
-        assertFalse( pp1.intersectsRegion( otherRegion.x, otherRegion.y, otherRegion.width, otherRegion.height, true ) );
+        assertFalse( pp1.intersectsRegion( otherRegion, true ) );
         assertTrue( pp1.intersects( otherRegion ) );
         
         pp1.dispose();
@@ -441,11 +498,74 @@ public class BitMaskTest extends FFTest {
         );
         
         assertTrue( pp2.intersects( 0, 0, pp1 ) );
+        assertEquals( 
+            "0000000000\n" + 
+            "0000000000\n" + 
+            "0000000000\n" + 
+            "0000000000\n" + 
+            "0000000000\n" + 
+            "0000111111\n" + 
+            "0001111111\n" + 
+            "0011111111\n" + 
+            "0111111111\n" + 
+            "1111111111", 
+            StringUtils.bitsetToString( pp2.intersectionMask, pp2.intersectionRegion.width, pp2.intersectionRegion.height ) 
+        );
         assertTrue( pp2.intersects( -1, -1, pp1 ) );
+        assertEquals( 
+            "000000000\n" + 
+            "000000000\n" + 
+            "000000000\n" + 
+            "000000000\n" + 
+            "000001111\n" + 
+            "000011111\n" + 
+            "000111111\n" + 
+            "001111111\n" + 
+            "011111111", 
+            StringUtils.bitsetToString( pp2.intersectionMask, pp2.intersectionRegion.width, pp2.intersectionRegion.height ) 
+        );
         assertTrue( pp2.intersects( -2, -2, pp1 ) );
+        assertEquals( 
+            "00000000\n" + 
+            "00000000\n" + 
+            "00000000\n" + 
+            "00000011\n" + 
+            "00000111\n" + 
+            "00001111\n" + 
+            "00011111\n" + 
+            "00111111", 
+            StringUtils.bitsetToString( pp2.intersectionMask, pp2.intersectionRegion.width, pp2.intersectionRegion.height ) 
+        );
         assertTrue( pp2.intersects( -3, -3, pp1 ) );
+        assertEquals( 
+            "0000000\n" + 
+            "0000000\n" + 
+            "0000000\n" + 
+            "0000001\n" + 
+            "0000011\n" + 
+            "0000111\n" + 
+            "0001111", 
+            StringUtils.bitsetToString( pp2.intersectionMask, pp2.intersectionRegion.width, pp2.intersectionRegion.height ) 
+        );
         assertTrue( pp2.intersects( -4, -4, pp1 ) );
+        assertEquals( 
+            "000000\n" + 
+            "000000\n" + 
+            "000000\n" + 
+            "000000\n" + 
+            "000001\n" + 
+            "000011", 
+            StringUtils.bitsetToString( pp2.intersectionMask, pp2.intersectionRegion.width, pp2.intersectionRegion.height ) 
+        );
         assertFalse( pp2.intersects( -5, -5, pp1 ) );
+        assertEquals( 
+            "00000\n" + 
+            "00000\n" + 
+            "00000\n" + 
+            "00000\n" + 
+            "00000", 
+            StringUtils.bitsetToString( pp2.intersectionMask, pp2.intersectionRegion.width, pp2.intersectionRegion.height ) 
+        );
         assertFalse( pp2.intersects( -6, -6, pp1 ) );
         
         pp1.dispose();

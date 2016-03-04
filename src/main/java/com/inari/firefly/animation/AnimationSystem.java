@@ -128,7 +128,7 @@ public final class AnimationSystem
                 }
                 
                 if ( animation.startTime > 0 && event.timer.getTime() >= animation.startTime ) {
-                    animation.activate();
+                    animation.activate( event.timer );
                     continue;
                 }
             }
