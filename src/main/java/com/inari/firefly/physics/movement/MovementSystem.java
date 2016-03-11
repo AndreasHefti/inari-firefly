@@ -15,7 +15,6 @@
  ******************************************************************************/ 
 package com.inari.firefly.physics.movement;
 
-import com.inari.commons.geom.Orientation;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
@@ -79,38 +78,16 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
                 continue;
             }
 
-            if ( !calculateMovement( movement ) ) {
+            if ( movement.velocity.dx == 0 && movement.velocity.dy == 0 ) {
                 continue;
             }
 
             ETransform transform = components.get( ETransform.TYPE_KEY );
-            transform.move( movement.velocity.dx, movement.velocity.dy );
-
+            transform.move( movement.velocity.dx, movement.velocity.dy);
+            
             moveEvent.add( entityId );
         }
         context.notify( moveEvent );
-    }
-    
-    private boolean calculateMovement( final EMovement movement ) {
-        if ( ( movement.velocity.dx < 0 && movement.hasContact( Orientation.WEST ) ) || 
-             ( movement.velocity.dx > 0 && movement.hasContact( Orientation.EAST ) ) ) {
-            movement.velocity.dx = 0;
-        } 
-        if ( ( movement.velocity.dy < 0 && movement.hasContact( Orientation.NORTH ) ) || 
-             ( movement.velocity.dy > 0 && movement.hasContact( Orientation.SOUTH ) ) ) {
-            movement.velocity.dy = 0;
-        }
-        
-        if ( movement.velocity.dx != 0 ) {
-            movement.removeContact( Orientation.NORTH  );
-            movement.removeContact( Orientation.SOUTH  );
-        }
-        if ( movement.velocity.dy != 0 ) {
-            movement.removeContact( Orientation.WEST  );
-            movement.removeContact( Orientation.EAST  );
-        }
-        
-        return movement.velocity.dx != 0 || movement.velocity.dy != 0;
     }
 
 }

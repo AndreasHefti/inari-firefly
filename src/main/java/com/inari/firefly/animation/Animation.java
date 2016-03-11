@@ -111,7 +111,7 @@ public abstract class Animation extends SystemComponent {
         finished = true;
     }
     
-    public final void activate( final FFTimer timer  ) {
+    public void activate( final FFTimer timer  ) {
         startedTime = timer.getTime();
         active = true;
     }

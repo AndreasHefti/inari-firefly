@@ -25,6 +25,7 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public final class AnimationSystem 
@@ -109,6 +110,14 @@ public final class AnimationSystem
 
         Animation animation = animations.get( animationId );
         return animation.isActive();
+    }
+    
+    public final void activate( int animationId, final FFTimer timer ) {
+        animations.get( animationId ).activate( timer );
+    }
+    
+    public final void resetAnimation( int animationId ) {
+        animations.get( animationId ).reset();
     }
 
     @Override

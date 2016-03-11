@@ -147,7 +147,7 @@ public final class CollisionSystem
             }
         }
     }
-    
+
     final void checkCollisionOnEntity( final int entityId ) {
         collisions.clear();
         

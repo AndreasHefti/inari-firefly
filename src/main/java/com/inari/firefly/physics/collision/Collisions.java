@@ -105,8 +105,8 @@ public final class Collisions implements Iterable<Collisions.CollisionData> {
         }
 
         private final void setBounds( final float worldPosX, final float worldPosY, final Rectangle collisionBounding ) {
-            worldBounds.x = (int) Math.ceil( worldPosX + collisionBounding.x );
-            worldBounds.y = (int) Math.ceil( worldPosY + collisionBounding.y );
+            worldBounds.x = (int) Math.ceil( worldPosX ) + collisionBounding.x;
+            worldBounds.y = (int) Math.floor( worldPosY ) + collisionBounding.y;
             worldBounds.width = collisionBounding.width;
             worldBounds.height = collisionBounding.height;
         }

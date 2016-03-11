@@ -196,6 +196,24 @@ public final class TileGridSystem
         return tileGridsForView.get( layerId );
     }
     
+    public final int getTile( int viewId, int layerId, final Position position ) {
+        TileGrid tileGrid = getTileGrid( viewId, layerId );
+        if ( tileGrid == null ) {
+            return -1;
+        }
+        
+        return tileGrid.getTileAt( position );
+    }
+    
+    public final int getTile( int tileGridId, final Position position ) {
+        TileGrid tileGrid = getTileGrid( tileGridId );
+        if ( tileGrid == null ) {
+            return -1;
+        }
+        
+        return tileGrid.getTileAt( position );
+    }
+    
     public final TileIterator getTiles( int viewId, int layerId, Rectangle bounds ) {
         TileGrid tileGrid = getTileGrid( viewId, layerId );
         if ( tileGrid == null ) {

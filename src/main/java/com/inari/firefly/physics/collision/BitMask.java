@@ -65,6 +65,14 @@ public final class BitMask extends SystemComponent {
         return region.height;
     }
     
+    public boolean getBit( int xpos, int ypos ) {
+        if ( !GeomUtils.contains( region, xpos, ypos ) ) {
+            return false;
+        }
+        
+        return bits.get( ypos * region.width + xpos );
+    }
+    
     public final BitSet getBits() {
         return bits;
     }

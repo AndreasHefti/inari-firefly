@@ -20,6 +20,7 @@ import java.util.Set;
 
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
+import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.IntIterator;
@@ -221,7 +222,19 @@ public final class TileGrid extends SystemComponent {
             xpos = xpos % width;
             ypos = ypos % height;
         }
+        
+        if ( xpos < 0 || xpos >= width || ypos < 0 || ypos >= height ) {
+            return -1;
+        }
+        
         return grid[ ypos ][ xpos ];
+    }
+    
+    public final int getTileAt( final Position worldPos ) {
+        int x = (int) Math.floor( (double) ( worldPos.x - worldXPos ) / cellWidth );
+        int y = (int) Math.floor( (double) ( worldPos.y - worldYPos ) / cellHeight );
+
+        return get( x, y );
     }
 
     public final void set( int entityId, int xpos, int ypos ) {

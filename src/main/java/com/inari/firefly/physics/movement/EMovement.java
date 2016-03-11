@@ -20,8 +20,8 @@ import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.commons.geom.Orientation;
 import com.inari.commons.geom.Vector2f;
+import com.inari.commons.lang.indexed.Indexed;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -47,12 +47,13 @@ public final class EMovement extends EntityComponent {
     final Vector2f velocity = new Vector2f( 0, 0 );
     float updateResolution;
 
-    private final BitSet contact;
+    private final BitSet stateFlags;
+    
     private UpdateScheduler updateScheduler = null;
 
     public EMovement() {
         super( TYPE_KEY );
-        contact = new BitSet( 5 );
+        stateFlags = new BitSet( 10 );
         resetAttributes();
     }
 
@@ -61,7 +62,7 @@ public final class EMovement extends EntityComponent {
         active = false;
         setVelocityX( 0f );
         setVelocityY( 0f );
-        contact.clear();
+        stateFlags.clear();
         updateResolution = -1;
         updateScheduler = null;
     }
@@ -90,8 +91,14 @@ public final class EMovement extends EntityComponent {
         return velocity.dy;
     }
     
-    public final Vector2f getVelocityVector() {
-        return velocity;
+    public final void setVelocity( float velocityX, float velocityY ) {
+        velocity.dx = velocityX;
+        velocity.dy = velocityY;
+    }
+    
+    public final void addVelocity( float velocityX, float velocityY ) {
+        velocity.dx += velocityX;
+        velocity.dy += velocityY;
     }
 
     public final float getUpdateResolution() {
@@ -114,32 +121,20 @@ public final class EMovement extends EntityComponent {
         return updateScheduler.needsUpdate();
     }
 
-    public final void setContact( Orientation orientation ) {
-        if ( orientation == Orientation.NONE ) {
-            return;
-        }
-        
-        contact.set( orientation.ordinal() );
+    public final void setStateFlag( final Indexed stateFlag ) {
+        stateFlags.set( stateFlag.index() );
     }
     
-    public final void removeContact( Orientation orientation ) {
-        if ( orientation == Orientation.NONE ) {
-            return;
-        }
-        
-        contact.set( orientation.ordinal(), false );
+    public final void resetStateFlag( final Indexed stateFlag ) {
+        stateFlags.set( stateFlag.index(), false );
+    }
+
+    public final boolean hasStateFlag( final Indexed stateFlag ) {
+        return stateFlags.get( stateFlag.index() ) == true;
     }
     
     public final void clearContact() {
-        contact.clear();
-    }
-    
-    public final boolean hasContact( Orientation orientation ) {
-        if ( orientation == Orientation.NONE ) {
-            return false;
-        }
-        
-        return contact.get( orientation.ordinal() ) == true;
+        stateFlags.clear();
     }
 
     public final boolean isMoving() {
