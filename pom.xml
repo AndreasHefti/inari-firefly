@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.inari</groupId>
-  <artifactId>firefly</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <groupId>com.github.inari-soft</groupId>
+  <artifactId>firefly-core</artifactId>
+  <version>1.0-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -52,9 +52,9 @@
           <scope>test</scope>
       </dependency>
       <dependency>
-          <groupId>com.inari</groupId>
-          <artifactId>commons</artifactId>
-          <version>0.0.1-SNAPSHOT</version>
+      	<groupId>com.github.inari-soft</groupId>
+      	<artifactId>commons</artifactId>
+      	<version>1.0-SNAPSHOT</version>
       </dependency>
   </dependencies>
 </project>
