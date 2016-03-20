@@ -32,7 +32,6 @@ public final class ETransform extends EntityComponent {
     public static final AttributeKey<Float> YPOSITION = new AttributeKey<Float>( "ypos", Float.class, ETransform.class );
     public static final AttributeKey<Float> PIVOT_X = new AttributeKey<Float>( "pivotx", Float.class, ETransform.class );
     public static final AttributeKey<Float> PIVOT_Y = new AttributeKey<Float>( "pivoty", Float.class, ETransform.class );
-    public static final AttributeKey<Boolean> STATIC_PIVOT = new AttributeKey<Boolean>( "staticPivot", Boolean.class, ETransform.class );
     public static final AttributeKey<Float> SCALE_X = new AttributeKey<Float>( "scalex", Float.class, ETransform.class );
     public static final AttributeKey<Float> SCALE_Y = new AttributeKey<Float>( "scaley", Float.class, ETransform.class );
     public static final AttributeKey<Float> ROTATION = new AttributeKey<Float>( "rotation", Float.class, ETransform.class );
@@ -44,7 +43,6 @@ public final class ETransform extends EntityComponent {
         YPOSITION,
         PIVOT_X,
         PIVOT_Y,
-        STATIC_PIVOT,
         SCALE_X,
         SCALE_Y,
         ROTATION,
@@ -54,7 +52,6 @@ public final class ETransform extends EntityComponent {
     private int viewId, layerId;
     private float xpos, ypos;
     private float pivotx, pivoty;
-    private boolean staticPivot;
     private float scalex, scaley;
     private float rotation;
     private int parentId;
@@ -72,7 +69,6 @@ public final class ETransform extends EntityComponent {
         ypos = 0;
         pivotx = 0;
         pivoty = 0;
-        staticPivot = false;
         scalex = 1;
         scaley = 1;
         rotation = 0;
@@ -127,35 +123,9 @@ public final class ETransform extends EntityComponent {
         this.pivoty = pivoty;
     }
 
-    public final boolean isStaticPivot() {
-        return staticPivot;
-    }
-
-    public final void setStaticPivot( boolean staticPivot ) {
-        this.staticPivot = staticPivot;
-    }
-
     public final void move( final float dx, final float dy ) {
         xpos += dx;
         ypos += dy;
-        if ( !staticPivot ) {
-            pivotx += dx;
-            pivoty += dy;
-        }
-    }
-
-    public final void moveX( final int dx ) {
-        xpos = ( ( dx < 0 )?  (float) Math.ceil( xpos ) : (float) Math.floor( xpos ) ) + dx;
-        if ( !staticPivot ) {
-            pivotx = ( ( dx < 0 )?  (float) Math.ceil( pivotx ) : (float) Math.floor( pivotx ) );
-        }
-    }
-    
-    public final void moveY( final int dy ) {
-        ypos = ( ( dy > 0 )?  (float) Math.ceil( ypos ) : (float) Math.floor( ypos ) ) + dy;
-        if ( !staticPivot ) {
-            pivoty = ( ( dy > 0 )?  (float) Math.ceil( pivoty ) : (float) Math.floor( pivoty ) ) + dy;
-        }
     }
 
     public final float getScalex() {
@@ -203,7 +173,6 @@ public final class ETransform extends EntityComponent {
         ypos = attributes.getValue( YPOSITION, ypos );
         pivotx = attributes.getValue( PIVOT_X, pivotx );
         pivoty = attributes.getValue( PIVOT_Y, pivoty );
-        staticPivot = attributes.getValue( STATIC_PIVOT, staticPivot );
         scalex = attributes.getValue( SCALE_X, scalex );
         scaley = attributes.getValue( SCALE_Y, scaley );
         
@@ -219,11 +188,10 @@ public final class ETransform extends EntityComponent {
         attributes.put( YPOSITION, ypos );
         attributes.put( PIVOT_X, pivotx );
         attributes.put( PIVOT_Y, pivoty );
-        attributes.put( STATIC_PIVOT, staticPivot );
         attributes.put( SCALE_X, scalex );
         attributes.put( SCALE_Y, scalex );
         attributes.put( ROTATION, rotation );
         attributes.put( PARENT_ID, parentId );
     }
-    
+
 }

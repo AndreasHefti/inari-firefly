@@ -152,7 +152,7 @@ public final class CompositeSystem extends ComponentSystem<CompositeSystem> {
         @Override
         public final int doBuild( int componentId, Class<?> type, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, type.getName() );
-            Composite result = getInstance( context, componentId );
+            Composite result = getInstance( componentId );
             result.fromAttributes( attributes );
             composites.set( result.index(), result );
             

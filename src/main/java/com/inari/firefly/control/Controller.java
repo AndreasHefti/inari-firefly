@@ -20,14 +20,13 @@ import java.util.Set;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.IntBag;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
-public abstract class Controller extends SystemComponent implements Disposable {
+public abstract class Controller extends SystemComponent {
     
     public static final SystemComponentKey<Controller> TYPE_KEY = SystemComponentKey.create( Controller.class );
     
@@ -35,7 +34,7 @@ public abstract class Controller extends SystemComponent implements Disposable {
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         UPDATE_RESOLUTION
     };
-    
+
     private float updateResolution;
     
     private UpdateScheduler updateScheduler;
@@ -48,7 +47,7 @@ public abstract class Controller extends SystemComponent implements Disposable {
         updateResolution = -1;
         updateScheduler = null;
     }
-    
+
     @Override
     public final IndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;

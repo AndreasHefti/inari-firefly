@@ -77,7 +77,6 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
             return;
         }
         
-        action.dispose( context );
         action.dispose();
     }
     
@@ -124,7 +123,7 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             checkType( componentType );
             attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            Action result = getInstance( context, componentId );
+            Action result = getInstance( componentId );
             result.fromAttributes( attributes );
             actions.set( result.index(), result );
             

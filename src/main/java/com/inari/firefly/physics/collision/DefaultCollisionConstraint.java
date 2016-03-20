@@ -1,16 +1,21 @@
 package com.inari.firefly.physics.collision;
 
 import com.inari.commons.GeomUtils;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.physics.collision.Collisions.CollisionData;
 import com.inari.firefly.physics.collision.Collisions.EntityData;
-import com.inari.firefly.system.FFContext;
 
 public final class DefaultCollisionConstraint extends CollisionConstraint {
     
-    private final CollisionSystem collisionSystem;
+    private CollisionSystem collisionSystem;
 
-    protected DefaultCollisionConstraint( int id, FFContext context ) {
+    protected DefaultCollisionConstraint( int id ) {
         super( id );
+    }
+
+    @Override
+    public void init() throws FFInitException {
+        super.init();
         collisionSystem = context.getSystem( CollisionSystem.SYSTEM_KEY );
     }
 

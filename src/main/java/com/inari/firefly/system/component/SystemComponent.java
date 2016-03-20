@@ -24,9 +24,11 @@ import com.inari.commons.lang.indexed.IndexedObject;
 import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.Indexer;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.NamedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.FFContext;
 
 public abstract class SystemComponent extends BaseIndexedObject implements IndexedType, NamedComponent {
 
@@ -35,6 +37,8 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
         NAME
     };
     
+    protected FFContext context;
+    
     private final ComponentKey componentKey;
     protected String name;
     
@@ -42,6 +46,14 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
         super( id );
         componentKey = new ComponentKey( indexedTypeKey(), getId() );
         name = null;
+    }
+    
+    protected final void injectContext( FFContext context ) {
+        this.context = context;
+    }
+    
+    protected void init() throws FFInitException {
+        // NOOP for default
     }
     
     public final int getId() {

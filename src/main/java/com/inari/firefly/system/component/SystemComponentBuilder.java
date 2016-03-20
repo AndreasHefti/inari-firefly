@@ -3,9 +3,10 @@ package com.inari.firefly.system.component;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.build.BaseComponentBuilder;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
-public abstract class SystemComponentBuilder extends BaseComponentBuilder {
+public abstract class SystemComponentBuilder extends BaseComponentBuilder<SystemComponent> {
     
     protected SystemComponentBuilder() {
         super();
@@ -41,6 +42,11 @@ public abstract class SystemComponentBuilder extends BaseComponentBuilder {
     @Override
     public final void activate( int componentId ) {
         doBuild( componentId, systemComponentKey().indexedType, true );
+    }
+    
+    protected final void postInit( SystemComponent component, FFContext context ) {
+        component.injectContext( context );
+        component.init();
     }
     
     protected void checkType( Class<?> componentType ) {

@@ -14,7 +14,9 @@ public class CollisionQuadTreeTest extends FFTest {
     
     @Test
     public void testCreateAndAdd() {
+        ffContext.loadSystem( CollisionSystem.SYSTEM_KEY );
         EntitySystem entitySystem = ffContext.getSystem( EntitySystem.SYSTEM_KEY );
+        
         
         String entity1 = createEntity( 10, 10, entitySystem );
         String entity2 = createEntity( 60, 10, entitySystem );
@@ -22,10 +24,16 @@ public class CollisionQuadTreeTest extends FFTest {
         String entity4 = createEntity( 60, 60, entitySystem );
         String entity5 = createEntity( 70, 70, entitySystem );
         
-        CollisionQuadTree quadTree = new CollisionQuadTree( 0, firefly.getContext() );
-        quadTree.setMaxEntities( 4 );
-        quadTree.setMaxLevel( 4 );
-        quadTree.setWorldArea( new Rectangle( 0, 0, 100, 100 ) );
+        ffContext.getComponentBuilder( CollisionQuadTree.TYPE_KEY )
+            .set( CollisionQuadTree.MAX_ENTRIES_OF_AREA, 4 )
+            .set( CollisionQuadTree.MAX_LEVEL, 4 )
+            .set( CollisionQuadTree.WORLD_AREA, new Rectangle( 0, 0, 100, 100 ) )
+        .build( 1, CollisionQuadTree.class );
+        CollisionQuadTree quadTree = ffContext.getSystemComponent( CollisionQuadTree.TYPE_KEY, 1 );
+
+//        quadTree.setMaxEntities( 4 );
+//        quadTree.setMaxLevel( 4 );
+//        quadTree.setWorldArea( new Rectangle( 0, 0, 100, 100 ) );
         assertEquals( 
             "EntityCollisionQuadTree: maxEntities=4 maxLevel=4[\n" + 
             "  Node [level=0, area=[x=0,y=0,width=100,height=100], entities=IntBag [nullValue=-1, expand=10, size=0, length=5, array=[-1, -1, -1, -1, -1]]]\n" + 

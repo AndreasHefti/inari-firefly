@@ -1,23 +1,31 @@
 package com.inari.firefly.system.view;
 
 import com.inari.firefly.control.Controller;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
 public abstract class ViewController extends Controller implements ViewEventListener {
     
     protected ViewSystem viewSystem;
     
-    protected ViewController( int id, FFContext context ) {
+    protected ViewController( int id ) {
         super( id );
-        viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
-
-        context.registerListener( ViewEvent.class, this );
     }
 
     @Override
-    public void dispose( FFContext context ) {
+    public void init() {
+        super.init();
+        
+        viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
+        context.registerListener( ViewEvent.class, this );
+    }
+
+
+
+    @Override
+    public void dispose() {
         context.disposeListener( ViewEvent.class, this );
+        
+        super.dispose();
     }
 
     @Override

@@ -80,9 +80,6 @@ public interface Component {
      * @param attributes AttributeMap where all the attribute values are put into
      */
     void toAttributes( AttributeMap attributes );
-    
-    // TODO add method to set/get single attribute?
-    
 
     public static final class ComponentKey {
         

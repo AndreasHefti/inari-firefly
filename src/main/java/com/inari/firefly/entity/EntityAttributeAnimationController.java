@@ -7,13 +7,12 @@ import java.util.Set;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
-public abstract class EntityAttributeController extends EntityController {
+public abstract class EntityAttributeAnimationController extends EntityController {
 
-    public static final AttributeKey<Integer> ANIMATION_ID = new AttributeKey<Integer>( "animationId", Integer.class, EntityAttributeController.class );
-    public static final AttributeKey<Integer> ANIMATION_RESOLVER_ID = new AttributeKey<Integer>( "animationResolverId", Integer.class, EntityAttributeController.class );
+    public static final AttributeKey<Integer> ANIMATION_ID = new AttributeKey<Integer>( "animationId", Integer.class, EntityAttributeAnimationController.class );
+    public static final AttributeKey<Integer> ANIMATION_RESOLVER_ID = new AttributeKey<Integer>( "animationResolverId", Integer.class, EntityAttributeAnimationController.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         ANIMATION_ID,
         ANIMATION_RESOLVER_ID
@@ -22,8 +21,8 @@ public abstract class EntityAttributeController extends EntityController {
     protected int animationId;
     protected int animationResolverId;
     
-    protected EntityAttributeController( int id, FFContext context ) {
-        super( id, context );
+    protected EntityAttributeAnimationController( int id ) {
+        super( id );
         
         animationId = -1;
         animationResolverId = -1;

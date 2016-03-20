@@ -38,9 +38,6 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
     private EntitySystem entitySystem;
     
     private final MoveEvent moveEvent = new MoveEvent();
-
-    MovementSystem() {
-    }
     
     @Override
     public IIndexedTypeKey indexedTypeKey() {

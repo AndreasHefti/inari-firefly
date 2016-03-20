@@ -64,7 +64,7 @@ public final class WorkflowEventTrigger implements TaskTrigger, WorkflowEventLis
             }
         }
         
-        task.run( context );
+        task.runTask();
     }
 
     @Override

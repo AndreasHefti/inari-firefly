@@ -15,10 +15,9 @@ import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFSystem;
 
-public final class EntityProvider implements FFSystem, FFContextInitiable  {
+public final class EntityProvider implements FFSystem  {
     
     public static final FFSystemTypeKey<EntityProvider> SYSTEM_KEY = FFSystemTypeKey.create( EntityProvider.class );
 

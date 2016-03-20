@@ -60,7 +60,7 @@ public class TextSystem
         context.disposeListener( EntityActivationEvent.class, this );
         
         for ( TextRenderer r : renderer ) {
-            r.dispose( context );
+            r.dispose();
         }
         renderer.clear();
         
@@ -90,7 +90,7 @@ public class TextSystem
         TextRenderer removed = renderer.remove( id );
         if ( removed != null ) {
             context.disposeListener( RenderEvent.class, removed );
-            removed.dispose( context );
+            removed.dispose();
         }
     }
     
@@ -184,7 +184,7 @@ public class TextSystem
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             checkType( componentType );
             attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            TextRenderer r = getInstance( context, componentId );
+            TextRenderer r = getInstance( componentId );
             
             r.fromAttributes( attributes );
             

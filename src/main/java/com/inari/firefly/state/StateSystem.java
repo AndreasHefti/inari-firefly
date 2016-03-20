@@ -19,7 +19,6 @@ import java.util.Iterator;
 
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
@@ -193,8 +192,7 @@ public class StateSystem
         return workflows.contains( workflowId );
     }
 
-    
-    public final ComponentBuilder getWorkflowBuilder() {
+    public final WorkflowBuilder getWorkflowBuilder() {
         return new WorkflowBuilder();
     }
 
@@ -240,7 +238,7 @@ public class StateSystem
         }
     }
     
-    private final class WorkflowBuilder extends SystemComponentBuilder {
+    public final class WorkflowBuilder extends SystemComponentBuilder {
         
         @Override
         public final SystemComponentKey<Workflow> systemComponentKey() {

@@ -1,10 +1,9 @@
 package com.inari.firefly.action;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.component.SystemComponent;
 
-public abstract class Action extends SystemComponent implements FFContextInitiable {
+public abstract class Action extends SystemComponent {
     
     public static final SystemComponentKey<Action> TYPE_KEY = SystemComponentKey.create( Action.class );
 

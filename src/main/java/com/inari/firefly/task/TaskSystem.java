@@ -113,7 +113,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         }
         
         Task task = tasks.get( taskId );
-        task.run( context );
+        task.runTask();
         if ( task.removeAfterRun() && tasks.contains( taskId ) ) {
             tasks.remove( taskId );
         }
@@ -147,7 +147,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         public final int doBuild( int componentId, Class<?> taskType, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, taskType.getName() );
             
-            Task task = getInstance( context, componentId );
+            Task task = getInstance( componentId );
             task.fromAttributes( attributes );
             
             tasks.set( task.getId(), task );

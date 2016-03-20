@@ -23,7 +23,6 @@ import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.Component;
-import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
@@ -34,10 +33,10 @@ import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.view.ViewEvent;
-import com.inari.firefly.system.view.ViewEventListener;
-import com.inari.firefly.system.view.ViewEvent.Type;
 import com.inari.firefly.system.component.SystemComponentBuilder;
+import com.inari.firefly.system.view.ViewEvent;
+import com.inari.firefly.system.view.ViewEvent.Type;
+import com.inari.firefly.system.view.ViewEventListener;
 
 public final class TileGridSystem
     extends 
@@ -94,7 +93,7 @@ public final class TileGridSystem
         
         for ( TileGridRenderer r : renderer ) {
             context.disposeListener( RenderEvent.class, r );
-            r.dispose( context );
+            r.dispose();
         }
         
         clear();
@@ -161,7 +160,7 @@ public final class TileGridSystem
         TileGridRenderer r = renderer.remove( id );
         if ( r != null ) {
             context.disposeListener( RenderEvent.class, r );
-            r.dispose( context );
+            r.dispose();
         }
     }
     
@@ -297,8 +296,7 @@ public final class TileGridSystem
         }
     }
 
-    
-    public final BaseComponentBuilder getTileGridBuilder() {
+    public final TileGridBuilder getTileGridBuilder() {
         return new TileGridBuilder();
     }
     
@@ -321,7 +319,7 @@ public final class TileGridSystem
         renderer.clear();
     }
     
-    private final class TileGridBuilder extends SystemComponentBuilder {
+    public final class TileGridBuilder extends SystemComponentBuilder {
         
         @Override
         public final SystemComponentKey<TileGrid> systemComponentKey() {
@@ -369,7 +367,7 @@ public final class TileGridSystem
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             checkType( componentType );
             attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            TileGridRenderer r = getInstance( context, componentId );
+            TileGridRenderer r = getInstance( componentId );
             
             r.fromAttributes( attributes );
             

@@ -3,7 +3,6 @@ package com.inari.firefly.graphics.text;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.graphics.BaseRenderer;
-import com.inari.firefly.system.FFContext;
 
 public abstract class TextRenderer extends BaseRenderer {
     
@@ -12,13 +11,18 @@ public abstract class TextRenderer extends BaseRenderer {
     protected TextSystem textSystem;
     protected AssetSystem assetSystem;
     
-    TextRenderer( int id, FFContext context ) {
-        super( id, context );
+    TextRenderer( int id ) {
+        super( id );
+    }
+
+    @Override
+    public void init() {
+        super.init();
         
         textSystem = context.getSystem( TextSystem.SYSTEM_KEY );
         assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
     }
-    
+
     @Override
     public final IndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;
