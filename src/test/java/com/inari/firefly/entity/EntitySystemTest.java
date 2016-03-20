@@ -78,15 +78,14 @@ public class EntitySystemTest extends FFTest {
         assertEquals( "1", String.valueOf( entitySystem.components.size() ) );
         ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         assertEquals(
-            "SystemComponent:Entity(-1)::"
-            + "ACTIVE_ENTITY_IDS:String=0 SystemComponent:Entity(0)::"
+            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=0 "
+            + "SystemComponent:Entity(0)::"
             + "viewId:Integer:ETransform=1, "
-            + "layerId:Integer:ETransform=0,"
-            + " xpos:Float:ETransform=234.0, "
+            + "layerId:Integer:ETransform=0, "
+            + "xpos:Float:ETransform=234.0, "
             + "ypos:Float:ETransform=134.0, "
             + "pivotx:Float:ETransform=0.0, "
             + "pivoty:Float:ETransform=0.0, "
-            + "staticPivot:Boolean:ETransform=false, "
             + "scalex:Float:ETransform=1.0, "
             + "scaley:Float:ETransform=1.0, "
             + "rotation:Float:ETransform=0.0, "

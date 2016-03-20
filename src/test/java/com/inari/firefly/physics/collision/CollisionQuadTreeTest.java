@@ -22,7 +22,9 @@ public class CollisionQuadTreeTest extends FFTest {
         String entity4 = createEntity( 60, 60, entitySystem );
         String entity5 = createEntity( 70, 70, entitySystem );
         
-        CollisionQuadTree quadTree = new CollisionQuadTree( 0, firefly.getContext() );
+        CollisionQuadTree quadTree = new CollisionQuadTree( 0 );
+        quadTree.injectContext( ffContext );
+        quadTree.init();
         quadTree.setMaxEntities( 4 );
         quadTree.setMaxLevel( 4 );
         quadTree.setWorldArea( new Rectangle( 0, 0, 100, 100 ) );

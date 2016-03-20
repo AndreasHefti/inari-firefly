@@ -298,7 +298,7 @@ public final class AnimationSystem
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             checkType( componentType );
             attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            Animation animation = getInstance( context, componentId );
+            Animation animation = getInstance( componentId );
             
             animation.fromAttributes( attributes );
             
@@ -326,7 +326,7 @@ public final class AnimationSystem
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             checkType( componentType );
             attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            AnimationResolver resolver = getInstance( context, componentId );
+            AnimationResolver resolver = getInstance( componentId );
             
             resolver.fromAttributes( attributes );
             

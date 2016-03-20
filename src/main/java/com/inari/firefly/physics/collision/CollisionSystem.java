@@ -508,7 +508,7 @@ public final class CollisionSystem
         }
 
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            CollisionQuadTree quadTree = new CollisionQuadTree( componentId, context );
+            CollisionQuadTree quadTree = new CollisionQuadTree( componentId );
             quadTree.fromAttributes( attributes );
             
             int viewId = quadTree.getViewId();
@@ -529,6 +529,8 @@ public final class CollisionSystem
             if ( !quadTreesPerViewAndLayer.contains( viewId ) ) {
                 quadTreesPerViewAndLayer.set( viewId, new DynArray<CollisionQuadTree>() );
             }
+            
+            postInit( quadTree, context );
             
             quadTrees.set( quadTree.getId(), quadTree );
             quadTreesPerViewAndLayer
@@ -551,7 +553,7 @@ public final class CollisionSystem
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
             
-            CollisionConstraint cc = getInstance( context, componentId );
+            CollisionConstraint cc = getInstance( componentId );
             cc.fromAttributes( attributes );
             
             collisionConstraints.set( cc.getId(), cc );
@@ -573,7 +575,7 @@ public final class CollisionSystem
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
             
-            CollisionResolver cr = getInstance( context, componentId );
+            CollisionResolver cr = getInstance( componentId );
             cr.fromAttributes( attributes );
             
             collisionResolvers.set( cr.getId(), cr );

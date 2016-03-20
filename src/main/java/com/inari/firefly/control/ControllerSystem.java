@@ -174,7 +174,7 @@ public final class ControllerSystem
         @Override
         public final int doBuild( int componentId, Class<?> controllerType, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, controllerType.getName() );
-            Controller result = getInstance( context, componentId );
+            Controller result = getInstance( componentId );
             result.fromAttributes( attributes );
             controller.set( result.index(), result );
             

@@ -82,8 +82,6 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     @Override
     public void dispose( FFContext context ) {
         clear();
-        
-        
     }
     
     public final EntityBuilder getEntityBuilder() {

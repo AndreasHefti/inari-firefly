@@ -1,33 +1,37 @@
 package com.inari.firefly.graphics;
 
-import com.inari.firefly.Disposable;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFGraphics;
 
-public abstract class BaseRenderer extends SystemComponent implements RenderEventListener, Disposable {
+public abstract class BaseRenderer extends SystemComponent implements RenderEventListener {
 
     protected FFGraphics graphics;
     protected EntitySystem entitySystem;
 
     protected final TransformDataCollector transformCollector = new TransformDataCollector();
 
-    protected BaseRenderer( int id, FFContext context ) {
+    protected BaseRenderer( int id ) {
         super( id );
+    }
+
+    @Override
+    public void init() {
+        super.init();
         
         graphics = context.getGraphics();
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         context.registerListener( RenderEvent.class, this );
     }
-    
+
     @Override
-    public void dispose( FFContext context ) {
-        super.dispose();
+    public void dispose() {
         context.disposeListener( RenderEvent.class, this );
+        
+        super.dispose();
     };
     
     protected final void render( SpriteRenderable sprite ) {

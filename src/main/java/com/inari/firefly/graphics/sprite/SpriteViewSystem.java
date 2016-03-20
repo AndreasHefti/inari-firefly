@@ -50,7 +50,9 @@ public final class SpriteViewSystem
     @Override
     public final void init( FFContext context ) throws FFInitException {
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        spriteRenderer = new SpriteRenderer( context );
+        spriteRenderer = new SpriteRenderer();
+        spriteRenderer.injectContext( context );
+        spriteRenderer.init();
         
         context.registerListener( RenderEvent.class, spriteRenderer );
         context.registerListener( EntityActivationEvent.class, this );
@@ -58,11 +60,9 @@ public final class SpriteViewSystem
     
     @Override
     public final void dispose( FFContext context ) {
-        
         context.disposeListener( RenderEvent.class, spriteRenderer );
         context.disposeListener( EntityActivationEvent.class, this );
         
-        spriteRenderer.dispose( context );
         spriteRenderer.dispose();
     }
     
@@ -142,8 +142,8 @@ public final class SpriteViewSystem
     
     final class SpriteRenderer extends BaseRenderer { 
     
-        protected SpriteRenderer( FFContext context ) {
-            super( 0, context );
+        protected SpriteRenderer() {
+            super( 0 );
         }
 
         @Override

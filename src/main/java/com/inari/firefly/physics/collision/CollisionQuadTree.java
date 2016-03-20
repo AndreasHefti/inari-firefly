@@ -9,11 +9,11 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent;
 
 public final class CollisionQuadTree extends SystemComponent {
@@ -43,11 +43,11 @@ public final class CollisionQuadTree extends SystemComponent {
     private final MatchingIterator matchingIterator = new MatchingIterator(); 
     private final Rectangle tmpBounds = new Rectangle();
     
-    private final EntitySystem entitySystem;
+    private EntitySystem entitySystem;
 
-    CollisionQuadTree( int id, FFContext context ) {
+    CollisionQuadTree( int id ) {
         super( id );
-        this.entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        
         this.maxEntities = 10;
         this.maxLevel = 10;
         this.rootNode = null;
@@ -55,7 +55,14 @@ public final class CollisionQuadTree extends SystemComponent {
         matching = new DynArray<IntIterator>( maxLevel );
         matchingIndex = 0;
     }
-    
+
+    @Override
+    public final void init() throws FFInitException {
+        super.init();
+        
+        this.entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+    }
+
     @Override
     public final IIndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;

@@ -1,15 +1,14 @@
 package com.inari.firefly.graphics.tile;
 
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
 
 public class NormalFastTileGridRenderer extends TileGridRenderer {
     
     public static final String NAME = "NormalFastTileGridRenderer";
     
-    NormalFastTileGridRenderer( int id, FFContext context ) {
-        super( id, context );
+    NormalFastTileGridRenderer( int id ) {
+        super( id );
     }
 
     @Override

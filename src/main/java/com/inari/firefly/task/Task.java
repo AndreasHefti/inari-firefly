@@ -22,7 +22,6 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent;
 
 public abstract class Task extends SystemComponent {
@@ -87,6 +86,6 @@ public abstract class Task extends SystemComponent {
         attributes.put( TRIGGERS, triggers );
     }
 
-    public abstract void run( FFContext context );
+    public abstract void runTask();
 
 }

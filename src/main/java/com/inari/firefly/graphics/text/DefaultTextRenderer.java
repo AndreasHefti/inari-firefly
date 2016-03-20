@@ -6,13 +6,12 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.SpriteRenderable;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
 
 public final class DefaultTextRenderer extends TextRenderer {
 
-    protected DefaultTextRenderer( int id, FFContext context ) {
-        super( id, context );
+    protected DefaultTextRenderer( int id ) {
+        super( id );
     }
 
     @Override

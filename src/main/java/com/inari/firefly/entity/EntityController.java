@@ -16,25 +16,28 @@
 package com.inari.firefly.entity;
 
 import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.control.Controller;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
 // TODO think about add and remove entityIds directly in the EntitySystem instead of listening to EntityActivationListener
 public abstract class EntityController extends Controller implements EntityActivationListener {
-    
-    protected FFContext context;
-    
-    protected EntityController( int id, FFContext context ) {
+
+    protected EntityController( int id ) {
         super( id );
-        this.context = context;
+    }
+    @Override
+    public void init() throws FFInitException {
+        super.init();
         
         context.registerListener( EntityActivationEvent.class, this );
     }
 
     @Override
-    public final void dispose( FFContext context ) {
+    public void dispose() {
         context.disposeListener( EntityActivationEvent.class, this );
+        
+        super.dispose();
     }
     
     @Override
@@ -81,6 +84,6 @@ public abstract class EntityController extends Controller implements EntityActiv
     }
 
     public void initEntity( EntityAttributeMap attributes ) {
-        // NOOP
+        // NOOP for default
     }
 }

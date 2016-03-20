@@ -16,50 +16,15 @@
 package com.inari.firefly.audio;
 
 import com.inari.firefly.control.Controller;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
 public abstract class SoundController extends Controller {
 
-    protected FFContext context;
     protected AudioSystem soundSystem;
     
-    protected SoundController( int id, FFContext context ) {
+    protected SoundController( int id ) {
         super( id );
-        this.context = context;
     }
-
-    @Override
-    public final void dispose( FFContext context ) {
-    }
-
-//    @Override
-//    public final void onSoundEvent( AudioSystemEvent event ) {
-//        Sound sound;
-//        if ( event.name!= null ) {
-//            sound = soundSystem.getSound( event.name );
-//        } else {
-//            sound = soundSystem.getSound( event.soundId );
-//        }
-//        
-//        if ( sound == null ) {
-//            return;
-//        } 
-//       
-//        switch ( event.eventType ) {
-//            case PLAY_SOUND: {
-//                if ( sound.getControllerId() == index ) {
-//                    componentIds.add( sound.index() );
-//                }
-//                break;
-//            } 
-//            case STOP_PLAYING: {
-//                componentIds.remove( sound.index() );
-//                break;
-//            }
-//            default: {}
-//        }
-//    }
 
     @Override
     public final void update( final FFTimer timer ) {
