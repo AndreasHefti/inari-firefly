@@ -31,9 +31,6 @@ public class CollisionQuadTreeTest extends FFTest {
         .build( 1, CollisionQuadTree.class );
         CollisionQuadTree quadTree = ffContext.getSystemComponent( CollisionQuadTree.TYPE_KEY, 1 );
 
-//        quadTree.setMaxEntities( 4 );
-//        quadTree.setMaxLevel( 4 );
-//        quadTree.setWorldArea( new Rectangle( 0, 0, 100, 100 ) );
         assertEquals( 
             "EntityCollisionQuadTree: maxEntities=4 maxLevel=4[\n" + 
             "  Node [level=0, area=[x=0,y=0,width=100,height=100], entities=IntBag [nullValue=-1, expand=10, size=0, length=5, array=[-1, -1, -1, -1, -1]]]\n" + 

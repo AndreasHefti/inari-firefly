@@ -52,7 +52,6 @@ public final class SpriteViewSystem
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         spriteRenderer = new SpriteRenderer( context );
         
-        
         context.registerListener( RenderEvent.class, spriteRenderer );
         context.registerListener( EntityActivationEvent.class, this );
     }
