@@ -1,9 +1,6 @@
 # inari-firefly
-Firefly is a top-level 2D game engine layer API with focus on organizing entities and components, defining 
-systems and communication between systems. With a simple and lightweight low-layer interface that is nevertheless 
-easy extandable and allows to implement support for different lower-level API's like libGDX, processing, lwjgl and others.
 
-NOTE: Firefly is in development state and in a very eraly stage.
+NOTE: Firefly is in development state and in a eraly stage.
 
 Introduction
 
