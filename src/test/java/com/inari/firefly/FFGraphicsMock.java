@@ -5,13 +5,17 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.SpriteRenderable;
 import com.inari.firefly.graphics.TextureAsset;
+import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.TransformData;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewEvent;
 
@@ -105,13 +109,23 @@ public class FFGraphicsMock implements FFGraphics {
     }
     
     @Override
-    public void renderSprite( SpriteRenderable spriteRenderable, float xpos, float ypos ) {
+    public final void renderSprite( SpriteRenderable spriteRenderable, float xpos, float ypos ) {
+        log.add( "renderSprite::Sprite(" + spriteRenderable.getSpriteId() + ")" );
+    }
+    
+    @Override
+    public final void renderSprite( SpriteRenderable spriteRenderable, TransformData transformData ) {
         log.add( "renderSprite::Sprite(" + spriteRenderable.getSpriteId() + ")" );
     }
 
     @Override
-    public void renderSprite( SpriteRenderable spriteRenderable, float x, float y, float pivotx, float pivoty, float scalex, float scaley,float rotation ) {
-        log.add( "renderSprite::Sprite(" + spriteRenderable.getSpriteId() + ")" );
+    public void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill ) {
+        log.add( "renderShape::type="+type+" vertices="+vertices+" segments="+segments+" colors="+colors+" blendMode="+blendMode+" fill="+fill );
+    }
+    
+    @Override
+    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, TransformData transformData ) {
+        log.add( "renderShape::type="+type+" vertices="+vertices+" segments="+segments+" colors="+colors+" blendMode="+blendMode+" fill="+fill );
     }
 
     @Override

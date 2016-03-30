@@ -17,14 +17,13 @@ import com.inari.firefly.graphics.SpriteRenderable;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.RenderEvent;
-import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public final class SpriteViewSystem 
     implements 
         FFSystem, 
         EntityActivationListener {
     
-    private static final SystemComponentKey<SpriteRenderer> SPRITE_RENDERER_TYPE_KEY = SystemComponentKey.create( SpriteRenderer.class );
+    
     public static final FFSystemTypeKey<SpriteViewSystem> SYSTEM_KEY = FFSystemTypeKey.create( SpriteViewSystem.class );
     
     private EntitySystem entitySystem;
@@ -139,6 +138,8 @@ public final class SpriteViewSystem
     };
     
     final class SpriteRenderer extends BaseRenderer { 
+        
+        private final SystemComponentKey<SpriteRenderer> SPRITE_RENDERER_TYPE_KEY = SystemComponentKey.create( SpriteRenderer.class );
     
         protected SpriteRenderer( FFContext context ) {
             super( 0 );

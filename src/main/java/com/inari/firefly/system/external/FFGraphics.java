@@ -18,9 +18,13 @@ package com.inari.firefly.system.external;
 import java.util.Iterator;
 
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.graphics.RGBColor;
+import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.SpriteRenderable;
 import com.inari.firefly.graphics.TextureAsset;
+import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.view.View;
@@ -51,10 +55,14 @@ public interface FFGraphics extends FFContextInitiable, ViewEventListener {
     int getScreenHeight();
     
     void startRendering( View view );
-    
+
     void renderSprite( SpriteRenderable renderableSprite, float xpos, float ypos );
     
-    void renderSprite( SpriteRenderable spriteRenderable, float x, float y, float pivotx, float pivoty, float scalex, float scaley, float rotation );
+    void renderSprite( SpriteRenderable renderableSprite, TransformData tranform );
+    
+    void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill );
+    
+    void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, TransformData tranform );
 
     void endRendering( View view );
     

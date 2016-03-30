@@ -2,10 +2,12 @@ package com.inari.firefly.graphics;
 
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.TransformData;
 
 public abstract class BaseRenderer extends SystemComponent implements RenderEventListener {
 
@@ -35,33 +37,42 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
     };
     
     protected final void render( SpriteRenderable sprite ) {
-        render( sprite, -1 );
+        graphics.renderSprite( sprite, transformCollector );
     }
     
     protected final void render( SpriteRenderable sprite, int parentId ) {
-        
         if ( parentId >= 0 ) {
             collectTransformData( parentId );
         }
         
-        if ( transformCollector.scalex != 1 || transformCollector.scaley != 1 || transformCollector.rotation != 0 ) {
-            graphics.renderSprite( 
-                sprite, 
-                transformCollector.xpos, 
-                transformCollector.ypos, 
-                transformCollector.pivotx,
-                transformCollector.pivoty,
-                transformCollector.scalex,
-                transformCollector.scaley,
-                transformCollector.rotation
-            );
-        } else {
-            graphics.renderSprite( 
-                sprite, 
-                transformCollector.xpos, 
-                transformCollector.ypos
-            );
+        graphics.renderSprite( sprite, transformCollector );
+    }
+    
+    protected final void render( EShape shape ) {
+        graphics.renderShape( 
+            shape.getShapeType(), 
+            shape.getVertices(), 
+            shape.getSegments(), 
+            shape.getColors(), 
+            shape.getBlendMode(), 
+            shape.isFill() 
+        );
+    }
+    
+    protected final void render( EShape shape, int parentId ) {
+        if ( parentId >= 0 ) {
+            collectTransformData( parentId );
         }
+        
+        graphics.renderShape( 
+            shape.getShapeType(), 
+            shape.getVertices(), 
+            shape.getSegments(), 
+            shape.getColors(), 
+            shape.getBlendMode(), 
+            shape.isFill(), 
+            transformCollector 
+        );
     }
     
     private void collectTransformData( int parentId ) {
@@ -75,7 +86,7 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
         
     }
 
-    protected final class TransformDataCollector {
+    protected final class TransformDataCollector implements TransformData {
         
         public float xpos, ypos;
         public float pivotx, pivoty;
@@ -101,7 +112,52 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
             scaley += transform.getScaley();
             rotation += transform.getRotation();
         }
-        
+
+        @Override
+        public final float getXOffset() {
+            return xpos;
+        }
+
+        @Override
+        public final float getYOffset() {
+            return ypos;
+        }
+
+        @Override
+        public final float getScaleX() {
+            return scalex;
+        }
+
+        @Override
+        public final float getScaleY() {
+            return scaley;
+        }
+
+        @Override
+        public final float getPivotX() {
+            return pivotx;
+        }
+
+        @Override
+        public final float getPivotY() {
+            return pivoty;
+        }
+
+        @Override
+        public final float getRotation() {
+            return rotation;
+        }
+
+        @Override
+        public final boolean hasRotation() {
+            return rotation != 0f;
+        }
+
+        @Override
+        public final boolean hasScale() {
+            return scalex != 1 || scaley != 1;
+        }
+
     }
 
 }
