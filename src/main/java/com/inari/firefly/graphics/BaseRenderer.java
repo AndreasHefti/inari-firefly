@@ -55,7 +55,8 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
             shape.getSegments(), 
             shape.getColors(), 
             shape.getBlendMode(), 
-            shape.isFill() 
+            shape.isFill(),
+            shape.getShaderId()
         );
     }
     
@@ -71,6 +72,7 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
             shape.getColors(), 
             shape.getBlendMode(), 
             shape.isFill(), 
+            shape.getShaderId(),
             transformCollector 
         );
     }

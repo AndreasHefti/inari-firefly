@@ -15,12 +15,14 @@ import com.inari.firefly.graphics.BaseRenderer;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.RenderEvent;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public final class ShapeRenderSystem
     implements 
         FFSystem, 
         EntityActivationListener {
     
+    private static final SystemComponentKey<ShapeRenderer> SHAPE_RENDERER_TYPE_KEY = SystemComponentKey.create( ShapeRenderer.class );
     public static final FFSystemTypeKey<ShapeRenderSystem> SYSTEM_KEY = FFSystemTypeKey.create( ShapeRenderSystem.class );
     
     private EntitySystem entitySystem;
@@ -107,9 +109,7 @@ public final class ShapeRenderSystem
     }
     
     final class ShapeRenderer extends BaseRenderer {
-        
-        private final SystemComponentKey<ShapeRenderer> SHAPE_RENDERER_TYPE_KEY = SystemComponentKey.create( ShapeRenderer.class );
-    
+
         protected ShapeRenderer( FFContext context ) {
             super( 0 );
             
@@ -128,13 +128,9 @@ public final class ShapeRenderSystem
             while( iterator.hasNext() ) {
                 int entityId = iterator.next();
                 EShape shape = entitySystem.getComponent( entityId, EShape.TYPE_KEY );
-                if ( entitySystem.getAspect( entityId ).contains( ETransform.TYPE_KEY ) ) {
-                    ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
-                    transformCollector.set( transform );
-                    render( shape, transform.getParentId() );
-                } else {
-                    render( shape );
-                }
+                ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
+                transformCollector.set( transform );
+                render( shape, transform.getParentId() );
             }
         }
 

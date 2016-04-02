@@ -25,6 +25,8 @@ public interface SpriteRenderable {
     
     BlendMode getBlendMode();
     
+    int getShaderId();
+    
     int getOrdering();
 
 }

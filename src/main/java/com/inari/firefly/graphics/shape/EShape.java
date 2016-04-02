@@ -19,7 +19,6 @@ public class EShape extends EntityComponent {
         POLI_LINE,
         POLIGON,
         RECTANGLE,
-        SQUARE,
         CIRCLE,
         CONE,
         ARC,
@@ -34,6 +33,7 @@ public class EShape extends EntityComponent {
     public static final AttributeKey<DynArray<RGBColor>> COLORS = AttributeKey.createForDynArray( "colors", EShape.class );
     public static final AttributeKey<Integer> SEGMENTS = new AttributeKey<Integer>( "segments", Integer.class, EShape.class );
     public static final AttributeKey<Boolean> FILL = new AttributeKey<Boolean>( "fill", Boolean.class, EShape.class );
+    public static final AttributeKey<Integer> SHADER_ID = new AttributeKey<Integer>( "shaderId", Integer.class, EShape.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, EShape.class );
 
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
@@ -42,7 +42,8 @@ public class EShape extends EntityComponent {
         COLORS,
         SEGMENTS,
         FILL,
-        BLEND_MODE
+        BLEND_MODE,
+        SHADER_ID
     };
     
     private Type shapeType;
@@ -51,6 +52,7 @@ public class EShape extends EntityComponent {
     private int segments;
     private boolean fill;
     private BlendMode blendMode;
+    private int shaderId;
 
     public EShape() {
         super( TYPE_KEY );
@@ -65,6 +67,7 @@ public class EShape extends EntityComponent {
         segments = 0;
         fill = false;
         blendMode = BlendMode.NONE;
+        shaderId = -1;
     }
 
     public final Type getShapeType() {
@@ -111,6 +114,14 @@ public class EShape extends EntityComponent {
         this.blendMode = blendMode;
     }
 
+    public final int getShaderId() {
+        return shaderId;
+    }
+
+    public final void setShaderId( int shaderId ) {
+        this.shaderId = shaderId;
+    }
+
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
@@ -127,6 +138,7 @@ public class EShape extends EntityComponent {
         segments = attributes.getValue( SEGMENTS, segments );
         fill = attributes.getValue( FILL, fill );
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
+        shaderId = attributes.getValue( SHADER_ID, shaderId );
     }
 
     @Override
@@ -137,6 +149,7 @@ public class EShape extends EntityComponent {
         attributes.put( SEGMENTS, segments );
         attributes.put( FILL, fill );
         attributes.put( BLEND_MODE, blendMode );
+        attributes.put( SHADER_ID, shaderId );
     }
 
 }

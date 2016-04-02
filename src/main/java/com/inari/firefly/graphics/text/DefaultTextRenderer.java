@@ -46,6 +46,7 @@ public final class DefaultTextRenderer extends TextRenderer {
             char[] chars = text.getText();
             textRenderable.blendMode = text.getBlendMode();
             textRenderable.tintColor = text.getTintColor();
+            textRenderable.shaderId = text.getShaderId();
             transformCollector.set( transform );
             int horizontalStep = font.getCharWidth() + font.getCharSpace();
             int verticalStep = font.getCharHeight() + font.getLineSpace();
@@ -71,6 +72,7 @@ public final class DefaultTextRenderer extends TextRenderer {
         int spriteId;
         RGBColor tintColor; 
         BlendMode blendMode;
+        int shaderId;
 
         @Override
         public int getSpriteId() {
@@ -90,6 +92,11 @@ public final class DefaultTextRenderer extends TextRenderer {
         @Override
         public int getOrdering() {
             return 0;
+        }
+
+        @Override
+        public int getShaderId() {
+            return shaderId;
         }
 
     }

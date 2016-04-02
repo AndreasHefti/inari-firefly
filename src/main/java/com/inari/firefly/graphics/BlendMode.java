@@ -40,7 +40,7 @@ public enum BlendMode {
     public int gl11DestConst;
     
     private BlendMode( int gl11SourceConst, int gl11DestConst ) {
-        this.gl11DestConst = gl11DestConst;
+        this.gl11SourceConst = gl11SourceConst;
         this.gl11DestConst = gl11DestConst;
     }
     

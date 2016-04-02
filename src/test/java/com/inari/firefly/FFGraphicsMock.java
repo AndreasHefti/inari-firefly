@@ -75,11 +75,6 @@ public class FFGraphicsMock implements FFGraphics {
     }
 
     @Override
-    public int createShader( String shaderProgram ) {
-        return loadedAssets.add( shaderProgram );
-    }
-
-    @Override
     public int createShader( ShaderAsset shaderAsset ) {
         return loadedAssets.add( shaderAsset.getName() );
     }
@@ -119,12 +114,12 @@ public class FFGraphicsMock implements FFGraphics {
     }
 
     @Override
-    public void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill ) {
+    public void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId ) {
         log.add( "renderShape::type="+type+" vertices="+vertices+" segments="+segments+" colors="+colors+" blendMode="+blendMode+" fill="+fill );
     }
     
     @Override
-    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, TransformData transformData ) {
+    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId, TransformData transformData ) {
         log.add( "renderShape::type="+type+" vertices="+vertices+" segments="+segments+" colors="+colors+" blendMode="+blendMode+" fill="+fill );
     }
 

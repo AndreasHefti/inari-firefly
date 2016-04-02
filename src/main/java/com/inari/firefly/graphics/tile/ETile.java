@@ -35,6 +35,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     public static final AttributeKey<Integer> SPRITE_ID = new AttributeKey<Integer>( "spriteId", Integer.class, ETile.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, ETile.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ETile.class );
+    public static final AttributeKey<Integer> SHADER_ID = new AttributeKey<Integer>( "shaderId", Integer.class, ETile.class );
     public static final AttributeKey<Boolean> MULTI_POSITION = new AttributeKey<Boolean>( "multiPosition", Boolean.class, ETile.class );
     public static final AttributeKey<Integer> GRID_X_POSITION = new AttributeKey<Integer>( "gridXPosition", Integer.class, ETile.class );
     public static final AttributeKey<Integer> GRID_Y_POSITION = new AttributeKey<Integer>( "gridYPosition", Integer.class, ETile.class );
@@ -43,6 +44,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         SPRITE_ID,
         TINT_COLOR,
         BLEND_MODE,
+        SHADER_ID,
         MULTI_POSITION,
         GRID_X_POSITION,
         GRID_Y_POSITION,
@@ -52,6 +54,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     private int spriteId;
     private final RGBColor tintColor = new RGBColor();
     private BlendMode blendMode;
+    private int shaderId;
     private boolean multiPosition;
     private final Position gridPosition = new Position();
     private final DynArray<Position> gridPositions = new DynArray<Position>( 10, 50 );
@@ -66,6 +69,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         spriteId = -1;
         setTintColor( new RGBColor( 1, 1, 1, 1 ) );
         blendMode = BlendMode.NONE;
+        shaderId = -1;
         setGridXPos( 0 );
         setGridYPos( 0 );
         gridPositions.clear();
@@ -105,6 +109,15 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
 
     public final void setBlendMode( BlendMode blendMode ) {
         this.blendMode = blendMode;
+    }
+    
+    @Override
+    public final int getShaderId() {
+        return shaderId;
+    }
+
+    public final void setShaderId( int shaderId ) {
+        this.shaderId = shaderId;
     }
 
     public final boolean isMultiPosition() {
@@ -152,6 +165,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         spriteId = attributes.getValue( SPRITE_ID, spriteId );
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
+        shaderId = attributes.getValue( SHADER_ID, shaderId );
         multiPosition = attributes.getValue( MULTI_POSITION, multiPosition );
         gridPosition.x = attributes.getValue( GRID_X_POSITION, gridPosition.x );
         gridPosition.y = attributes.getValue( GRID_Y_POSITION, gridPosition.y );
@@ -172,6 +186,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         attributes.put( SPRITE_ID, spriteId );
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
         attributes.put( BLEND_MODE, blendMode );
+        attributes.put( SHADER_ID, shaderId );
         attributes.put( MULTI_POSITION, multiPosition );
         if ( multiPosition ) {
             attributes.put( GRID_POSITIONS, gridPositions );

@@ -44,11 +44,9 @@ public interface FFGraphics extends FFContextInitiable, ViewEventListener {
     
     void disposeSprite( int spriteId );
     
-    int createShader( String shaderProgram );
-    
     int createShader( ShaderAsset shaderAsset );
     
-    void disposeShader( int shaderId );
+    void disposeShader( int shaderAssetId );
     
     int getScreenWidth();
 
@@ -60,9 +58,9 @@ public interface FFGraphics extends FFContextInitiable, ViewEventListener {
     
     void renderSprite( SpriteRenderable renderableSprite, TransformData tranform );
     
-    void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill );
+    void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId );
     
-    void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, TransformData tranform );
+    void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId, TransformData tranform );
 
     void endRendering( View view );
     

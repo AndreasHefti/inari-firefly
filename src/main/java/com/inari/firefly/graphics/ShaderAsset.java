@@ -12,24 +12,31 @@ import com.inari.firefly.system.FFContext;
 
 public final class ShaderAsset extends Asset {
 
-    public static final AttributeKey<Boolean> RESOURCE_BASED = new AttributeKey<Boolean>( "resourceBased", Boolean.class, ShaderAsset.class );
-    public static final AttributeKey<String> RESOURCE_NAME = new AttributeKey<String>( "resourceName", String.class, ShaderAsset.class );
-    public static final AttributeKey<String> SHADER_PROGRAM = new AttributeKey<String>( "shaderProgram", String.class, ShaderAsset.class );
+    public static final AttributeKey<String> VERTEX_SHADER_RESOURCE_NAME = new AttributeKey<String>( "vertexShaderResourceName", String.class, ShaderAsset.class );
+    public static final AttributeKey<String> VERTEX_SHADER_PROGRAM = new AttributeKey<String>( "vertexShaderProgram", String.class, ShaderAsset.class );
+    public static final AttributeKey<String> FRAGMENT_SHADER_RESOURCE_NAME = new AttributeKey<String>( "fragmentShaderResourceName", String.class, ShaderAsset.class );
+    public static final AttributeKey<String> FRAGMENT_SHADER_PROGRAM = new AttributeKey<String>( "fragmentShaderProgram", String.class, ShaderAsset.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] {
-        RESOURCE_BASED,
-        RESOURCE_NAME,
-        SHADER_PROGRAM
+        VERTEX_SHADER_RESOURCE_NAME,
+        VERTEX_SHADER_PROGRAM,
+        FRAGMENT_SHADER_RESOURCE_NAME,
+        FRAGMENT_SHADER_PROGRAM
     } ) );
 
-    private boolean resourceBased;
-    private String resourceName;
-    private String shaderProgram;
+    private String vertexShaderResourceName;
+    private String vertexShaderProgram;
+    private String fragmentShaderResourceName;
+    private String fragmentShaderProgram;
     
     private int shaderId = -1;
 
     ShaderAsset( int assetId ) {
         super( assetId );
-        resourceBased = true;
+        
+        vertexShaderResourceName = null;
+        vertexShaderProgram = null;
+        fragmentShaderResourceName = null;
+        fragmentShaderProgram = null;
     }
     
     @Override
@@ -41,28 +48,36 @@ public final class ShaderAsset extends Asset {
         return shaderId;
     }
 
-    public final boolean isResourceBased() {
-        return resourceBased;
+    public final String getVertexShaderResourceName() {
+        return vertexShaderResourceName;
     }
 
-    public final void setResourceBased( boolean resourceBased ) {
-        this.resourceBased = resourceBased;
+    public final void setVertexShaderResourceName( String vertexShaderResourceName ) {
+        this.vertexShaderResourceName = vertexShaderResourceName;
     }
 
-    public final String getResourceName() {
-        return resourceName;
+    public final String getVertexShaderProgram() {
+        return vertexShaderProgram;
     }
 
-    public final void setResourceName( String resourceName ) {
-        this.resourceName = resourceName;
+    public final void setVertexShaderProgram( String vertexShaderProgram ) {
+        this.vertexShaderProgram = vertexShaderProgram;
     }
 
-    public final String getShaderProgram() {
-        return shaderProgram;
+    public final String getFragmentShaderResourceName() {
+        return fragmentShaderResourceName;
     }
 
-    public final void setShaderProgram( String shaderProgram ) {
-        this.shaderProgram = shaderProgram;
+    public final void setFragmentShaderResourceName( String fragmentShaderResourceName ) {
+        this.fragmentShaderResourceName = fragmentShaderResourceName;
+    }
+
+    public final String getFragmentShaderProgram() {
+        return fragmentShaderProgram;
+    }
+
+    public final void setFragmentShaderProgram( String fragmentShaderProgram ) {
+        this.fragmentShaderProgram = fragmentShaderProgram;
     }
 
     @Override
@@ -75,17 +90,27 @@ public final class ShaderAsset extends Asset {
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
-        resourceBased = attributes.getValue( RESOURCE_BASED, resourceBased );
-        resourceName = attributes.getValue( RESOURCE_NAME, resourceName );
-        shaderProgram = attributes.getValue( SHADER_PROGRAM, shaderProgram );
+        vertexShaderResourceName = attributes.getValue( VERTEX_SHADER_RESOURCE_NAME, vertexShaderResourceName );
+        vertexShaderProgram = attributes.getValue( VERTEX_SHADER_PROGRAM, vertexShaderProgram );
+        fragmentShaderResourceName = attributes.getValue( FRAGMENT_SHADER_RESOURCE_NAME, fragmentShaderResourceName );
+        fragmentShaderProgram = attributes.getValue( FRAGMENT_SHADER_PROGRAM, fragmentShaderProgram );
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        attributes.put( RESOURCE_BASED, resourceBased );
-        attributes.put( RESOURCE_NAME, resourceName );
-        attributes.put( SHADER_PROGRAM, shaderProgram );
+        if ( vertexShaderResourceName != null ) {
+            attributes.put( VERTEX_SHADER_RESOURCE_NAME, vertexShaderResourceName );
+        }
+        if ( vertexShaderProgram != null ) {
+            attributes.put( VERTEX_SHADER_PROGRAM, vertexShaderProgram );
+        }
+        if ( fragmentShaderResourceName != null ) {
+            attributes.put( FRAGMENT_SHADER_RESOURCE_NAME, fragmentShaderResourceName );
+        }
+        if ( fragmentShaderProgram != null ) {
+            attributes.put( FRAGMENT_SHADER_PROGRAM, fragmentShaderProgram );
+        }
     }
 
     @Override

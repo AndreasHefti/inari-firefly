@@ -20,12 +20,14 @@ public class EText extends EntityComponent {
     public static final AttributeKey<String> TEXT_STRING = new AttributeKey<String>( "text_string", String.class, EText.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, EText.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, EText.class );
+    public static final AttributeKey<Integer> SHADER_ID = new AttributeKey<Integer>( "shaderId", Integer.class, EText.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         RENDERER_ID,
         FONT_ID,
         TEXT,
         TINT_COLOR,
-        BLEND_MODE
+        BLEND_MODE,
+        SHADER_ID
     };
     
     private int rendererId;
@@ -33,7 +35,7 @@ public class EText extends EntityComponent {
     private char[] text;
     private final RGBColor tintColor = new RGBColor();
     private BlendMode blendMode;
-    
+    private int shaderId;
     
     public EText() {
         super( TYPE_KEY );
@@ -47,6 +49,7 @@ public class EText extends EntityComponent {
         text = null;
         setTintColor( new RGBColor( 1f, 1f, 1f, 1f ) );
         blendMode = BlendMode.NONE;
+        shaderId = -1;
     }
 
     public final int getRendererId() {
@@ -80,6 +83,14 @@ public class EText extends EntityComponent {
     public final void setBlendMode( BlendMode blendMode ) {
         this.blendMode = blendMode;
     }
+    
+    public final int getShaderId() {
+        return shaderId;
+    }
+
+    public final void setShaderId( int shaderId ) {
+        this.shaderId = shaderId;
+    }
 
     public final RGBColor getTintColor() {
         return tintColor;
@@ -107,6 +118,7 @@ public class EText extends EntityComponent {
         }
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
+        shaderId = attributes.getValue( SHADER_ID, shaderId );
     }
 
     @Override
@@ -116,6 +128,7 @@ public class EText extends EntityComponent {
         attributes.put( TEXT, text );
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
         attributes.put( BLEND_MODE, blendMode );
+        attributes.put( SHADER_ID, shaderId );
     }
 
 }
