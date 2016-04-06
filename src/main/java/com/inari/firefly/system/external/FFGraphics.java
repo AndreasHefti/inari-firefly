@@ -17,30 +17,19 @@ package com.inari.firefly.system.external;
 
 import java.util.Iterator;
 
-import com.inari.commons.geom.Rectangle;
-import com.inari.commons.graphics.RGBColor;
-import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.SpriteRenderable;
-import com.inari.firefly.graphics.TextureAsset;
-import com.inari.firefly.graphics.shape.EShape;
-import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewEventListener;
 
 public interface FFGraphics extends FFContextInitiable, ViewEventListener {
-    
-    int createTexture( String resourceName );
-    
-    int createTexture( TextureAsset textureAsset );
+
+    int createTexture( TextureData data );
     
     void disposeTexture( int textureId );
     
-    int createSprite( int textureId, Rectangle textureRegion );
-    
-    int createSprite( SpriteAsset spriteAsset );
+    int createSprite( SpriteData data );
     
     void disposeSprite( int spriteId );
     
@@ -58,9 +47,9 @@ public interface FFGraphics extends FFContextInitiable, ViewEventListener {
     
     void renderSprite( SpriteRenderable renderableSprite, TransformData tranform );
     
-    void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId );
+    void renderShape( ShapeData data );
     
-    void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId, TransformData tranform );
+    void renderShape( ShapeData data, TransformData tranform );
 
     void endRendering( View view );
     

@@ -25,8 +25,9 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.TextureData;
 
-public final class TextureAsset extends Asset {
+public final class TextureAsset extends Asset implements TextureData {
     
     public static final AttributeKey<String> RESOURCE_NAME = new AttributeKey<String>( "resourceName", String.class, TextureAsset.class );
     
@@ -53,6 +54,7 @@ public final class TextureAsset extends Asset {
         return textureId;
     }
 
+    @Override
     public final String getResourceName() {
         return resourceName;
     }
@@ -62,20 +64,22 @@ public final class TextureAsset extends Asset {
         this.resourceName = resourceName;
     }
     
-    public final int getWidth() {
+    public final int getTextureWidth() {
         return width;
     }
 
-    public final void setWidth( int width ) {
+    @Override
+    public final void setTextureWidth( int width ) {
         checkNotAlreadyLoaded();
         this.width = width;
     }
 
-    public final int getHeight() {
+    public final int getTextureHeight() {
         return height;
     }
 
-    public final void setHeight( int height ) {
+    @Override
+    public final void setTextureHeight( int height ) {
         checkNotAlreadyLoaded();
         this.height = height;
     }

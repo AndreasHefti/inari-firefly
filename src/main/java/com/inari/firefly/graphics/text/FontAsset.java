@@ -12,8 +12,10 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.SpriteData;
+import com.inari.firefly.system.external.TextureData;
 
-public final class FontAsset extends Asset {
+public final class FontAsset extends Asset implements TextureData {
     
     public static final AttributeKey<String> TEXTURE_RESOURCE_NAME = new AttributeKey<String>( "fontTextureId", String.class, FontAsset.class );
     public static final AttributeKey<char[][]> CHAR_TEXTURE_MAP = new AttributeKey<char[][]>( "charTextureMap", char[][].class, FontAsset.class );
@@ -33,6 +35,8 @@ public final class FontAsset extends Asset {
     };
 
     private String textureResourceName;
+    private int textureWidth;
+    private int textureHeight;
     
     private char[][] charTextureMap;
     private int charWidth;
@@ -68,13 +72,36 @@ public final class FontAsset extends Asset {
         
         return charSpriteMap.get( defaultChar );
     }
+    
+    @Override
+    public final String getResourceName() {
+        return textureResourceName;
+    }
 
     public final String getTextureResourceName() {
         return textureResourceName;
     }
-
+    
     public final void setTextureResourceName( String textureResourceName ) {
         this.textureResourceName = textureResourceName;
+    }
+
+    public final int getTextureWidth() {
+        return textureWidth;
+    }
+
+    @Override
+    public final void setTextureWidth( int textureWidth ) {
+        this.textureWidth = textureWidth;
+    }
+
+    public final int getTextureHeight() {
+        return textureHeight;
+    }
+
+    @Override
+    public final void setTextureHeight( int textureHeight ) {
+        this.textureHeight = textureHeight;
     }
 
     public final char[][] getCharTextureMap() {
@@ -165,15 +192,17 @@ public final class FontAsset extends Asset {
         }
         
         FFGraphics graphics = context.getGraphics();
-        textureId = graphics.createTexture( textureResourceName );
         
+        textureId = graphics.createTexture( this );
         Rectangle textureRegion = new Rectangle( 0, 0, getCharWidth(), getCharHeight() );
+        InternalSpriteData spriteData = new InternalSpriteData( this, textureRegion );
+        
         for ( int y = 0; y < charTextureMap.length; y++ ) {
             for ( int x = 0; x < charTextureMap[ y ].length; x++ ) {
                 textureRegion.x = x * charWidth;
                 textureRegion.y = y * charHeight;
                 
-                int charSpriteId = graphics.createSprite( textureId, textureRegion );
+                int charSpriteId = graphics.createSprite( spriteData );
                 charSpriteMap.set( charTextureMap[ y ][ x ], charSpriteId );
             }
         }
@@ -197,6 +226,33 @@ public final class FontAsset extends Asset {
         
         graphics.disposeTexture( textureId );
         textureId = -1;
+    }
+    
+    private final class InternalSpriteData implements SpriteData {
+        
+        private final FontAsset fontAsset;
+        private final Rectangle region;
+
+        public InternalSpriteData( FontAsset fontAsset, Rectangle region ) {
+            super();
+            this.fontAsset = fontAsset;
+            this.region = region;
+        }
+
+        @Override
+        public final int getTextureId() {
+            return fontAsset.textureId;
+        }
+
+        @Override
+        public final Rectangle getTextureRegion() {
+            return region;
+        }
+
+        @Override
+        public final <A> A getDynamicAttribute( AttributeKey<A> key ) {
+            return fontAsset.getDynamicAttribute( key );
+        }
     }
 
 }

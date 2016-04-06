@@ -10,22 +10,10 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.BlendMode;
+import com.inari.firefly.system.external.ShapeData;
 
-public class EShape extends EntityComponent {
-    
-    public enum Type {
-        POINT,
-        LINE,
-        POLI_LINE,
-        POLIGON,
-        RECTANGLE,
-        CIRCLE,
-        CONE,
-        ARC,
-        CURVE,
-        TRIANGLE
-    }
-    
+public class EShape extends EntityComponent implements ShapeData {
+
     public static final EntityComponentTypeKey<EShape> TYPE_KEY = EntityComponentTypeKey.create( EShape.class );
 
     public static final AttributeKey<Type> SHAPE_TYPE = new AttributeKey<Type>( "shapeType", Type.class, EShape.class );

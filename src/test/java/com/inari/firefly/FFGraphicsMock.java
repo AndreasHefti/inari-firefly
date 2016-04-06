@@ -4,17 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.inari.commons.geom.Rectangle;
-import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.SpriteRenderable;
-import com.inari.firefly.graphics.TextureAsset;
-import com.inari.firefly.graphics.shape.EShape;
-import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.ShapeData;
+import com.inari.firefly.system.external.SpriteData;
+import com.inari.firefly.system.external.TextureData;
 import com.inari.firefly.system.external.TransformData;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewEvent;
@@ -45,13 +42,8 @@ public class FFGraphicsMock implements FFGraphics {
     }
     
     @Override
-    public int createTexture( String resourceName ) {
-        return loadedAssets.add( resourceName );
-    }
-
-    @Override
-    public int createTexture( TextureAsset textureAsset ) {
-        return createTexture( textureAsset.getName() );
+    public int createTexture( TextureData data ) {
+        return loadedAssets.add( data.getResourceName() );
     }
 
     @Override
@@ -60,13 +52,8 @@ public class FFGraphicsMock implements FFGraphics {
     }
 
     @Override
-    public int createSprite( int textureId, Rectangle textureRegion ) {
-        return loadedAssets.add( "sprite:"+ textureRegion );
-    }
-
-    @Override
-    public int createSprite( SpriteAsset spriteAsset ) {
-        return loadedAssets.add( spriteAsset.getName() );
+    public int createSprite( SpriteData data ) {
+        return loadedAssets.add( "sprite:"+ data.getTextureId() + " : "+ data.getTextureRegion() );
     }
 
     @Override
@@ -114,13 +101,13 @@ public class FFGraphicsMock implements FFGraphics {
     }
 
     @Override
-    public void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId ) {
-        log.add( "renderShape::type="+type+" vertices="+vertices+" segments="+segments+" colors="+colors+" blendMode="+blendMode+" fill="+fill );
+    public void renderShape( ShapeData data ) {
+        log.add( "renderShape:: " + data );
     }
     
     @Override
-    public final void renderShape( EShape.Type type, float[] vertices, int segments, DynArray<RGBColor> colors, BlendMode blendMode, boolean fill, int shaderId, TransformData transformData ) {
-        log.add( "renderShape::type="+type+" vertices="+vertices+" segments="+segments+" colors="+colors+" blendMode="+blendMode+" fill="+fill );
+    public final void renderShape( ShapeData data, TransformData transformData ) {
+        log.add( "renderShape:: " + data + " : " + transformData );
     }
 
     @Override

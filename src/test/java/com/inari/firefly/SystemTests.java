@@ -58,10 +58,10 @@ public class SystemTests extends FFTest {
         entitySystem.activateEntity( entityId );
         
         assertEquals( 
-            "LowerSystemFacadeMock [" +
-            "loadedAssets=[boulderDashTextureAsset,spriteAsset], " +
-            "views=[BASE_VIEW], " +
-            "log=[]]", 
+            "LowerSystemFacadeMock ["
+            + "loadedAssets=[origTiles.png,sprite:0 : [x=0,y=0,width=32,height=32]], "
+            + "views=[BASE_VIEW], "
+            + "log=[]]", 
             lowerSystemMock.toString() 
         );
         
@@ -69,10 +69,10 @@ public class SystemTests extends FFTest {
         firefly.render();
         
         assertEquals( 
-            "LowerSystemFacadeMock [" +
-            "loadedAssets=[boulderDashTextureAsset,spriteAsset], " +
-            "views=[BASE_VIEW], " +
-            "log=[startRendering::View(BASE_VIEW), renderSprite::Sprite(1), endRendering::View(BASE_VIEW), flush]]", 
+            "LowerSystemFacadeMock ["
+            + "loadedAssets=[origTiles.png,sprite:0 : [x=0,y=0,width=32,height=32]], "
+            + "views=[BASE_VIEW], "
+            + "log=[startRendering::View(BASE_VIEW), renderSprite::Sprite(1), endRendering::View(BASE_VIEW), flush]]", 
             lowerSystemMock.toString() 
         );
     }
