@@ -38,7 +38,7 @@ public final class AssetEvent extends Event<AssetEventListener> {
     }
 
     @Override
-    public final void notify( AssetEventListener listener ) {
+    protected final void notify( AssetEventListener listener ) {
         listener.onAssetEvent( this );
     }
 

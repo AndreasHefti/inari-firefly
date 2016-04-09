@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
@@ -113,7 +112,9 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
 
     public final class ActionBuilder extends SystemComponentBuilder {
         
-        protected ActionBuilder() {}
+        protected ActionBuilder() {
+            super( context );
+        }
         
         @Override
         public final SystemComponentKey<Action> systemComponentKey() {
@@ -121,17 +122,10 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
         }
 
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            checkType( componentType );
-            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            Action result = getInstance( componentId );
-            result.fromAttributes( attributes );
+            Action result = createSystemComponent( componentId, componentType, context );
             actions.set( result.index(), result );
-            
-            postInit( result, context );
-            
             return result.getId();
         }
-
     }
 
     public final class ActionBuilderAdapter extends SystemBuilderAdapter<Action> {

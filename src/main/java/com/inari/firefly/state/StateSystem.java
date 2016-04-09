@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.system.Condition;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
@@ -96,12 +97,12 @@ public class StateSystem
             
             while ( stateChanges.hasNext() ) {
                 StateChange stateChange = stateChanges.next();
-                StateChangeCondition condition = stateChange.getCondition();
+                Condition condition = stateChange.getCondition();
                 if ( condition == null ) {
                     continue;
                 }
                 
-                if ( condition.check( context, workflow, event.timer ) ) {
+                if ( condition.check( context ) ) {
                     doStateChange( workflow, stateChange );
                     break;
                 }
@@ -240,6 +241,10 @@ public class StateSystem
     
     public final class WorkflowBuilder extends SystemComponentBuilder {
         
+        protected WorkflowBuilder() {
+            super( context );
+        }
+        
         @Override
         public final SystemComponentKey<Workflow> systemComponentKey() {
             return Workflow.TYPE_KEY;
@@ -247,8 +252,7 @@ public class StateSystem
         
         @Override
         public int doBuild( int componentId, Class<?> subType, boolean activate ) {
-            Workflow workflow = new Workflow( componentId );
-            workflow.fromAttributes( attributes );
+            Workflow workflow = createSystemComponent( componentId, subType, context );
             workflows.set( workflow.index(), workflow );
             
             if ( activate ) {

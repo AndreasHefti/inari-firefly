@@ -7,7 +7,6 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
@@ -178,8 +177,8 @@ public final class CollisionSystem
         checkTileCollision( constraint, viewId, layerId );
         checkSpriteCollision( constraint, viewId, layerId );
         
-        if ( collisions.entityData.collision.collisionLayersIds != null ) {
-            final IntIterator iterator = collisions.entityData.collision.collisionLayersIds.iterator();
+        if ( collisions.entityData.collision.collisionLayerIds != null ) {
+            final IntIterator iterator = collisions.entityData.collision.collisionLayerIds.iterator();
             while ( iterator.hasNext() ) {
                 final int layerId2 = iterator.next();
                 if ( layerId2 == layerId ) {
@@ -481,7 +480,9 @@ public final class CollisionSystem
 
     public final class BitMaskBuilder extends SystemComponentBuilder {
         
-        protected BitMaskBuilder() {}
+        protected BitMaskBuilder() {
+            super( context );
+        }
         
         @Override
         public final SystemComponentKey<BitMask> systemComponentKey() {
@@ -500,16 +501,17 @@ public final class CollisionSystem
     
     public final class CollisionQuadTreeBuilder extends SystemComponentBuilder {
         
-        protected CollisionQuadTreeBuilder() {}
+        protected CollisionQuadTreeBuilder() {
+            super( context );
+        }
         
         @Override
         public final SystemComponentKey<CollisionQuadTree> systemComponentKey() {
             return CollisionQuadTree.TYPE_KEY;
         }
 
-        public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            CollisionQuadTree quadTree = new CollisionQuadTree( componentId );
-            quadTree.fromAttributes( attributes );
+        public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
+            CollisionQuadTree quadTree = createSystemComponent( componentId, componentType, context );
             
             int viewId = quadTree.getViewId();
             int layerId = quadTree.getLayerId();
@@ -530,8 +532,6 @@ public final class CollisionSystem
                 quadTreesPerViewAndLayer.set( viewId, new DynArray<CollisionQuadTree>() );
             }
             
-            postInit( quadTree, context );
-            
             quadTrees.set( quadTree.getId(), quadTree );
             quadTreesPerViewAndLayer
                 .get( viewId )
@@ -543,44 +543,36 @@ public final class CollisionSystem
     
     public final class CollisionConstraintBuilder extends SystemComponentBuilder {
         
-        protected CollisionConstraintBuilder() {}
+        protected CollisionConstraintBuilder() {
+            super( context );
+        }
         
         @Override
         public final SystemComponentKey<CollisionConstraint> systemComponentKey() {
             return CollisionConstraint.TYPE_KEY;
         }
 
-        public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            
-            CollisionConstraint cc = getInstance( componentId );
-            cc.fromAttributes( attributes );
-            
+        public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
+            CollisionConstraint cc = createSystemComponent( componentId, componentType, context );
             collisionConstraints.set( cc.getId(), cc );
-            postInit( cc, context );
-            
             return cc.getId();
         }
     }
     
     public final class CollisionResolverBuilder extends SystemComponentBuilder {
         
-        protected CollisionResolverBuilder() {}
+        protected CollisionResolverBuilder() {
+            super( context );
+        }
         
         @Override
         public final SystemComponentKey<CollisionResolver> systemComponentKey() {
             return CollisionResolver.TYPE_KEY;
         }
 
-        public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            
-            CollisionResolver cr = getInstance( componentId );
-            cr.fromAttributes( attributes );
-            
+        public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
+            CollisionResolver cr = createSystemComponent( componentId, componentType, context );
             collisionResolvers.set( cr.getId(), cr );
-            postInit( cr, context );
-            
             return cr.getId();
         }
     }

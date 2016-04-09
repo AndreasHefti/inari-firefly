@@ -19,7 +19,6 @@ import java.util.Iterator;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.control.ControllerSystem;
@@ -191,6 +190,10 @@ public final class AudioSystem
     }
 
     public final class SoundBuilder extends SystemComponentBuilder {
+        
+        public SoundBuilder() {
+            super( context );
+        }
 
         @Override
         public final SystemComponentKey<Sound> systemComponentKey() {
@@ -199,12 +202,7 @@ public final class AudioSystem
 
         @Override
         public int doBuild( int componentId, Class<?> subType, boolean activate ) {
-            if ( componentId >= 0 && sounds.contains( componentId ) ) {
-                throw new FFInitException( "Sound with id: " + componentId + " already exists: " + sounds.get( componentId ).getName() );
-            }
-            
-            Sound result = new Sound( componentId );
-            result.fromAttributes( attributes );
+            Sound result = createSystemComponent( componentId, subType, context );
             
             SoundAsset asset = assetSystem.getAssetAs( result.getSoundAssetId(), SoundAsset.class );
             if ( asset == null ) {
@@ -214,8 +212,6 @@ public final class AudioSystem
             result.streaming = asset.isStreaming();
             
             sounds.set( result.index(), result );
-            postInit( result, context );
-            
             return result.getId();
         }
     }

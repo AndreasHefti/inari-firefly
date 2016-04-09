@@ -52,7 +52,7 @@ public final class RenderEvent extends Event<RenderEventListener> {
     }
 
     @Override
-    public final void notify( RenderEventListener listener ) {
+    protected final void notify( RenderEventListener listener ) {
         listener.render( this );
     }
 

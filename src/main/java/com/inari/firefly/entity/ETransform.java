@@ -21,12 +21,16 @@ import java.util.Set;
 
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.view.Layer;
+import com.inari.firefly.system.view.View;
 
 public final class ETransform extends EntityComponent {
     
     public static final EntityComponentTypeKey<ETransform> TYPE_KEY = EntityComponentTypeKey.create( ETransform.class );
     
+    public static final AttributeKey<String> VIEW_NAME = new AttributeKey<String>( "viewName", String.class, ETransform.class );
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, ETransform.class );
+    public static final AttributeKey<String> LAYER_NAME = new AttributeKey<String>( "layerName", String.class, ETransform.class );
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, ETransform.class );
     public static final AttributeKey<Float> XPOSITION = new AttributeKey<Float>( "xpos", Float.class, ETransform.class );
     public static final AttributeKey<Float> YPOSITION = new AttributeKey<Float>( "ypos", Float.class, ETransform.class );
@@ -167,8 +171,8 @@ public final class ETransform extends EntityComponent {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        viewId = attributes.getValue( VIEW_ID, viewId );
-        layerId = attributes.getValue( LAYER_ID, layerId );
+        viewId = attributes.getIdForName( VIEW_NAME, VIEW_ID, View.TYPE_KEY, viewId );
+        layerId = attributes.getIdForName( LAYER_NAME, LAYER_ID, Layer.TYPE_KEY, layerId );
         xpos = attributes.getValue( XPOSITION, xpos );
         ypos = attributes.getValue( YPOSITION, ypos );
         pivotx = attributes.getValue( PIVOT_X, pivotx );

@@ -20,12 +20,23 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.IntBag;
+import com.inari.firefly.component.Component;
 import com.inari.firefly.component.Component.ComponentKey;
+import com.inari.firefly.control.Controller;
+import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public class ComponentAttributeMap implements AttributeMap {
 
     protected ComponentKey typeKey;
     protected final HashMap<AttributeKey<?>, Object> attributes = new LinkedHashMap<AttributeKey<?>, Object>();
+    protected final FFContext context;
+    
+    public ComponentAttributeMap( FFContext context ) {
+        this.context = context;
+    }
     
     @Override
     public final ComponentKey getComponentKey() {
@@ -134,7 +145,65 @@ public class ComponentAttributeMap implements AttributeMap {
     }
     
     @Override
-    public void clear() {
+    public final int getIdForName( 
+        AttributeKey<String> nameAttribute, 
+        AttributeKey<Integer> idAttribute, 
+        SystemComponentKey<? extends Component> typeKey, 
+        int defaultValue 
+    ) {
+        if ( contains( idAttribute ) ) {
+           return getValue( idAttribute, defaultValue );
+        } else {
+            String name = getValue( nameAttribute, null );
+            return ( name != null )? context.getSystemComponentId( typeKey, name ) : defaultValue;
+        }
+    }
+    
+    @Override
+    public final IntBag getIdsForNames( 
+        AttributeKey<DynArray<String>> namesAttribute, 
+        AttributeKey<IntBag> idsAttribute,
+        SystemComponentKey<Controller> typeKey, 
+        IntBag defaultValue 
+    ) {
+        IntBag result = null;
+        if ( contains( idsAttribute ) ) {
+           result = getValue( idsAttribute, defaultValue );
+        } 
+        
+        if ( contains( namesAttribute ) ) {
+            DynArray<String> names = getValue( namesAttribute, null );
+            if ( result == null ) {
+                result = new IntBag( names.size(), -1 );
+            }
+            
+            for ( String name : names ) {
+                int id = context.getSystemComponentId( typeKey, name );
+                if ( !result.contains( id ) ) {
+                    result.add( id );
+                }
+            }
+        }
+        
+        return ( result != null )? result : defaultValue;
+    }
+    
+    @Override
+    public final int getAssetInstanceId( 
+        AttributeKey<String> nameAttribute, 
+        AttributeKey<Integer> idAttribute, 
+        int defaultValue 
+    ) {
+        if ( contains( idAttribute ) ) {
+           return getValue( idAttribute, defaultValue );
+        } else {
+            String name = getValue( nameAttribute, null );
+            return ( name != null )? context.getAssetInstanceId( name ) : defaultValue;
+        }
+    }
+
+    @Override
+    public final void clear() {
         attributes.clear();
     }
     

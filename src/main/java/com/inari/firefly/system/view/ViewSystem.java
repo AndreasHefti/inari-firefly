@@ -362,7 +362,9 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     
     public final class ViewBuilder extends SystemComponentBuilder {
 
-        protected ViewBuilder() {}
+        protected ViewBuilder() {
+            super( context );
+        }
         
         @Override
         public final SystemComponentKey<View> systemComponentKey() {
@@ -371,8 +373,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
 
         @Override
         public final int doBuild( int componentId, Class<?> subType, boolean activate ) {
-            View view = new View( componentId );
-            view.fromAttributes( attributes );
+            View view = createSystemComponent( componentId, subType, context );
             
             checkName( view );
             views.set( view.index(), view );
@@ -400,6 +401,10 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     }
     
     public final class LayerBuilder extends SystemComponentBuilder {
+        
+        public LayerBuilder() {
+            super( context );
+        }
 
         @Override
         public final SystemComponentKey<Layer> systemComponentKey() {
@@ -408,8 +413,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
 
         @Override
         public int doBuild( int componentId, Class<?> subType, boolean activate ) {
-            Layer layer = new Layer( componentId );
-            layer.fromAttributes( attributes );
+            Layer layer = createSystemComponent( componentId, subType, context );
             checkName( layer );
             
             int viewId = layer.getViewId();

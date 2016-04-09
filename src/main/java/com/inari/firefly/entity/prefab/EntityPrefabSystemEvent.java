@@ -16,13 +16,14 @@ public final class EntityPrefabSystemEvent extends Event<EntityPrefabSystem> {
 
     public final Type type;
     public final int prefabId;
-    public final EntityAttributeMap attributes = new EntityAttributeMap();
+    public final EntityAttributeMap attributes;
     public final int entityId;
     public final int number;
     public final boolean activation;
 
-    protected EntityPrefabSystemEvent( Type type, int prefabId, int entityId, int number, boolean activation ) {
+    protected EntityPrefabSystemEvent( Type type, int prefabId, int entityId, int number, boolean activation, EntityAttributeMap attributes ) {
         super( TYPE_KEY );
+        this.attributes = attributes;
         this.type = type;
         this.prefabId = prefabId;
         this.entityId = entityId;
@@ -35,7 +36,7 @@ public final class EntityPrefabSystemEvent extends Event<EntityPrefabSystem> {
     }
 
     @Override
-    public final void notify( final EntityPrefabSystem listener ) {
+    protected final void notify( final EntityPrefabSystem listener ) {
         switch ( type ) {
             case CREATE_ENTITY: {
                 listener.activateOne( prefabId, attributes );

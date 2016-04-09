@@ -4,15 +4,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.control.Controller;
 
 public class EEntity extends EntityComponent {
     
     public static final EntityComponentTypeKey<EEntity> TYPE_KEY = EntityComponentTypeKey.create( EEntity.class );
     
     public static final AttributeKey<String> ENTITY_NAME = new AttributeKey<String>( "entityName", String.class, EEntity.class );
+    public static final AttributeKey<DynArray<String>> CONTROLLER_NAMES = AttributeKey.createForDynArray( "controllerNames", EEntity.class );
     public static final AttributeKey<IntBag> CONTROLLER_IDS = new AttributeKey<IntBag>( "controllerIds", IntBag.class, EEntity.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         ENTITY_NAME,
@@ -68,7 +71,8 @@ public class EEntity extends EntityComponent {
     @Override
     public void fromAttributes( AttributeMap attributes ) {
         entityName = attributes.getValue( ENTITY_NAME, entityName );
-        setControllerIds( attributes.getValue( CONTROLLER_IDS, controllerIds ) );
+
+        setControllerIds( attributes.getIdsForNames( CONTROLLER_NAMES, CONTROLLER_IDS, Controller.TYPE_KEY, controllerIds ) );
     }
 
     @Override

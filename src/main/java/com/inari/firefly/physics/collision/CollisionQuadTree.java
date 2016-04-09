@@ -15,12 +15,16 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.view.Layer;
+import com.inari.firefly.system.view.View;
 
 public final class CollisionQuadTree extends SystemComponent {
     
     public static final SystemComponentKey<CollisionQuadTree> TYPE_KEY = SystemComponentKey.create( CollisionQuadTree.class );
     
+    public static final AttributeKey<String> VIEW_NAME = new AttributeKey<String>( "viewName", String.class, CollisionQuadTree.class );
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, CollisionQuadTree.class );
+    public static final AttributeKey<String> LAYER_NAME = new AttributeKey<String>( "layerName", String.class, CollisionQuadTree.class );
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, CollisionQuadTree.class );
     public static final AttributeKey<Rectangle> WORLD_AREA = new AttributeKey<Rectangle>( "world_area", Rectangle.class, CollisionQuadTree.class );
     public static final AttributeKey<Integer> MAX_ENTRIES_OF_AREA = new AttributeKey<Integer>( "maxEntities", Integer.class, CollisionQuadTree.class );
@@ -125,8 +129,8 @@ public final class CollisionQuadTree extends SystemComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        viewId = attributes.getValue( VIEW_ID, viewId );
-        layerId = attributes.getValue( LAYER_ID, layerId );
+        viewId = attributes.getIdForName( VIEW_NAME, VIEW_ID, View.TYPE_KEY, viewId );
+        layerId = attributes.getIdForName( LAYER_NAME, LAYER_ID, Layer.TYPE_KEY, layerId );
         maxEntities = attributes.getValue( MAX_ENTRIES_OF_AREA, maxEntities );
         maxLevel = attributes.getValue( MAX_LEVEL, maxLevel );
         
@@ -145,8 +149,6 @@ public final class CollisionQuadTree extends SystemComponent {
         attributes.put( MAX_LEVEL, maxLevel );
         attributes.put( WORLD_AREA, rootNode.area );
     } 
-    
-    
 
     public final void add( int entityId ) {
         rootNode.add( 

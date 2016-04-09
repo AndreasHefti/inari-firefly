@@ -27,15 +27,10 @@ import com.inari.firefly.component.NamedComponent;
 import com.inari.firefly.component.attr.Attribute;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.component.attr.ComponentAttributeMap;
 
 public abstract class BaseComponentBuilder<C extends Component> implements ComponentBuilder {
     
     protected final AttributeMap attributes;
-    
-    protected BaseComponentBuilder() {
-        this.attributes = new ComponentAttributeMap();
-    }
     
     protected BaseComponentBuilder( AttributeMap attributes ) {
         this.attributes = attributes;

@@ -58,7 +58,7 @@ public abstract class EntityComponent implements Component, IndexedType {
         
         @SuppressWarnings( "unchecked" )
         public static final <C extends EntityComponent> EntityComponentTypeKey<C> create( Class<C> type ) {
-            return Indexer.getIndexedTypeKey( EntityComponentTypeKey.class, type );
+            return Indexer.createIndexedTypeKey( EntityComponentTypeKey.class, type );
         }
     }
     

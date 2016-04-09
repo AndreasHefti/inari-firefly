@@ -21,6 +21,7 @@ public class EShape extends EntityComponent implements ShapeData {
     public static final AttributeKey<DynArray<RGBColor>> COLORS = AttributeKey.createForDynArray( "colors", EShape.class );
     public static final AttributeKey<Integer> SEGMENTS = new AttributeKey<Integer>( "segments", Integer.class, EShape.class );
     public static final AttributeKey<Boolean> FILL = new AttributeKey<Boolean>( "fill", Boolean.class, EShape.class );
+    public static final AttributeKey<String> SHADER_ASSET_NAME = new AttributeKey<String>( "shaderAssetName", String.class, EShape.class );
     public static final AttributeKey<Integer> SHADER_ID = new AttributeKey<Integer>( "shaderId", Integer.class, EShape.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, EShape.class );
 
@@ -126,7 +127,7 @@ public class EShape extends EntityComponent implements ShapeData {
         segments = attributes.getValue( SEGMENTS, segments );
         fill = attributes.getValue( FILL, fill );
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
-        shaderId = attributes.getValue( SHADER_ID, shaderId );
+        shaderId = attributes.getAssetInstanceId( SHADER_ASSET_NAME, SHADER_ID, shaderId );
     }
 
     @Override

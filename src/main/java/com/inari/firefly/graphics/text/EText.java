@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.graphics.RGBColor;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -14,16 +15,19 @@ public class EText extends EntityComponent {
     
     public static final EntityComponentTypeKey<EText> TYPE_KEY = EntityComponentTypeKey.create( EText.class );
     
+    public static final AttributeKey<String> RENDERER_NAME = new AttributeKey<String>( "rendererName", String.class, EText.class );
     public static final AttributeKey<Integer> RENDERER_ID = new AttributeKey<Integer>( "rendererId", Integer.class, EText.class );
-    public static final AttributeKey<Integer> FONT_ID = new AttributeKey<Integer>( "fontId", Integer.class, EText.class );
+    public static final AttributeKey<String> FONT_ASSET_NAME = new AttributeKey<String>( "fontAssetName", String.class, EText.class );
+    public static final AttributeKey<Integer> FONT_ASSET_ID = new AttributeKey<Integer>( "fontAssetId", Integer.class, EText.class );
     public static final AttributeKey<char[]> TEXT = new AttributeKey<char[]>( "text", char[].class, EText.class );
     public static final AttributeKey<String> TEXT_STRING = new AttributeKey<String>( "text_string", String.class, EText.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, EText.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, EText.class );
+    public static final AttributeKey<String> SHADER_ASSET_NAME = new AttributeKey<String>( "shaderAssetName", String.class, EText.class );
     public static final AttributeKey<Integer> SHADER_ID = new AttributeKey<Integer>( "shaderId", Integer.class, EText.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         RENDERER_ID,
-        FONT_ID,
+        FONT_ASSET_ID,
         TEXT,
         TINT_COLOR,
         BLEND_MODE,
@@ -31,7 +35,7 @@ public class EText extends EntityComponent {
     };
     
     private int rendererId;
-    private int fontId;
+    private int fontAssetId;
     private char[] text;
     private final RGBColor tintColor = new RGBColor();
     private BlendMode blendMode;
@@ -45,7 +49,7 @@ public class EText extends EntityComponent {
     @Override
     public final void resetAttributes() {
         rendererId = -1;
-        fontId = -1;
+        fontAssetId = -1;
         text = null;
         setTintColor( new RGBColor( 1f, 1f, 1f, 1f ) );
         blendMode = BlendMode.NONE;
@@ -60,12 +64,12 @@ public class EText extends EntityComponent {
         this.rendererId = rendererId;
     }
 
-    public final int getFontId() {
-        return fontId;
+    public final int getFontAssetId() {
+        return fontAssetId;
     }
 
-    public final void setFontId( int fontId ) {
-        this.fontId = fontId;
+    public final void setFontAssetId( int fontAssetId ) {
+        this.fontAssetId = fontAssetId;
     }
 
     public final char[] getText() {
@@ -110,8 +114,8 @@ public class EText extends EntityComponent {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        rendererId = attributes.getValue( RENDERER_ID, rendererId );
-        fontId = attributes.getValue( FONT_ID, fontId );
+        rendererId = attributes.getIdForName( RENDERER_NAME, RENDERER_ID, TextRenderer.TYPE_KEY, rendererId );
+        fontAssetId = attributes.getIdForName( FONT_ASSET_NAME, FONT_ASSET_ID, Asset.TYPE_KEY, fontAssetId );
         text = attributes.getValue( TEXT, text );
         if ( attributes.contains( TEXT_STRING ) ) {
             text = attributes.getValue( TEXT_STRING ).toCharArray();
@@ -124,7 +128,7 @@ public class EText extends EntityComponent {
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( RENDERER_ID, rendererId );
-        attributes.put( FONT_ID, fontId );
+        attributes.put( FONT_ASSET_ID, fontAssetId );
         attributes.put( TEXT, text );
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
         attributes.put( BLEND_MODE, blendMode );

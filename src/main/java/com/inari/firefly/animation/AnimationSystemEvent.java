@@ -50,9 +50,8 @@ public final class AnimationSystemEvent extends Event<AnimationSystem> {
         this.type = type;
     }
 
-    /** NOTE: this is called by the EventDispatcher on specified AnimationEvent. No need to call dis directly */
     @Override
-    public final void notify( AnimationSystem listener ) {
+    protected final void notify( AnimationSystem listener ) {
         listener.onAnimationEvent( this );
     }
 

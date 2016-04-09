@@ -19,20 +19,24 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.control.Controller;
 import com.inari.firefly.system.component.SystemComponent;
 
 public final class Sound extends SystemComponent {
     
     public static final SystemComponentKey<Sound> TYPE_KEY = SystemComponentKey.create( Sound.class );
     
-    public static final AttributeKey<Integer> SOUND_ASSET_ID = new AttributeKey<Integer>( "soundId", Integer.class, Sound.class );
+    public static final AttributeKey<String> SOUND_ASSET_NAME = new AttributeKey<String>( "soundAssetName", String.class, Sound.class );
+    public static final AttributeKey<Integer> SOUND_ASSET_ID = new AttributeKey<Integer>( "soundAssetId", Integer.class, Sound.class );
     public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Sound.class );
     public static final AttributeKey<Float> VOLUME = new AttributeKey<Float>( "volume", Float.class, Sound.class );
     public static final AttributeKey<Float> PITCH = new AttributeKey<Float>( "pitch", Float.class, Sound.class );
     public static final AttributeKey<Float> PAN = new AttributeKey<Float>( "pan", Float.class, Sound.class );
     public static final AttributeKey<Integer> CHANNEL = new AttributeKey<Integer>( "channel", Integer.class, Sound.class );
+    public static final AttributeKey<String> CONTROLLER_NAME = new AttributeKey<String>( "controllerName", String.class, Sound.class );
     public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, Sound.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         SOUND_ASSET_ID,
@@ -154,12 +158,12 @@ public final class Sound extends SystemComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        soundAssetId = attributes.getValue( SOUND_ASSET_ID, soundAssetId );
+        soundAssetId = attributes.getIdForName( SOUND_ASSET_NAME, SOUND_ASSET_ID, Asset.TYPE_KEY, soundAssetId );
         looping = attributes.getValue( LOOPING, looping );
         volume = attributes.getValue( VOLUME, volume );
         pitch = attributes.getValue( PITCH, pitch );
         pan = attributes.getValue( PAN, pan );
-        controllerId = attributes.getValue( CONTROLLER_ID, controllerId );
+        controllerId = attributes.getIdForName( CONTROLLER_NAME, CONTROLLER_ID, Controller.TYPE_KEY, controllerId );
         channel = attributes.getValue( CHANNEL, channel );
     }
 

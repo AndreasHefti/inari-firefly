@@ -6,7 +6,6 @@ import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
@@ -173,7 +172,9 @@ public class TextSystem
     
     public final class TextRendererBuilder extends SystemComponentBuilder {
         
-        private TextRendererBuilder() {}
+        private TextRendererBuilder() {
+            super( context );
+        }
         
         @Override
         public final SystemComponentKey<TextRenderer> systemComponentKey() {
@@ -182,16 +183,9 @@ public class TextSystem
 
         @Override
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            checkType( componentType );
-            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            TextRenderer r = getInstance( componentId );
-            
-            r.fromAttributes( attributes );
-            
-            renderer.set( r.index(), r );
-            postInit( r, context );
-            
-            return r.getId();
+            TextRenderer component = createSystemComponent( componentId, componentType, context );
+            renderer.set( component.index(), component );
+            return component.getId();
         }
     }
 

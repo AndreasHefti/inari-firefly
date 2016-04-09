@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
-import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
@@ -29,14 +28,14 @@ public abstract class Task extends SystemComponent {
     public static final SystemComponentKey<Task> TYPE_KEY = SystemComponentKey.create( Task.class );
 
     public static final AttributeKey<Boolean> REMOVE_AFTER_RUN = new AttributeKey<Boolean>( "removeAfterRun", Boolean.class, Task.class );
-    public static final AttributeKey<DynArray<TaskTrigger>> TRIGGERS = AttributeKey.createForDynArray( "triggers", Task.class );
+    public static final AttributeKey<WorkflowTaskTrigger> TRIGGER = new AttributeKey<WorkflowTaskTrigger>( "triggerId", WorkflowTaskTrigger.class, Task.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         REMOVE_AFTER_RUN,
-        TRIGGERS
+        TRIGGER
     };
     
     private boolean removeAfterRun;
-    private DynArray<TaskTrigger> triggers;
+    private WorkflowTaskTrigger trigger;
     
     protected Task( int id ) {
         super( id );
@@ -55,12 +54,18 @@ public abstract class Task extends SystemComponent {
         this.removeAfterRun = removeAfterRun;
     }
 
-    final DynArray<TaskTrigger> getTriggers() {
-        return triggers;
+    public final WorkflowTaskTrigger getTrigger() {
+        return trigger;
     }
 
-    final void setTriggers( DynArray<TaskTrigger> triggers ) {
-        this.triggers = triggers;
+    public final void setTrigger( WorkflowTaskTrigger trigger ) {
+        if ( this.trigger != null ) {
+            trigger.dispose( context );
+        }
+        this.trigger = trigger;
+        if ( this.trigger != null ) {
+            trigger.register( context, getId() );
+        }
     }
 
     @Override
@@ -75,7 +80,7 @@ public abstract class Task extends SystemComponent {
         super.fromAttributes( attributes );
         
         removeAfterRun = attributes.getValue( REMOVE_AFTER_RUN, removeAfterRun );
-        triggers = attributes.getValue( TRIGGERS, triggers );
+        setTrigger( attributes.getValue( TRIGGER ) );
     }
 
     @Override
@@ -83,7 +88,7 @@ public abstract class Task extends SystemComponent {
         super.toAttributes( attributes );
         
         attributes.put( REMOVE_AFTER_RUN, removeAfterRun );
-        attributes.put( TRIGGERS, triggers );
+        attributes.put( TRIGGER, trigger );
     }
 
     public abstract void runTask();

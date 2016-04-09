@@ -24,7 +24,7 @@ public interface FFSystem extends IndexedType, FFContextInitiable {
         
         @SuppressWarnings( "unchecked" )
         public static final <T extends FFSystem> FFSystemTypeKey<T> create( Class<T> type ) {
-            return Indexer.getIndexedTypeKey( FFSystemTypeKey.class, type );
+            return Indexer.createIndexedTypeKey( FFSystemTypeKey.class, type );
         }
 
     }

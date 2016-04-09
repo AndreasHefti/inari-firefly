@@ -32,9 +32,11 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     
     public static final EntityComponentTypeKey<ETile> TYPE_KEY = EntityComponentTypeKey.create( ETile.class );
     
+    public static final AttributeKey<String> SPRITE_ASSET_NAME = new AttributeKey<String>( "spriteAssetName", String.class, ETile.class );
     public static final AttributeKey<Integer> SPRITE_ID = new AttributeKey<Integer>( "spriteId", Integer.class, ETile.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, ETile.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ETile.class );
+    public static final AttributeKey<String> SHADER_ASSET_NAME = new AttributeKey<String>( "shaderAssetName", String.class, ETile.class );
     public static final AttributeKey<Integer> SHADER_ID = new AttributeKey<Integer>( "shaderId", Integer.class, ETile.class );
     public static final AttributeKey<Boolean> MULTI_POSITION = new AttributeKey<Boolean>( "multiPosition", Boolean.class, ETile.class );
     public static final AttributeKey<Integer> GRID_X_POSITION = new AttributeKey<Integer>( "gridXPosition", Integer.class, ETile.class );
@@ -162,10 +164,10 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        spriteId = attributes.getValue( SPRITE_ID, spriteId );
+        spriteId = attributes.getAssetInstanceId( SPRITE_ASSET_NAME, SPRITE_ID, spriteId );
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
-        shaderId = attributes.getValue( SHADER_ID, shaderId );
+        shaderId = attributes.getAssetInstanceId( SHADER_ASSET_NAME, SHADER_ID, shaderId );
         multiPosition = attributes.getValue( MULTI_POSITION, multiPosition );
         gridPosition.x = attributes.getValue( GRID_X_POSITION, gridPosition.x );
         gridPosition.y = attributes.getValue( GRID_Y_POSITION, gridPosition.y );

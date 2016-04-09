@@ -1,15 +1,17 @@
 package com.inari.firefly.system.component;
 
 import com.inari.firefly.FFInitException;
+import com.inari.firefly.component.Component;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.component.attr.ComponentAttributeMap;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public abstract class SystemComponentBuilder extends BaseComponentBuilder<SystemComponent> {
     
-    protected SystemComponentBuilder() {
-        super();
+    protected SystemComponentBuilder( FFContext context ) {
+        super( new ComponentAttributeMap( context ) );
     }
     
     protected SystemComponentBuilder( AttributeMap attributes ) {
@@ -44,15 +46,18 @@ public abstract class SystemComponentBuilder extends BaseComponentBuilder<System
         doBuild( componentId, systemComponentKey().indexedType, true );
     }
     
-    protected final void postInit( SystemComponent component, FFContext context ) {
-        component.injectContext( context );
-        component.init();
-    }
-    
-    protected void checkType( Class<?> componentType ) {
+    protected <SC extends SystemComponent> SC createSystemComponent( int componentId, Class<?> componentType, FFContext context ) {
         if ( !systemComponentKey().indexedType.isAssignableFrom( componentType ) ) {
             throw new FFInitException( "Component Builder Type missmatch. builderType: " + componentType.getName() + " is not a valid substitute of type: " + componentType.getName() );
         }
+        attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
+            
+        SC systemComponent = getInstance( componentId );
+        systemComponent.injectContext( context );
+        systemComponent.fromAttributes( attributes );
+        systemComponent.init();
+        
+        return systemComponent;
     }
 
 }

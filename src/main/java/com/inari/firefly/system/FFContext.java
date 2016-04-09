@@ -23,7 +23,6 @@ import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.EntitySystem.EntityBuilder;
 import com.inari.firefly.graphics.TextureAsset;
-import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.system.FFSystem.FFSystemTypeKey;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
@@ -147,17 +146,8 @@ public final class FFContext {
     
     //---- SystemComponent adaption ----
     
-    public final int getTextureId( String textureName ) {
-        Asset asset = getSystemComponent( TextureAsset.TYPE_KEY, textureName );
-        if ( asset == null ) {
-            return -1;
-        }
-        
-        return asset.getInstanceId();
-    }
-
-    public final int getSpriteId( String textureName ) {
-        Asset asset = getSystemComponent( SpriteAsset.TYPE_KEY, textureName );
+    public final int getAssetInstanceId( String assetName ) {
+        Asset asset = getSystemComponent( TextureAsset.TYPE_KEY, assetName );
         if ( asset == null ) {
             return -1;
         }
@@ -299,14 +289,14 @@ public final class FFContext {
     
     public final void toAttributes( Attributes attributes ) {
         for ( SystemBuilderAdapter<?> builderAdapter : systemBuilderAdapter ) {
-            builderAdapter.toAttributes( attributes );
+            builderAdapter.toAttributes( attributes, this );
         }
     }
     
     public final void toAttributes( Attributes attributes, SystemComponentKey<?>... componentKeys ) {
         for ( SystemComponentKey<?> componentKey : componentKeys ) {
             SystemBuilderAdapter<?> builderAdapter = systemBuilderAdapter.get( componentKey.index() );
-            builderAdapter.toAttributes( attributes );
+            builderAdapter.toAttributes( attributes, this );
         }
     }
 

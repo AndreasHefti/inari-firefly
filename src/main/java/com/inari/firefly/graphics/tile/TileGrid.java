@@ -28,13 +28,18 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.view.Layer;
+import com.inari.firefly.system.view.View;
 
 public final class TileGrid extends SystemComponent {
     
     public static final SystemComponentKey<TileGrid> TYPE_KEY = SystemComponentKey.create( TileGrid.class );
     
+    public static final AttributeKey<String> RENDERER_NAME = new AttributeKey<String>( "rendererName", String.class, TileGrid.class );
     public static final AttributeKey<Integer> RENDERER_ID = new AttributeKey<Integer>( "rendererId", Integer.class, TileGrid.class );
+    public static final AttributeKey<String> VIEW_NAME = new AttributeKey<String>( "viewName", String.class, TileGrid.class );
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, TileGrid.class );
+    public static final AttributeKey<String> LAYER_NAME = new AttributeKey<String>( "layerName", String.class, TileGrid.class );
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, TileGrid.class );
     public static final AttributeKey<Integer> WIDTH = new AttributeKey<Integer>( "width", Integer.class, TileGrid.class );
     public static final AttributeKey<Integer> HEIGHT = new AttributeKey<Integer>( "height", Integer.class, TileGrid.class );
@@ -188,9 +193,9 @@ public final class TileGrid extends SystemComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        rendererId = attributes.getValue( RENDERER_ID, rendererId );
-        viewId = attributes.getValue( VIEW_ID, viewId );
-        layerId = attributes.getValue( LAYER_ID, layerId );
+        rendererId = attributes.getIdForName( RENDERER_NAME, RENDERER_ID, TileGridRenderer.TYPE_KEY, rendererId );
+        viewId = attributes.getIdForName( VIEW_NAME, VIEW_ID, View.TYPE_KEY, viewId );
+        layerId = attributes.getIdForName( LAYER_NAME, LAYER_ID, Layer.TYPE_KEY, layerId );
         width = attributes.getValue( WIDTH, width );
         height = attributes.getValue( HEIGHT, height );
         cellWidth = attributes.getValue( CELL_WIDTH, cellWidth );

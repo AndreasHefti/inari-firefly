@@ -31,6 +31,7 @@ import com.inari.firefly.system.external.SpriteData;
 
 public final class SpriteAsset extends Asset implements SpriteData {
     
+    public static final AttributeKey<String> TEXTURE_ASSET_NAME = new AttributeKey<String>( "textureAssetName", String.class, SpriteAsset.class );
     public static final AttributeKey<Integer> TEXTURE_ASSET_ID = new AttributeKey<Integer>( "textureAssetId", Integer.class, SpriteAsset.class );
     public static final AttributeKey<Rectangle> TEXTURE_REGION  = new AttributeKey<Rectangle>( "textureRegion", Rectangle.class, SpriteAsset.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
@@ -101,7 +102,7 @@ public final class SpriteAsset extends Asset implements SpriteData {
         checkNotAlreadyLoaded();
         super.fromAttributes( attributes );
         
-        textureAssetId = attributes.getValue( TEXTURE_ASSET_ID, textureAssetId );
+        textureAssetId = attributes.getIdForName( TEXTURE_ASSET_NAME, TEXTURE_ASSET_ID, Asset.TYPE_KEY, textureAssetId );
         Rectangle textureRegion = attributes.getValue( TEXTURE_REGION );
         if ( textureRegion != null ) {
             setTextureRegion( textureRegion );

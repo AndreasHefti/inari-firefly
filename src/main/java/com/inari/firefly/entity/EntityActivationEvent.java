@@ -44,7 +44,7 @@ public final class EntityActivationEvent extends AspectedEvent<EntityActivationL
     }
 
     @Override
-    public final void notify( EntityActivationListener listener ) {
+    protected final void notify( EntityActivationListener listener ) {
         listener.onEntityActivationEvent( this );
     }
 

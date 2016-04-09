@@ -44,7 +44,7 @@ public class BitMaskTest extends FFTest {
     
     @Test
     public void testCreation() {
-        AttributeMap attrs = new ComponentAttributeMap();
+        AttributeMap attrs = new ComponentAttributeMap( ffContext );
         attrs.put( BitMask.WIDTH, 10 );
         attrs.put( BitMask.HEIGHT, 10 );
         BitMask pp1 = new BitMask( 1 );
@@ -108,7 +108,7 @@ public class BitMaskTest extends FFTest {
     
     @Test
     public void testSetPixel() {
-        AttributeMap attrs = new ComponentAttributeMap();
+        AttributeMap attrs = new ComponentAttributeMap( null );
         attrs.put( BitMask.WIDTH, 10 );
         attrs.put( BitMask.HEIGHT, 10 );
         BitMask pp = new BitMask( 1 );
@@ -212,7 +212,7 @@ public class BitMaskTest extends FFTest {
     @Test
     public void testIntersectionOfPixel() {
         
-        AttributeMap attrs = new ComponentAttributeMap();
+        AttributeMap attrs = new ComponentAttributeMap( ffContext );
         attrs.put( BitMask.WIDTH, 10 );
         attrs.put( BitMask.HEIGHT, 10 );
         BitMask pp1 = new BitMask( 1 );
@@ -297,7 +297,7 @@ public class BitMaskTest extends FFTest {
     @Test
     public void testIntersectionOfRectangle() {
         
-        AttributeMap attrs = new ComponentAttributeMap();
+        AttributeMap attrs = new ComponentAttributeMap( ffContext );
         attrs.put( BitMask.WIDTH, 10 );
         attrs.put( BitMask.HEIGHT, 10 );
         BitMask pp1 = new BitMask( 1 );
@@ -457,7 +457,7 @@ public class BitMaskTest extends FFTest {
     
     @Test
     public void testIntersectionWithOther() {
-        AttributeMap attrs = new ComponentAttributeMap();
+        AttributeMap attrs = new ComponentAttributeMap( ffContext );
         attrs.put( BitMask.WIDTH, 10 );
         attrs.put( BitMask.HEIGHT, 10 );
         attrs.put( BitMask.BITS, StringUtils.bitsetFromString( PP_REGION_1 ) );
@@ -574,7 +574,7 @@ public class BitMaskTest extends FFTest {
     
     @Test
     public void testIntersectionPerformance() {
-        AttributeMap attrs = new ComponentAttributeMap();
+        AttributeMap attrs = new ComponentAttributeMap( ffContext );
         attrs.put( BitMask.WIDTH, 10 );
         attrs.put( BitMask.HEIGHT, 10 );
         attrs.put( BitMask.BITS, StringUtils.bitsetFromString( PP_REGION_1 ) );

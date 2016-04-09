@@ -20,6 +20,7 @@ import java.util.Iterator;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
@@ -53,11 +54,11 @@ public abstract class SystemBuilderAdapter<C extends SystemComponent> implements
         }
     }
     
-    public void toAttributes( Attributes attributes ) {
+    public void toAttributes( Attributes attributes, FFContext context ) {
         Iterator<C> all = getAll();
         while ( all.hasNext() ) {
             C component = all.next();
-            AttributeMap attrs = new ComponentAttributeMap();
+            AttributeMap attrs = new ComponentAttributeMap( context );
             attrs.setComponentKey( component.componentKey() );
             component.toAttributes( attrs );
             attributes.add( attrs );

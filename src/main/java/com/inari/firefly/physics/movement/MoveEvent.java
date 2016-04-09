@@ -38,7 +38,7 @@ public final class MoveEvent extends Event<MoveEventListener> {
     }
 
     @Override
-    public final void notify( MoveEventListener listener ) {
+    protected final void notify( MoveEventListener listener ) {
         listener.onMoveEvent( this );
     }
 

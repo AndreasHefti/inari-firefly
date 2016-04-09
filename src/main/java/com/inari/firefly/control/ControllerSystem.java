@@ -19,7 +19,6 @@ import java.util.Iterator;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
@@ -166,6 +165,10 @@ public final class ControllerSystem
 
     public final class ControllerBuilder extends SystemComponentBuilder {
         
+        protected ControllerBuilder() {
+            super( context );
+        }
+        
         @Override
         public final SystemComponentKey<Controller> systemComponentKey() {
             return Controller.TYPE_KEY;
@@ -173,13 +176,8 @@ public final class ControllerSystem
 
         @Override
         public final int doBuild( int componentId, Class<?> controllerType, boolean activate ) {
-            attributes.put( Component.INSTANCE_TYPE_NAME, controllerType.getName() );
-            Controller result = getInstance( componentId );
-            result.fromAttributes( attributes );
+            Controller result = createSystemComponent( componentId, controllerType, context );
             controller.set( result.index(), result );
-            
-            postInit( result, context );
-            
             return result.getId();
         }
     }

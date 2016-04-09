@@ -18,7 +18,6 @@ package com.inari.firefly.task;
 import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
@@ -61,7 +60,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         return tasks.get( taskId );
     }
     
-    public <T extends Task> T getTaskAs( int taskId, Class<T> subType ) {
+    public final <T extends Task> T getTaskAs( int taskId, Class<T> subType ) {
         Task task = getTask( taskId );
         if ( task == null ) {
             return null;
@@ -96,13 +95,6 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         Task task = tasks.remove( taskId );
 
         if ( task != null ) {
-            DynArray<TaskTrigger> triggers = task.getTriggers();
-            if ( triggers != null ) {
-                for ( TaskTrigger trigger : triggers ) {
-                    trigger.dispose( context );
-                }
-            }
-            
             disposeSystemComponent( task );
         }
     }
@@ -135,8 +127,11 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         };
     }
 
-    
     public final class TaskBuilder extends SystemComponentBuilder {
+        
+        public TaskBuilder() {
+            super( context );
+        }
 
         @Override
         public final SystemComponentKey<Task> systemComponentKey() {
@@ -145,21 +140,8 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         
         @Override
         public final int doBuild( int componentId, Class<?> taskType, boolean activate ) {
-            attributes.put( Component.INSTANCE_TYPE_NAME, taskType.getName() );
-            
-            Task task = getInstance( componentId );
-            task.fromAttributes( attributes );
-            
+            Task task = createSystemComponent( componentId, taskType, context );
             tasks.set( task.getId(), task );
-            postInit( task, context );
-            
-            DynArray<TaskTrigger> triggers = task.getTriggers();
-            if ( triggers != null ) {
-                for ( TaskTrigger trigger : triggers ) {
-                    trigger.connect( context, task );
-                }
-            }
-            
             return task.getId();
         }
     }

@@ -16,10 +16,13 @@ public final class ECollision extends EntityComponent {
     
     public static final AttributeKey<Rectangle> OUTER_BOUNDING = new AttributeKey<Rectangle>( "outerBounding", Rectangle.class, ECollision.class );
     public static final AttributeKey<Rectangle> BOUNDING = new AttributeKey<Rectangle>( "bounding", Rectangle.class, ECollision.class );
+    public static final AttributeKey<String> BIT_MASK_NAME = new AttributeKey<String>( "bitmaskName", String.class, ECollision.class );
     public static final AttributeKey<Integer> BIT_MASK_ID = new AttributeKey<Integer>( "bitmaskId", Integer.class, ECollision.class );
+    public static final AttributeKey<String> COLLISION_CONSTRAINT_NAME = new AttributeKey<String>( "collisionConstraintName", String.class, ECollision.class );
     public static final AttributeKey<Integer> COLLISION_CONSTRAINT_ID = new AttributeKey<Integer>( "collisionConstraintId", Integer.class, ECollision.class );
+    public static final AttributeKey<String> COLLISION_RESOLVER_NAME = new AttributeKey<String>( "collisionResolverName", String.class, ECollision.class );
     public static final AttributeKey<Integer> COLLISION_RESOLVER_ID = new AttributeKey<Integer>( "collisionResolverId", Integer.class, ECollision.class );
-    public static final AttributeKey<IntBag> COLLISION_LAYERS_IDS = new AttributeKey<IntBag>( "collisionLayersIds", IntBag.class, ECollision.class );
+    public static final AttributeKey<IntBag> COLLISION_LAYER_IDS = new AttributeKey<IntBag>( "collisionLayersIds", IntBag.class, ECollision.class );
     
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         OUTER_BOUNDING,
@@ -27,7 +30,7 @@ public final class ECollision extends EntityComponent {
         BIT_MASK_ID,
         COLLISION_CONSTRAINT_ID,
         COLLISION_RESOLVER_ID,
-        COLLISION_LAYERS_IDS
+        COLLISION_LAYER_IDS
     };
     
     Rectangle outerBounding;
@@ -35,7 +38,7 @@ public final class ECollision extends EntityComponent {
     int bitmaskId;
     int collisionConstraintId;
     int collisionResolverId;
-    IntBag collisionLayersIds;
+    IntBag collisionLayerIds;
 
     ECollision(  ) {
         super( TYPE_KEY );
@@ -49,7 +52,7 @@ public final class ECollision extends EntityComponent {
         bitmaskId = -1;
         collisionConstraintId = -1;
         collisionResolverId = -1;
-        collisionLayersIds = null;
+        collisionLayerIds = null;
     }
 
     public final int getBitmaskId() {
@@ -92,12 +95,20 @@ public final class ECollision extends EntityComponent {
         this.collisionConstraintId = collisionConstraintId;
     }
 
-    public final IntBag getCollisionResolverIds() {
-        return collisionLayersIds;
+    public final int getCollisionResolverId() {
+        return collisionResolverId;
     }
 
-    public final void setCollisionResolverIds( IntBag collisionLayersIds ) {
-        this.collisionLayersIds = collisionLayersIds;
+    public final void setCollisionResolverId( int collisionResolverId ) {
+        this.collisionResolverId = collisionResolverId;
+    }
+
+    public final IntBag getCollisionLayerIds() {
+        return collisionLayerIds;
+    }
+
+    public final void setCollisionLayerIds( IntBag collisionLayerIds ) {
+        this.collisionLayerIds = collisionLayerIds;
     }
 
     @Override
@@ -108,11 +119,11 @@ public final class ECollision extends EntityComponent {
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
         outerBounding = attributes.getValue( OUTER_BOUNDING, outerBounding );
-        collisionConstraintId = attributes.getValue( COLLISION_CONSTRAINT_ID, collisionConstraintId );
-        collisionResolverId = attributes.getValue( COLLISION_RESOLVER_ID, collisionResolverId );
-        bitmaskId = attributes.getValue( BIT_MASK_ID, bitmaskId );
+        collisionConstraintId = attributes.getIdForName( COLLISION_CONSTRAINT_NAME, COLLISION_CONSTRAINT_ID, CollisionConstraint.TYPE_KEY, collisionConstraintId );
+        collisionResolverId = attributes.getIdForName( COLLISION_RESOLVER_NAME, COLLISION_RESOLVER_ID, CollisionConstraint.TYPE_KEY, collisionResolverId );
+        bitmaskId = attributes.getIdForName( BIT_MASK_NAME, BIT_MASK_ID, BitMask.TYPE_KEY, bitmaskId );
         bounding = attributes.getValue( BOUNDING, bounding );
-        collisionLayersIds = attributes.getValue( COLLISION_LAYERS_IDS, collisionLayersIds );
+        collisionLayerIds = attributes.getValue( COLLISION_LAYER_IDS, collisionLayerIds );
     }
 
     @Override
@@ -122,7 +133,7 @@ public final class ECollision extends EntityComponent {
         attributes.put( COLLISION_RESOLVER_ID, collisionResolverId );
         attributes.put( OUTER_BOUNDING, outerBounding );
         attributes.put( COLLISION_CONSTRAINT_ID, collisionConstraintId );
-        attributes.put( COLLISION_LAYERS_IDS, collisionLayersIds );
+        attributes.put( COLLISION_LAYER_IDS, collisionLayerIds );
     }
 
 }

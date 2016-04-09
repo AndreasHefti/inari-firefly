@@ -26,7 +26,7 @@ public final class TileSystemEvent extends Event<TileGridSystem> {
     }
 
     @Override
-    public final void notify( final TileGridSystem listener ) {
+    protected final void notify( final TileGridSystem listener ) {
         switch ( type ) {
             case MULTIPOSITION_ADD: {
                 listener.addMultiTilePosition( 

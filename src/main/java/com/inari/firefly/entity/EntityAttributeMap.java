@@ -22,8 +22,13 @@ import com.inari.firefly.component.Component;
 import com.inari.firefly.component.Component.ComponentKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
+import com.inari.firefly.system.FFContext;
 
 public class EntityAttributeMap extends ComponentAttributeMap {
+    
+    public EntityAttributeMap( FFContext context ) {
+        super( context );
+    }
     
     @Override
     public final void setComponentKey( ComponentKey typeKey ) {

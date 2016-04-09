@@ -45,7 +45,7 @@ public final class TaskSystemEvent extends Event<TaskSystem> {
     }
 
     @Override
-    public final void notify( TaskSystem listener ) {
+    protected final void notify( TaskSystem listener ) {
         switch ( eventType ) {
             case RUN_TASK: {
                if ( taskId >= 0 ) {

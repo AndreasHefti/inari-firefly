@@ -16,19 +16,20 @@
 package com.inari.firefly.state;
 
 import com.inari.commons.config.StringConfigurable;
+import com.inari.firefly.system.Condition;
 
 public final class StateChange implements StringConfigurable {
 
     String name;
     String fromStateName;
     String toStateName;
-    StateChangeCondition condition;
+    Condition condition;
     
     public StateChange( String name, String fromStateName, String toStateName ) {
         this( name, fromStateName, toStateName, null );
     }
 
-    public StateChange( String name, String fromStateName, String toStateName, StateChangeCondition condition ) {
+    public StateChange( String name, String fromStateName, String toStateName, Condition condition ) {
         this.name = name;
         this.fromStateName = fromStateName;
         this.toStateName = toStateName;
@@ -47,7 +48,7 @@ public final class StateChange implements StringConfigurable {
         return toStateName;
     }
 
-    public final StateChangeCondition getCondition() {
+    public final Condition getCondition() {
         return condition;
     }
 

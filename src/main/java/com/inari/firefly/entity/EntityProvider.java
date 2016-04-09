@@ -82,7 +82,7 @@ public final class EntityProvider implements FFSystem  {
     }
     
     public <T extends EntityComponent> T getComponent( Class<T> componentType ) {
-        int componentTypeId = Indexer.getIndexedTypeKey( EntityComponentTypeKey.class, componentType ).index();
+        int componentTypeId = Indexer.createIndexedTypeKey( EntityComponentTypeKey.class, componentType ).index();
         ArrayDeque<EntityComponent> componentsOfType = disposedComponents.get( componentTypeId );
         T component;
         if ( componentsOfType.isEmpty() ) {
@@ -106,7 +106,7 @@ public final class EntityProvider implements FFSystem  {
     }
     
     public final void createComponentsForLaterUse( int number, Class<? extends EntityComponent> componentType ) {
-        int componentTypeId = Indexer.getIndexedTypeKey( EntityComponentTypeKey.class, componentType ).index();
+        int componentTypeId = Indexer.createIndexedTypeKey( EntityComponentTypeKey.class, componentType ).index();
         ArrayDeque<EntityComponent> componentsOfType = disposedComponents.get( componentTypeId );
         if ( componentsOfType == null ) {
             componentsOfType = new ArrayDeque<EntityComponent>();

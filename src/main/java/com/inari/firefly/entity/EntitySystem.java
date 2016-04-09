@@ -271,7 +271,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     
     private void entityToAttribute( Attributes attributes, int entityId ) {
         ComponentKey key = new ComponentKey( Entity.ENTITY_TYPE_KEY, entityId );
-        EntityAttributeMap attributeMap = new EntityAttributeMap();
+        EntityAttributeMap attributeMap = new EntityAttributeMap( context );
         attributeMap.setComponentKey( key );
         attributes.add( attributeMap );
         IndexedTypeSet components = getComponents( entityId );
@@ -400,7 +400,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         private IndexedTypeSet prefabComponents;
 
         private EntityBuilder() {
-            super( new EntityAttributeMap() );
+            super( new EntityAttributeMap( context ) );
         }
         
         public EntityBuilder setPrefabComponents( IndexedTypeSet prefabComponents ) {
@@ -520,7 +520,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         }
 
         @Override
-        public final void toAttributes( Attributes attributes ) {
+        public final void toAttributes( Attributes attributes, FFContext context ) {
             IntBag activeEntityIds = new IntBag( activeEntities.cardinality(), -1 );
             IntIterator active = entities();
             while ( active.hasNext() ) {
@@ -529,7 +529,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
                 activeEntityIds.add( entityId );
             }
             
-            EntityAttributeMap attributeMap = new EntityAttributeMap();
+            EntityAttributeMap attributeMap = new EntityAttributeMap( context );
             attributeMap.setComponentKey( Entity.ACTIVE_ENTITIES_IDS_KEY );
             attributeMap.put( Entity.ACTIVE_ENTITY_IDS, activeEntityIds.toConfigString() );
             attributes.add( attributeMap );

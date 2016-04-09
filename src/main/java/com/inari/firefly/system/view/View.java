@@ -24,6 +24,7 @@ import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.control.Controller;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.system.component.SystemComponent;
@@ -39,7 +40,8 @@ public class View extends SystemComponent {
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ESprite.class );
     public static final AttributeKey<Boolean> LAYERING_ENABLED = new AttributeKey<Boolean>( "layeringEnabled", Boolean.class, View.class );
     public static final AttributeKey<Float> ZOOM = new AttributeKey<Float>( "zoom", Float.class, View.class );
-    public static final AttributeKey<int[]> CONTROLLER_IDS = new AttributeKey<int[]>( "controllerId", int[].class, View.class );
+    public static final AttributeKey<String> CONTROLLER_NAME = new AttributeKey<String>( "controllerName", String.class, View.class );
+    public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, View.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         BOUNDS,
         WORLD_POSITION,
@@ -48,7 +50,7 @@ public class View extends SystemComponent {
         BLEND_MODE,
         LAYERING_ENABLED,
         ZOOM,
-        CONTROLLER_IDS
+        CONTROLLER_ID
     };
     
     int order;
@@ -61,7 +63,7 @@ public class View extends SystemComponent {
     private final RGBColor tintColor;
     private BlendMode blendMode;
     private float zoom;
-    private int[] controllerIds;
+    private int controllerId;
     
     View( int viewId ) {
         super( viewId );
@@ -72,7 +74,7 @@ public class View extends SystemComponent {
         tintColor = new RGBColor( 1f, 1f, 1f, 1f );
         blendMode = BlendMode.NONE;
         zoom = 1.0f;
-        controllerIds = null;
+        controllerId = -1;
     }
     
     @Override
@@ -158,26 +160,16 @@ public class View extends SystemComponent {
         this.zoom = zoom;
     }
 
-    public final int[] getControllerIds() {
-        return controllerIds;
+    public final int getControllerId() {
+        return controllerId;
     }
 
-    public final void setControllerIds( int[] controllerIds ) {
-        this.controllerIds = controllerIds;
+    public final void setControllerId( int controllerId ) {
+        this.controllerId = controllerId;
     }
-    
+
     public final boolean controlledBy( int controllerId ) {
-        if ( controllerIds == null ) {
-            return false;
-        }
-        
-        for ( int i = 0; i < controllerIds.length; i++ ) {
-            if ( controllerIds[ i ] == controllerId ) {
-                return true;
-            } 
-        }
-        
-        return false;
+        return this.controllerId == controllerId;
     }
 
     @Override
@@ -198,7 +190,7 @@ public class View extends SystemComponent {
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
         layeringEnabled = attributes.getValue( LAYERING_ENABLED, layeringEnabled );
         zoom = attributes.getValue( ZOOM, zoom );
-        controllerIds = attributes.getValue( CONTROLLER_IDS, controllerIds );
+        controllerId = attributes.getIdForName( CONTROLLER_NAME, CONTROLLER_ID, Controller.TYPE_KEY, controllerId );
     }
 
     @Override
@@ -212,7 +204,7 @@ public class View extends SystemComponent {
         attributes.put( BLEND_MODE, blendMode );
         attributes.put( LAYERING_ENABLED, layeringEnabled );
         attributes.put( ZOOM, zoom );
-        attributes.put( CONTROLLER_IDS, controllerIds );
+        attributes.put( CONTROLLER_ID, controllerId );
     }
 
 }

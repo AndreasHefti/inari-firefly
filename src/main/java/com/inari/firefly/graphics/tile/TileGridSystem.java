@@ -22,7 +22,6 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
@@ -321,6 +320,10 @@ public final class TileGridSystem
     
     public final class TileGridBuilder extends SystemComponentBuilder {
         
+        public TileGridBuilder() {
+            super( context );
+        }
+        
         @Override
         public final SystemComponentKey<TileGrid> systemComponentKey() {
             return TileGrid.TYPE_KEY;
@@ -328,8 +331,8 @@ public final class TileGridSystem
         
         @Override
         public int doBuild( int componentId, Class<?> subType, boolean activate ) {
-            TileGrid tileGrid = new TileGrid( componentId );
-            tileGrid.fromAttributes( attributes );
+            TileGrid tileGrid = createSystemComponent( componentId, subType, context );
+
             int viewId = tileGrid.getViewId();
             int layerId = tileGrid.getLayerId();
             
@@ -356,7 +359,9 @@ public final class TileGridSystem
     
     public final class TileGridRendererBuilder extends SystemComponentBuilder {
         
-        private TileGridRendererBuilder() {}
+        private TileGridRendererBuilder() {
+            super( context );
+        }
         
         @Override
         public final SystemComponentKey<TileGridRenderer> systemComponentKey() {
@@ -365,16 +370,9 @@ public final class TileGridSystem
 
         @Override
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            checkType( componentType );
-            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            TileGridRenderer r = getInstance( componentId );
-            
-            r.fromAttributes( attributes );
-            
-            renderer.set( r.index(), r );
-            postInit( r, context );
-            
-            return r.getId();
+            TileGridRenderer component = createSystemComponent( componentId, componentType, context );
+            renderer.set( component.index(), component );
+            return component.getId();
         }
     }
     

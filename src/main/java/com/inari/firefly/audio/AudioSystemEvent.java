@@ -45,7 +45,7 @@ public final class AudioSystemEvent extends Event<AudioSystem> {
     }
 
     @Override
-    public final void notify( AudioSystem listener ) {
+    protected final void notify( AudioSystem listener ) {
         switch ( eventType ) {
             case PLAY_SOUND : {
                 if ( soundId >= 0 ) {

@@ -41,7 +41,7 @@ public final class DefaultTextRenderer extends TextRenderer {
             }
             
             ETransform transform = components.get( ETransform.TYPE_KEY );
-            FontAsset font = assetSystem.getAssetAs( text.getFontId(), FontAsset.class );
+            FontAsset font = assetSystem.getAssetAs( text.getFontAssetId(), FontAsset.class );
             
             char[] chars = text.getText();
             textRenderable.blendMode = text.getBlendMode();

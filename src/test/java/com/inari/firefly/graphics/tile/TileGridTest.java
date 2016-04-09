@@ -54,7 +54,7 @@ public class TileGridTest extends FFTest {
         grid3.setWorldYPos( 10f );
         grid3.setSpherical( true );
         
-        AttributeMap attrs = new ComponentAttributeMap();
+        AttributeMap attrs = new ComponentAttributeMap( null );
         
 
         grid1.toAttributes( attrs );
@@ -140,7 +140,7 @@ public class TileGridTest extends FFTest {
         grid1.setLayerId( 1 );
         grid1.setWidth( 3 );
         grid1.setHeight( 3 );
-        AttributeMap attrs = new ComponentAttributeMap();
+        AttributeMap attrs = new ComponentAttributeMap( null );
 
         grid1.toAttributes( attrs );
         assertEquals(
@@ -272,7 +272,7 @@ public class TileGridTest extends FFTest {
         grid1.setWidth( 3 );
         grid1.setHeight( 3 );
         grid1.setSpherical( true );
-        AttributeMap attrs = new ComponentAttributeMap();
+        AttributeMap attrs = new ComponentAttributeMap( null );
 
         attrs.clear();
         grid1.toAttributes( attrs );
@@ -404,7 +404,7 @@ public class TileGridTest extends FFTest {
         grid1.setLayerId( 1 );
         grid1.setWidth( 3 );
         grid1.setHeight( 3 );
-        AttributeMap attrs = new ComponentAttributeMap();
+        AttributeMap attrs = new ComponentAttributeMap( null );
 
         grid1.set( 100, 0, 0 );
         grid1.set( 100, 1, 1 );
@@ -546,7 +546,7 @@ public class TileGridTest extends FFTest {
         grid1.setLayerId( 1 );
         grid1.setWidth( 3 );
         grid1.setHeight( 3 );
-        AttributeMap attrs = new ComponentAttributeMap();
+        AttributeMap attrs = new ComponentAttributeMap( null );
 
         grid1.set( 100, 0, 0 );
         grid1.set( 100, 1, 1 );

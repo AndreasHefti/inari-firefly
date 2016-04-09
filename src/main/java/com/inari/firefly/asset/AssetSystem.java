@@ -23,7 +23,6 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
@@ -301,7 +300,9 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     
     public final class AssetBuilder extends SystemComponentBuilder {
         
-        private AssetBuilder() {}
+        private AssetBuilder() {
+            super( context );
+        }
         
         @Override
         public final SystemComponentKey<Asset> systemComponentKey() {
@@ -310,11 +311,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
 
         @Override
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            Asset asset = getInstance( componentId );
-            
-            asset.fromAttributes( attributes );
-            
+            Asset asset = createSystemComponent( componentId, componentType, context );
             if ( asset.getName() == null ) {
                 throw new FFInitException( "Name attribute is mandatory for Asset component" );
             }
@@ -324,8 +321,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
 
             assets.set( asset.getId(), asset );
             nameMapping.put( asset.getName(), asset );
-            postInit( asset, context );
-            
+
             context.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
             
             if ( activate ) {

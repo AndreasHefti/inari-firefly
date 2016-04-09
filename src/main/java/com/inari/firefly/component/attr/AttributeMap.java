@@ -15,7 +15,12 @@
  ******************************************************************************/ 
 package com.inari.firefly.component.attr;
 
+import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.IntBag;
+import com.inari.firefly.component.Component;
 import com.inari.firefly.component.Component.ComponentKey;
+import com.inari.firefly.control.Controller;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public interface AttributeMap {
     
@@ -44,9 +49,31 @@ public interface AttributeMap {
     <A> A getValue( AttributeKey<A> key, A defaultValue );
 
     Object getUntypedValue( AttributeKey<?> key, Object defaultValue );
+    
+    int getIdForName( 
+        AttributeKey<String> nameAttribute, 
+        AttributeKey<Integer> idAttribute, 
+        SystemComponentKey<? extends Component> typeKey, 
+        int defaultValue 
+    );
+    
+    int getAssetInstanceId( 
+        AttributeKey<String> nameAttribute, 
+        AttributeKey<Integer> idAttribute, 
+        int defaultValue 
+    );
+    
+    IntBag getIdsForNames( 
+        AttributeKey<DynArray<String>> namesAttribute, 
+        AttributeKey<IntBag> idsAttribute,
+        SystemComponentKey<Controller> typeKey, 
+        IntBag defaultValue 
+    );
 
     void clear();
 
     boolean contains( AttributeKey<?> key );
+
+    
 
 }

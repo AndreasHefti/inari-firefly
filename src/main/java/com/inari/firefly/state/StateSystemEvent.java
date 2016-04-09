@@ -37,7 +37,7 @@ public final class StateSystemEvent extends Event<StateSystem> {
     }
 
     @Override
-    public final void notify( StateSystem listener ) {
+    protected final void notify( StateSystem listener ) {
         switch ( type ) {
             case DO_STATE_CHANGE: {
                 int wId = workflowId;

@@ -1,10 +1,10 @@
-package com.inari.firefly.task;
+package com.inari.firefly.state;
 
-import com.inari.firefly.state.WorkflowEvent;
-import com.inari.firefly.state.WorkflowEventListener;
+import com.inari.firefly.system.Condition;
+import com.inari.firefly.system.EventTrigger;
 import com.inari.firefly.system.FFContext;
 
-public final class WorkflowEventTrigger implements TaskTrigger, WorkflowEventListener {
+public abstract class WorkflowEventTrigger extends EventTrigger implements WorkflowEventListener {
     
     public enum Type {
         STATE_CHANGE,
@@ -16,27 +16,26 @@ public final class WorkflowEventTrigger implements TaskTrigger, WorkflowEventLis
     private final Type triggerType;
     private final String triggerName;
     
-    private FFContext context;
-    private Task task;
+    
 
-    public WorkflowEventTrigger( String workflowName, Type triggerType, String triggerName ) {
+    public WorkflowEventTrigger( String workflowName, Type triggerType, String triggerName, Condition condition ) {
+        super( condition );
         this.workflowName = workflowName;
         this.triggerType = triggerType;
         this.triggerName = triggerName;
     }
     
     @Override
-    public void connect( FFContext context, Task task ) {
-        if ( this.context == null ) {
-            this.context = context;
-        }
-        if ( this.task == null ) {
-            this.task = task;
-        }
-        
+    public final void register( FFContext context, int componentId ) {
+        super.register( context, componentId );
         context.registerListener( WorkflowEvent.class, this );
     }
-    
+
+    @Override
+    public final void dispose( FFContext context ) {
+        context.disposeListener( WorkflowEvent.class, this );
+    }
+
     @Override
     public final void onEvent( WorkflowEvent event ) {
         if ( !workflowName.equals( event.workflowName ) ) {
@@ -64,23 +63,19 @@ public final class WorkflowEventTrigger implements TaskTrigger, WorkflowEventLis
             }
         }
         
-        task.runTask();
+        trigger();
     }
-
+    
+    protected abstract void trigger();
+    
     @Override
-    public final void dispose( FFContext context ) {
-        context.disposeListener( WorkflowEvent.class, this );
-        
-    }
-
-    @Override
-    public void fromConfigString( String stringValue ) {
+    public final void fromConfigString( String stringValue ) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public String toConfigString() {
+    public final String toConfigString() {
         // TODO Auto-generated method stub
         return null;
     }

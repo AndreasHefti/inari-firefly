@@ -54,7 +54,7 @@ public final class WorkflowEvent extends Event<WorkflowEventListener> {
     }
 
     @Override
-    public final void notify( WorkflowEventListener listener ) {
+    protected final void notify( WorkflowEventListener listener ) {
         listener.onEvent( this );
     }
 

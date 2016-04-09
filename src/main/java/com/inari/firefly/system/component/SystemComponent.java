@@ -95,8 +95,6 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
         attributes.put( NAME, name );
     }
     
-    
-    
     public static final class SystemComponentKey<C extends SystemComponent> extends IndexedTypeKey {
 
         SystemComponentKey( Class<C> indexedType ) {
@@ -115,7 +113,7 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
 
         @SuppressWarnings( "unchecked" )
         public static final <T extends SystemComponent> SystemComponentKey<T> create( Class<T> type ) {
-            return Indexer.getIndexedTypeKey( SystemComponentKey.class, type );
+            return Indexer.createIndexedTypeKey( SystemComponentKey.class, type );
         }
     }
 

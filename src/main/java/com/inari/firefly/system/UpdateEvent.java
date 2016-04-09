@@ -30,7 +30,7 @@ public final class UpdateEvent extends Event<UpdateEventListener> {
     }
 
     @Override
-    public final void notify( UpdateEventListener listener ) {
+    protected final void notify( UpdateEventListener listener ) {
         listener.update( this );
     }
 

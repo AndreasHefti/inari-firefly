@@ -32,12 +32,10 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     private EntitySystem entitySystem;
     private EntityProvider entityProvider;
     
-    private final EntityAttributeMap attributeMap;
-    
+    private EntityAttributeMap attributeMap;
     
     EntityPrefabSystem() {
         super( SYSTEM_KEY );
-        attributeMap = new EntityAttributeMap();
     }
     
     @Override
@@ -52,6 +50,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         entityProvider = context.getSystem( EntityProvider.SYSTEM_KEY );
         context.registerListener( EntityPrefabSystemEvent.class, this );
+        attributeMap = new EntityAttributeMap( context );
     }
     
     @Override
@@ -232,7 +231,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     public final class EntityPrefabBuilder extends SystemComponentBuilder {
         
         private EntityPrefabBuilder() {
-            super( new EntityAttributeMap() );
+            super( new EntityAttributeMap( context ) );
         }
 
         @Override
@@ -246,18 +245,15 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
             entityProvider.initAttributesOnController( (EntityAttributeMap) attributes );
             entityProvider.createComponents( components, (EntityAttributeMap) attributes );
 
-            EntityPrefab prefab = new EntityPrefab( componentId );
-            prefab.fromAttributes( attributes );
-            
+            EntityPrefab prefab = createSystemComponent( componentId, subType, context );
             checkName( prefab );
-            postInit( prefab, context );
             
-            int prefabId = prefab.index();
+            int prefabId = prefab.getId();
             prefabs.set( prefabId, prefab );
             prefabNames.set( prefabId, prefab.getName() );
             prefabComponents.set( prefabId, components );
             
-            return prefab.getId();
+            return prefabId;
         }
     }
     

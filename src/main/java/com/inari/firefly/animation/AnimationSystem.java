@@ -18,15 +18,14 @@ package com.inari.firefly.animation;
 import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.component.SystemComponentBuilder;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class AnimationSystem 
     extends 
@@ -145,6 +144,9 @@ public final class AnimationSystem
     }
     
     public final Animation getAnimation( int animationId ) {
+        if ( animationId < 0 ) {
+            return null;
+        }
         return animations.get( animationId );
     }
     
@@ -287,7 +289,9 @@ public final class AnimationSystem
 
     public final class AnimationBuilder extends SystemComponentBuilder {
         
-        private AnimationBuilder() {}
+        private AnimationBuilder() { 
+            super( context ); 
+        }
         
         @Override
         public final SystemComponentKey<Animation> systemComponentKey() {
@@ -296,15 +300,9 @@ public final class AnimationSystem
 
         @Override
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            checkType( componentType );
-            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            Animation animation = getInstance( componentId );
-            
-            animation.fromAttributes( attributes );
-            
+            Animation animation = createSystemComponent( componentId, componentType, context );
             animations.set( animation.index(), animation );
-            postInit( animation, context );
-            
+
             if ( activate ) {
                 animation.active = true;
             }
@@ -315,7 +313,9 @@ public final class AnimationSystem
     
     public final class AnimationResolverBuilder extends SystemComponentBuilder {
         
-        private AnimationResolverBuilder() {}
+        private AnimationResolverBuilder() {
+            super( context );
+        }
         
         @Override
         public final SystemComponentKey<AnimationResolver> systemComponentKey() {
@@ -324,14 +324,8 @@ public final class AnimationSystem
 
         @Override
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            checkType( componentType );
-            attributes.put( Component.INSTANCE_TYPE_NAME, componentType.getName() );
-            AnimationResolver resolver = getInstance( componentId );
-            
-            resolver.fromAttributes( attributes );
-            
+            AnimationResolver resolver = createSystemComponent( componentId, componentType, context );
             animationResolver.set( resolver.index(), resolver );
-            postInit( resolver, context );
             
             return resolver.getId();
         }

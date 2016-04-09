@@ -38,7 +38,7 @@ public final class ViewEvent extends Event<ViewEventListener> {
     }
 
     @Override
-    public final void notify( ViewEventListener listener ) {
+    protected final void notify( ViewEventListener listener ) {
         listener.onViewEvent( this );
     }
 

@@ -12,7 +12,7 @@ public abstract class ViewController extends Controller implements ViewEventList
     }
 
     @Override
-    public void init() {
+    public final void init() {
         super.init();
         
         viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
@@ -22,14 +22,14 @@ public abstract class ViewController extends Controller implements ViewEventList
 
 
     @Override
-    public void dispose() {
+    public final void dispose() {
         context.disposeListener( ViewEvent.class, this );
         
         super.dispose();
     }
 
     @Override
-    public void onViewEvent( ViewEvent event ) {
+    public final void onViewEvent( ViewEvent event ) {
         switch ( event.eventType ) {
         case VIEW_ACTIVATED: {
             if ( event.view.controlledBy( index ) ) {
@@ -46,7 +46,11 @@ public abstract class ViewController extends Controller implements ViewEventList
     }
 
     @Override
-    public void update( final FFTimer timer ) {
+    public final void update( final FFTimer timer ) {
+        if ( componentIds.size() <= 0 ) {
+            return;
+        }
+        
         for ( int i = 0; i < componentIds.length(); i++ ) {
             if ( componentIds.isEmpty( i ) ) {
                 continue;
