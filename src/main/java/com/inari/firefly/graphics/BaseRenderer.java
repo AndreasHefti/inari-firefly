@@ -48,10 +48,6 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
         graphics.renderSprite( sprite, transformCollector );
     }
     
-//    protected final void render( EShape shape ) {
-//        graphics.renderShape( shape );
-//    }
-    
     protected final void render( EShape shape, int parentId ) {
         if ( parentId >= 0 ) {
             collectTransformData( parentId );

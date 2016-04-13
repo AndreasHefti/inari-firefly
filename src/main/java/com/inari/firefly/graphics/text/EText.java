@@ -19,8 +19,8 @@ public class EText extends EntityComponent {
     public static final AttributeKey<Integer> RENDERER_ID = new AttributeKey<Integer>( "rendererId", Integer.class, EText.class );
     public static final AttributeKey<String> FONT_ASSET_NAME = new AttributeKey<String>( "fontAssetName", String.class, EText.class );
     public static final AttributeKey<Integer> FONT_ASSET_ID = new AttributeKey<Integer>( "fontAssetId", Integer.class, EText.class );
-    public static final AttributeKey<char[]> TEXT = new AttributeKey<char[]>( "text", char[].class, EText.class );
-    public static final AttributeKey<String> TEXT_STRING = new AttributeKey<String>( "text_string", String.class, EText.class );
+    //public static final AttributeKey<char[]> TEXT = new AttributeKey<char[]>( "text", char[].class, EText.class );
+    public static final AttributeKey<String> TEXT = new AttributeKey<String>( "text", String.class, EText.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, EText.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, EText.class );
     public static final AttributeKey<String> SHADER_ASSET_NAME = new AttributeKey<String>( "shaderAssetName", String.class, EText.class );
@@ -36,7 +36,7 @@ public class EText extends EntityComponent {
     
     private int rendererId;
     private int fontAssetId;
-    private char[] text;
+    private StringBuffer textBuffer;
     private final RGBColor tintColor = new RGBColor();
     private BlendMode blendMode;
     private int shaderId;
@@ -50,7 +50,7 @@ public class EText extends EntityComponent {
     public final void resetAttributes() {
         rendererId = -1;
         fontAssetId = -1;
-        text = null;
+        textBuffer = new StringBuffer();
         setTintColor( new RGBColor( 1f, 1f, 1f, 1f ) );
         blendMode = BlendMode.NONE;
         shaderId = -1;
@@ -71,13 +71,25 @@ public class EText extends EntityComponent {
     public final void setFontAssetId( int fontAssetId ) {
         this.fontAssetId = fontAssetId;
     }
-
-    public final char[] getText() {
-        return text;
+    
+    public final StringBuffer getTextBuffer() {
+        return textBuffer;
     }
 
-    public final void setText( char[] text ) {
-        this.text = text;
+    public final String getText() {
+        return textBuffer.toString();
+    }
+
+    public final void setText( String text ) {
+        textBuffer = new StringBuffer( text );
+    }
+    
+    public final void appendText( String text ) {
+        textBuffer.append( text );
+    }
+    
+    public final void prependText( String text ) {
+        textBuffer.insert( 0, text );
     }
 
     public final BlendMode getBlendMode() {
@@ -116,9 +128,8 @@ public class EText extends EntityComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         rendererId = attributes.getIdForName( RENDERER_NAME, RENDERER_ID, TextRenderer.TYPE_KEY, rendererId );
         fontAssetId = attributes.getIdForName( FONT_ASSET_NAME, FONT_ASSET_ID, Asset.TYPE_KEY, fontAssetId );
-        text = attributes.getValue( TEXT, text );
-        if ( attributes.contains( TEXT_STRING ) ) {
-            text = attributes.getValue( TEXT_STRING ).toCharArray();
+        if ( attributes.contains( TEXT ) ) {
+            setText( attributes.getValue( TEXT ) );
         }
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
@@ -129,7 +140,7 @@ public class EText extends EntityComponent {
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( RENDERER_ID, rendererId );
         attributes.put( FONT_ASSET_ID, fontAssetId );
-        attributes.put( TEXT, text );
+        attributes.put( TEXT, textBuffer.toString() );
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
         attributes.put( BLEND_MODE, blendMode );
         attributes.put( SHADER_ID, shaderId );

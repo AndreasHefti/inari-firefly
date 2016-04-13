@@ -21,6 +21,7 @@ import java.util.Random;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.IntIterator;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.audio.AudioSystem;
@@ -32,8 +33,8 @@ import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.system.external.FFAudio;
 import com.inari.firefly.system.external.FFGraphics;
-import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFInput;
+import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.TaskSystem;
@@ -44,11 +45,13 @@ public abstract class FireFly {
     
     protected final FFContext context;
     
-    protected FFGraphics lowerSystemFacade;
+    protected FFGraphics graphics;
     protected ViewSystem viewSystem;
 
     private final UpdateEvent updateEvent;
     private final RenderEvent renderEvent;
+    
+    private final SystemInfoDisplayImpl systemInfoDisplay;
     
     private boolean disposed = false;
 
@@ -61,7 +64,7 @@ public abstract class FireFly {
     ) {
         context = new FFContext( eventDispatcher, graphics, audio, timer, input );
         
-        lowerSystemFacade = context.getGraphics();
+        this.graphics = context.getGraphics();
         viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         
         context.loadSystem( AssetSystem.SYSTEM_KEY );
@@ -77,6 +80,8 @@ public abstract class FireFly {
         
         updateEvent = new UpdateEvent( timer );
         renderEvent = new RenderEvent();
+        
+        systemInfoDisplay  = new SystemInfoDisplayImpl( context ); 
     }
     
     public final boolean exit() {
@@ -111,38 +116,50 @@ public abstract class FireFly {
                     continue;
                 }
 
-                int viewId = virtualView.index();
-                Rectangle bounds = virtualView.getBounds();
-                Position worldPosition = virtualView.getWorldPosition();
-                renderEvent.viewId = viewId;
-                renderEvent.clip.x = worldPosition.x;
-                renderEvent.clip.y = worldPosition.y;
-                renderEvent.clip.width = bounds.width;
-                renderEvent.clip.height = bounds.height;
-
-                lowerSystemFacade.startRendering( virtualView );
-                context.notify( renderEvent );
-                lowerSystemFacade.endRendering( virtualView );
+                render( virtualView );
             }
             
-            lowerSystemFacade.flush( viewSystem.activeViewportIterator() );
+            graphics.flush( viewSystem.activeViewportIterator() );
         } else {
             View baseView = viewSystem.getView( ViewSystem.BASE_VIEW_ID );
             
-            Rectangle bounds = baseView.getBounds();
-            Position worldPosition = baseView.getWorldPosition();
-            renderEvent.viewId = ViewSystem.BASE_VIEW_ID;
-            renderEvent.clip.x = worldPosition.x;
-            renderEvent.clip.y = worldPosition.y;
-            renderEvent.clip.width = bounds.width;
-            renderEvent.clip.height = bounds.height;
+            render( baseView );
             
-            lowerSystemFacade.startRendering( baseView );
-            context.notify( renderEvent );
-            lowerSystemFacade.endRendering( baseView );
-            
-            lowerSystemFacade.flush( null );
+            graphics.flush( null );
         }
     }
+    
+    private void render( final View view ) {
+        Rectangle bounds = view.getBounds();
+        Position worldPosition = view.getWorldPosition();
+        int viewId = view.getId();
+        
+        renderEvent.viewId = viewId;
+        renderEvent.clip.x = worldPosition.x;
+        renderEvent.clip.y = worldPosition.y;
+        renderEvent.clip.width = bounds.width;
+        renderEvent.clip.height = bounds.height;
+
+        graphics.startRendering( view );
+        
+        if ( viewSystem.isLayeringEnabledAndHasLayers( viewId ) ) {
+            IntIterator layerIterator = viewSystem.getLayersOfView( viewId ).iterator();
+            while ( layerIterator.hasNext() ) {
+                renderEvent.layerId = layerIterator.next();
+                context.notify( renderEvent );
+            }
+            renderEvent.layerId = 0;
+        } else {
+            context.notify( renderEvent );
+        }
+        
+        if ( systemInfoDisplay.isActive() ) {
+            systemInfoDisplay.renderSystemInfoDisplay();
+        }
+        
+        graphics.endRendering( view );
+    }
+    
+    
 
 }

@@ -30,6 +30,7 @@ public final class Layer extends SystemComponent {
     
     public static final String DEFAULT_LAYER_NAME = "LAYER_";
     
+    public static final AttributeKey<String> VIEW_NAME = new AttributeKey<String>( "viewName", String.class, Layer.class );
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, Layer.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         VIEW_ID
@@ -61,7 +62,7 @@ public final class Layer extends SystemComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        viewId = attributes.getValue( VIEW_ID, -1 );
+        viewId = attributes.getIdForName( VIEW_NAME, VIEW_ID, View.TYPE_KEY, -1 );
         if ( viewId < 0 ) {
             throw new ComponentCreationException( "Missing mandatory viewId attribute" );
         }

@@ -1,11 +1,8 @@
 package com.inari.firefly.graphics.text;
 
-import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.graphics.BlendMode;
-import com.inari.firefly.graphics.SpriteRenderable;
 import com.inari.firefly.system.RenderEvent;
 
 public final class DefaultTextRenderer extends TextRenderer {
@@ -43,7 +40,7 @@ public final class DefaultTextRenderer extends TextRenderer {
             ETransform transform = components.get( ETransform.TYPE_KEY );
             FontAsset font = assetSystem.getAssetAs( text.getFontAssetId(), FontAsset.class );
             
-            char[] chars = text.getText();
+            char[] chars = text.getText().toCharArray();
             textRenderable.blendMode = text.getBlendMode();
             textRenderable.tintColor = text.getTintColor();
             textRenderable.shaderId = text.getShaderId();
@@ -65,40 +62,6 @@ public final class DefaultTextRenderer extends TextRenderer {
         }
     }
 
-    final TextRenderable textRenderable = new TextRenderable();
     
-    final class TextRenderable implements SpriteRenderable {
-        
-        int spriteId;
-        RGBColor tintColor; 
-        BlendMode blendMode;
-        int shaderId;
-
-        @Override
-        public int getSpriteId() {
-            return spriteId;
-        }
-
-        @Override
-        public RGBColor getTintColor() {
-            return tintColor;
-        }
-
-        @Override
-        public BlendMode getBlendMode() {
-            return blendMode;
-        }
-
-        @Override
-        public int getOrdering() {
-            return 0;
-        }
-
-        @Override
-        public int getShaderId() {
-            return shaderId;
-        }
-
-    }
 
 }

@@ -33,8 +33,11 @@ import com.inari.firefly.system.external.FFAudio;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFTimer;
+import com.inari.firefly.system.info.SystemInfoDisplay;
 
 public final class FFContext {
+    
+    public static final String DEFAULT_FONT = "FIREFLY_DEFAULT_FONT";
 
     public static interface Properties {
         public static final TypedKey<Integer> ENTITY_MAP_CAPACITY = TypedKey.create( "FF_ENTITY_MAP_CAPACITY", Integer.class );
@@ -55,6 +58,7 @@ public final class FFContext {
     private final FFTimer timer;
     private final FFInput input;
     
+    private SystemInfoDisplay systemInfoDisplay;
     private EntitySystem entitySystem;
     boolean exit = false;
 
@@ -63,7 +67,7 @@ public final class FFContext {
         FFGraphics graphics,
         FFAudio audio,
         FFTimer timer,
-        FFInput input 
+        FFInput input
     ) {
         this.eventDispatcher = eventDispatcher;
         this.graphics = graphics;
@@ -72,6 +76,10 @@ public final class FFContext {
         audio.init( this );
         this.timer = timer;
         this.input = input;
+    }
+    
+    final void setSystemInfoDisplay( SystemInfoDisplay systemInfoDisplay ) {
+        this.systemInfoDisplay = systemInfoDisplay;
     }
 
     public final IEventDispatcher getEventDispatcher() {
@@ -92,6 +100,10 @@ public final class FFContext {
 
     public final FFInput getInput() {
         return input;
+    }
+    
+    public final SystemInfoDisplay getSystemInfoDisplay() {
+        return systemInfoDisplay;
     }
 
     public final <T extends FFSystem> T getSystem( FFSystemTypeKey<T> key ) {
@@ -230,6 +242,10 @@ public final class FFContext {
     
     public final <T extends EntityComponent> T getEntityComponent( int entityId, EntityComponentTypeKey<T> typeKey ) {
         return entitySystem.getComponent( entityId, typeKey );
+    }
+    
+    public final <T extends EntityComponent> T getEntityComponent( String entityName, EntityComponentTypeKey<T> typeKey ) {
+        return entitySystem.getComponent( entityName, typeKey );
     }
     
     public final void activateEntity( int entityId ) {

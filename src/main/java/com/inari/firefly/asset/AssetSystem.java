@@ -312,9 +312,6 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         @Override
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             Asset asset = createSystemComponent( componentId, componentType, context );
-            if ( asset.getName() == null ) {
-                throw new FFInitException( "Name attribute is mandatory for Asset component" );
-            }
             if ( nameMapping.containsKey( asset.getName() ) ) {
                 throw new FFInitException( "There is already a Asset with name: " + asset.getName() );
             }

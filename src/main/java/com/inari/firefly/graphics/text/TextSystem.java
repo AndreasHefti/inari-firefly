@@ -146,15 +146,15 @@ public class TextSystem
             return null;
         }
         
-        DynArray<IndexedTypeSet> textOfLayer = null;
+        DynArray<IndexedTypeSet> textsOfLayer = null;
         if ( textPerLayer.contains( layerId ) ) { 
-            textOfLayer = textPerLayer.get( layerId );
+            textsOfLayer = textPerLayer.get( layerId );
         } else if ( createNew ) {
-            textOfLayer = new DynArray<IndexedTypeSet>();
-            textPerLayer.set( layerId, textOfLayer );
+            textsOfLayer = new DynArray<IndexedTypeSet>();
+            textPerLayer.set( layerId, textsOfLayer );
         }
         
-        return textOfLayer;
+        return textsOfLayer;
     }
 
     @Override

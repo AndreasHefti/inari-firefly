@@ -84,6 +84,9 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     }
     
     public final View getView( int viewId ) {
+        if ( !views.contains( viewId ) ) {
+            return null;
+        }
         return views.get( viewId );
     }
     
@@ -320,6 +323,18 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         layersOfView.remove( viewId );
         view.setLayeringEnabled( false );
     }
+    
+    public final IntBag getLayersOfView( int viewId ) {
+        if ( layersOfView.contains( viewId ) ) {
+            return layersOfView.get( viewId );
+        }
+        
+        return null;
+    }
+    
+    public final boolean isLayeringEnabledAndHasLayers( int viewId ) {
+        return layersOfView.contains( viewId ) && layersOfView.get( viewId ).size() > 1 ;
+    }
 
     public final LayerBuilder getLayerBuilder() {
         return new LayerBuilder();
@@ -375,7 +390,6 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         public final int doBuild( int componentId, Class<?> subType, boolean activate ) {
             View view = createSystemComponent( componentId, subType, context );
             
-            checkName( view );
             views.set( view.index(), view );
             if ( componentId != BASE_VIEW_ID ) {
                 view.order = orderedViewports.size();
@@ -502,5 +516,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return getLayer( getLayerId( name ) );
         }
     }
+
+    
 
 }
