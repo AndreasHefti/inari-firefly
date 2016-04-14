@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system;
+package com.inari.firefly.graphics.view;
 
-import com.inari.firefly.FFInitException;
-
-public interface FFContextInitiable extends Disposable {
+public interface ViewAware {
     
-    void init( FFContext context ) throws FFInitException;
+    int getViewId();
 
 }

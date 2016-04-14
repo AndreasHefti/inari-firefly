@@ -20,13 +20,13 @@ import java.util.Set;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.IntBag;
-import com.inari.firefly.Disposable;
-import com.inari.firefly.Loadable;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
 import com.inari.firefly.component.dynattr.DynamicAttributeMap;
 import com.inari.firefly.component.dynattr.DynamicAttributedComponent;
+import com.inari.firefly.system.Disposable;
+import com.inari.firefly.system.Loadable;
 import com.inari.firefly.system.component.SystemComponent;
 
 public abstract class Asset extends SystemComponent implements Loadable, Disposable, DynamicAttributedComponent {

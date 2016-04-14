@@ -12,7 +12,6 @@ import com.inari.commons.event.PredicatedEvent;
 import com.inari.commons.event.PredicatedEventListener;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.Component;

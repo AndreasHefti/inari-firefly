@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system;
+package com.inari.firefly.control.state;
 
-import com.inari.firefly.FFInitException;
-
-public interface FFContextInitiable extends Disposable {
+public interface WorkflowEventListener {
     
-    void init( FFContext context ) throws FFInitException;
-
+    void onEvent( WorkflowEvent event );
+    
 }

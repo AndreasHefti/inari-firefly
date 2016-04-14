@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.system;
+package com.inari.firefly.physics.animation;
 
-import com.inari.firefly.FFInitException;
 
-public interface FFContextInitiable extends Disposable {
+public abstract class FloatAnimation extends Animation {
     
-    void init( FFContext context ) throws FFInitException;
+    protected FloatAnimation( int id ) {
+        super( id );
+    }
+
+    public abstract float getInitValue();
+    public abstract float getValue( int componentId, float currentValue );
 
 }

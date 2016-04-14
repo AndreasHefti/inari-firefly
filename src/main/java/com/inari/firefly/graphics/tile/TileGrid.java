@@ -27,9 +27,9 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.graphics.view.Layer;
+import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.system.component.SystemComponent;
-import com.inari.firefly.system.view.Layer;
-import com.inari.firefly.system.view.View;
 
 public final class TileGrid extends SystemComponent {
     

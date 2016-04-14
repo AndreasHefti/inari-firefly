@@ -10,12 +10,12 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFTest;
 import com.inari.firefly.asset.AssetSystem.AssetBuilder;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.FFContext;
 
 public class AssetSystemTest extends FFTest {

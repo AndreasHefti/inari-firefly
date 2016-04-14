@@ -19,9 +19,9 @@ import java.util.Iterator;
 
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.SpriteRenderable;
+import com.inari.firefly.graphics.view.View;
+import com.inari.firefly.graphics.view.ViewEventListener;
 import com.inari.firefly.system.FFContextInitiable;
-import com.inari.firefly.system.view.View;
-import com.inari.firefly.system.view.ViewEventListener;
 
 public interface FFGraphics extends FFContextInitiable, ViewEventListener {
 
