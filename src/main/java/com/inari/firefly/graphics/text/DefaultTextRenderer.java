@@ -33,7 +33,7 @@ public final class DefaultTextRenderer extends TextRenderer {
             
             EText text = components.get( EText.TYPE_KEY );
             int rendererId = text.getRendererId();
-            if ( rendererId >= 0 && rendererId != getId() ) {
+            if ( rendererId >= 0 && rendererId != index() ) {
                 continue;
             }
             

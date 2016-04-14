@@ -186,7 +186,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
             return -1;
         }
         
-        return asset.getId();
+        return asset.index();
     }
     
     public final void clear() {
@@ -211,7 +211,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
 
     private IntBag disposeAsset( Asset asset ) {
-        IntBag toDisposeFirst = findeAssetsToDisposeFirst( asset.getId() );
+        IntBag toDisposeFirst = findeAssetsToDisposeFirst( asset.index() );
         if ( !toDisposeFirst.isEmpty() ) {
             IntIterator iterator = toDisposeFirst.iterator();
             while ( iterator.hasNext() ) {
@@ -255,7 +255,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
             }
         }
         
-        delete( asset.getId() );
+        delete( asset.index() );
     }
     
     private void delete( int assetId ) {
@@ -316,7 +316,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
                 throw new FFInitException( "There is already a Asset with name: " + asset.getName() );
             }
 
-            assets.set( asset.getId(), asset );
+            assets.set( asset.index(), asset );
             nameMapping.put( asset.getName(), asset );
 
             context.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
@@ -325,7 +325,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
                 load( asset );
             }
             
-            return asset.getId();
+            return asset.index();
         }
     }
     

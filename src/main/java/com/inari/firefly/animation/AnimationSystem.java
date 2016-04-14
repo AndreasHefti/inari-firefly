@@ -178,7 +178,7 @@ public final class AnimationSystem
             
             Animation anim = animations.get( i );
             if ( animationName.equals( anim.getName() ) ) {
-                return anim.getId();
+                return anim.index();
             }
         }
         
@@ -204,7 +204,7 @@ public final class AnimationSystem
     public final int getAnimationResolverId( String name ) {
         for ( AnimationResolver resolver : animationResolver ) {
             if ( name.equals( resolver.getName() ) ) {
-                return resolver.getId();
+                return resolver.index();
             }
         }
         
@@ -307,7 +307,7 @@ public final class AnimationSystem
                 animation.active = true;
             }
             
-            return animation.getId();
+            return animation.index();
         }
     }
     
@@ -327,7 +327,7 @@ public final class AnimationSystem
             AnimationResolver resolver = createSystemComponent( componentId, componentType, context );
             animationResolver.set( resolver.index(), resolver );
             
-            return resolver.getId();
+            return resolver.index();
         }
         
     }

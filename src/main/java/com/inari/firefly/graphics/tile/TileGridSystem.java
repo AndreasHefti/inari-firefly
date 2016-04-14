@@ -148,7 +148,7 @@ public final class TileGridSystem
     public final int getRendererId( String name ) {
         for ( TileGridRenderer r : renderer ) {
             if ( name.equals( r.getName() ) ) {
-                return r.getId();
+                return r.index();
             }
         }
         
@@ -348,12 +348,12 @@ public final class TileGridSystem
                 tileGridOfViewsPerLayer.set( viewId, new DynArray<TileGrid>() );
             }
 
-            tileGrids.set( tileGrid.getId(), tileGrid );
+            tileGrids.set( tileGrid.index(), tileGrid );
             tileGridOfViewsPerLayer
                 .get( viewId )
                 .set( layerId, tileGrid );
 
-            return tileGrid.getId();
+            return tileGrid.index();
         }
     }
     
@@ -372,7 +372,7 @@ public final class TileGridSystem
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             TileGridRenderer component = createSystemComponent( componentId, componentType, context );
             renderer.set( component.index(), component );
-            return component.getId();
+            return component.index();
         }
     }
     
@@ -398,7 +398,7 @@ public final class TileGridSystem
         }
         @Override
         public final void deleteComponent( String name ) {
-            deleteTileGrid( getTileGrid( name ).getId() );
+            deleteTileGrid( getTileGrid( name ).index() );
         }
         @Override
         public final TileGrid getComponent( String name ) {

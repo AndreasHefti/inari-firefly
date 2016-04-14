@@ -64,7 +64,7 @@ public abstract class Task extends SystemComponent {
         }
         this.trigger = trigger;
         if ( this.trigger != null ) {
-            trigger.register( context, getId() );
+            trigger.register( context, index() );
         }
     }
 

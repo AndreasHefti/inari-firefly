@@ -93,7 +93,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     public final int getViewId( String viewName ) {
         for ( View view : views ) {
             if ( viewName.equals( view.getName() ) ) {
-                return view.getId();
+                return view.index();
             }
         }
         
@@ -228,7 +228,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     public final int getLayerId( String layerName ) {
         for ( Layer layer : layers  ) {
             if ( layerName.equals( layer.getName() ) ) {
-                return layer.getId();
+                return layer.index();
             }
         }
         
@@ -294,7 +294,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         
         Layer toDelete = layers.get( layerId );
         IntBag layersOfView = this.layersOfView.get( toDelete.getViewId() );
-        layersOfView.remove( toDelete.getId() );
+        layersOfView.remove( toDelete.index() );
         toDelete.dispose();
     }
     
@@ -400,7 +400,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             if ( activate ) {
                 activateView( view.index() );
             }
-            return view.getId();
+            return view.index();
         }
         
         void buildBaseView( Rectangle screenBounds ) {
@@ -447,7 +447,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
                 viewLayers = layersOfView.get( viewId );
             }
             
-            int layerId = layer.getId();
+            int layerId = layer.index();
             viewLayers.add( layerId );
             layers.set( layerId, layer );
             

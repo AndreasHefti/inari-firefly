@@ -60,7 +60,7 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
         
         for ( Action action : actions ) {
             if ( actionName.equals( action.getName() ) ) {
-                return action.getId();
+                return action.index();
             }
         }
         
@@ -124,7 +124,7 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             Action result = createSystemComponent( componentId, componentType, context );
             actions.set( result.index(), result );
-            return result.getId();
+            return result.index();
         }
     }
 

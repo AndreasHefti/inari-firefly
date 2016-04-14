@@ -87,7 +87,7 @@ public final class AudioSystem
     public void deleteSound( String soundName ) {
         Sound sound = getSound( soundName );
         if ( sound != null ) {
-            deleteSound( sound.getId() );
+            deleteSound( sound.index() );
         }
     }
 
@@ -114,7 +114,7 @@ public final class AudioSystem
         if ( sound == null ) {
             return -1;
         }
-        return sound.getId();
+        return sound.index();
     }
     
     public final void stopPlaying( String soundName ) {
@@ -212,7 +212,7 @@ public final class AudioSystem
             result.streaming = asset.isStreaming();
             
             sounds.set( result.index(), result );
-            return result.getId();
+            return result.index();
         }
     }
     
@@ -238,7 +238,7 @@ public final class AudioSystem
         }
         @Override
         public final void deleteComponent( String name ) {
-            deleteSound( getSound( name ).getId() );
+            deleteSound( getSound( name ).index() );
         }
         @Override
         public final Sound getComponent( String name ) {

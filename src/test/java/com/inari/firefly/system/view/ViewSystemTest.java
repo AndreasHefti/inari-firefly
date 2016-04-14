@@ -33,7 +33,7 @@ public class ViewSystemTest extends FFTest {
             "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
-            "controllerId:int[]=null", 
+            "controllerId:Integer=-1", 
             attrs.toString() 
         );
         assertEquals( 
@@ -80,7 +80,7 @@ public class ViewSystemTest extends FFTest {
             "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
-            "controllerId:int[]=null " +
+            "controllerId:Integer=-1 " +
             "SystemComponent:View(1)::" +
             "name:String=Header, " +
             "bounds:Rectangle=[x=0,y=0,width=10,height=100], " +
@@ -90,7 +90,7 @@ public class ViewSystemTest extends FFTest {
             "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
-            "controllerId:int[]=null " +
+            "controllerId:Integer=-1 " +
             "SystemComponent:View(2)::" +
             "name:String=Body, " +
             "bounds:Rectangle=[x=0,y=10,width=90,height=100], " +
@@ -100,7 +100,7 @@ public class ViewSystemTest extends FFTest {
             "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
-            "controllerId:int[]=null", 
+            "controllerId:Integer=-1", 
             attrs.toString() 
         );
         assertEquals( 
@@ -171,7 +171,7 @@ public class ViewSystemTest extends FFTest {
             "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=true, " +
             "zoom:Float=1.0, " +
-            "controllerId:int[]=null " +
+            "controllerId:Integer=-1 " +
             "SystemComponent:Layer(1)::" +
             "name:String=Layer1, " +
             "viewId:Integer=0 " +

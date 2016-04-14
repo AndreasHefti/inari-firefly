@@ -248,7 +248,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
             EntityPrefab prefab = createSystemComponent( componentId, subType, context );
             checkName( prefab );
             
-            int prefabId = prefab.getId();
+            int prefabId = prefab.index();
             prefabs.set( prefabId, prefab );
             prefabNames.set( prefabId, prefab.getName() );
             prefabComponents.set( prefabId, components );

@@ -104,7 +104,7 @@ public abstract class Asset extends SystemComponent implements Loadable, Disposa
     
     protected void checkNotAlreadyLoaded() {
         if ( loaded ) {
-            throw new IllegalStateException( "Asset: " + name + " is already loaded and can not be modified" );
+            throw new IllegalStateException( "Asset: " + componentId() + " is already loaded and can not be modified" );
         } 
     }
 

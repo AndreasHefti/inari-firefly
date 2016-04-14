@@ -17,7 +17,6 @@ package com.inari.firefly.component;
 
 import java.util.Set;
 
-import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
@@ -52,8 +51,8 @@ public interface Component {
      */
     public static final AttributeKey<String> INSTANCE_TYPE_NAME = new AttributeKey<String>( "instanceTypeName", String.class, Component.class );
     
-    /** Use this to get the ComponentKey of this Component that identifes the Component by type and instance */
-    ComponentKey componentKey();
+    /** Use this to get the ComponentId of this Component that identifies the Component by type and instance */
+    ComponentId componentId();
     
     /** Use this to get a Set of all AttributeKey's supported by this Component instance. 
      * 
@@ -81,69 +80,69 @@ public interface Component {
      */
     void toAttributes( AttributeMap attributes );
 
-    public static final class ComponentKey {
-        
-        public final IIndexedTypeKey typeKey;
-        public final int id;
-        private final int hashCode;
-
-        public ComponentKey( IIndexedTypeKey typeKey, int id ) {
-            super();
-            this.typeKey = typeKey;
-            this.id = id;
-            
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + id;
-            result = prime * result + ( ( typeKey == null ) ? 0 : typeKey.hashCode() );
-            hashCode = result;
-        }
-
-        public final Class<?> getType() {
-            return typeKey.type();
-        }
-        
-        public final <T> Class<T> getTypeAs() {
-            return typeKey.type();
-        }
-        
-        public final int getTypeIndex() {
-            return typeKey.typeIndex();
-        }
-
-        public final int getId() {
-            return id;
-        }
-
-        @Override
-        public final int hashCode() {
-            return hashCode;
-        }
-
-        @Override
-        public final boolean equals( Object obj ) {
-            if ( this == obj )
-                return true;
-            if ( obj == null )
-                return false;
-            if ( getClass() != obj.getClass() )
-                return false;
-            ComponentKey other = (ComponentKey) obj;
-            if ( id != other.id )
-                return false;
-            if ( typeKey != other.typeKey ) 
-                return false;
-            return true;
-        }
-
-        @Override
-        public final String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append( typeKey );
-            builder.append( "(" );
-            builder.append( id );
-            builder.append( ")" );
-            return builder.toString();
-        }
-    }
+//    public static final class ComponentKey {
+//        
+//        public final IIndexedTypeKey typeKey;
+//        public final int id;
+//        private final int hashCode;
+//
+//        public ComponentKey( IIndexedTypeKey typeKey, int id ) {
+//            super();
+//            this.typeKey = typeKey;
+//            this.id = id;
+//            
+//            final int prime = 31;
+//            int result = 1;
+//            result = prime * result + id;
+//            result = prime * result + ( ( typeKey == null ) ? 0 : typeKey.hashCode() );
+//            hashCode = result;
+//        }
+//
+//        public final Class<?> getType() {
+//            return typeKey.type();
+//        }
+//        
+//        public final <T> Class<T> getTypeAs() {
+//            return typeKey.type();
+//        }
+//        
+//        public final int getTypeIndex() {
+//            return typeKey.typeIndex();
+//        }
+//
+//        public final int getId() {
+//            return id;
+//        }
+//
+//        @Override
+//        public final int hashCode() {
+//            return hashCode;
+//        }
+//
+//        @Override
+//        public final boolean equals( Object obj ) {
+//            if ( this == obj )
+//                return true;
+//            if ( obj == null )
+//                return false;
+//            if ( getClass() != obj.getClass() )
+//                return false;
+//            ComponentKey other = (ComponentKey) obj;
+//            if ( id != other.id )
+//                return false;
+//            if ( typeKey != other.typeKey ) 
+//                return false;
+//            return true;
+//        }
+//
+//        @Override
+//        public final String toString() {
+//            StringBuilder builder = new StringBuilder();
+//            builder.append( typeKey );
+//            builder.append( "(" );
+//            builder.append( id );
+//            builder.append( ")" );
+//            return builder.toString();
+//        }
+//    }
 }

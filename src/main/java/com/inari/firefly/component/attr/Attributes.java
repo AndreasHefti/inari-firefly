@@ -23,32 +23,32 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.inari.firefly.component.Component.ComponentKey;
+import com.inari.firefly.component.ComponentId;
 
 public final class Attributes implements Iterable<AttributeMap> {
     
-    private final Map<ComponentKey, AttributeMap> attributes = new LinkedHashMap<ComponentKey, AttributeMap>();
+    private final Map<ComponentId, AttributeMap> attributes = new LinkedHashMap<ComponentId, AttributeMap>();
 
     @Override
     public final Iterator<AttributeMap> iterator() {
         return attributes.values().iterator();
     }
     
-    public final AttributeMap get( ComponentKey key ) {
-        return attributes.get( key );
+    public final AttributeMap get( ComponentId id ) {
+        return attributes.get( id );
     }
     
     public final void add( AttributeMap attributes ) {
-        if ( attributes.getComponentKey() == null ) {
-            throw new IllegalArgumentException( "The attributes has no ComponentKey" );
+        if ( attributes.getComponentId() == null ) {
+            throw new IllegalArgumentException( "The attributes has no ComponentId" );
         }
-        this.attributes.put( attributes.getComponentKey(), attributes );
+        this.attributes.put( attributes.getComponentId(), attributes );
     }
     
     public Collection<AttributeMap> getAllOfType( Class<?> componentType ) {
         Collection<AttributeMap> result = new ArrayList<AttributeMap>();
         for ( AttributeMap attrs : attributes.values() ) {
-            if ( componentType == attrs.getComponentKey().getType() ) {
+            if ( componentType == attrs.getComponentId().typeKey.type() ) {
                 result.add( attrs );
             }
         }
@@ -58,9 +58,9 @@ public final class Attributes implements Iterable<AttributeMap> {
     @SuppressWarnings( "unchecked" )
     public <C> Set<Class<? extends C>> getAllSubTypes( Class<C> componentType ) {
         Set<Class<? extends C>> result = new HashSet<Class<? extends C>>();
-        for ( ComponentKey componentKey : attributes.keySet() ) {
-            if ( componentType.isAssignableFrom( componentKey.getType() ) ) {
-                result.add( (Class<? extends C>) componentKey.getType() );
+        for ( ComponentId componentKey : attributes.keySet() ) {
+            if ( componentType.isAssignableFrom( componentKey.typeKey.type() ) ) {
+                result.add( (Class<? extends C>) componentKey.typeKey.type() );
             }
         }
         return result;
@@ -73,7 +73,7 @@ public final class Attributes implements Iterable<AttributeMap> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for ( Map.Entry<ComponentKey, AttributeMap> entry : attributes.entrySet() ) {
+        for ( Map.Entry<ComponentId, AttributeMap> entry : attributes.entrySet() ) {
             if ( builder.length() > 0 ) {
                 builder.append( " " );
             }

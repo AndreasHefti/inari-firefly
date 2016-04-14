@@ -78,7 +78,7 @@ public class TextSystem
     public final int getRendererId( String name ) {
         for ( TextRenderer r : renderer ) {
             if ( name.equals( r.getName() ) ) {
-                return r.getId();
+                return r.index();
             }
         }
         
@@ -185,7 +185,7 @@ public class TextSystem
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             TextRenderer component = createSystemComponent( componentId, componentType, context );
             renderer.set( component.index(), component );
-            return component.getId();
+            return component.index();
         }
     }
 

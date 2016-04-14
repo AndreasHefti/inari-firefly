@@ -61,7 +61,7 @@ public class FFAudioMock implements FFAudio {
     @Override
     public int createSound( SoundAsset asset ) {
         loadedAssets.add( asset.getName() );
-        return asset.getId();
+        return asset.index();
     }
 
     @Override

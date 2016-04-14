@@ -15,6 +15,8 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.Asset;
+import com.inari.firefly.component.Component;
+import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.ContextComponent;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
@@ -47,7 +49,7 @@ public final class FFContext {
     
     private final Map<TypedKey<?>, Object> properties =  new LinkedHashMap<TypedKey<?>, Object>();
     
-    private final Map<TypedKey<? extends ContextComponent>, ContextComponent> contextComponents = new LinkedHashMap<TypedKey<? extends ContextComponent>, ContextComponent>();
+    private final DynArray<ContextComponent> contextComponents = new DynArray<ContextComponent>();
     private final DynArray<FFSystem> systems = new DynArray<FFSystem>();
     
     private final DynArray<SystemBuilderAdapter<?>> systemBuilderAdapter = new DynArray<SystemBuilderAdapter<?>>();
@@ -166,6 +168,19 @@ public final class FFContext {
         
         return asset.getInstanceId();
     }
+    
+    @SuppressWarnings( "unchecked" )
+    public final <C extends Component> C getComponent( ComponentId id ) {
+        if ( id.typeKey.baseType() == SystemComponent.class ) {
+            return (C) getSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
+        } else if ( id.typeKey.baseType() == EntityComponent.class ) {
+            return (C) getEntityComponent( id.indexId, EntityComponentTypeKey.class.cast( id.typeKey ) );
+        } else if ( id.typeKey.baseType() == ContextComponent.class ) {
+            return (C) getContextComponent( id.indexId );
+        }
+        
+        return null;
+    }
 
     public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, int componentId ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
@@ -182,14 +197,14 @@ public final class FFContext {
         return subType.cast( component );
     }
     
-    public <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, String componentName ) {
+    public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         return key.<C>type().cast( builderHelper.getComponent( componentName ) );
     }
     
-    public <C extends SystemComponent> int getSystemComponentId( SystemComponentKey<C> key, String componentName ) {
+    public final <C extends SystemComponent> int getSystemComponentId( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        return key.<C>type().cast( builderHelper.getComponent( componentName ) ).getId();
+        return key.<C>type().cast( builderHelper.getComponent( componentName ) ).index();
     }
     
     @SuppressWarnings( "unchecked" )
@@ -202,9 +217,9 @@ public final class FFContext {
         return subType.cast( component );
     }
     
-    public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, int componentId ) {
+    public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, int componentIndex ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        builderHelper.deleteComponent( componentId );
+        builderHelper.deleteComponent( componentIndex );
     }
     
     public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, String componentName ) {
@@ -212,18 +227,41 @@ public final class FFContext {
         builderHelper.deleteComponent( componentName );
     }
 
-    public final <T extends ContextComponent> T getContextComponent( TypedKey<T> componentKey ) {
-        return componentKey.cast(contextComponents.get( componentKey ) );
+    @SuppressWarnings( "unchecked" )
+    public final <C extends ContextComponent> C getContextComponent( int componentIndex ) {
+        return (C) contextComponents.get( componentIndex );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public final <C extends ContextComponent> C getContextComponent( String name ) {
+        for ( ContextComponent contextComponent : contextComponents ) {
+            if ( name.equals( contextComponent.getName() ) ) {
+                return (C) contextComponent;
+            }
+        }
+        
+        return null;
+    }
+    
+    public final <C extends ContextComponent> C getContextComponent( int componentIndex, Class<C> type ) {
+        return type.cast(  contextComponents.get( componentIndex ) );
     }
     
     public final <T extends ContextComponent> void setContextComponent( T component ) {
-        contextComponents.put( component.contextKey(), component );
+        contextComponents.set( component.index(), component );
     }
     
-    public final void disposeContextComponent( TypedKey<? extends ContextComponent> componentKey ) {
-        ContextComponent component = contextComponents.remove( componentKey );
+    public final void disposeContextComponent( int componentIndex ) {
+        ContextComponent component = contextComponents.remove( componentIndex );
         if ( component != null && component instanceof Disposable ) {
             ( (Disposable) component ).dispose( this );
+        }
+    }
+    
+    public final void disposeContextComponent( String componentName ) {
+        ContextComponent contextComponent = getContextComponent( componentName );
+        if ( contextComponent != null ) {
+            disposeContextComponent( contextComponent.index() );
         }
     }
     
@@ -329,7 +367,7 @@ public final class FFContext {
     }
 
     public final void dispose() {
-        for ( ContextComponent component : contextComponents.values() ) {
+        for ( ContextComponent component : contextComponents ) {
             if ( component instanceof Disposable ) {
                 ( (Disposable) component ).dispose( this );
             }

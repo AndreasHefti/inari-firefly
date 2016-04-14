@@ -59,7 +59,7 @@ public abstract class SystemBuilderAdapter<C extends SystemComponent> implements
         while ( all.hasNext() ) {
             C component = all.next();
             AttributeMap attrs = new ComponentAttributeMap( context );
-            attrs.setComponentKey( component.componentKey() );
+            attrs.setComponentId( component.componentId() );
             component.toAttributes( attrs );
             attributes.add( attrs );
         }
@@ -71,7 +71,7 @@ public abstract class SystemBuilderAdapter<C extends SystemComponent> implements
         Attributes attrs
     ) {
         for ( AttributeMap attributes : attrs.getAllOfType( subType ) ) {
-            int componentId = attributes.getComponentKey().getId();
+            int componentId = attributes.getComponentId().getIndexId();
             if ( buildType == BuildType.MERGE_ATTRIBUTES ) {
                 C component = getComponent( componentId );
                 if ( component != null ) {

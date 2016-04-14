@@ -18,7 +18,7 @@ public final class NormalFullTileGridRenderer extends TileGridRenderer {
         int layerId = event.getLayerId();
         
         TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
-        if ( tileGrid == null || ( tileGrid.getRendererId() >= 0 && tileGrid.getRendererId() != getId() ) ) {
+        if ( tileGrid == null || ( tileGrid.getRendererId() >= 0 && tileGrid.getRendererId() != index() ) ) {
             return;
         }
         

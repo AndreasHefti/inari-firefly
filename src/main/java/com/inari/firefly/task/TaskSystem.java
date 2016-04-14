@@ -141,8 +141,8 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         @Override
         public final int doBuild( int componentId, Class<?> taskType, boolean activate ) {
             Task task = createSystemComponent( componentId, taskType, context );
-            tasks.set( task.getId(), task );
-            return task.getId();
+            tasks.set( task.index(), task );
+            return task.index();
         }
     }
     

@@ -18,7 +18,7 @@ public interface FFSystem extends IndexedType, FFContextInitiable {
         }
 
         @Override
-        protected final Class<FFSystem> baseIndexedType() {
+        public final Class<FFSystem> baseType() {
             return FFSystem.class;
         }
         

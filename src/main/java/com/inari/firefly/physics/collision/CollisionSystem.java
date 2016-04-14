@@ -92,7 +92,7 @@ public final class CollisionSystem
     
     @Override
     public final void onViewEvent( ViewEvent event ) {
-        int viewId = event.view.getId();
+        int viewId = event.view.index();
         if ( event.eventType == Type.VIEW_DELETED ) {
             quadTreesPerViewAndLayer.remove( viewId );
             return;
@@ -273,7 +273,7 @@ public final class CollisionSystem
     public final int getBitMaskId( String name ) {
         for ( BitMask bitmask : bitmasks ) {
             if ( bitmask.getName().equals( name ) ) {
-                return bitmask.getId();
+                return bitmask.index();
             }
         }
         return -1;
@@ -364,7 +364,7 @@ public final class CollisionSystem
     public final int getCollisionConstraintId( String name ) {
         for ( CollisionConstraint cc : collisionConstraints ) {
             if ( name.equals( cc.getName() ) ) {
-                return cc.getId();
+                return cc.index();
             }
         }
         
@@ -409,7 +409,7 @@ public final class CollisionSystem
             return;
         }
         
-        deleteCollisionResolver( cr.getId() );
+        deleteCollisionResolver( cr.index() );
     }
 
     public final void deleteCollisionResolver( int id ) {
@@ -493,9 +493,9 @@ public final class CollisionSystem
             BitMask bitmask = new BitMask( componentId );
             bitmask.fromAttributes( attributes );
             
-            bitmasks.set( bitmask.getId(), bitmask );
+            bitmasks.set( bitmask.index(), bitmask );
             
-            return bitmask.getId();
+            return bitmask.index();
         }
     }
     
@@ -532,12 +532,12 @@ public final class CollisionSystem
                 quadTreesPerViewAndLayer.set( viewId, new DynArray<CollisionQuadTree>() );
             }
             
-            quadTrees.set( quadTree.getId(), quadTree );
+            quadTrees.set( quadTree.index(), quadTree );
             quadTreesPerViewAndLayer
                 .get( viewId )
                 .set( layerId, quadTree );
             
-            return quadTree.getId();
+            return quadTree.index();
         }
     }
     
@@ -554,8 +554,8 @@ public final class CollisionSystem
 
         public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             CollisionConstraint cc = createSystemComponent( componentId, componentType, context );
-            collisionConstraints.set( cc.getId(), cc );
-            return cc.getId();
+            collisionConstraints.set( cc.index(), cc );
+            return cc.index();
         }
     }
     
@@ -572,8 +572,8 @@ public final class CollisionSystem
 
         public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             CollisionResolver cr = createSystemComponent( componentId, componentType, context );
-            collisionResolvers.set( cr.getId(), cr );
-            return cr.getId();
+            collisionResolvers.set( cr.index(), cr );
+            return cr.index();
         }
     }
 

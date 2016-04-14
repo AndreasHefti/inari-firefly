@@ -17,7 +17,7 @@ public class NormalFastTileGridRenderer extends TileGridRenderer {
         int layerId = event.getLayerId();
         
         TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
-        if ( tileGrid == null || tileGrid.getRendererId() != getId() ) {
+        if ( tileGrid == null || tileGrid.getRendererId() != index() ) {
           return;
         }
         TileIterator iterator = tileGrid.iterator( event.getClip() );

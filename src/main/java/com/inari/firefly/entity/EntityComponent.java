@@ -20,22 +20,23 @@ import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.Component;
+import com.inari.firefly.component.ComponentId;
 
 public abstract class EntityComponent implements Component, IndexedType {
     
-    public final ComponentKey componentKey;
+    public final ComponentId componentId;
     
     protected EntityComponent( EntityComponentTypeKey<?> indexedTypeKey ) {
-        componentKey = new ComponentKey( indexedTypeKey, -1 );
+        componentId = new ComponentId( indexedTypeKey, -1 );
     }
 
     public final IIndexedTypeKey indexedTypeKey() {
-        return componentKey.typeKey;
+        return componentId.typeKey;
     }
 
     @Override
-    public final ComponentKey componentKey() {
-        return componentKey;
+    public final ComponentId componentId() {
+        return componentId;
     }
 
     public abstract void resetAttributes();
@@ -47,7 +48,7 @@ public abstract class EntityComponent implements Component, IndexedType {
         }
 
         @Override
-        protected final Class<EntityComponent> baseIndexedType() {
+        public final Class<EntityComponent> baseType() {
             return EntityComponent.class;
         }
         

@@ -27,7 +27,7 @@ import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
-import com.inari.firefly.component.Component.ComponentKey;
+import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
@@ -270,9 +270,9 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     }
     
     private void entityToAttribute( Attributes attributes, int entityId ) {
-        ComponentKey key = new ComponentKey( Entity.ENTITY_TYPE_KEY, entityId );
+        ComponentId componentId = new ComponentId( Entity.ENTITY_TYPE_KEY, entityId );
         EntityAttributeMap attributeMap = new EntityAttributeMap( context );
-        attributeMap.setComponentKey( key );
+        attributeMap.setComponentId( componentId );
         attributes.add( attributeMap );
         IndexedTypeSet components = getComponents( entityId );
         for ( EntityComponent component : components.<EntityComponent>getIterable() ) {
@@ -486,7 +486,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             
             EntityBuilder entityBuilder = getEntityBuilder();
             for ( AttributeMap entityAttrs : attributes.getAllOfType( Entity.class ) ) {
-                int entityId = entityAttrs.getComponentKey().getId();
+                int entityId = entityAttrs.getComponentId().getIndexId();
                 if ( entityId < 0 ) {
                     continue;
                 }
@@ -530,7 +530,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             }
             
             EntityAttributeMap attributeMap = new EntityAttributeMap( context );
-            attributeMap.setComponentKey( Entity.ACTIVE_ENTITIES_IDS_KEY );
+            attributeMap.setComponentId( Entity.ACTIVE_ENTITIES_IDS_KEY );
             attributeMap.put( Entity.ACTIVE_ENTITY_IDS, activeEntityIds.toConfigString() );
             attributes.add( attributeMap );
             
@@ -546,7 +546,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         
         public static final SystemComponentKey<Entity> ENTITY_TYPE_KEY = SystemComponentKey.create( Entity.class );
         static final AttributeKey<String> ACTIVE_ENTITY_IDS = new AttributeKey<String>( "ACTIVE_ENTITY_IDS", String.class, Entity.class );
-        static final ComponentKey ACTIVE_ENTITIES_IDS_KEY = new ComponentKey( ENTITY_TYPE_KEY, -1 );
+        static final ComponentId ACTIVE_ENTITIES_IDS_KEY = new ComponentId( ENTITY_TYPE_KEY, -1 );
         
         Entity() {
             super( 0 );

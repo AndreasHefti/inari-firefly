@@ -132,7 +132,7 @@ public abstract class FireFly {
     private void render( final View view ) {
         Rectangle bounds = view.getBounds();
         Position worldPosition = view.getWorldPosition();
-        int viewId = view.getId();
+        int viewId = view.index();
         
         renderEvent.viewId = viewId;
         renderEvent.clip.x = worldPosition.x;

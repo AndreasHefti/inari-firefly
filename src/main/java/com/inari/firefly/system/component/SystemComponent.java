@@ -25,6 +25,7 @@ import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.FFInitException;
+import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.NamedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -39,13 +40,11 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
     
     protected FFContext context;
     
-    private final ComponentKey componentKey;
-    protected String name;
+    private ComponentId componentId;
     
-    protected SystemComponent( int id ) {
-        super( id );
-        componentKey = new ComponentKey( indexedTypeKey(), getId() );
-        name = null;
+    protected SystemComponent( int index ) {
+        super( index );
+        componentId = new ComponentId( indexedTypeKey(), index );
     }
     
     protected final void injectContext( FFContext context ) {
@@ -55,14 +54,10 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
     protected void init() throws FFInitException {
         // NOOP for default
     }
-    
-    public final int getId() {
-        return index;
-    }
 
     @Override
-    public final ComponentKey componentKey() {
-        return componentKey;
+    public final ComponentId componentId() {
+        return componentId;
     }
 
     @Override
@@ -72,12 +67,12 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
 
     @Override
     public final String getName() {
-        return name;
+        return componentId.getName();
     }
 
     @Override
     public final void setName( String name ) {
-        this.name = name;
+        componentId = new ComponentId( indexedTypeKey(), index, name );
     }
 
     @Override
@@ -87,12 +82,12 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
 
     @Override
     public void fromAttributes( AttributeMap attributes ) {
-        name = attributes.getValue( NAME, name );
+        setName( attributes.getValue( NAME, getName() ) );
     }
 
     @Override
     public void toAttributes( AttributeMap attributes ) {
-        attributes.put( NAME, name );
+        attributes.put( NAME, getName() );
     }
     
     public static final class SystemComponentKey<C extends SystemComponent> extends IndexedTypeKey {
@@ -102,7 +97,7 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
         }
 
         @Override
-        protected final Class<SystemComponent> baseIndexedType() {
+        public final Class<SystemComponent> baseType() {
             return SystemComponent.class;
         }
 

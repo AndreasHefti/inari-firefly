@@ -79,7 +79,7 @@ public class StateSystem
         }
         
         workflow.activate();
-        context.notify( WorkflowEvent.createWorkflowStartedEvent( workflow.getId(), workflow.getName(), workflow.getCurrentState() ) );
+        context.notify( WorkflowEvent.createWorkflowStartedEvent( workflow.index(), workflow.getName(), workflow.getCurrentState() ) );
     }
 
     @Override
@@ -125,9 +125,9 @@ public class StateSystem
         workflow.setCurrentState( toStateName );
         
         if ( toStateName != null ) {
-            context.notify( WorkflowEvent.createStateChangedEvent( workflow.getId(), workflow.getName(), stateChange ) );
+            context.notify( WorkflowEvent.createStateChangedEvent( workflow.index(), workflow.getName(), stateChange ) );
         } else {
-            context.notify( WorkflowEvent.createWorkflowFinishedEvent( workflow.getId(), workflow.getName(), stateChange ) );
+            context.notify( WorkflowEvent.createWorkflowFinishedEvent( workflow.index(), workflow.getName(), stateChange ) );
         }
     }
     
@@ -256,10 +256,10 @@ public class StateSystem
             workflows.set( workflow.index(), workflow );
             
             if ( activate ) {
-                activateWorkflow( workflow.getId() );
+                activateWorkflow( workflow.index() );
             }
             
-            return workflow.getId();
+            return workflow.index();
         }
     }
 

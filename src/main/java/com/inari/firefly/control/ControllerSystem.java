@@ -109,7 +109,7 @@ public final class ControllerSystem
         
         for ( Controller c : controller ) {
             if ( name.equals( c.getName() ) ) {
-                return c.getId();
+                return c.index();
             }
         }
         
@@ -178,7 +178,7 @@ public final class ControllerSystem
         public final int doBuild( int componentId, Class<?> controllerType, boolean activate ) {
             Controller result = createSystemComponent( componentId, controllerType, context );
             controller.set( result.index(), result );
-            return result.getId();
+            return result.index();
         }
     }
 
