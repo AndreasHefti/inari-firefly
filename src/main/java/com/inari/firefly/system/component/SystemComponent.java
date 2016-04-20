@@ -44,7 +44,7 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
     
     protected SystemComponent( int index ) {
         super( index );
-        componentId = new ComponentId( indexedTypeKey(), index );
+        componentId = new ComponentId( indexedTypeKey(), index() );
     }
     
     protected final void injectContext( FFContext context ) {

@@ -41,7 +41,7 @@ public interface FFGraphics extends FFContextInitiable, ViewEventListener {
 
     int getScreenHeight();
     
-    void startRendering( View view );
+    void startRendering( View view, boolean clear );
 
     void renderSprite( SpriteRenderable renderableSprite, float xpos, float ypos );
     

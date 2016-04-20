@@ -61,6 +61,8 @@ public abstract class FFInput {
     
     public abstract void mapInputType( ButtonType buttonType, InputType inputType );
     
+    public abstract boolean typed( ButtonType buttonType );
+    
     public abstract boolean isPressed( ButtonType buttonType );
     
     public abstract int getXpos();

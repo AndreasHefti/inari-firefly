@@ -106,6 +106,8 @@ public abstract class FireFly {
         if ( disposed ) {
             return;
         }
+        View baseView = viewSystem.getView( ViewSystem.BASE_VIEW_ID );
+        
         // NOTE: for now there is no renderer that works with approximationTime so I skip the calculation so far.
         // TODO: implements the calculation of approximationTime and set it to the event.
         if ( viewSystem.hasActiveViewports() ) {
@@ -121,10 +123,14 @@ public abstract class FireFly {
             
             graphics.flush( viewSystem.activeViewportIterator() );
         } else {
-            View baseView = viewSystem.getView( ViewSystem.BASE_VIEW_ID );
-            
             render( baseView );
-            
+            graphics.flush( null );
+        }
+
+        if ( systemInfoDisplay.isActive() ) {
+            graphics.startRendering( baseView, false );
+            systemInfoDisplay.renderSystemInfoDisplay();
+            graphics.endRendering( baseView );
             graphics.flush( null );
         }
     }
@@ -140,7 +146,7 @@ public abstract class FireFly {
         renderEvent.clip.width = bounds.width;
         renderEvent.clip.height = bounds.height;
 
-        graphics.startRendering( view );
+        graphics.startRendering( view, true );
         
         if ( viewSystem.isLayeringEnabledAndHasLayers( viewId ) ) {
             IntIterator layerIterator = viewSystem.getLayersOfView( viewId ).iterator();
@@ -152,14 +158,8 @@ public abstract class FireFly {
         } else {
             context.notify( renderEvent );
         }
-        
-        if ( systemInfoDisplay.isActive() ) {
-            systemInfoDisplay.renderSystemInfoDisplay();
-        }
-        
+
         graphics.endRendering( view );
     }
-    
-    
 
 }

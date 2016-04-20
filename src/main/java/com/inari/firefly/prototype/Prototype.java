@@ -8,7 +8,7 @@ import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.Loadable;
 import com.inari.firefly.system.component.SystemComponent;
 
-public abstract class Prototype extends  SystemComponent implements Loadable, Disposable {
+public abstract class Prototype extends SystemComponent implements Loadable, Disposable {
     
     protected Prototype( int id ) {
         super( id );

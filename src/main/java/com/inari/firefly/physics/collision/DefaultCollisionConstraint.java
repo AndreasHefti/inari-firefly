@@ -21,6 +21,10 @@ public final class DefaultCollisionConstraint extends CollisionConstraint {
 
     @Override
     public final boolean check( EntityData entityData, CollisionData collisionData ) {
+        if ( !entityData.collision.isSolid() || !collisionData.entityData.collision.isSolid() ) {
+            return false;
+        }
+        
         GeomUtils.intersection( 
             entityData.worldBounds, 
             collisionData.entityData.worldBounds, 

@@ -44,6 +44,16 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
         return prototypes.get( prototypeId );
     }
     
+    public final Prototype getPrototype( String prototypeName ) {
+        for ( Prototype prototype : prototypes ) {
+            if ( prototypeName.equals( prototype.getName() ) ) {
+                return prototype;
+            }
+        }
+        
+        return null;
+    }
+    
     public final <T extends Prototype> T getPrototypeAs( int prototypeId, Class<T> subType ) {
         Prototype prototype = getPrototype( prototypeId );
         if ( prototype == null ) {
@@ -62,13 +72,9 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
     }
     
     public final int getPrototypeId( String prototypeName ) {
-        for ( int i = 0; i < prototypes.capacity(); i++ ) {
-            if ( !prototypes.contains( i ) ) {
-                continue;
-            }
-            Prototype prototype = prototypes.get( i );
-            if ( prototype.getName().equals( prototypeName ) ) {
-                return i;
+        for ( Prototype prototype : prototypes ) {
+            if ( prototypeName.equals( prototype.getName() ) ) {
+                return prototype.index();
             }
         }
         
@@ -122,6 +128,11 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
         public final int doBuild( int componentId, Class<?> prototypeType, boolean activate ) {
             Prototype prototype = createSystemComponent( componentId, prototypeType, context );
             prototypes.set( prototype.index(), prototype );
+            
+            if ( activate ) {
+                prototype.load( context );
+            }
+            
             return prototype.index();
         }
     }
@@ -152,7 +163,7 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
         }
         @Override
         public final Prototype getComponent( String name ) {
-            return getPrototype( getPrototypeId( name ) );
+            return getPrototype( name );
         }
     }
 

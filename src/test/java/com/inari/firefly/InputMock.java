@@ -34,6 +34,12 @@ public class InputMock extends FFInput {
         return 0;
     }
 
+    @Override
+    public boolean typed( ButtonType buttonType ) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
     
 
 }

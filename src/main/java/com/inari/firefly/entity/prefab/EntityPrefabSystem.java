@@ -25,7 +25,6 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     };
 
     private DynArray<EntityPrefab> prefabs;
-    private DynArray<String> prefabNames;
     private DynArray<IndexedTypeSet> prefabComponents;
     private DynArray<ArrayDeque<IndexedTypeSet>> components;
     
@@ -43,7 +42,6 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
         super.init( context );
         
         prefabs = new DynArray<EntityPrefab>();
-        prefabNames = new DynArray<String>();
         prefabComponents = new DynArray<IndexedTypeSet>();
         components = new DynArray<ArrayDeque<IndexedTypeSet>>();
         
@@ -70,7 +68,6 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
         
         prefabs.clear();
         prefabComponents.clear();
-        prefabNames.clear();
         components.clear();
     }
     
@@ -80,6 +77,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
             return;
         }
         
+        prefabs.remove( prefab.index() );
         deletePrefab( prefab );
     }
     
@@ -96,20 +94,20 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
         deletePrefab( prefab );
     }
     
-    public final Iterator<String> getPrefabNames() {
-        return prefabNames.iterator();
-    }
-    
     public final EntityPrefab getPrefab( String prefabName ) {
-        int prefabId = prefabNames.indexOf( prefabName );
-        if ( prefabId < 0 ) {
-            return null;
+        for ( EntityPrefab prefab : prefabs ) {
+            if ( prefabName.equals( prefab.getName() ) ) {
+                return prefab;
+            }
         }
-        return prefabs.get( prefabId );
+        return null;
     }
     
     public final void cacheComponents( String prefabName, int number ) {
-        cacheComponents( prefabNames.indexOf( prefabName ), number );
+        EntityPrefab prefab = getPrefab( prefabName );
+        if ( prefab != null ) {
+            cacheComponents( prefab.index(), number );
+        }
     }
     
     public final void cacheComponents( int prefabId, int number ) {
@@ -250,8 +248,14 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
             
             int prefabId = prefab.index();
             prefabs.set( prefabId, prefab );
-            prefabNames.set( prefabId, prefab.getName() );
             prefabComponents.set( prefabId, components );
+            
+            if ( attributes.contains( EntityPrefab.INITIAL_CREATE_NUMBER ) ) {
+                cacheComponents( 
+                    prefabId, 
+                    attributes.getValue( EntityPrefab.INITIAL_CREATE_NUMBER ) 
+                );
+            }
             
             return prefabId;
         }

@@ -238,7 +238,7 @@ public final class AudioSystem
         }
         @Override
         public final void deleteComponent( String name ) {
-            deleteSound( getSound( name ).index() );
+            deleteSound( name );
         }
         @Override
         public final Sound getComponent( String name ) {

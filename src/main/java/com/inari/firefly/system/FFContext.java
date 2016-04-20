@@ -267,7 +267,7 @@ public final class FFContext {
     public final ComponentBuilder getComponentBuilder( SystemComponentKey<?> key ) {
         int id = key.index();
         if ( !systemBuilderAdapter.contains( id ) ) {
-            return null;
+            throw new FFInitException( "No component builder for key: " + key + " found. Maybe the appropriate System is not loaded?" );
         }
         
         return systemBuilderAdapter.get( id ).getComponentBuilder();

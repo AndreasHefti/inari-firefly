@@ -70,6 +70,10 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
     
     public final Asset getAsset( int assetId ) {
+        if ( !assets.contains( assetId ) ) {
+            return null;
+        }
+        
         return assets.get( assetId );
     }
     

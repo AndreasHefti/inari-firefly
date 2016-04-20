@@ -3,7 +3,7 @@ package com.inari.firefly.component.attr;
 public class Attribute {
     
     final AttributeKey<?> key;
-    final Object value;
+    Object value;
     
     public Attribute( AttributeKey<?> key, Object value ) {
         super();
@@ -13,6 +13,10 @@ public class Attribute {
 
     public final AttributeKey<?> getKey() {
         return key;
+    }
+    
+    public final void setValue( Object value ) {
+        this.value = value;
     }
 
     public final Object getValue() {

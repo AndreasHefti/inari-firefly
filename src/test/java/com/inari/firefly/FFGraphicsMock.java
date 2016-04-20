@@ -86,7 +86,7 @@ public class FFGraphicsMock implements FFGraphics {
     }
 
     @Override
-    public void startRendering( View view ) {
+    public void startRendering( View view, boolean clear ) {
         log.add( "startRendering::View(" + view.getName() + ")" );
     }
     
