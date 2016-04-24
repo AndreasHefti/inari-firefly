@@ -25,7 +25,7 @@ public final class ECollision extends EntityComponent {
     public static final AttributeKey<Integer> COLLISION_RESOLVER_ID = new AttributeKey<Integer>( "collisionResolverId", Integer.class, ECollision.class );
     public static final AttributeKey<IntBag> COLLISION_LAYER_IDS = new AttributeKey<IntBag>( "collisionLayersIds", IntBag.class, ECollision.class );
     public static final AttributeKey<Boolean> SOLID = new AttributeKey<Boolean>( "solid", Boolean.class, ECollision.class );
-    
+    public static final AttributeKey<Integer> CONTACT_TYPE = new AttributeKey<Integer>( "contactType", Integer.class, ECollision.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         OUTER_BOUNDING,
         BOUNDING,
@@ -33,7 +33,8 @@ public final class ECollision extends EntityComponent {
         COLLISION_CONSTRAINT_ID,
         COLLISION_RESOLVER_ID,
         COLLISION_LAYER_IDS,
-        SOLID
+        SOLID,
+        CONTACT_TYPE
     };
     
     Rectangle outerBounding;
@@ -43,6 +44,7 @@ public final class ECollision extends EntityComponent {
     int collisionResolverId;
     IntBag collisionLayerIds;
     boolean solid;
+    int contactType;
     
     private final IntBag contacts = new IntBag( 10, -1 );
 
@@ -60,6 +62,7 @@ public final class ECollision extends EntityComponent {
         collisionResolverId = -1;
         collisionLayerIds = null;
         solid = true;
+        contactType = -1;
     }
 
     public final int getBitmaskId() {
@@ -125,7 +128,15 @@ public final class ECollision extends EntityComponent {
     public final void setSolid( boolean solid ) {
         this.solid = solid;
     }
-    
+
+    public final int getContactType() {
+        return contactType;
+    }
+
+    public final void setContactType( int contactType ) {
+        this.contactType = contactType;
+    }
+
     public final void setContactIds( int... contactIds ) {
         contacts.clear();
         contacts.addAll( contactIds );
@@ -154,6 +165,7 @@ public final class ECollision extends EntityComponent {
         bounding = attributes.getValue( BOUNDING, bounding );
         collisionLayerIds = attributes.getValue( COLLISION_LAYER_IDS, collisionLayerIds );
         solid = attributes.getValue( SOLID, solid );
+        contactType = attributes.getValue( CONTACT_TYPE, contactType );
     }
 
     @Override
@@ -165,6 +177,7 @@ public final class ECollision extends EntityComponent {
         attributes.put( COLLISION_CONSTRAINT_ID, collisionConstraintId );
         attributes.put( COLLISION_LAYER_IDS, collisionLayerIds );
         attributes.put( SOLID, solid );
+        attributes.put( CONTACT_TYPE, contactType );
     }
 
 }

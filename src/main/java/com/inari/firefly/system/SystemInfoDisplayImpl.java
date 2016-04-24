@@ -7,12 +7,14 @@ import com.inari.firefly.asset.Asset;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.SpriteRenderable;
 import com.inari.firefly.graphics.text.FontAsset;
+import com.inari.firefly.graphics.view.View;
+import com.inari.firefly.graphics.view.ViewSystem;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.ShapeData;
 import com.inari.firefly.system.info.SystemInfo;
 import com.inari.firefly.system.info.SystemInfoDisplay;
 
-final class SystemInfoDisplayImpl implements SystemInfoDisplay {
+final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventListener {
 
     private final FFContext context;
     private final FFGraphics graphics;
@@ -29,7 +31,6 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay {
     SystemInfoDisplayImpl( FFContext context ) {
         this.context = context;
         graphics = context.getGraphics();
-        context.setSystemInfoDisplay( this );
     }
 
     @Override
@@ -52,6 +53,13 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay {
         }
         
         this.active = active;
+        
+        if ( active ) {
+            context.registerListener( PostRenderEvent.class, this );
+        } else {
+            context.disposeListener( PostRenderEvent.class, this );
+        }
+        
         return this;
     }
     
@@ -64,6 +72,17 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay {
             width = systemInfo.getLength();
         }
         return this;
+    }
+    
+    @Override
+    public final void postRendering( FFContext context ) {
+        //if ( systemInfoDisplay.isActive() ) {
+        View baseView = context.getSystemComponent( View.TYPE_KEY, ViewSystem.BASE_VIEW_ID );
+        graphics.startRendering( baseView, false );
+        renderSystemInfoDisplay();
+        graphics.endRendering( baseView );
+        graphics.flush( null );
+        //}
     }
     
     final void update() {
@@ -131,5 +150,5 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay {
         @Override public int getShaderId() { return -1; }
         
     }
-    
+
 }

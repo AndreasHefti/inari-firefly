@@ -31,7 +31,7 @@ public final class RenderEvent extends Event<RenderEventListener> {
     /** Defines a clipping area */
     final Rectangle clip = new Rectangle();
     
-    public RenderEvent() {
+    RenderEvent() {
         super( TYPE_KEY );
     }
     

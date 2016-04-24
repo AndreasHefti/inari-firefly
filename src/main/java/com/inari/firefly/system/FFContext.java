@@ -58,8 +58,8 @@ public final class FFContext {
     private final FFAudio audio;
     private final FFTimer timer;
     private final FFInput input;
+    private final SystemInfoDisplay systemInfoDisplay;
     
-    private SystemInfoDisplay systemInfoDisplay;
     private EntitySystem entitySystem;
     boolean exit = false;
 
@@ -77,10 +77,7 @@ public final class FFContext {
         audio.init( this );
         this.timer = timer;
         this.input = input;
-    }
-    
-    final void setSystemInfoDisplay( SystemInfoDisplay systemInfoDisplay ) {
-        this.systemInfoDisplay = systemInfoDisplay;
+        systemInfoDisplay = new SystemInfoDisplayImpl( this );
     }
 
     public final IEventDispatcher getEventDispatcher() {

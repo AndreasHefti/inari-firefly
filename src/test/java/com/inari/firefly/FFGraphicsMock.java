@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.SpriteRenderable;
@@ -166,6 +167,12 @@ public class FFGraphicsMock implements FFGraphics {
         }
         
         builder.append( "]" );
+    }
+
+    @Override
+    public byte[] getScreenshotPixels( Rectangle area ) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

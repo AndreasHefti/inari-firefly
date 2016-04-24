@@ -50,9 +50,8 @@ public abstract class FireFly {
 
     private final UpdateEvent updateEvent;
     private final RenderEvent renderEvent;
-    
-    private final SystemInfoDisplayImpl systemInfoDisplay;
-    
+    private final PostRenderEvent postRenderEvent;
+
     private boolean disposed = false;
 
     protected FireFly( 
@@ -80,8 +79,7 @@ public abstract class FireFly {
         
         updateEvent = new UpdateEvent( timer );
         renderEvent = new RenderEvent();
-        
-        systemInfoDisplay  = new SystemInfoDisplayImpl( context ); 
+        postRenderEvent = new PostRenderEvent( context );
     }
     
     public final boolean exit() {
@@ -126,13 +124,8 @@ public abstract class FireFly {
             render( baseView );
             graphics.flush( null );
         }
-
-        if ( systemInfoDisplay.isActive() ) {
-            graphics.startRendering( baseView, false );
-            systemInfoDisplay.renderSystemInfoDisplay();
-            graphics.endRendering( baseView );
-            graphics.flush( null );
-        }
+        
+        context.notify( postRenderEvent );
     }
     
     private void render( final View view ) {
