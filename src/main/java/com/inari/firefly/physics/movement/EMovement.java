@@ -16,12 +16,10 @@
 package com.inari.firefly.physics.movement;
 
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Vector2f;
-import com.inari.commons.lang.indexed.Indexed;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -47,13 +45,10 @@ public final class EMovement extends EntityComponent {
     final Vector2f velocity = new Vector2f( 0, 0 );
     float updateResolution;
 
-    private final BitSet stateFlags;
-    
     private UpdateScheduler updateScheduler = null;
 
     public EMovement() {
         super( TYPE_KEY );
-        stateFlags = new BitSet( 10 );
         resetAttributes();
     }
 
@@ -62,7 +57,6 @@ public final class EMovement extends EntityComponent {
         active = false;
         setVelocityX( 0f );
         setVelocityY( 0f );
-        stateFlags.clear();
         updateResolution = -1;
         updateScheduler = null;
     }
@@ -119,22 +113,6 @@ public final class EMovement extends EntityComponent {
         }
         
         return updateScheduler.needsUpdate();
-    }
-
-    public final void setStateFlag( final Indexed stateFlag ) {
-        stateFlags.set( stateFlag.index() );
-    }
-    
-    public final void resetStateFlag( final Indexed stateFlag ) {
-        stateFlags.set( stateFlag.index(), false );
-    }
-
-    public final boolean hasStateFlag( final Indexed stateFlag ) {
-        return stateFlags.get( stateFlag.index() ) == true;
-    }
-    
-    public final void clearContact() {
-        stateFlags.clear();
     }
 
     public final boolean isMoving() {
