@@ -15,7 +15,6 @@ public final class ECollision extends EntityComponent {
     
     public static final EntityComponentTypeKey<ECollision> TYPE_KEY = EntityComponentTypeKey.create( ECollision.class );
     
-    public static final AttributeKey<Rectangle> OUTER_BOUNDING = new AttributeKey<Rectangle>( "outerBounding", Rectangle.class, ECollision.class );
     public static final AttributeKey<Rectangle> BOUNDING = new AttributeKey<Rectangle>( "bounding", Rectangle.class, ECollision.class );
     public static final AttributeKey<String> BIT_MASK_NAME = new AttributeKey<String>( "bitmaskName", String.class, ECollision.class );
     public static final AttributeKey<Integer> BIT_MASK_ID = new AttributeKey<Integer>( "bitmaskId", Integer.class, ECollision.class );
@@ -27,7 +26,6 @@ public final class ECollision extends EntityComponent {
     public static final AttributeKey<Boolean> SOLID = new AttributeKey<Boolean>( "solid", Boolean.class, ECollision.class );
     public static final AttributeKey<Integer> CONTACT_TYPE = new AttributeKey<Integer>( "contactType", Integer.class, ECollision.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
-        OUTER_BOUNDING,
         BOUNDING,
         BIT_MASK_ID,
         COLLISION_CONSTRAINT_ID,
@@ -158,7 +156,6 @@ public final class ECollision extends EntityComponent {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        outerBounding = attributes.getValue( OUTER_BOUNDING, outerBounding );
         collisionConstraintId = attributes.getIdForName( COLLISION_CONSTRAINT_NAME, COLLISION_CONSTRAINT_ID, CollisionConstraint.TYPE_KEY, collisionConstraintId );
         collisionResolverId = attributes.getIdForName( COLLISION_RESOLVER_NAME, COLLISION_RESOLVER_ID, CollisionConstraint.TYPE_KEY, collisionResolverId );
         bitmaskId = attributes.getIdForName( BIT_MASK_NAME, BIT_MASK_ID, BitMask.TYPE_KEY, bitmaskId );
@@ -173,7 +170,6 @@ public final class ECollision extends EntityComponent {
         attributes.put( BIT_MASK_ID, bitmaskId );
         attributes.put( BOUNDING, bounding );
         attributes.put( COLLISION_RESOLVER_ID, collisionResolverId );
-        attributes.put( OUTER_BOUNDING, outerBounding );
         attributes.put( COLLISION_CONSTRAINT_ID, collisionConstraintId );
         attributes.put( COLLISION_LAYER_IDS, collisionLayerIds );
         attributes.put( SOLID, solid );
