@@ -11,20 +11,20 @@ import com.inari.firefly.physics.movement.EMovement;
 
 public final class Collisions implements Iterable<Collisions.CollisionData> {
     
-    private final CollisionSystem collisionSystem;
+    private final CollisionConstraint collisionConstraint;
 
     public final EntityData entityData = new EntityData();
     private final DynArray<CollisionData> collisions = new DynArray<CollisionData>();
     
     int size = 0;
     
-    Collisions( CollisionSystem collisionSystem ) {
-        this.collisionSystem = collisionSystem;
+    public Collisions( CollisionConstraint collisionConstraint ) {
+        this.collisionConstraint = collisionConstraint;
     }
     
     public final void update() {
         if ( entityData.entityId >= 0 ) {
-            collisionSystem.checkCollisionOnEntity( entityData.entityId );
+            collisionConstraint.checkCollisions( entityData.entityId );
         }
     }
 

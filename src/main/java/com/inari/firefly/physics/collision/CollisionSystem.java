@@ -2,7 +2,6 @@ package com.inari.firefly.physics.collision;
 
 import java.util.Iterator;
 
-import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.list.DynArray;
@@ -10,16 +9,10 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
-import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.graphics.tile.TileGrid;
-import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.graphics.view.ViewEvent;
-import com.inari.firefly.graphics.view.ViewEventListener;
 import com.inari.firefly.graphics.view.ViewEvent.Type;
-import com.inari.firefly.graphics.tile.TileGridSystem;
-import com.inari.firefly.physics.collision.Collisions.CollisionData;
-import com.inari.firefly.physics.movement.EMovement;
+import com.inari.firefly.graphics.view.ViewEventListener;
 import com.inari.firefly.physics.movement.MoveEvent;
 import com.inari.firefly.physics.movement.MoveEventListener;
 import com.inari.firefly.system.FFContext;
@@ -44,18 +37,11 @@ public final class CollisionSystem
         CollisionConstraint.TYPE_KEY
     };
     
-    private EntitySystem entitySystem;
-    private TileGridSystem tileGridSystem;
-    
     final DynArray<BitMask> bitmasks;
     final DynArray<CollisionQuadTree> quadTrees;
     final DynArray<DynArray<CollisionQuadTree>> quadTreesPerViewAndLayer;
     final DynArray<CollisionConstraint> collisionConstraints;
     final DynArray<CollisionResolver> collisionResolvers;
-    
-
-    private final Rectangle tmpTileGridBounds = new Rectangle();
-    private final Collisions collisions = new Collisions( this );
 
     CollisionSystem() {
         super( SYSTEM_KEY );
@@ -74,8 +60,6 @@ public final class CollisionSystem
     @Override
     public final void init( FFContext context ) {
         super.init( context );
-        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
         
         context.registerListener( EntityActivationEvent.class, this );
         context.registerListener( ViewEvent.class, this );
@@ -101,7 +85,7 @@ public final class CollisionSystem
 
     @Override
     public final void onEntityActivationEvent( EntityActivationEvent event ) {
-        ETransform transform = entitySystem.getComponent( event.entityId, ETransform.TYPE_KEY );
+        ETransform transform = context.getEntityComponent( event.entityId, ETransform.TYPE_KEY );
         int viewId = transform.getViewId();
         int layerId = transform.getLayerId();
         if ( !quadTreesPerViewAndLayer.contains( viewId ) ) {
@@ -134,135 +118,30 @@ public final class CollisionSystem
         final IntIterator movedEntiyIterator = event.movedEntityIds();
         while ( movedEntiyIterator.hasNext() ) {
             final int entityId = movedEntiyIterator.next();
-            final AspectBitSet aspect = entitySystem.getAspect( entityId );
+            final AspectBitSet aspect = context.getEntityAspect( entityId );
             if ( !aspect.contains( ECollision.TYPE_KEY ) ) {
                 continue;
             }
             
-            checkCollisionOnEntity( entityId );
-            
-            if ( collisions.size > 0 && collisions.entityData.collision.collisionResolverId >= 0 ) {
-                collisionResolvers.get( collisions.entityData.collision.collisionResolverId ).resolve( collisions );
+            ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+            final int collisionConstraintId = collision.getCollisionConstraintId();
+            final int collisionResolverId = collision.getCollisionResolverId();
+            if ( collisionConstraintId < 0 ) {
+                continue;
             }
-        }
-    }
 
-    final void checkCollisionOnEntity( final int entityId ) {
-        collisions.clear();
-        
-        collisions.entityData.entityId = entityId;
-        collisions.entityData.set( 
-            entityId,
-            entitySystem.getComponent( entityId, ETransform.TYPE_KEY ), 
-            entitySystem.getComponent( entityId, ECollision.TYPE_KEY ),
-            entitySystem.getComponent( entityId, EMovement.TYPE_KEY )
-        );
-        
-        if ( collisions.entityData.collision.collisionConstraintId < 0 ) {
-            collisions.clear();
-            return;
-        }
-
-        final int viewId = collisions.entityData.transform.getViewId();
-        final int layerId = collisions.entityData.transform.getLayerId();
-        final CollisionConstraint constraint = collisionConstraints.get( 
-            collisions.entityData.collision.collisionConstraintId 
-        );
-
-        tmpTileGridBounds.x = collisions.entityData.worldBounds.x;
-        tmpTileGridBounds.y = collisions.entityData.worldBounds.y;
-        tmpTileGridBounds.width = collisions.entityData.worldBounds.width;
-        tmpTileGridBounds.height = collisions.entityData.worldBounds.height;
-
-        checkTileCollision( constraint, viewId, layerId );
-        checkSpriteCollision( constraint, viewId, layerId );
-        
-        if ( collisions.entityData.collision.collisionLayerIds != null ) {
-            final IntIterator iterator = collisions.entityData.collision.collisionLayerIds.iterator();
-            while ( iterator.hasNext() ) {
-                final int layerId2 = iterator.next();
-                if ( layerId2 == layerId ) {
-                    continue;
+            Collisions collisions = collisionConstraints
+                .get( collisionConstraintId )
+                .checkCollisions( entityId );
+            
+            if ( collisions.size > 0 ) {
+                if ( collisionResolverId >= 0 ) {
+                    collisionResolvers.get( collisionResolverId ).resolve( collisions );
                 }
-                checkTileCollision( constraint, viewId, layerId2 );
-                checkSpriteCollision( constraint, viewId, layerId2 );
             }
         }
     }
 
-    private void checkSpriteCollision( final CollisionConstraint constraint, final int viewId, final int layerId ) {
-        if ( !quadTreesPerViewAndLayer.contains( viewId ) ) {
-            return;
-        }
-        
-        final DynArray<CollisionQuadTree> ofLayer = quadTreesPerViewAndLayer.get( viewId );
-        if ( !ofLayer.contains( layerId ) ) {
-            return;
-        }
-        
-        final CollisionQuadTree quadTree = ofLayer.get( layerId );
-        IntIterator entityIterator = quadTree.get( collisions.entityData.entityId );
-        if ( entityIterator == null ) {
-            return;
-        }
-        
-        while ( entityIterator.hasNext() ) {
-            final int entityId2 = entityIterator.next();
-            if ( collisions.entityData.entityId == entityId2 ) {
-                continue;
-            }
-            
-            final CollisionData collisionData = collisions.get();
-            collisionData.clear();
-            collisionData.entityData.set( 
-                entityId2,
-                entitySystem.getComponent( entityId2, ETransform.TYPE_KEY ), 
-                entitySystem.getComponent( entityId2, ECollision.TYPE_KEY ),
-                entitySystem.getComponent( entityId2, EMovement.TYPE_KEY )
-            );
-            
-            if ( constraint.check( collisions.entityData, collisionData ) ) {
-                collisions.next();
-            }
-        }
-    }
-
-    private final void checkTileCollision( final CollisionConstraint constraint, final int viewId, final int layerId ) {
-        TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
-        if ( tileGrid == null ) {
-            return;
-        }
-        
-        TileIterator tileIterator = tileGrid.iterator( tmpTileGridBounds );
-        if ( tileIterator == null || !tileIterator.hasNext() ) {
-            return;
-        }
-        
-        while ( tileIterator.hasNext() ) {
-            int tileId = tileIterator.next();
-            if ( !entitySystem.getAspect( tileId ).contains( ECollision.TYPE_KEY ) ) {
-                continue;
-            }
-            
-            final CollisionData collisionData = collisions.get();
-            collisionData.clear();
-            collisionData.entityData.set( 
-                tileId,
-                tileIterator.getWorldXPos(),
-                tileIterator.getWorldYPos(),
-                entitySystem.getComponent( tileId, ETransform.TYPE_KEY ), 
-                entitySystem.getComponent( tileId, ECollision.TYPE_KEY ),
-                entitySystem.getComponent( tileId, EMovement.TYPE_KEY ) 
-            );
-
-            if ( constraint.check( collisions.entityData, collisionData ) ) {
-                collisions.next();
-            } else {
-                collisionData.clear();
-            }
-        }
-    }
-    
     public final BitMask getBitMask( int bitMaskId ) {
         if ( !bitmasks.contains( bitMaskId ) ) {
             return null;
@@ -317,6 +196,19 @@ public final class CollisionSystem
             }
         }
         return null;
+    }
+    
+    public final CollisionQuadTree getCollisionQuadTree( int viewId, int layerId ) {
+        if ( !quadTreesPerViewAndLayer.contains( viewId ) ) {
+            return null;
+        }
+        
+        final DynArray<CollisionQuadTree> ofLayer = quadTreesPerViewAndLayer.get( viewId );
+        if ( !ofLayer.contains( layerId ) ) {
+            return null;
+        }
+        
+        return ofLayer.get( layerId );
     }
     
     public final void deleteCollisionQuadTree( int id ) {
@@ -474,8 +366,6 @@ public final class CollisionSystem
         quadTreesPerViewAndLayer.clear();
         collisionConstraints.clear();
         collisionResolvers.clear();
-        
-        collisions.clear();
     }
 
     public final class BitMaskBuilder extends SystemComponentBuilder {
@@ -700,5 +590,4 @@ public final class CollisionSystem
             return getCollisionResolver( name );
         }
     }
-
 }
