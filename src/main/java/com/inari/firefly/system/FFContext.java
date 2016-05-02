@@ -42,9 +42,10 @@ import com.inari.firefly.system.info.SystemInfoDisplay;
  *  get injected within a FFContext on creation time and usually have a proetected member of it.
  * 
  *  Within The FFContext you can:
- *  - Load/dispose a Systems within its SystemKey
- *  - Get/Delete a Sytem Components within the specified SystemComponentKey and the Component Id or name
- *  - Get/Set/Delete Context Components
+ *  - Get lower system API interfaces like IEventDispatcher, FFGraphics, FFAudio, FFTimer, FFInput
+ *  - Load / Dispose a Systems within its SystemKey
+ *  - Get / Delete a Sytem Components within the specified SystemComponentKey and the Component Id or name
+ *  - Get / Set / Delete Context Components
  *  - Get a Component Builder of specifiec type to build a Component within
  *  - Get a Entity Component of specified type by Id or name
  *  - Get the Aspect of an specified Entity by Id or name
@@ -56,8 +57,12 @@ import com.inari.firefly.system.info.SystemInfoDisplay;
  **/
 public final class FFContext {
     
+    /** Defines the name of the default font that is pre created and installed with the native firefly-engine */
     public static final String DEFAULT_FONT = "FIREFLY_DEFAULT_FONT";
 
+    /** This defines to configurationa and initialization properties for the firefly-enigne.
+     *  For the moment mostly chace sizes and stuff.
+     */
     public static interface Properties {
         public static final TypedKey<Integer> ENTITY_MAP_CAPACITY = TypedKey.create( "FF_ENTITY_MAP_CAPACITY", Integer.class );
         public static final TypedKey<Integer> ENTITY_COMPONENT_SET_CAPACITY = TypedKey.create( "FF_ENTITY_COMPONENT_SET_CAPACITY", Integer.class );
@@ -81,6 +86,10 @@ public final class FFContext {
     private EntitySystem entitySystem;
     boolean exit = false;
 
+    /** This creates a FFContext instance with the needed lower level API interface implementations.
+     *  NOTE: This is called by the application initializer of the specified firefly-engine platform and
+     *        Must never be called/created directly.
+     */
     public FFContext( 
         IEventDispatcher eventDispatcher, 
         FFGraphics graphics,
