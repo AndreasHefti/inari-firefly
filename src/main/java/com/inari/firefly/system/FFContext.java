@@ -107,30 +107,44 @@ public final class FFContext {
         systemInfoDisplay = new SystemInfoDisplayImpl( this );
     }
 
+    /** Use this to get the underling IEventDispatcher implementation. */
     public final IEventDispatcher getEventDispatcher() {
         return eventDispatcher;
     }
-
+    
+    /** Use this to get the underling FFGraphics implementation */
     public final FFGraphics getGraphics() {
         return graphics;
     }
     
+    /** Use this to get the underling FFAudio implementation */
     public final FFAudio getAudio() {
         return audio;
     }
 
+    /** Use this to get the underling FFTimer implementation */
     public final FFTimer getTimer() {
         return timer;
     }
-
+    
+    /** Use this to get the underling FFInput implementation */
     public final FFInput getInput() {
         return input;
     }
     
+    /** Use this to get the SystemInfoDisplay that gives the ability to add/remove SystemInfo displays
+     *  and activate/deactive the system info display. for More information about the system info display
+     *  have a look at the JavaDoc of <code>SystemInfoDisplay</code>
+     */
     public final SystemInfoDisplay getSystemInfoDisplay() {
         return systemInfoDisplay;
     }
 
+    /** Use this to get a System for a specified FFSystemTypeKey. The key normaly is provieded within 
+     *  a static reference within the implementing System class.
+     *  If the System is not already loaded, the context tries to load the System and throws an FFInitException
+     *  if an error occures on loading process.
+     */
     public final <T extends FFSystem> T getSystem( FFSystemTypeKey<T> key ) {
         if ( !systems.contains( key.index() ) ) {
             loadSystem( key, true );
