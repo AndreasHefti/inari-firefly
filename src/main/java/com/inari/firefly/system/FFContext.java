@@ -40,8 +40,8 @@ import com.inari.firefly.system.utils.Disposable;
 
 /** This is the main access point of the firefly-engine API. A FFContext is a singleton instance and created by the application
  *  initializer. You can access the FFContext in differently within different situations. Systems, Components and Controllers 
- *  get injected within a FFContext on creation time and usually have a proetected member of it.
- * 
+ *  get injected within a FFContext on creation time and usually have a protected member of it.
+ * <pre>
  *  Within The FFContext you can:
  *  - Get lower system API interfaces like IEventDispatcher, FFGraphics, FFAudio, FFTimer, FFInput
  *  - Load / Dispose a Systems within its SystemKey
@@ -55,14 +55,15 @@ import com.inari.firefly.system.utils.Disposable;
  *  - Notify Events of specified types to the EventDispatcher
  *  - Serialize / Load Components form Attributes
  *  - ...
+ *  </pre>
  **/
 public final class FFContext {
     
     /** Defines the name of the default font that is pre created and installed with the native firefly-engine */
     public static final String DEFAULT_FONT = "FIREFLY_DEFAULT_FONT";
 
-    /** This defines to configurationa and initialization properties for the firefly-enigne.
-     *  For the moment mostly chace sizes and stuff.
+    /** This defines configuration and initialization properties for the firefly-engine.
+     *  For the moment mostly cache sizes and stuff.
      */
     public static interface Properties {
         public static final TypedKey<Integer> ENTITY_MAP_CAPACITY = TypedKey.create( "FF_ENTITY_MAP_CAPACITY", Integer.class );
@@ -105,43 +106,60 @@ public final class FFContext {
         systemInfoDisplay = new SystemInfoDisplayImpl( this );
     }
 
-    /** Use this to get the underling IEventDispatcher implementation. */
+    /** Use this to get the underling IEventDispatcher implementation. 
+     * @return IEventDispatcher implementation
+     */
     public final IEventDispatcher getEventDispatcher() {
         return eventDispatcher;
     }
     
-    /** Use this to get the underling FFGraphics implementation */
+    /** Use this to get the underling FFGraphics implementation 
+     * @return underling FFGraphics
+     */
     public final FFGraphics getGraphics() {
         return graphics;
     }
     
-    /** Use this to get the underling FFAudio implementation */
+    /** Use this to get the underling FFAudio implementation 
+     * @return underling FFAudio implementation
+     */
     public final FFAudio getAudio() {
         return audio;
     }
 
-    /** Use this to get the underling FFTimer implementation */
+    /** Use this to get the underling FFTimer implementation
+     * @return underling FFTimer implementation
+     */
     public final FFTimer getTimer() {
         return timer;
     }
     
-    /** Use this to get the underling FFInput implementation */
+    /** Use this to get the underling FFInput implementation 
+     * @return underling FFInput implementation
+     */
     public final FFInput getInput() {
         return input;
     }
     
     /** Use this to get the SystemInfoDisplay that gives the ability to add/remove SystemInfo displays
-     *  and activate/deactive the system info display. for More information about the system info display
+     *  and activate/deactivate the system info display. for More information about the system info display
      *  have a look at the JavaDoc of <code>SystemInfoDisplay</code>
+     * @return SystemInfoDisplay implementation
      */
     public final SystemInfoDisplay getSystemInfoDisplay() {
         return systemInfoDisplay;
     }
 
-    /** Use this to get a System for a specified FFSystemTypeKey. The key normaly is provieded within 
-     *  a static reference within the implementing System class.
-     *  If the System is not already loaded, the context tries to load the System and throws an FFInitException
-     *  if an error occures on loading process.
+    /** Use this to get a FFSystem for a specified FFSystemTypeKey.<p>
+     *  The key normally is provided within a static reference within the implementing System class.
+     *  <p>
+     *  <code>context.getSystem( EntitySystem.SYSTEM_KEY )</code>
+     *  <p>
+     *  If the FFSystem is not already loaded, the context tries to load the specified FFSystem and throws an FFInitException
+     *  if an error occurs on loading process.
+     *  @param key FFSystemTypeKey specifies the FFSytem
+     *  @return FFSystem of type of key type
+     *  @throws FFInitExcpetion if the FFSystem was not loaded and an error occurs on load
      */
     public final <T extends FFSystem> T getSystem( FFSystemTypeKey<T> key ) {
         if ( !systems.contains( key.index() ) ) {
@@ -149,11 +167,23 @@ public final class FFContext {
         }
         return key.systemType.cast( systems.get( key.index() ) );
     }
-    
+    /** Use this to load a specified {@link FFSystem} into the context.
+     *  @param key {@link FFSystemTypeKey} specifies the {@link FFSystem}
+     *  @return {@link FFSystem} of type of key type
+     *  @throws {@link FFInitExcpetion} if the {@link FFSystem} was not loaded and an error occurs on load
+     */
     public final <T extends FFSystem> void loadSystem( FFSystemTypeKey<T> key ) {
         loadSystem( key, false );
     }
     
+    /** Use this to load a specified {@link FFSystem} into the context.<p>
+     *  Use force true to force the loading of the specified {@link FFSystem}. This means, even if the {@link FFSystem}
+     *  is already loaded, the already loaded instance is disposed and a new instance is created.
+     *  @param key {@link FFSystemTypeKey} specifies the {@link FFSystem}
+     *  @param force forces to load of specified {@link FFSystem}
+     *  @return {@link FFSystem} of type of key type
+     *  @throws {@link FFInitExcpetion} if the {@link FFSystem} was not loaded and an error occurs on load
+     */
     public final <T extends FFSystem> void loadSystem( FFSystemTypeKey<T> key, boolean force ) {
         if ( systems.contains( key.index() ) ) {
             if ( force ) {
@@ -185,6 +215,9 @@ public final class FFContext {
         }
     }
     
+    /** Use this to dispose a specified {@link FFSystem} that was loaded into the context.
+     * @param key {@link FFSystemTypeKey} specifies the {@link FFSystem}
+     */
     public final <T extends FFSystem> void disposeSystem( FFSystemTypeKey<T> key ) {
         @SuppressWarnings( "unchecked" )
         T system = (T) systems.remove( key.index() );
@@ -195,15 +228,18 @@ public final class FFContext {
     
     //---- SystemComponent adaption ----
     
-    public final int getAssetInstanceId( String assetName ) {
-        Asset asset = getSystemComponent( TextureAsset.TYPE_KEY, assetName );
-        if ( asset == null ) {
-            return -1;
-        }
-        
-        return asset.getInstanceId();
-    }
-    
+    /** Use this to get a {@link Component} instance with the specified {@link ComponentId}.
+     *  The {@link ComponentId} defines the type and the instance id of the component.
+     *  The {@link Component} can be one of the following component base types:
+     *  <pre>
+     *  - {@link SystemComponent}
+     *  - {@link EntityComponent}
+     *  - {@link ContextComponent}
+     *  </pre>
+     *  
+     * @param the {@link ComponentId}, defining the type and instance id of the {@link Component}
+     * @return id the {@link Component} instance for specified {@link ComponentId} or null of no such {@link Component} exists within the context
+     */
     @SuppressWarnings( "unchecked" )
     public final <C extends Component> C getComponent( ComponentId id ) {
         if ( id.typeKey.baseType() == SystemComponent.class ) {
@@ -217,6 +253,15 @@ public final class FFContext {
         return null;
     }
 
+    /** Use this to get a {@link SystemComponent} for specified {@link SystemComponentKey} and component instance id.<p>
+     *  The {@link SystemComponentKey} usually is provided with a static field within the Component's base class. For example:
+     *  <p>
+     *  <code>View baseView = context.getSystemComponent( View.TYPE_KEY, 0 )</code>
+     *  
+     * @param key {@link SystemComponentKey} that defines the type of the {@link SystemComponent}
+     * @param componentId the instance id/index of the specified {@link SystemComponent}
+     * @return the {@link SystemComponent} or null if no such component exists
+     */
     public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, int componentId ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         return key.<C>type().cast( builderHelper.getComponent( componentId ) );
@@ -335,6 +380,15 @@ public final class FFContext {
     
     public final void deleteEntity( int entityId ) {
         entitySystem.delete( entityId );
+    }
+    
+    public final int getAssetInstanceId( String assetName ) {
+        Asset asset = getSystemComponent( TextureAsset.TYPE_KEY, assetName );
+        if ( asset == null ) {
+            return -1;
+        }
+        
+        return asset.getInstanceId();
     }
 
     public final <T> T getProperty( TypedKey<T> key ) {
