@@ -37,6 +37,23 @@ import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.info.SystemInfoDisplay;
 
+/** This is the main access point of the firefly-engine API. A FFContext is a singleton instance and created by the application
+ *  initializer. You can access the FFContext in differently within different situations. Systems, Components and Controllers 
+ *  get injected within a FFContext on creation time and usually have a proetected member of it.
+ * 
+ *  Within The FFContext you can:
+ *  - Load/dispose a Systems within its SystemKey
+ *  - Get/Delete a Sytem Components within the specified SystemComponentKey and the Component Id or name
+ *  - Get/Set/Delete Context Components
+ *  - Get a Component Builder of specifiec type to build a Component within
+ *  - Get a Entity Component of specified type by Id or name
+ *  - Get the Aspect of an specified Entity by Id or name
+ *  - Activate / Deactivate / Delete a specified Entity that exists by Id or name
+ *  - Register / Dispose EventListers for specifed Events
+ *  - Notify Events of specified types to the EventDispatcher
+ *  - Serialize / Load Components form Attributes
+ *  - ...
+ **/
 public final class FFContext {
     
     public static final String DEFAULT_FONT = "FIREFLY_DEFAULT_FONT";
