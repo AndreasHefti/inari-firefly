@@ -1,7 +1,7 @@
 package com.inari.firefly.control.task;
 
 import com.inari.firefly.control.state.WorkflowEventTrigger;
-import com.inari.firefly.system.Condition;
+import com.inari.firefly.system.utils.Condition;
 
 public final class WorkflowTaskTrigger extends WorkflowEventTrigger {
 

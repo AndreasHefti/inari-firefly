@@ -1,4 +1,6 @@
-package com.inari.firefly.system;
+package com.inari.firefly.system.utils;
+
+import com.inari.firefly.system.FFContext;
 
 public interface Disposable {
     

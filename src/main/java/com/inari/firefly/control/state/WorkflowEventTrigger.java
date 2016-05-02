@@ -1,8 +1,8 @@
 package com.inari.firefly.control.state;
 
-import com.inari.firefly.system.Condition;
-import com.inari.firefly.system.EventTrigger;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.utils.Condition;
+import com.inari.firefly.system.utils.EventTrigger;
 
 public abstract class WorkflowEventTrigger extends EventTrigger implements WorkflowEventListener {
     

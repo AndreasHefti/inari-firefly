@@ -4,9 +4,9 @@ import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.Disposable;
-import com.inari.firefly.system.Loadable;
 import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.utils.Disposable;
+import com.inari.firefly.system.utils.Loadable;
 
 public abstract class Prototype extends SystemComponent implements Loadable, Disposable {
     

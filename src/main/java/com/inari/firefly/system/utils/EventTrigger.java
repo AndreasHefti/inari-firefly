@@ -1,6 +1,7 @@
-package com.inari.firefly.system;
+package com.inari.firefly.system.utils;
 
 import com.inari.commons.config.StringConfigurable;
+import com.inari.firefly.system.FFContext;
 
 public abstract class EventTrigger implements StringConfigurable {
     

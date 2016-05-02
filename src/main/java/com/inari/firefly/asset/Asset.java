@@ -25,9 +25,9 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
 import com.inari.firefly.component.dynattr.DynamicAttributeMap;
 import com.inari.firefly.component.dynattr.DynamicAttributedComponent;
-import com.inari.firefly.system.Disposable;
-import com.inari.firefly.system.Loadable;
 import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.utils.Disposable;
+import com.inari.firefly.system.utils.Loadable;
 
 public abstract class Asset extends SystemComponent implements Loadable, Disposable, DynamicAttributedComponent {
     

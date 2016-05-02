@@ -19,13 +19,13 @@ import java.util.Iterator;
 
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.system.Condition;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.utils.Condition;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public class StateSystem

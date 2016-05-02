@@ -3,6 +3,7 @@ package com.inari.firefly.system;
 import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.Indexer;
+import com.inari.firefly.system.utils.FFContextInitiable;
 
 public interface FFSystem extends IndexedType, FFContextInitiable {
     

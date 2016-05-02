@@ -16,7 +16,7 @@
 package com.inari.firefly.control.state;
 
 import com.inari.commons.config.StringConfigurable;
-import com.inari.firefly.system.Condition;
+import com.inari.firefly.system.utils.Condition;
 
 public final class StateChange implements StringConfigurable {
 

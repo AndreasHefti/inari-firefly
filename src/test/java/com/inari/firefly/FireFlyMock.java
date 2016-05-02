@@ -2,9 +2,9 @@ package com.inari.firefly;
 
 import com.inari.commons.event.EventDispatcher;
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.firefly.system.FireFly;
+import com.inari.firefly.system.FireFlyApp;
 
-public class FireFlyMock extends FireFly {
+public class FireFlyMock extends FireFlyApp {
 
     public FireFlyMock() {
         super( new EventDispatcher(), new FFGraphicsMock(), new FFAudioMock(), new TestTimer(), new InputMock() );

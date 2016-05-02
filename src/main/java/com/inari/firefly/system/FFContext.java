@@ -36,6 +36,7 @@ import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.info.SystemInfoDisplay;
+import com.inari.firefly.system.utils.Disposable;
 
 /** This is the main access point of the firefly-engine API. A FFContext is a singleton instance and created by the application
  *  initializer. You can access the FFContext in differently within different situations. Systems, Components and Controllers 
@@ -86,11 +87,8 @@ public final class FFContext {
     private EntitySystem entitySystem;
     boolean exit = false;
 
-    /** This creates a FFContext instance with the needed lower level API interface implementations.
-     *  NOTE: This is called by the application initializer of the specified firefly-engine platform and
-     *        Must never be called/created directly.
-     */
-    public FFContext( 
+    /** Creates a FFContext instance with the needed lower level API interface implementations. */
+    FFContext( 
         IEventDispatcher eventDispatcher, 
         FFGraphics graphics,
         FFAudio audio,

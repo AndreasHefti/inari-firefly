@@ -22,10 +22,10 @@ import java.util.Set;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.TextureData;
+import com.inari.firefly.system.utils.Disposable;
 
 public final class TextureAsset extends Asset implements TextureData {
     

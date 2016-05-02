@@ -39,7 +39,7 @@ import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFTimer;
 
-public abstract class FireFly {
+public abstract class FireFlyApp {
     
     public static final Random RANDOM = new Random();
     
@@ -54,7 +54,7 @@ public abstract class FireFly {
 
     private boolean disposed = false;
 
-    protected FireFly( 
+    protected FireFlyApp( 
             IEventDispatcher eventDispatcher, 
             FFGraphics graphics,
             FFAudio audio,
