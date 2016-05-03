@@ -39,27 +39,31 @@ import com.inari.firefly.system.info.SystemInfoDisplay;
 import com.inari.firefly.system.utils.Disposable;
 
 /** This is the main access point of the firefly-engine API. A FFContext is a singleton instance and created by the application
- *  initializer. You can access the FFContext in differently within different situations. Systems, Components and Controllers 
- *  get injected within a FFContext on creation time and usually have a protected member of it.
+ *  initializer. FFContext ususally is available in Systems, Components and Controllers. All this types get injected on 
+ *  creation time and usually have a protected member of it.
+ *  <p>
+ *  
  * <pre>
  *  Within The FFContext you can:
- *  - Get lower system API interfaces like IEventDispatcher, FFGraphics, FFAudio, FFTimer, FFInput
- *  - Load / Dispose a Systems within its SystemKey
- *  - Get / Delete a Sytem Components within the specified SystemComponentKey and the Component Id or name
- *  - Get / Set / Delete Context Components
- *  - Get a Component Builder of specifiec type to build a Component within
- *  - Get a Entity Component of specified type by Id or name
- *  - Get the Aspect of an specified Entity by Id or name
- *  - Activate / Deactivate / Delete a specified Entity that exists by Id or name
- *  - Register / Dispose EventListers for specifed Events
- *  - Notify Events of specified types to the EventDispatcher
- *  - Serialize / Load Components form Attributes
+ *  - Get lower system API interfaces like {@link IEventDispatcher, {@link FFGraphics}, {@link FFAudio}, {@link FFTimer}, {@link FFInput}
+ *  - Load / Dispose a {@link FFSystem} within its {@link SystemKey}
+ *  - Get / Delete a {@link SystemComponent} within the specified {@link ComponentId} or {@link SystemComponentKey} and the components instance id or name
+ *  - Create / Get / Delete a {@link SystemComponent} or a {@link Entity}, {@link EntityComponent} or a {@link ContextComponent}
+ *  - Get a {@link ComponentBuilder} of specifiec type to build a {@link Component} within
+ *  - Get an {@link EntityComponent} of specified type by id or name
+ *  - Get the {@link Aspect} of an specified {@link Entity} by Id or name
+ *  - Activate / Deactivate / Delete a specified {@link Entity} that exists by id or name
+ *  - Register / Dispose an event-listener for a specifed {@link Events}
+ *  - Notify an {@link Event} of specified types to the internal event dispatcher
+ *  - Serialize / Load one or many {@link Component} from {@link Attributes}
  *  - ...
  *  </pre>
+ * 
+ *  TODO: provide some example code that shows how to work with the FFContext
  **/
 public final class FFContext {
     
-    /** Defines the name of the default font that is pre created and installed with the native firefly-engine */
+    /** Defines the name of the default {@link Font} that is pre created and installed with the native firefly-engine */
     public static final String DEFAULT_FONT = "FIREFLY_DEFAULT_FONT";
 
     /** This defines configuration and initialization properties for the firefly-engine.
@@ -106,60 +110,59 @@ public final class FFContext {
         systemInfoDisplay = new SystemInfoDisplayImpl( this );
     }
 
-    /** Use this to get the underling IEventDispatcher implementation. 
-     * @return IEventDispatcher implementation
+    /** Use this to get the underling {@link IEventDispatcher} implementation. 
+     * @return {@link IEventDispatcher} implementation
      */
     public final IEventDispatcher getEventDispatcher() {
         return eventDispatcher;
     }
     
-    /** Use this to get the underling FFGraphics implementation 
-     * @return underling FFGraphics
+    /** Use this to get the underling {@link FFGraphics} implementation 
+     * @return underling {@link FFGraphics}
      */
     public final FFGraphics getGraphics() {
         return graphics;
     }
     
-    /** Use this to get the underling FFAudio implementation 
-     * @return underling FFAudio implementation
+    /** Use this to get the underling {@link FFAudio} implementation 
+     * @return underling {@link FFAudio} implementation
      */
     public final FFAudio getAudio() {
         return audio;
     }
 
-    /** Use this to get the underling FFTimer implementation
-     * @return underling FFTimer implementation
+    /** Use this to get the underling {@link FFTimer} implementation
+     * @return underling {@link FFTimer} implementation
      */
     public final FFTimer getTimer() {
         return timer;
     }
     
-    /** Use this to get the underling FFInput implementation 
-     * @return underling FFInput implementation
+    /** Use this to get the underling {@link FFInput} implementation 
+     * @return underling {@link FFInput} implementation
      */
     public final FFInput getInput() {
         return input;
     }
     
-    /** Use this to get the SystemInfoDisplay that gives the ability to add/remove SystemInfo displays
-     *  and activate/deactivate the system info display. for More information about the system info display
-     *  have a look at the JavaDoc of <code>SystemInfoDisplay</code>
-     * @return SystemInfoDisplay implementation
+    /** Use this to get the {@link SystemInfoDisplay} that gives the ability to add/remove {@link SystemInfo} displays
+     *  and activate/deactivate the system info display. 
+     * @return {@link SystemInfoDisplay} implementation
      */
     public final SystemInfoDisplay getSystemInfoDisplay() {
         return systemInfoDisplay;
     }
 
-    /** Use this to get a FFSystem for a specified FFSystemTypeKey.<p>
-     *  The key normally is provided within a static reference within the implementing System class.
+    /** Use this to get a {@link FFSystem} for a specified {@link FFSystemTypeKey}.<p>
+     *  The key normally is provided within a static reference within the implementing {@link FFSystem} class.
      *  <p>
      *  <code>context.getSystem( EntitySystem.SYSTEM_KEY )</code>
      *  <p>
-     *  If the FFSystem is not already loaded, the context tries to load the specified FFSystem and throws an FFInitException
+     *  If the {@link FFSystem} is not already loaded, the context tries to load the specified {@link FFSystem} and throws a {@link FFInitException}
      *  if an error occurs on loading process.
-     *  @param key FFSystemTypeKey specifies the FFSytem
-     *  @return FFSystem of type of key type
-     *  @throws FFInitExcpetion if the FFSystem was not loaded and an error occurs on load
+     *  @param key {@link FFSystemTypeKey} specifies the {@link FFSytem}
+     *  @return {@link FFSystem} of type of key type
+     *  @throws {@link FFInitExcpetion} if the FFSystem was not loaded and an error occurs on load
      */
     public final <T extends FFSystem> T getSystem( FFSystemTypeKey<T> key ) {
         if ( !systems.contains( key.index() ) ) {
