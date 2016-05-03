@@ -19,9 +19,9 @@ import java.util.BitSet;
 import java.util.Iterator;
 
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedType;
-import com.inari.commons.lang.indexed.IndexedTypeAspectSet;
+import com.inari.commons.lang.indexed.IndexedTypeAspects;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
@@ -113,7 +113,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         inactiveEntities.clear( entityId );
         activeEntities.set( entityId ) ;
         
-        AspectBitSet aspect = getAspect( entityId );
+        Aspects aspect = getAspects( entityId );
         context.notify( 
             new EntityActivationEvent( entityId, aspect, Type.ENTITY_ACTIVATED ) 
         );
@@ -131,7 +131,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         inactiveEntities.set( entityId );
         
         context.notify( 
-            new EntityActivationEvent( entityId, getAspect( entityId ), Type.ENTITY_DEACTIVATED ) 
+            new EntityActivationEvent( entityId, getAspects( entityId ), Type.ENTITY_DEACTIVATED ) 
         );
     }
     
@@ -212,7 +212,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         return -1;
     }
 
-    public final AspectBitSet getAspect( int entityId ) {
+    public final Aspects getAspects( int entityId ) {
         IndexedTypeSet components = getComponents( entityId );
         if ( components == null ) {
             return null;
@@ -242,8 +242,8 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         return ( active )?  new ActiveEntityIterator() : new InactiveEntityIterator();
     }
 
-    public final IntIterator entities( final AspectBitSet aspect ) {
-        return new AspectedEntityIterator( aspect );
+    public final IntIterator entities( final Aspects aspects ) {
+        return new AspectedEntityIterator( aspects );
     }
 
     public final <T extends EntityComponent> T getComponent( int entityId, EntityComponentTypeKey<T> componentType ) {
@@ -376,10 +376,10 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     
     private final class AspectedEntityIterator extends EntityIterator {
         
-        private final AspectBitSet aspect;
+        private final Aspects aspects;
         
-        public AspectedEntityIterator( AspectBitSet aspect ) {
-            this.aspect = aspect;
+        public AspectedEntityIterator( Aspects aspects ) {
+            this.aspects = aspects;
             findNext();
         }
 
@@ -387,7 +387,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         protected void findNext() {
             while ( nextEntityId < activeEntities.size() ) {
                 nextEntityId = activeEntities.nextSetBit( nextEntityId + 1 );
-                if ( nextEntityId < 0 || getAspect( nextEntityId ).include( aspect ) ) {
+                if ( nextEntityId < 0 || getAspects( nextEntityId ).include( aspects ) ) {
                     return;
                 }
             }
@@ -415,7 +415,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
                 entityId = Indexer.nextObjectIndex( Entity.class );
             }
 
-            IndexedTypeAspectSet aspectToCheck;
+            IndexedTypeAspects aspectToCheck;
             if ( prefabComponents != null ) {
                 // if we have prefab components we use them
                 components.set( entityId, prefabComponents );

@@ -2,7 +2,7 @@ package com.inari.firefly.graphics.sprite;
 
 import java.util.Comparator;
 
-import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
@@ -65,8 +65,8 @@ public final class SpriteViewSystem
     }
     
     @Override
-    public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( ESprite.TYPE_KEY );
+    public final boolean match( Aspects aspects ) {
+        return aspects.contains( ESprite.TYPE_KEY );
     }
     
     @Override

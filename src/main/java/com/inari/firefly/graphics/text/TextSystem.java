@@ -2,7 +2,7 @@ package com.inari.firefly.graphics.text;
 
 import java.util.Iterator;
 
-import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
@@ -106,8 +106,8 @@ public class TextSystem
     }
 
     @Override
-    public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( EText.TYPE_KEY );
+    public final boolean match( Aspects aspects ) {
+        return aspects.contains( EText.TYPE_KEY );
     }
 
     @Override

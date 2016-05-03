@@ -19,7 +19,7 @@ import java.util.Iterator;
 
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
@@ -28,8 +28,8 @@ import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.graphics.view.ViewEvent;
-import com.inari.firefly.graphics.view.ViewEventListener;
 import com.inari.firefly.graphics.view.ViewEvent.Type;
+import com.inari.firefly.graphics.view.ViewEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.component.ComponentSystem;
@@ -114,11 +114,11 @@ public final class TileGridSystem
     public final void onEntityActivationEvent( EntityActivationEvent event ) {
         switch ( event.eventType ) {
             case ENTITY_ACTIVATED: {
-                registerEntity( event.entityId, event.aspect );
+                registerEntity( event.entityId, event.aspects );
                 break;
             }
             case ENTITY_DEACTIVATED: {
-                unregisterEntity( event.entityId, event.aspect );
+                unregisterEntity( event.entityId, event.aspects );
                 break;
             }
         }
@@ -133,8 +133,8 @@ public final class TileGridSystem
     }
     
     @Override
-    public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( ETile.TYPE_KEY );
+    public final boolean match( Aspects aspects ) {
+        return aspects.contains( ETile.TYPE_KEY );
     }
     
     public final TileGridRenderer getRenderer( int id ) {
@@ -267,7 +267,7 @@ public final class TileGridSystem
         tileGridOfViewsPerLayer.get( removed.getViewId() ).remove( removed.getLayerId() );
     };
     
-    private final void registerEntity( int entityId, AspectBitSet entityAspect ) {
+    private final void registerEntity( int entityId, Aspects entityAspects ) {
         ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
@@ -281,7 +281,7 @@ public final class TileGridSystem
         }
     }
     
-    private final void unregisterEntity( int entityId, AspectBitSet entityAspect ) {
+    private final void unregisterEntity( int entityId, Aspects entityAspects ) {
         ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );

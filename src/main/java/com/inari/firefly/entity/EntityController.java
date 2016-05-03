@@ -15,7 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
-import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.system.external.FFTimer;
@@ -41,8 +41,8 @@ public abstract class EntityController extends Controller implements EntityActiv
     }
     
     @Override
-    public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( EEntity.TYPE_KEY );
+    public final boolean match( Aspects aspects ) {
+        return aspects.contains( EEntity.TYPE_KEY );
     }
 
     @Override

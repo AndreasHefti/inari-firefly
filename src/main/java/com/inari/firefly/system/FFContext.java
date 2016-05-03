@@ -11,7 +11,7 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.event.PredicatedEvent;
 import com.inari.commons.event.PredicatedEventListener;
 import com.inari.commons.lang.TypedKey;
-import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.Asset;
@@ -369,8 +369,8 @@ public final class FFContext {
         return entitySystem.getComponent( entityName, typeKey );
     }
     
-    public final AspectBitSet getEntityAspect( int entityId ) {
-        return entitySystem.getAspect( entityId );
+    public final Aspects getEntityAspects( int entityId ) {
+        return entitySystem.getAspects( entityId );
     }
     
     public final void activateEntity( int entityId ) {

@@ -3,7 +3,7 @@ package com.inari.firefly.physics.collision;
 import java.util.Iterator;
 
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
@@ -53,8 +53,8 @@ public final class CollisionSystem
     }
     
     @Override
-    public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( ECollision.TYPE_KEY ) && !aspect.contains( ETile.TYPE_KEY );
+    public final boolean match( Aspects aspects ) {
+        return aspects.contains( ECollision.TYPE_KEY ) && !aspects.contains( ETile.TYPE_KEY );
     }
     
     @Override
@@ -118,8 +118,8 @@ public final class CollisionSystem
         final IntIterator movedEntiyIterator = event.movedEntityIds();
         while ( movedEntiyIterator.hasNext() ) {
             final int entityId = movedEntiyIterator.next();
-            final AspectBitSet aspect = context.getEntityAspect( entityId );
-            if ( !aspect.contains( ECollision.TYPE_KEY ) ) {
+            final Aspects aspects = context.getEntityAspects( entityId );
+            if ( !aspects.contains( ECollision.TYPE_KEY ) ) {
                 continue;
             }
             

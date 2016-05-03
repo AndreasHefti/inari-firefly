@@ -1,7 +1,7 @@
 package com.inari.firefly.graphics.shape;
 
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
@@ -62,8 +62,8 @@ public final class ShapeRenderSystem
     }
     
     @Override
-    public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( EShape.TYPE_KEY );
+    public final boolean match( Aspects aspects ) {
+        return aspects.contains( EShape.TYPE_KEY );
     }
     
     @Override
