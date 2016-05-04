@@ -1,12 +1,13 @@
 package com.inari.firefly.control.state;
 
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.indexed.Indexed;
+import com.inari.commons.lang.aspect.Aspect;
+import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -16,16 +17,12 @@ public final class EState extends EntityComponent {
     
     public static final EntityComponentTypeKey<EState> TYPE_KEY = EntityComponentTypeKey.create( EState.class );
     
-    public static final AttributeKey<Integer> STATE = new AttributeKey<Integer>( "state", Integer.class, EState.class );
-    public static final AttributeKey<IntBag> STATE_FLAGS = new AttributeKey<IntBag>( "stateFlags", IntBag.class, EState.class );
+    public static final AttributeKey<IntBag> STATE_ASPECTS = new AttributeKey<IntBag>( "stateAspects", IntBag.class, EState.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
-        STATE,
-        STATE_FLAGS
+        STATE_ASPECTS
     };
     
-    
-    private int state;
-    private final BitSet stateFlags = new BitSet( 10 );
+    private final Aspects stateAspects = AspectsBuilder.createWithCapacity( 10 );
 
     protected EState() {
         super( TYPE_KEY );
@@ -34,44 +31,44 @@ public final class EState extends EntityComponent {
     
     @Override
     public final void resetAttributes() {
-        state = -1;
-        stateFlags.clear();
+        stateAspects.clear();
     }
     
-    public final int getState() {
-        return state;
-    }
-
-    public final void setState( int state ) {
-        this.state = state;
+    public final void addStateAspect( Aspect aspect ) {
+        stateAspects.set( aspect );
     }
     
-    public final void setStateFlag( Indexed indexed ) {
-        stateFlags.set( indexed.index() );
+    public final void addStateAspects( Aspects aspects ) {
+        stateAspects.add( aspects );
     }
     
-    public final void resetStateFlag( Indexed indexed ) {
-        stateFlags.set( indexed.index(), false );
-    }
-
-    public final boolean hasStateFlag( Indexed indexed ) {
-        return stateFlags.get( indexed.index() );
+    public final void setStateAspects( Aspects aspects ) {
+        stateAspects.clear();
+        stateAspects.add( aspects );
     }
     
-    public final void setStateFlags( IntBag stateFlags ) {
-        this.stateFlags.clear();
-        IntIterator iterator = stateFlags.iterator();
-        while( iterator.hasNext() ) {
-            this.stateFlags.set( iterator.next() );
+    public final void setStateAspects( IntBag values ) {
+        stateAspects.clear();
+        IntIterator iterator = values.iterator();
+        while ( iterator.hasNext() ) {
+            stateAspects.set( iterator.next() );
         }
     }
     
-    public final IntBag getStateFalgs() {
-        IntBag result = new IntBag( stateFlags.size(), -1 );
-        for ( int i = stateFlags.nextSetBit( 0 ); i >= 0; i = stateFlags.nextSetBit( i+1 ) ) {
-             result.add( i );
-        }
-        return result;
+    public final IntBag getStateAspectValues() {
+        return stateAspects.getValues();
+    }
+    
+    public final void setStateAspect( Aspect aspect ) {
+        stateAspects.set( aspect );
+    }
+    
+    public final void resetStateAspect( Aspect aspect ) {
+        stateAspects.reset( aspect );
+    }
+    
+    public final boolean hasStateAspect( Aspect aspect ) {
+        return stateAspects.contains( aspect );
     }
 
     @Override
@@ -81,16 +78,14 @@ public final class EState extends EntityComponent {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        state = attributes.getValue( STATE, state );
-        if ( attributes.contains( STATE_FLAGS ) ) {
-            setStateFlags( attributes.getValue( STATE_FLAGS ) );
+        if ( attributes.contains( STATE_ASPECTS ) ) {
+            setStateAspects( attributes.getValue( STATE_ASPECTS ) );
         }
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
-        attributes.put( STATE, state );
-        attributes.put( STATE_FLAGS, getStateFalgs() );
+        attributes.put( STATE_ASPECTS, stateAspects.getValues() );
     }
 
 }
