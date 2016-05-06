@@ -1,16 +1,18 @@
 package com.inari.firefly.physics.collision;
 
+import java.util.BitSet;
+import java.util.Iterator;
+
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.graphics.tile.TileGridSystem;
-import com.inari.firefly.physics.collision.Collisions.CollisionData;
-import com.inari.firefly.physics.collision.Collisions.EntityData;
-import com.inari.firefly.physics.movement.EMovement;
+import com.inari.firefly.physics.collision.DefaultCollisionConstraint.CollisionsImpl.CollisionDataImpl;
 
 public final class DefaultCollisionConstraint extends CollisionConstraint {
     
@@ -18,7 +20,7 @@ public final class DefaultCollisionConstraint extends CollisionConstraint {
     private TileGridSystem tileGridSystem;
     
     private final Rectangle tmpTileGridBounds = new Rectangle();
-    private final Collisions collisions = new Collisions( this );
+    private final CollisionsImpl collisions = new CollisionsImpl( this );
 
     protected DefaultCollisionConstraint( int id ) {
         super( id );
@@ -32,68 +34,68 @@ public final class DefaultCollisionConstraint extends CollisionConstraint {
     }
     
     @Override
-    public Collisions checkCollisions( int entityId ) {
+    public CollisionsImpl checkCollisions( int entityId ) {
+        ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
+        ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+
         collisions.clear();
-        collisions.entityData.entityId = entityId;
-        collisions.entityData.set( 
-            entityId,
-            context.getEntityComponent( entityId, ETransform.TYPE_KEY ), 
-            context.getEntityComponent( entityId, ECollision.TYPE_KEY ),
-            context.getEntityComponent( entityId, EMovement.TYPE_KEY )
-        );
+        collisions.movingEntityId = entityId;
+        collisions.setWorldBounds( transform.getXpos(), transform.getYpos(), collision.bounding, collisions.worldBounds );
 
-        final int viewId = collisions.entityData.transform.getViewId();
+        final int viewId = transform.getViewId();
 
-        tmpTileGridBounds.x = collisions.entityData.worldBounds.x;
-        tmpTileGridBounds.y = collisions.entityData.worldBounds.y;
-        tmpTileGridBounds.width = collisions.entityData.worldBounds.width;
-        tmpTileGridBounds.height = collisions.entityData.worldBounds.height;
+        tmpTileGridBounds.x = collisions.worldBounds.x;
+        tmpTileGridBounds.y = collisions.worldBounds.y;
+        tmpTileGridBounds.width = collisions.worldBounds.width;
+        tmpTileGridBounds.height = collisions.worldBounds.height;
 
-        if ( collisions.entityData.collision.collisionLayerIds != null ) {
-            final IntIterator iterator = collisions.entityData.collision.collisionLayerIds.iterator();
+        if ( collision.collisionLayerIds != null ) {
+            final IntIterator iterator = collision.collisionLayerIds.iterator();
             while ( iterator.hasNext() ) {
                 final int layerId = iterator.next();
-                checkTileCollision( viewId, layerId );
-                checkSpriteCollision( viewId, layerId );
+                checkTileCollision( viewId, layerId, collision );
+                checkSpriteCollision( viewId, layerId, collision );
             }
         }
         
         return collisions;
     }
 
-    private void checkSpriteCollision( final int viewId, final int layerId ) {
+    private void checkSpriteCollision( final int viewId, final int layerId, final ECollision collision1 ) {
         final CollisionQuadTree quadTree = collisionSystem.getCollisionQuadTree( viewId, layerId );
         if ( quadTree == null ) {
             return;
         }
         
-        IntIterator entityIterator = quadTree.get( collisions.entityData.entityId );
+        IntIterator entityIterator = quadTree.get( collisions.movingEntityId );
         if ( entityIterator == null ) {
             return;
         }
         
         while ( entityIterator.hasNext() ) {
             final int entityId2 = entityIterator.next();
-            if ( collisions.entityData.entityId == entityId2 ) {
+            if ( collisions.movingEntityId == entityId2 ) {
                 continue;
             }
             
-            final CollisionData collisionData = collisions.get();
-            collisionData.clear();
-            collisionData.entityData.set( 
-                entityId2,
-                context.getEntityComponent( entityId2, ETransform.TYPE_KEY ), 
-                context.getEntityComponent( entityId2, ECollision.TYPE_KEY ),
-                context.getEntityComponent( entityId2, EMovement.TYPE_KEY )
+            ETransform transform = context.getEntityComponent( entityId2, ETransform.TYPE_KEY );
+            ECollision collision2 = context.getEntityComponent( entityId2, ECollision.TYPE_KEY );
+            final CollisionDataImpl collisionData = collisions.create( 
+                entityId2, 
+                transform.getXpos(), 
+                transform.getYpos(), 
+                collision2.bounding 
             );
             
-            if ( check( collisions.entityData, collisionData ) ) {
+            if ( check( collision1, collision2, collisionData ) ) {
                 collisions.next();
+            } else {
+                collisionData.clear();
             }
         }
     }
 
-    private final void checkTileCollision( final int viewId, final int layerId ) {
+    private final void checkTileCollision( final int viewId, final int layerId, final ECollision collision1 ) {
         TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
         if ( tileGrid == null ) {
             return;
@@ -110,18 +112,15 @@ public final class DefaultCollisionConstraint extends CollisionConstraint {
                 continue;
             }
             
-            final CollisionData collisionData = collisions.get();
-            collisionData.clear();
-            collisionData.entityData.set( 
-                tileId,
-                tileIterator.getWorldXPos(),
-                tileIterator.getWorldYPos(),
-                context.getEntityComponent( tileId, ETransform.TYPE_KEY ), 
-                context.getEntityComponent( tileId, ECollision.TYPE_KEY ),
-                context.getEntityComponent( tileId, EMovement.TYPE_KEY ) 
+            ECollision collision2 = context.getEntityComponent( tileId, ECollision.TYPE_KEY );
+            final CollisionDataImpl collisionData = collisions.create( 
+                tileId, 
+                tileIterator.getWorldXPos(), 
+                tileIterator.getWorldYPos(), 
+                collision2.bounding 
             );
 
-            if ( check( collisions.entityData, collisionData ) ) {
+            if ( check( collision1, collision2, collisionData ) ) {
                 collisions.next();
             } else {
                 collisionData.clear();
@@ -129,14 +128,14 @@ public final class DefaultCollisionConstraint extends CollisionConstraint {
         }
     }
 
-    private final boolean check( EntityData entityData, CollisionData collisionData ) {
-        if ( !entityData.collision.isSolid() || !collisionData.entityData.collision.isSolid() ) {
+    private final boolean check( ECollision collision1, ECollision collision2, CollisionDataImpl collisionData ) {
+        if ( !collision1.isSolid() || !collision2.isSolid() ) {
             return false;
         }
         
         GeomUtils.intersection( 
-            entityData.worldBounds, 
-            collisionData.entityData.worldBounds, 
+            collisions.worldBounds, 
+            collisionData.worldBounds, 
             collisionData.intersectionBounds 
         );
         
@@ -145,34 +144,197 @@ public final class DefaultCollisionConstraint extends CollisionConstraint {
         }
         
         // normalize the intersection  to origin of coordinate system
-        collisionData.intersectionBounds.x -= entityData.worldBounds.x;
-        collisionData.intersectionBounds.y -= entityData.worldBounds.y;
+        collisionData.intersectionBounds.x -= collisions.worldBounds.x;
+        collisionData.intersectionBounds.y -= collisions.worldBounds.y;
 
-        final BitMask bitmask1 = ( entityData.collision.bitmaskId < 0 )? null : collisionSystem.bitmasks.get( entityData.collision.bitmaskId );
-        final BitMask bitmask2 = ( collisionData.entityData.collision.bitmaskId < 0 )? null : collisionSystem.bitmasks.get( collisionData.entityData.collision.bitmaskId );
+        final BitMask bitmask1 = ( collision1.bitmaskId < 0 )? null : collisionSystem.bitmasks.get( collision1.bitmaskId );
+        final BitMask bitmask2 = ( collision2.bitmaskId < 0 )? null : collisionSystem.bitmasks.get( collision2.bitmaskId );
         if ( bitmask1 == null && bitmask2 == null ) {
             return true;
         }
         
-        int xOffset = entityData.worldBounds.x - collisionData.entityData.worldBounds.x;
-        int yOffset = entityData.worldBounds.y - collisionData.entityData.worldBounds.y;
+        int xOffset = collisions.worldBounds.x - collisionData.worldBounds.x;
+        int yOffset = collisions.worldBounds.y - collisionData.worldBounds.y;
         
         if ( bitmask1 != null && bitmask2 != null && bitmask2.intersects( xOffset, yOffset, bitmask1 ) ) {
             collisionData.intersectionMask = bitmask2.intersectionMask;
             return true;
         }
         
-        if ( bitmask1 == null && bitmask2 != null && bitmask2.intersectsRegion( xOffset, yOffset, entityData.worldBounds.width, entityData.worldBounds.height ) ) {
+        if ( bitmask1 == null && bitmask2 != null && bitmask2.intersectsRegion( xOffset, yOffset, collisions.worldBounds.width, collisions.worldBounds.height ) ) {
             collisionData.intersectionMask = bitmask2.intersectionMask;
             return true;
         }
         
-        if ( bitmask1 != null && bitmask2 == null && bitmask1.intersects( -xOffset, -yOffset, entityData.worldBounds ) ) {
+        if ( bitmask1 != null && bitmask2 == null && bitmask1.intersects( -xOffset, -yOffset, collisions.worldBounds ) ) {
             collisionData.intersectionMask = bitmask1.intersectionMask;
             return true;
         }
         
         return false;
+    }
+    
+    
+    public final class CollisionsImpl implements Collisions {
+    
+        private final CollisionConstraint collisionConstraint;
+    
+        int movingEntityId;
+        final Rectangle worldBounds = new Rectangle();
+        
+        private final DynArray<CollisionDataImpl> collisions = new DynArray<CollisionDataImpl>();
+        
+        int size = 0;
+        
+        public CollisionsImpl( CollisionConstraint collisionConstraint ) {
+            this.collisionConstraint = collisionConstraint;
+        }
+        
+        @Override
+        public final int movingEntityId() {
+            return movingEntityId;
+        }
+        
+        @Override
+        public final Rectangle worldBounds() {
+            return worldBounds;
+        }
+        
+        @Override
+        public final void update() {
+            if ( movingEntityId >= 0 ) {
+                collisionConstraint.checkCollisions( movingEntityId );
+            }
+        }
+    
+        @Override
+        public final int size() {
+            return size;
+        }
+    
+        @Override
+        public final Iterator<CollisionData> iterator() {
+            return new CollisionDataIterator();
+        }
+        
+        final CollisionDataImpl create( int entityId, float woldPosX, float worldPosY, Rectangle collisionBounding ) {
+            if ( !collisions.contains( size ) ) {
+                collisions.set( size, new CollisionDataImpl() );
+            }
+            
+            CollisionDataImpl collisionData = collisions.get( size );
+            collisionData.entityId = entityId;
+            setWorldBounds( woldPosX, worldPosY, collisionBounding, collisionData.worldBounds );
+            
+            return collisionData;
+        }
+    
+        final void next() {
+            size++;
+        }
+    
+        final void clear() {
+            size = 0; 
+            movingEntityId = -1;
+            for ( CollisionDataImpl collision : collisions ) {
+                collision.clear();
+            }
+        }
+        
+        final void setWorldBounds( final float worldPosX, final float worldPosY, final Rectangle collisionBounding, Rectangle worldBounds ) {
+            worldBounds.x = (int) Math.ceil( worldPosX ) + collisionBounding.x;
+            worldBounds.y = (int) Math.floor( worldPosY ) + collisionBounding.y;
+            worldBounds.width = collisionBounding.width;
+            worldBounds.height = collisionBounding.height;
+        }    
+        
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append( "CollisionData [size=" );
+            builder.append( size );
+            builder.append( ", collisionData=" );
+            builder.append( collisions );
+            builder.append( "]" );
+            return builder.toString();
+        }
+    
+        public final class CollisionDataImpl implements CollisionData {
+            
+            int entityId;
+            final Rectangle worldBounds = new Rectangle();
+            final Rectangle intersectionBounds = new Rectangle();
+            BitSet intersectionMask;
+            
+            CollisionDataImpl() {
+                clear();
+            }
+            
+            @Override
+            public final int entityId() {
+                return entityId;
+            }
+            
+            @Override
+            public final Rectangle worldBounds() {
+                return worldBounds;
+            }
+    
+            @Override
+            public final Rectangle intersectionBounds() {
+                return intersectionBounds;
+            }
+    
+            @Override
+            public final BitSet intersectionMask() {
+                return intersectionMask;
+            }
+            
+            final void clear() {
+                entityId = -1;
+                intersectionBounds.x = 0;
+                intersectionBounds.y = 0;
+                intersectionBounds.width = 0;
+                intersectionBounds.height = 0;
+                intersectionMask = null;
+            }
+    
+            @Override
+            public String toString() {
+                StringBuilder builder = new StringBuilder();
+                builder.append( "CollisionData [entityId=" );
+                builder.append( entityId );
+                builder.append( ", intersectionBounds=" );
+                builder.append( intersectionBounds );
+                builder.append( ", intersectionMask=" );
+                builder.append( intersectionMask );
+                builder.append( "]" );
+                return builder.toString();
+            }
+        }
+        
+        private final class CollisionDataIterator implements Iterator<CollisionData> {
+            
+            int index = 0;
+            Iterator<CollisionDataImpl> delegate = collisions.iterator();
+    
+            @Override
+            public boolean hasNext() {
+                return index < size;
+            }
+    
+            @Override
+            public CollisionData next() {
+                index++;
+                return delegate.next();
+            }
+    
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+            
+        }
     }
 
 }

@@ -134,7 +134,7 @@ public final class CollisionSystem
                 .get( collisionConstraintId )
                 .checkCollisions( entityId );
             
-            if ( collisions.size > 0 ) {
+            if ( collisions.size() > 0 ) {
                 if ( collisionResolverId >= 0 ) {
                     collisionResolvers.get( collisionResolverId ).resolve( collisions );
                 }
