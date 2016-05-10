@@ -41,7 +41,7 @@ public class SimpleCollisionTest extends FFTest {
         .build();
         int constraintId = collisionSystem.getCollisionConstraintBuilder()
             .set( CollisionConstraint.NAME, "Test" )
-        .build( DefaultCollisionConstraint.class );
+        .build( CollisionConstraintImpl.class );
             
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )

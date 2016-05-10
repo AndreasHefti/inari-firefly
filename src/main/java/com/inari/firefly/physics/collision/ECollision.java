@@ -1,6 +1,7 @@
 package com.inari.firefly.physics.collision;
 
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ public final class ECollision extends EntityComponent {
     public static final AttributeKey<IntBag> COLLISION_LAYER_IDS = new AttributeKey<IntBag>( "collisionLayersIds", IntBag.class, ECollision.class );
     public static final AttributeKey<Boolean> SOLID = new AttributeKey<Boolean>( "solid", Boolean.class, ECollision.class );
     public static final AttributeKey<Integer> CONTACT_TYPE = new AttributeKey<Integer>( "contactType", Integer.class, ECollision.class );
+    public static final AttributeKey<IntBag> CONTACTS = new AttributeKey<IntBag>( "contacts", IntBag.class, ECollision.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         BOUNDING,
         BIT_MASK_ID,
@@ -32,7 +34,8 @@ public final class ECollision extends EntityComponent {
         COLLISION_RESOLVER_ID,
         COLLISION_LAYER_IDS,
         SOLID,
-        CONTACT_TYPE
+        CONTACT_TYPE,
+        CONTACTS
     };
     
     Rectangle outerBounding;
@@ -40,14 +43,15 @@ public final class ECollision extends EntityComponent {
     int bitmaskId;
     int collisionConstraintId;
     int collisionResolverId;
-    IntBag collisionLayerIds;
+    final IntBag collisionLayerIds;
     boolean solid;
-    int contactType;
-    
-    private final IntBag contacts = new IntBag( 10, -1 );
+    ContactType contactType;
+    final BitSet contacts;
 
     ECollision() {
         super( TYPE_KEY );
+        collisionLayerIds = new IntBag( 5, -1 );
+        contacts = new BitSet( 10 );
         resetAttributes();
     }
     
@@ -58,9 +62,10 @@ public final class ECollision extends EntityComponent {
         bitmaskId = -1;
         collisionConstraintId = -1;
         collisionResolverId = -1;
-        collisionLayerIds = null;
+        collisionLayerIds.clear();
         solid = true;
-        contactType = -1;
+        contactType = null;
+        contacts.clear();
     }
 
     public final int getBitmaskId() {
@@ -108,7 +113,8 @@ public final class ECollision extends EntityComponent {
     }
 
     public final void setCollisionLayerIds( IntBag collisionLayerIds ) {
-        this.collisionLayerIds = collisionLayerIds;
+        this.collisionLayerIds.clear();
+        this.collisionLayerIds.addAll( collisionLayerIds );
     }
     
     public final boolean isSolid() {
@@ -119,26 +125,37 @@ public final class ECollision extends EntityComponent {
         this.solid = solid;
     }
 
-    public final int getContactType() {
+    public final ContactType getContactType() {
         return contactType;
     }
 
-    public final void setContactType( int contactType ) {
+    public final void setContactType( ContactType contactType ) {
         this.contactType = contactType;
     }
 
-    public final void setContactIds( int... contactIds ) {
+    public final void setContacts( ContactType... contactTypes ) {
         contacts.clear();
-        contacts.addAll( contactIds );
+        if ( contactTypes != null ) {
+            for ( ContactType contactType : contactTypes ) {
+                contacts.set( contactType.aspectId() );
+            }
+        }
+    }
+
+    public final void setContact( ContactType contactType ) {
+        contacts.set( contactType.aspectId() );
+    }
+
+    public final void resetContact( ContactType contactType ) {
+        contacts.set( contactType.aspectId(), false );
     }
     
-    public final void setContactIds( IntIterator contactIds ) {
-        contacts.clear();
-        contacts.addAll( contactIds );
+    public final boolean hasContact( ContactType contactType ) {
+        return contacts.get( contactType.aspectId() );
     }
     
-    public final IntIterator getContactIds() {
-        return contacts.iterator();
+    public final void clearContacts() {
+        contacts.clear();
     }
 
     @Override
@@ -152,9 +169,20 @@ public final class ECollision extends EntityComponent {
         collisionResolverId = attributes.getIdForName( COLLISION_RESOLVER_NAME, COLLISION_RESOLVER_ID, CollisionResolver.TYPE_KEY, collisionResolverId );
         bitmaskId = attributes.getIdForName( BIT_MASK_NAME, BIT_MASK_ID, BitMask.TYPE_KEY, bitmaskId );
         bounding = attributes.getValue( BOUNDING, bounding );
-        collisionLayerIds = attributes.getValue( COLLISION_LAYER_IDS, collisionLayerIds );
+        if ( attributes.contains( COLLISION_LAYER_IDS ) ) {
+            setCollisionLayerIds( attributes.getValue( COLLISION_LAYER_IDS, collisionLayerIds ) );
+        }
         solid = attributes.getValue( SOLID, solid );
-        contactType = attributes.getValue( CONTACT_TYPE, contactType );
+        if ( attributes.contains( CONTACT_TYPE ) ) {
+            contactType = ContactType.byId( attributes.getValue( CONTACT_TYPE ) );
+        }
+        
+        if ( attributes.contains( CONTACTS ) ) {
+            IntIterator contactsIterator = attributes.getValue( CONTACTS ).iterator();
+            while ( contactsIterator.hasNext() ) {
+                contacts.set( contactsIterator.next() );
+            }
+        }
     }
 
     @Override
@@ -165,7 +193,8 @@ public final class ECollision extends EntityComponent {
         attributes.put( COLLISION_CONSTRAINT_ID, collisionConstraintId );
         attributes.put( COLLISION_LAYER_IDS, collisionLayerIds );
         attributes.put( SOLID, solid );
-        attributes.put( CONTACT_TYPE, contactType );
+        attributes.put( CONTACT_TYPE, contactType.aspectId() );
+        attributes.put( CONTACTS, new IntBag( contacts, -1, 10 ) );
     }
 
 }

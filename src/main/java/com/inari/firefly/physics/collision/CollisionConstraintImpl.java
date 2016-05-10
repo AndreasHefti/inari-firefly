@@ -12,9 +12,9 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.graphics.tile.TileGridSystem;
-import com.inari.firefly.physics.collision.DefaultCollisionConstraint.CollisionsImpl.CollisionDataImpl;
+import com.inari.firefly.physics.collision.CollisionConstraintImpl.CollisionsImpl.CollisionDataImpl;
 
-public final class DefaultCollisionConstraint extends CollisionConstraint {
+public final class CollisionConstraintImpl extends CollisionConstraint {
     
     private CollisionSystem collisionSystem;
     private TileGridSystem tileGridSystem;
@@ -22,7 +22,7 @@ public final class DefaultCollisionConstraint extends CollisionConstraint {
     private final Rectangle tmpTileGridBounds = new Rectangle();
     private final CollisionsImpl collisions = new CollisionsImpl( this );
 
-    protected DefaultCollisionConstraint( int id ) {
+    protected CollisionConstraintImpl( int id ) {
         super( id );
     }
 
