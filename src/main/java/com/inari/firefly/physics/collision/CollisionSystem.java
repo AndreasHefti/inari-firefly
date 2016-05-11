@@ -3,6 +3,7 @@ package com.inari.firefly.physics.collision;
 import java.util.Iterator;
 
 import com.inari.commons.lang.IntIterator;
+import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
@@ -30,6 +31,7 @@ public final class CollisionSystem
         MoveEventListener {
     
     public static final FFSystemTypeKey<CollisionSystem> SYSTEM_KEY = FFSystemTypeKey.create( CollisionSystem.class );
+    public static final AspectGroup CONTACT_ASPECT_TYPE = new AspectGroup( "CONTACT_ASPECT_TYPE" );
 
     private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         BitMask.TYPE_KEY,

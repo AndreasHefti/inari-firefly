@@ -2,6 +2,7 @@ package com.inari.firefly.component;
 
 import java.util.Set;
 
+import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.indexed.BaseIndexedObject;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedObject;
@@ -13,18 +14,33 @@ import com.inari.firefly.component.attr.AttributeMap;
 public abstract class ContextComponent extends BaseIndexedObject implements IndexedType, Component {
     
     private final static IIndexedTypeKey TYPE_KEY = new IIndexedTypeKey() {
+        
+        private AspectGroup aspectGroup = new AspectGroup( "ContextComponent" );
+        
         @SuppressWarnings( "unchecked" )
         @Override
-        public Class<? extends ContextComponent> type() {
+        public final Class<? extends ContextComponent> type() {
             return ContextComponent.class;
         }
+        
         @Override
-        public int typeIndex() {
+        public final Class<?> baseType() {
+            return ContextComponent.class;
+        }
+
+        @Override
+        public final AspectGroup aspectGroup() {
+            return aspectGroup;
+        }
+
+        @Override
+        public final int index() {
             return -1;
         }
+
         @Override
-        public Class<?> baseType() {
-            return ContextComponent.class;
+        public final String name() {
+            return "ContextComponent";
         }
     };
     

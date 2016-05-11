@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspect;
+import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
-import com.inari.commons.lang.aspect.AspectsBuilder;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -16,13 +16,14 @@ import com.inari.firefly.entity.EntityComponent;
 public final class EState extends EntityComponent {
     
     public static final EntityComponentTypeKey<EState> TYPE_KEY = EntityComponentTypeKey.create( EState.class );
+    public static final AspectGroup ASPECT_GROUP = new AspectGroup( "EState" );
     
-    public static final AttributeKey<IntBag> STATE_ASPECTS = new AttributeKey<IntBag>( "stateAspects", IntBag.class, EState.class );
+    public static final AttributeKey<DynArray<Aspect>> STATE_ASPECTS = AttributeKey.createForDynArray( "stateAspects", EState.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         STATE_ASPECTS
     };
     
-    private final Aspects stateAspects = AspectsBuilder.createWithCapacity( 10 );
+    private final Aspects stateAspects = ASPECT_GROUP.createAspects();
 
     protected EState() {
         super( TYPE_KEY );
@@ -39,20 +40,11 @@ public final class EState extends EntityComponent {
     }
     
     public final void addStateAspects( Aspects aspects ) {
-        stateAspects.add( aspects );
+        stateAspects.set( aspects );
     }
     
     public final void setStateAspects( Aspects aspects ) {
-        stateAspects.clear();
-        stateAspects.add( aspects );
-    }
-    
-    public final void setStateAspects( IntBag values ) {
-        stateAspects.clear();
-        IntIterator iterator = values.iterator();
-        while ( iterator.hasNext() ) {
-            stateAspects.set( iterator.next() );
-        }
+        stateAspects.set( aspects );
     }
     
     public final IntBag getStateAspectValues() {
@@ -78,14 +70,14 @@ public final class EState extends EntityComponent {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        if ( attributes.contains( STATE_ASPECTS ) ) {
-            setStateAspects( attributes.getValue( STATE_ASPECTS ) );
-        }
+//        if ( attributes.contains( STATE_ASPECTS ) ) {
+//            setStateAspects( attributes.getValue( STATE_ASPECTS ) );
+//        }
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
-        attributes.put( STATE_ASPECTS, stateAspects.getValues() );
+      //  attributes.put( STATE_ASPECTS, stateAspects.getValues() );
     }
 
 }

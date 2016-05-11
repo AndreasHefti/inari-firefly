@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.indexed.BaseIndexedObject;
 import com.inari.commons.lang.indexed.IndexedObject;
 import com.inari.commons.lang.indexed.IndexedType;
@@ -32,6 +33,8 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
 
 public abstract class SystemComponent extends BaseIndexedObject implements IndexedType, NamedComponent {
+    
+    public static final AspectGroup ASPECT_GROUP = new AspectGroup( "SystemComponent" );
 
     public static final AttributeKey<String> NAME = new AttributeKey<String>( "name", String.class, SystemComponent.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
@@ -91,7 +94,7 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
     }
     
     public static final class SystemComponentKey<C extends SystemComponent> extends IndexedTypeKey {
-
+        
         SystemComponentKey( Class<C> indexedType ) {
             super( indexedType );
         }
@@ -102,8 +105,13 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
         }
 
         @Override
-        public String toString() {
+        public final String toString() {
             return "SystemComponent:" + type().getSimpleName();
+        }
+        
+        @Override
+        public final AspectGroup aspectGroup() {
+            return ASPECT_GROUP;
         }
 
         @SuppressWarnings( "unchecked" )

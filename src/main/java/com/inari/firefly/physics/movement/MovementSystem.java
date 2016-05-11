@@ -18,10 +18,9 @@ package com.inari.firefly.physics.movement;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
-import com.inari.commons.lang.indexed.IndexedTypeAspectBuilder;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
+import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
@@ -32,7 +31,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
     
     public static final FFSystemTypeKey<MovementSystem> SYSTEM_KEY = FFSystemTypeKey.create( MovementSystem.class );
     
-    private final static Aspects MOVEMENT_ASPECT = IndexedTypeAspectBuilder.build( EntityComponentTypeKey.class, EMovement.class );
+    private final static Aspects MOVEMENT_ASPECT = EntityComponent.ASPECT_TYPE.createAspects( EMovement.TYPE_KEY );
 
     private FFContext context;
     private EntitySystem entitySystem;

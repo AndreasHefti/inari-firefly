@@ -21,7 +21,6 @@ import java.util.Iterator;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedType;
-import com.inari.commons.lang.indexed.IndexedTypeAspects;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
@@ -415,7 +414,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
                 entityId = Indexer.nextObjectIndex( Entity.class );
             }
 
-            IndexedTypeAspects aspectToCheck;
+            Aspects aspectToCheck;
             if ( prefabComponents != null ) {
                 // if we have prefab components we use them
                 components.set( entityId, prefabComponents );

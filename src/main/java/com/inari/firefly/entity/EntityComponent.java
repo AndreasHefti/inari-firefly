@@ -15,6 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
+import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
@@ -23,6 +24,8 @@ import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentId;
 
 public abstract class EntityComponent implements Component, IndexedType {
+    
+    public final static AspectGroup ASPECT_TYPE = new AspectGroup( "EntityComponentTypeKey" );
     
     public final ComponentId componentId;
     
@@ -53,8 +56,13 @@ public abstract class EntityComponent implements Component, IndexedType {
         }
         
         @Override
-        public String toString() {
+        public final String toString() {
             return "EntityComponentTypeKey:" + type().getSimpleName();
+        }
+        
+        @Override
+        public final AspectGroup aspectGroup() {
+            return ASPECT_TYPE;
         }
         
         @SuppressWarnings( "unchecked" )
