@@ -26,12 +26,12 @@ public class FFGraphicsMock implements FFGraphics {
 
     @Override
     public void init( FFContext context ) {
-        context.registerListener( ViewEvent.class, this );
+        context.registerListener( ViewEvent.TYPE_KEY, this );
     }
     
     @Override
     public void dispose( FFContext context ) {
-        context.disposeListener( ViewEvent.class, this );
+        context.disposeListener( ViewEvent.TYPE_KEY, this );
         
         clear();
     }

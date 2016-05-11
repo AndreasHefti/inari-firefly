@@ -50,12 +50,12 @@ public final class ControllerSystem
     public void init( FFContext context ) {
         super.init( context );
         
-        context.registerListener( UpdateEvent.class, this );
+        context.registerListener( UpdateEvent.TYPE_KEY, this );
     }
 
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( UpdateEvent.class, this );
+        context.disposeListener( UpdateEvent.TYPE_KEY, this );
         
         clear();
     }

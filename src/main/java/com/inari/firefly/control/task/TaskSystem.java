@@ -43,12 +43,12 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
     public final void init( FFContext context ) {
         super.init( context );
         
-        context.registerListener( TaskSystemEvent.class, this );
+        context.registerListener( TaskSystemEvent.TYPE_KEY, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( TaskSystemEvent.class, this );
+        context.disposeListener( TaskSystemEvent.TYPE_KEY, this );
         clear();
     }
     

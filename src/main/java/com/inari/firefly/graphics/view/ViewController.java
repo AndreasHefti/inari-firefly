@@ -16,14 +16,14 @@ public abstract class ViewController extends Controller implements ViewEventList
         super.init();
         
         viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
-        context.registerListener( ViewEvent.class, this );
+        context.registerListener( ViewEvent.TYPE_KEY, this );
     }
 
 
 
     @Override
     public final void dispose() {
-        context.disposeListener( ViewEvent.class, this );
+        context.disposeListener( ViewEvent.TYPE_KEY, this );
         
         super.dispose();
     }

@@ -49,14 +49,14 @@ public final class ShapeRenderSystem
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         shapeRenderer = new ShapeRenderer( context );
         
-        context.registerListener( RenderEvent.class, shapeRenderer );
-        context.registerListener( EntityActivationEvent.class, this );
+        context.registerListener( RenderEvent.TYPE_KEY, shapeRenderer );
+        context.registerListener( EntityActivationEvent.TYPE_KEY, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( RenderEvent.class, shapeRenderer );
-        context.disposeListener( EntityActivationEvent.class, this );
+        context.disposeListener( RenderEvent.TYPE_KEY, shapeRenderer );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
         
         shapeRenderer.dispose();
     }

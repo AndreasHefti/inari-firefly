@@ -47,7 +47,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
         
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         entityProvider = context.getSystem( EntityProvider.SYSTEM_KEY );
-        context.registerListener( EntityPrefabSystemEvent.class, this );
+        context.registerListener( EntityPrefabSystemEvent.TYPE_KEY, this );
         attributeMap = new EntityAttributeMap( context );
     }
     
@@ -55,7 +55,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     public void dispose( FFContext context ) {
         clear();
         
-        context.disposeListener( EntityPrefabSystemEvent.class, this );
+        context.disposeListener( EntityPrefabSystemEvent.TYPE_KEY, this );
     }
     
     public final  void clear() {

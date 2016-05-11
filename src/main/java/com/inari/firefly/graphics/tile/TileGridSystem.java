@@ -75,9 +75,9 @@ public final class TileGridSystem
             .set( TileGridRenderer.NAME, NormalFullTileGridRenderer.NAME )
             .build( NormalFullTileGridRenderer.class );
 
-        context.registerListener( ViewEvent.class, this );
-        context.registerListener( EntityActivationEvent.class, this );
-        context.registerListener( TileSystemEvent.class, this );
+        context.registerListener( ViewEvent.TYPE_KEY, this );
+        context.registerListener( EntityActivationEvent.TYPE_KEY, this );
+        context.registerListener( TileSystemEvent.TYPE_KEY, this );
     }
 
     public final TileGridRendererBuilder getRendererBuilder() {
@@ -86,12 +86,12 @@ public final class TileGridSystem
 
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( ViewEvent.class, this );
-        context.disposeListener( EntityActivationEvent.class, this );
-        context.disposeListener( TileSystemEvent.class, this );
+        context.disposeListener( ViewEvent.TYPE_KEY, this );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
+        context.disposeListener( TileSystemEvent.TYPE_KEY, this );
         
         for ( TileGridRenderer r : renderer ) {
-            context.disposeListener( RenderEvent.class, r );
+            context.disposeListener( RenderEvent.TYPE_KEY, r );
             r.dispose();
         }
         
@@ -158,7 +158,7 @@ public final class TileGridSystem
     public final void deleteRenderer( int id ) {
         TileGridRenderer r = renderer.remove( id );
         if ( r != null ) {
-            context.disposeListener( RenderEvent.class, r );
+            context.disposeListener( RenderEvent.TYPE_KEY, r );
             r.dispose();
         }
     }

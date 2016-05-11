@@ -7,6 +7,7 @@ import java.util.Map;
 import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.event.AspectedEventListener;
 import com.inari.commons.event.Event;
+import com.inari.commons.event.Event.EventTypeKey;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.event.PredicatedEvent;
 import com.inari.commons.event.PredicatedEventListener;
@@ -407,11 +408,11 @@ public final class FFContext {
         properties.put( key, value );
     }
     
-    public final <L> void registerListener( Class<? extends Event<L>> eventType, L listener ) {
+    public final <L> void registerListener( EventTypeKey eventType, L listener ) {
         eventDispatcher.register( eventType, listener );
     }
     
-    public final <L> void disposeListener( Class<? extends Event<L>> eventType, L listener ) {
+    public final <L> void disposeListener( EventTypeKey eventType, L listener ) {
         eventDispatcher.unregister( eventType, listener );
     }
     

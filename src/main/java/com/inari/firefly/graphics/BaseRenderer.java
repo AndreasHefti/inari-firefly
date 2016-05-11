@@ -26,12 +26,12 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
         
         graphics = context.getGraphics();
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        context.registerListener( RenderEvent.class, this );
+        context.registerListener( RenderEvent.TYPE_KEY, this );
     }
 
     @Override
     public void dispose() {
-        context.disposeListener( RenderEvent.class, this );
+        context.disposeListener( RenderEvent.TYPE_KEY, this );
         
         super.dispose();
     };

@@ -28,12 +28,12 @@ public abstract class WorkflowEventTrigger extends EventTrigger implements Workf
     @Override
     public final void register( FFContext context, int componentId ) {
         super.register( context, componentId );
-        context.registerListener( WorkflowEvent.class, this );
+        context.registerListener( WorkflowEvent.TYPE_KEY, this );
     }
 
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( WorkflowEvent.class, this );
+        context.disposeListener( WorkflowEvent.TYPE_KEY, this );
     }
 
     @Override

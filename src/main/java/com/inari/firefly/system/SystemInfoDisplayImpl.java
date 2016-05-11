@@ -55,9 +55,9 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
         this.active = active;
         
         if ( active ) {
-            context.registerListener( PostRenderEvent.class, this );
+            context.registerListener( PostRenderEvent.TYPE_KEY, this );
         } else {
-            context.disposeListener( PostRenderEvent.class, this );
+            context.disposeListener( PostRenderEvent.TYPE_KEY, this );
         }
         
         return this;

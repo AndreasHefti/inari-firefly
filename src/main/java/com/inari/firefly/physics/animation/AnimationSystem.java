@@ -53,16 +53,16 @@ public final class AnimationSystem
     public void init( FFContext context ) {
         super.init( context );
         
-        context.registerListener( UpdateEvent.class, this );
-        context.registerListener( AnimationSystemEvent.class, this );
+        context.registerListener( UpdateEvent.TYPE_KEY, this );
+        context.registerListener( AnimationSystemEvent.TYPE_KEY, this );
     }
     
     @Override
     public void dispose( FFContext context ) {
         clear();
         
-        context.disposeListener( UpdateEvent.class, this );
-        context.disposeListener( AnimationSystemEvent.class, this );
+        context.disposeListener( UpdateEvent.TYPE_KEY, this );
+        context.disposeListener( AnimationSystemEvent.TYPE_KEY, this );
     }
     
     public final void clear() {

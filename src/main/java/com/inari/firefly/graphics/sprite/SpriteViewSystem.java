@@ -52,14 +52,14 @@ public final class SpriteViewSystem
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         spriteRenderer = new SpriteRenderer( context );
         
-        context.registerListener( RenderEvent.class, spriteRenderer );
-        context.registerListener( EntityActivationEvent.class, this );
+        context.registerListener( RenderEvent.TYPE_KEY, spriteRenderer );
+        context.registerListener( EntityActivationEvent.TYPE_KEY, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( RenderEvent.class, spriteRenderer );
-        context.disposeListener( EntityActivationEvent.class, this );
+        context.disposeListener( RenderEvent.TYPE_KEY, spriteRenderer );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
         
         spriteRenderer.dispose();
     }

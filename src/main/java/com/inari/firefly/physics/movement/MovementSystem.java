@@ -54,12 +54,12 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
         
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
-        context.registerListener( UpdateEvent.class, this );
+        context.registerListener( UpdateEvent.TYPE_KEY, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( UpdateEvent.class, this );
+        context.disposeListener( UpdateEvent.TYPE_KEY, this );
     }
 
     @Override

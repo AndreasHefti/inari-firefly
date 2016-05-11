@@ -52,14 +52,14 @@ public class StateSystem
     public void init( FFContext context ) {
         super.init( context );
         
-        context.registerListener( UpdateEvent.class, this );
-        context.registerListener( StateSystemEvent.class, this );
+        context.registerListener( UpdateEvent.TYPE_KEY, this );
+        context.registerListener( StateSystemEvent.TYPE_KEY, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( UpdateEvent.class, this );
-        context.disposeListener( StateSystemEvent.class, this );
+        context.disposeListener( UpdateEvent.TYPE_KEY, this );
+        context.disposeListener( StateSystemEvent.TYPE_KEY, this );
         
         clear();
     }

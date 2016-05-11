@@ -63,17 +63,17 @@ public final class CollisionSystem
     public final void init( FFContext context ) {
         super.init( context );
         
-        context.registerListener( EntityActivationEvent.class, this );
-        context.registerListener( ViewEvent.class, this );
-        context.registerListener( MoveEvent.class, this );
+        context.registerListener( EntityActivationEvent.TYPE_KEY, this );
+        context.registerListener( ViewEvent.TYPE_KEY, this );
+        context.registerListener( MoveEvent.TYPE_KEY, this );
     }
 
     @Override
     public final void dispose( FFContext context ) {
         clear();
-        context.disposeListener( EntityActivationEvent.class, this );
-        context.disposeListener( ViewEvent.class, this );
-        context.disposeListener( MoveEvent.class, this );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
+        context.disposeListener( ViewEvent.TYPE_KEY, this );
+        context.disposeListener( MoveEvent.TYPE_KEY, this );
     }
     
     @Override

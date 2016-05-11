@@ -58,14 +58,14 @@ public final class AudioSystem
         controllerSystem = context.getSystem( ControllerSystem. SYSTEM_KEY );
         audio = context.getAudio();
         
-        context.registerListener( AudioSystemEvent.class, this );
+        context.registerListener( AudioSystemEvent.TYPE_KEY, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
         clear();
         
-        context.disposeListener( AudioSystemEvent.class, this );
+        context.disposeListener( AudioSystemEvent.TYPE_KEY, this );
     }
 
     public final void clear() {

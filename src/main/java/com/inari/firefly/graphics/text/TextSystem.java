@@ -50,13 +50,13 @@ public class TextSystem
             .set( TextRenderer.NAME, DEFAULT_TEXT_RENDERER_NAME )
             .build( DefaultTextRenderer.class );
         
-        context.registerListener( EntityActivationEvent.class, this );
+        context.registerListener( EntityActivationEvent.TYPE_KEY, this );
         
     }
 
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( EntityActivationEvent.class, this );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
         
         for ( TextRenderer r : renderer ) {
             r.dispose();
@@ -88,7 +88,7 @@ public class TextSystem
     public final void deleteRenderer( int id ) {
         TextRenderer removed = renderer.remove( id );
         if ( removed != null ) {
-            context.disposeListener( RenderEvent.class, removed );
+            context.disposeListener( RenderEvent.TYPE_KEY, removed );
             removed.dispose();
         }
     }

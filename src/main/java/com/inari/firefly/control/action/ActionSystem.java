@@ -29,11 +29,11 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
         
-        context.registerListener( ActionSystemEvent.class, this );
+        context.registerListener( ActionSystemEvent.TYPE_KEY, this );
     }
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( ActionSystemEvent.class, this );
+        context.disposeListener( ActionSystemEvent.TYPE_KEY, this );
     }
     
     public final Action getAction( int actionId ) {

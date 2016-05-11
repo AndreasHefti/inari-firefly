@@ -30,12 +30,12 @@ public abstract class EntityController extends Controller implements EntityActiv
     public void init() throws FFInitException {
         super.init();
         
-        context.registerListener( EntityActivationEvent.class, this );
+        context.registerListener( EntityActivationEvent.TYPE_KEY, this );
     }
 
     @Override
     public void dispose() {
-        context.disposeListener( EntityActivationEvent.class, this );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
         
         super.dispose();
     }
