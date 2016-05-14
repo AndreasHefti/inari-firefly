@@ -120,7 +120,7 @@ public final class CollisionSystem
         final IntIterator movedEntiyIterator = event.movedEntityIds();
         while ( movedEntiyIterator.hasNext() ) {
             final int entityId = movedEntiyIterator.next();
-            final Aspects aspects = context.getEntityAspects( entityId );
+            final Aspects aspects = context.getEntityComponentAspects( entityId );
             if ( !aspects.contains( ECollision.TYPE_KEY ) ) {
                 continue;
             }

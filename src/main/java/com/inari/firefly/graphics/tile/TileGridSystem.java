@@ -114,11 +114,11 @@ public final class TileGridSystem
     public final void onEntityActivationEvent( EntityActivationEvent event ) {
         switch ( event.eventType ) {
             case ENTITY_ACTIVATED: {
-                registerEntity( event.entityId, event.aspects );
+                registerEntity( event.entityId, event.entityComponentAspects );
                 break;
             }
             case ENTITY_DEACTIVATED: {
-                unregisterEntity( event.entityId, event.aspects );
+                unregisterEntity( event.entityId, event.entityComponentAspects );
                 break;
             }
         }

@@ -370,8 +370,8 @@ public final class FFContext {
         return entitySystem.getComponent( entityName, typeKey );
     }
     
-    public final Aspects getEntityAspects( int entityId ) {
-        return entitySystem.getAspects( entityId );
+    public final Aspects getEntityComponentAspects( int entityId ) {
+        return entitySystem.getEntityComponentAspects( entityId );
     }
     
     public final void activateEntity( int entityId ) {

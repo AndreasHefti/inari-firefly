@@ -28,19 +28,19 @@ public final class EntityActivationEvent extends AspectedEvent<EntityActivationL
     }
     
     public final int entityId;
-    public final Aspects aspects;
+    public final Aspects entityComponentAspects;
     public final Type eventType;
     
-    public EntityActivationEvent( int entityId, Aspects aspects, Type eventType ) {
+    public EntityActivationEvent( int entityId, Aspects entityComponentAspects, Type eventType ) {
         super( TYPE_KEY );
         this.entityId = entityId;
-        this.aspects = aspects;
+        this.entityComponentAspects = entityComponentAspects;
         this.eventType = eventType;
     }
 
     @Override
     public final Aspects getAspects() {
-        return aspects;
+        return entityComponentAspects;
     }
 
     @Override

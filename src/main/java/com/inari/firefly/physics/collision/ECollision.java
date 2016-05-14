@@ -43,6 +43,7 @@ public final class ECollision extends EntityComponent {
     int collisionResolverId;
     final IntBag collisionLayerIds;
     boolean solid;
+    
     final Aspects contacts;
 
     ECollision() {

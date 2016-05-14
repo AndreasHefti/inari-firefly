@@ -108,7 +108,7 @@ public final class CollisionConstraintImpl extends CollisionConstraint {
         
         while ( tileIterator.hasNext() ) {
             int tileId = tileIterator.next();
-            if ( !context.getEntityAspects( tileId ).contains( ECollision.TYPE_KEY ) ) {
+            if ( !context.getEntityComponentAspects( tileId ).contains( ECollision.TYPE_KEY ) ) {
                 continue;
             }
             

@@ -112,7 +112,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         inactiveEntities.clear( entityId );
         activeEntities.set( entityId ) ;
         
-        Aspects aspect = getAspects( entityId );
+        Aspects aspect = getEntityComponentAspects( entityId );
         context.notify( 
             new EntityActivationEvent( entityId, aspect, Type.ENTITY_ACTIVATED ) 
         );
@@ -130,7 +130,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         inactiveEntities.set( entityId );
         
         context.notify( 
-            new EntityActivationEvent( entityId, getAspects( entityId ), Type.ENTITY_DEACTIVATED ) 
+            new EntityActivationEvent( entityId, getEntityComponentAspects( entityId ), Type.ENTITY_DEACTIVATED ) 
         );
     }
     
@@ -211,7 +211,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         return -1;
     }
 
-    public final Aspects getAspects( int entityId ) {
+    public final Aspects getEntityComponentAspects( int entityId ) {
         IndexedTypeSet components = getComponents( entityId );
         if ( components == null ) {
             return null;
@@ -386,7 +386,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         protected void findNext() {
             while ( nextEntityId < activeEntities.size() ) {
                 nextEntityId = activeEntities.nextSetBit( nextEntityId + 1 );
-                if ( nextEntityId < 0 || getAspects( nextEntityId ).include( aspects ) ) {
+                if ( nextEntityId < 0 || getEntityComponentAspects( nextEntityId ).include( aspects ) ) {
                     return;
                 }
             }
