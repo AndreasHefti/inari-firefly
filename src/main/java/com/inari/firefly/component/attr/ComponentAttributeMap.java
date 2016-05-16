@@ -76,6 +76,10 @@ public class ComponentAttributeMap implements AttributeMap {
     
     @Override
     public final AttributeMap putUntyped( AttributeKey<?> key, Object value ) {
+        if ( value == null ) {
+            attributes.remove( key );
+            return this;
+        }
         if ( !key.valueType.isAssignableFrom( value.getClass() ) ) {
             throw new IllegalArgumentException( "The type of value does not match with the key valueType: " + key.valueType + " objectType: " + value.getClass() );
         }

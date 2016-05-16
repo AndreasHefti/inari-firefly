@@ -28,8 +28,7 @@ public interface FFSystem extends IndexedType, FFContextInitiable {
         
         @Override
         public final AspectGroup aspectGroup() {
-            // TODO Auto-generated method stub
-            return null;
+            return ASPECT_GROUP;
         }
         
         @SuppressWarnings( "unchecked" )

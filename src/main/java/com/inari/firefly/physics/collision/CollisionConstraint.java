@@ -16,8 +16,6 @@ public abstract class CollisionConstraint extends SystemComponent {
         return TYPE_KEY;
     }
     
-    //public abstract boolean check( EntityData entityData, CollisionData collisionData );
-    
-    public abstract Collisions checkCollisions( int entityId );
+    public abstract void checkCollisions( int entityId, boolean update );
 
 }

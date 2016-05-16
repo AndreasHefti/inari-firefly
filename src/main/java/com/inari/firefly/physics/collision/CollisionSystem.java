@@ -31,7 +31,8 @@ public final class CollisionSystem
         MoveEventListener {
     
     public static final FFSystemTypeKey<CollisionSystem> SYSTEM_KEY = FFSystemTypeKey.create( CollisionSystem.class );
-    public static final AspectGroup CONTACT_ASPECT_TYPE = new AspectGroup( "CONTACT_ASPECT_TYPE" );
+    public static final AspectGroup MATERIAL_ASPECT_GROUP = new AspectGroup( "MATERIAL_ASPECT_GROUP" );
+    public static final AspectGroup CONTACT_ASPECT_GROUP = new AspectGroup( "CONTACT_ASPECT_GROUP" );
 
     private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         BitMask.TYPE_KEY,
@@ -44,6 +45,8 @@ public final class CollisionSystem
     final DynArray<DynArray<CollisionQuadTree>> quadTreesPerViewAndLayer;
     final DynArray<CollisionConstraint> collisionConstraints;
     final DynArray<CollisionResolver> collisionResolvers;
+    
+    private final ContactEvent contactEvent = new ContactEvent();
 
     CollisionSystem() {
         super( SYSTEM_KEY );
@@ -126,22 +129,40 @@ public final class CollisionSystem
             }
             
             ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
-            final int collisionConstraintId = collision.getCollisionConstraintId();
             final int collisionResolverId = collision.getCollisionResolverId();
-            if ( collisionConstraintId < 0 ) {
-                continue;
-            }
-
-            Collisions collisions = collisionConstraints
-                .get( collisionConstraintId )
-                .checkCollisions( entityId );
+            final int collisionConstraintId = collision.getCollisionConstraintId();
             
-            if ( collisions.size() > 0 ) {
+            collision.clearContacts();
+            if ( collisionConstraintId < 0 ) {
+                return;
+            }
+            
+            collisionConstraints
+                .get( collisionConstraintId )
+                .checkCollisions( entityId, false );
+            
+            if ( collision.hasAnyContact() ) {
+                contactEvent.entityId = entityId;
+                context.notify( contactEvent );
+                
                 if ( collisionResolverId >= 0 ) {
-                    collisionResolvers.get( collisionResolverId ).resolve( collisions );
+                    collisionResolvers.get( collisionResolverId ).resolve( entityId );
                 }
             }
         }
+    }
+    
+    public final void updateContacts( int entityId ) {
+        ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+        collision.clearContacts();
+        final int collisionConstraintId = collision.getCollisionConstraintId();
+        if ( collisionConstraintId < 0 ) {
+            return;
+        }
+        
+        collisionConstraints
+            .get( collisionConstraintId )
+            .checkCollisions( entityId, true );
     }
 
     public final BitMask getBitMask( int bitMaskId ) {

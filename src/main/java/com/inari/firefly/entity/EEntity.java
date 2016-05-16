@@ -120,10 +120,8 @@ public class EEntity extends EntityComponent {
     
     private DynArray<Aspect> getAspectsAsDynArray() {
         DynArray<Aspect> result = new DynArray<Aspect>();
-        int i = aspects.nextSetBit( 0 );
-        while ( i >= 0 ) {
-            result.add( ENTITY_ASPECT_GROUP.getAspect( i ) );
-            i = aspects.nextSetBit( i + 1 );
+        for ( Aspect aspect : aspects ) {
+            result.add( aspect );
         }
         return result;
     }

@@ -68,6 +68,6 @@ public abstract class CollisionResolver extends SystemComponent {
         attributes.put( Y_AXIS_FIRST, yAxisFirst );
     }
 
-    public abstract void resolve( Collisions collisions );
+    public abstract void resolve( int entityId );
 
 }
