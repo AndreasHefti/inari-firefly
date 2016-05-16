@@ -11,6 +11,7 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.graphics.tile.TileGridSystem;
+import com.inari.firefly.physics.movement.EMovement;
 
 public final class CollisionConstraintImpl extends CollisionConstraint {
     
@@ -35,18 +36,15 @@ public final class CollisionConstraintImpl extends CollisionConstraint {
     public void checkCollisions( int entityId, boolean updte ) {
         ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
         ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+        EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
 
         tmpContact.dispose();
         tmpContact.movingEntityId = entityId;
-        tmpContact.setMovingWorldBounds( transform.getXpos(), transform.getYpos(), collision.bounding );
+        tmpContact.setMovingWorldBounds( transform.getXpos(), transform.getYpos(), collision.bounding, movement.getVelocityX() );
 
         final int viewId = transform.getViewId();
-
-        tmpTileGridBounds.x = tmpContact.movingWorldBounds.x;
-        tmpTileGridBounds.y = tmpContact.movingWorldBounds.y;
-        tmpTileGridBounds.width = tmpContact.movingWorldBounds.width;
-        tmpTileGridBounds.height = tmpContact.movingWorldBounds.height;
-
+       
+        tmpTileGridBounds.setFrom( tmpContact.movingWorldBounds );
         if ( collision.collisionLayerIds != null ) {
             final IntIterator iterator = collision.collisionLayerIds.iterator();
             while ( iterator.hasNext() ) {
@@ -189,8 +187,8 @@ public final class CollisionConstraintImpl extends CollisionConstraint {
             solid = false; 
         }
         
-        public final void setMovingWorldBounds( final float worldPosX, final float worldPosY, final Rectangle collisionBounding ) {
-            movingWorldBounds.x = (int) Math.floor( worldPosX ) + collisionBounding.x;
+        public final void setMovingWorldBounds( final float worldPosX, final float worldPosY, final Rectangle collisionBounding, final float xVelocity ) {
+            movingWorldBounds.x = ( xVelocity > 0 )? (int) Math.ceil( worldPosX ) : (int) Math.floor( worldPosX ) + collisionBounding.x;
             movingWorldBounds.y = (int) Math.floor( worldPosY ) + collisionBounding.y;
             movingWorldBounds.width = collisionBounding.width;
             movingWorldBounds.height = collisionBounding.height;
