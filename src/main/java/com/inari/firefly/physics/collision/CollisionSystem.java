@@ -6,11 +6,15 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.graphics.tile.ETile;
+import com.inari.firefly.graphics.tile.TileGrid;
+import com.inari.firefly.graphics.tile.TileGridSystem;
+import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.graphics.view.ViewEvent;
 import com.inari.firefly.graphics.view.ViewEvent.Type;
 import com.inari.firefly.graphics.view.ViewEventListener;
@@ -163,6 +167,40 @@ public final class CollisionSystem
         collisionConstraints
             .get( collisionConstraintId )
             .checkCollisions( entityId, true );
+    }
+    
+    public final RayScan rayScan( RayScan rayScan, int viewId, IntBag layerIds ) {
+        rayScan.clear();
+        final TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
+        final IntIterator layerIterator = layerIds.iterator();
+        
+        while ( layerIterator.hasNext() ) {
+            TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerIterator.next() );
+            TileIterator scanIterator = tileGridSystem.getTiles( tileGrid.index(), rayScan.bounds );
+            if ( !scanIterator.hasNext() ) {
+                continue;
+            }
+            
+            while ( scanIterator.hasNext() ) {
+                final int tileId = scanIterator.next();
+                final ECollision tileCollision = context.getEntityComponent( tileId, ECollision.TYPE_KEY );
+                if ( tileCollision == null || !tileCollision.isSolid() ) {
+                    continue;
+                }
+        
+                final int bitmaskId = tileCollision.getBitmaskId();
+                if ( bitmaskId >= 0 ) { 
+                    rayScan.setBitMask( context.getSystemComponent( BitMask.TYPE_KEY, bitmaskId ) );
+                }
+                
+                rayScan.addScan( 
+                    (int) scanIterator.getWorldXPos(), 
+                    (int) scanIterator.getWorldYPos() 
+                );
+            }
+        }
+        
+        return rayScan;
     }
 
     public final BitMask getBitMask( int bitMaskId ) {
