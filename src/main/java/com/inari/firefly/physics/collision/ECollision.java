@@ -133,6 +133,16 @@ public final class ECollision extends EntityComponent {
     public final boolean hasAnyContact() {
         return contacts.size() > 0;
     }
+    
+    public final boolean hasSolidContact() {
+        for ( Contact contact : contacts ) {
+            if ( contact.isSolid() ) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     public final boolean hasContact( Aspect contact ) {
         return contactAspects.contains( contact );
@@ -148,6 +158,16 @@ public final class ECollision extends EntityComponent {
 
     public final DynArray<Contact> getContacts() {
         return contacts;
+    }
+    
+    public final Contact getFirstContact( Aspect contactType ) {
+        for ( Contact c : contacts ) {
+            if ( c.contactType() == contactType ) {
+                return c;
+            }
+        }
+        
+        return null;
     }
 
     public final Aspect getMaterialType() {

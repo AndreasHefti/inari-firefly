@@ -145,7 +145,7 @@ public final class CollisionSystem
                 .get( collisionConstraintId )
                 .checkCollisions( entityId, false );
             
-            if ( collision.hasAnyContact() ) {
+            if ( collision.hasAnyContact() && collision.hasSolidContact() ) {
                 contactEvent.entityId = entityId;
                 context.notify( contactEvent );
                 
@@ -169,38 +169,45 @@ public final class CollisionSystem
             .checkCollisions( entityId, true );
     }
     
-    public final RayScan rayScan( RayScan rayScan, int viewId, IntBag layerIds ) {
+    public final RayScan rayScan( final RayScan rayScan, final int viewId, final IntBag layerIds ) {
         rayScan.clear();
         final TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
         final IntIterator layerIterator = layerIds.iterator();
         
         while ( layerIterator.hasNext() ) {
-            TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerIterator.next() );
-            TileIterator scanIterator = tileGridSystem.getTiles( tileGrid.index(), rayScan.bounds );
-            if ( !scanIterator.hasNext() ) {
-                continue;
-            }
-            
-            while ( scanIterator.hasNext() ) {
-                final int tileId = scanIterator.next();
-                final ECollision tileCollision = context.getEntityComponent( tileId, ECollision.TYPE_KEY );
-                if ( tileCollision == null || !tileCollision.isSolid() ) {
-                    continue;
-                }
-        
-                final int bitmaskId = tileCollision.getBitmaskId();
-                if ( bitmaskId >= 0 ) { 
-                    rayScan.setBitMask( context.getSystemComponent( BitMask.TYPE_KEY, bitmaskId ) );
-                }
-                
-                rayScan.addScan( 
-                    (int) scanIterator.getWorldXPos(), 
-                    (int) scanIterator.getWorldYPos() 
-                );
-            }
+            addToRayScan( rayScan, viewId, layerIterator.next(), tileGridSystem );
         }
         
         return rayScan;
+    }
+    
+    public final RayScan addToRayScan( final RayScan rayScan, final int viewId, final int layerId ) {
+        addToRayScan( rayScan, viewId, layerId, context.getSystem( TileGridSystem.SYSTEM_KEY ) );
+        return rayScan;
+    }
+
+    private void addToRayScan( final RayScan rayScan, final int viewId, final int layerId, final TileGridSystem tileGridSystem ) {
+        TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
+        TileIterator scanIterator = tileGridSystem.getTiles( tileGrid.index(), rayScan.bounds );
+        if ( !scanIterator.hasNext() ) {
+            return;
+        }
+        
+        while ( scanIterator.hasNext() ) {
+            final int tileId = scanIterator.next();
+            final ECollision tileCollision = context.getEntityComponent( tileId, ECollision.TYPE_KEY );
+      
+            final int bitmaskId = tileCollision.getBitmaskId();
+            BitMask bitMask = ( bitmaskId >= 0 )? context.getSystemComponent( BitMask.TYPE_KEY, bitmaskId ) : null;
+            
+            rayScan.addScan( 
+                (int) scanIterator.getWorldXPos(), 
+                (int) scanIterator.getWorldYPos(),
+                bitMask,
+                tileCollision.isSolid(),
+                tileCollision.getContactType()
+            );
+        }
     }
 
     public final BitMask getBitMask( int bitMaskId ) {

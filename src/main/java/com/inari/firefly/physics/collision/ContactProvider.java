@@ -37,6 +37,24 @@ public abstract class ContactProvider {
         return contact;
     }
     
+    public final static Contact createContact( int movingEntityId, int contactEntityId, Aspect contactType, boolean solid ) {
+        ContactImpl contact = disposedContacts.getFirst();
+        if ( contact == null ) {
+            contact = new ContactImpl();
+        }
+        
+        contact.movingEntityId = movingEntityId;
+        contact.contactEntityId = contactEntityId;
+        contact.movingWorldBounds.width = 0;
+        contact.contactWorldBounds.width = 0;
+        contact.intersectionBounds.width = 0;
+        contact.intersectionMask = null;
+        contact.contactType = contactType;
+        contact.solid = solid;
+        
+        return contact;
+    }
+    
     public final static Contact createContact( Contact other ) {
         ContactImpl contact = ( !disposedContacts.isEmpty() )?  disposedContacts.pollFirst() : new ContactImpl();
         
@@ -142,4 +160,5 @@ public abstract class ContactProvider {
             disposedContacts.add( this );
         }
     }
+
 }

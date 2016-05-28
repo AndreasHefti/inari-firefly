@@ -241,6 +241,13 @@ public final class TileGrid extends SystemComponent {
 
         return get( x, y );
     }
+    
+    public final int getTileAt( float xpos, float ypos ) {
+        int x = (int) Math.floor( (double) ( xpos - worldXPos ) / cellWidth );
+        int y = (int) Math.floor( (double) ( ypos - worldYPos ) / cellHeight );
+
+        return get( x, y );
+    }
 
     public final void set( int entityId, int xpos, int ypos ) {
         if ( spherical ) {
@@ -400,5 +407,5 @@ public final class TileGrid extends SystemComponent {
             worldPosition.dy = worldYPos + ( clip.y * cellHeight );
         }
     }
-    
+
 }

@@ -92,6 +92,10 @@ public class EEntity extends EntityComponent {
     public final boolean hasAspect( Aspect aspect ) {
         return aspects.contains( aspect );
     }
+    
+    public final void resetAspects() {
+        aspects.clear();
+    }
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
@@ -125,5 +129,5 @@ public class EEntity extends EntityComponent {
         }
         return result;
     }
-    
+
 }

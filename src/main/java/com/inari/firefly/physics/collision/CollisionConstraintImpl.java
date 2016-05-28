@@ -33,7 +33,7 @@ public final class CollisionConstraintImpl extends CollisionConstraint {
     }
     
     @Override
-    public void checkCollisions( int entityId, boolean updte ) {
+    public void checkCollisions( int entityId, boolean update ) {
         ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
         ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
         EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
