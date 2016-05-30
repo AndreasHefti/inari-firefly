@@ -131,8 +131,8 @@ public final class CollisionConstraintImpl extends CollisionConstraint {
         tmpContact.intersectionBounds.x -= tmpContact.movingWorldBounds.x;
         tmpContact.intersectionBounds.y -= tmpContact.movingWorldBounds.y;
 
-        final BitMask bitmask1 = ( collision1.bitmaskId < 0 )? null : collisionSystem.bitmasks.get( collision1.bitmaskId );
-        final BitMask bitmask2 = ( collision2.bitmaskId < 0 )? null : collisionSystem.bitmasks.get( collision2.bitmaskId );
+        final BitMask bitmask1 = ( collision1.bitmaskId < 0 )? null : collisionSystem.getBitMask( collision1.bitmaskId );
+        final BitMask bitmask2 = ( collision2.bitmaskId < 0 )? null : collisionSystem.getBitMask( collision2.bitmaskId );
         if ( bitmask1 == null && bitmask2 == null ) {
             return true;
         }

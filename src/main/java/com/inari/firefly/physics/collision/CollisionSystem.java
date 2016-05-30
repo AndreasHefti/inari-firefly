@@ -44,11 +44,13 @@ public final class CollisionSystem
         CollisionConstraint.TYPE_KEY
     };
     
-    final DynArray<BitMask> bitmasks;
-    final DynArray<CollisionQuadTree> quadTrees;
-    final DynArray<DynArray<CollisionQuadTree>> quadTreesPerViewAndLayer;
-    final DynArray<CollisionConstraint> collisionConstraints;
-    final DynArray<CollisionResolver> collisionResolvers;
+    private final DynArray<BitMask> bitmasks;
+    private final DynArray<CollisionQuadTree> quadTrees;
+    private final DynArray<DynArray<CollisionQuadTree>> quadTreesPerViewAndLayer;
+    private final DynArray<CollisionConstraint> collisionConstraints;
+    private final DynArray<CollisionResolver> collisionResolvers;
+    
+    private TileGridSystem tileGridSystem;
     
     private final ContactEvent contactEvent = new ContactEvent();
 
@@ -73,6 +75,8 @@ public final class CollisionSystem
         context.registerListener( EntityActivationEvent.TYPE_KEY, this );
         context.registerListener( ViewEvent.TYPE_KEY, this );
         context.registerListener( MoveEvent.TYPE_KEY, this );
+        
+        tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
     }
 
     @Override
@@ -169,28 +173,52 @@ public final class CollisionSystem
             .checkCollisions( entityId, true );
     }
     
-    public final RayScan rayScan( final RayScan rayScan, final int viewId, final IntBag layerIds ) {
-        rayScan.clear();
-        final TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
+    public final void contactScan( final ContactScan contactScan, final int viewId, final IntBag layerIds ) {
+        contactScan.clearContacts();
         final IntIterator layerIterator = layerIds.iterator();
         
         while ( layerIterator.hasNext() ) {
-            addToRayScan( rayScan, viewId, layerIterator.next(), tileGridSystem );
+            addToContactScan( contactScan, viewId, layerIterator.next() );
+        }
+    }
+    
+    public final void addToContactScan( final ContactScan contactScan, final int viewId, final int layerId ) {
+        TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
+        TileIterator scanIterator = tileGridSystem.getTiles( tileGrid.index(), contactScan.getBounds() );
+        if ( !scanIterator.hasNext() ) {
+            return;
+        }
+        
+        while ( scanIterator.hasNext() ) {
+            final int tileId = scanIterator.next();
+            final ECollision tileCollision = context.getEntityComponent( tileId, ECollision.TYPE_KEY );
+            
+            contactScan.addContact( 
+                (int) scanIterator.getWorldXPos(), 
+                (int) scanIterator.getWorldYPos(),
+                tileId, tileCollision
+            );
+        }
+    }
+    
+    @Deprecated
+    public final RayScan rayScan( final RayScan rayScan, final int viewId, final IntBag layerIds ) {
+        rayScan.clear();
+        final IntIterator layerIterator = layerIds.iterator();
+        
+        while ( layerIterator.hasNext() ) {
+            addToRayScan( rayScan, viewId, layerIterator.next() );
         }
         
         return rayScan;
     }
     
+    @Deprecated
     public final RayScan addToRayScan( final RayScan rayScan, final int viewId, final int layerId ) {
-        addToRayScan( rayScan, viewId, layerId, context.getSystem( TileGridSystem.SYSTEM_KEY ) );
-        return rayScan;
-    }
-
-    private void addToRayScan( final RayScan rayScan, final int viewId, final int layerId, final TileGridSystem tileGridSystem ) {
         TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
         TileIterator scanIterator = tileGridSystem.getTiles( tileGrid.index(), rayScan.bounds );
         if ( !scanIterator.hasNext() ) {
-            return;
+            return rayScan;
         }
         
         while ( scanIterator.hasNext() ) {
@@ -208,6 +236,8 @@ public final class CollisionSystem
                 tileCollision.getContactType()
             );
         }
+        
+        return rayScan;
     }
 
     public final BitMask getBitMask( int bitMaskId ) {
