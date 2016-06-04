@@ -161,11 +161,10 @@ public final class CollisionQuadTree extends SystemComponent {
         rootNode.remove( entityId );
     }
     
-    public final IntIterator get( int entityId ) {
-        Rectangle collisionBounds = getCollisionBounds( entityId );
+    public final IntIterator get( Rectangle scanBounds ) {
         matching.clear();
         matchingIndex = 0;
-        rootNode.get( collisionBounds );
+        rootNode.get( scanBounds );
         if ( matching.contains( 0 ) ) {
             matchingIndex = 0;
             matchingIterator.currentIterator = matching.get( 0 );
@@ -181,8 +180,9 @@ public final class CollisionQuadTree extends SystemComponent {
         ETransform tranform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         tmpBounds.x = (int) tranform.getXpos();
         tmpBounds.y = (int) tranform.getYpos();
-        tmpBounds.width = collision.bounding.width;
-        tmpBounds.height = collision.bounding.height;
+        Rectangle bounding = collision.getCollisionBounds();
+        tmpBounds.width = bounding.width;
+        tmpBounds.height = bounding.height;
         return tmpBounds;
     }
 

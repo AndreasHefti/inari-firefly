@@ -4,10 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
-import com.inari.commons.lang.aspect.Aspects;
-import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -17,11 +16,9 @@ public final class ECollision extends EntityComponent {
     
     public static final EntityComponentTypeKey<ECollision> TYPE_KEY = EntityComponentTypeKey.create( ECollision.class );
     
-    public static final AttributeKey<Rectangle> BOUNDING = new AttributeKey<Rectangle>( "bounding", Rectangle.class, ECollision.class );
-    public static final AttributeKey<String> BIT_MASK_NAME = new AttributeKey<String>( "bitmaskName", String.class, ECollision.class );
-    public static final AttributeKey<Integer> BIT_MASK_ID = new AttributeKey<Integer>( "bitmaskId", Integer.class, ECollision.class );
-    public static final AttributeKey<String> COLLISION_CONSTRAINT_NAME = new AttributeKey<String>( "collisionConstraintName", String.class, ECollision.class );
-    public static final AttributeKey<Integer> COLLISION_CONSTRAINT_ID = new AttributeKey<Integer>( "collisionConstraintId", Integer.class, ECollision.class );
+    public static final AttributeKey<Rectangle> COLLISION_BOUNDS = new AttributeKey<Rectangle>( "collisionBounds", Rectangle.class, ECollision.class );
+    public static final AttributeKey<BitMask> COLLISION_MASK = new AttributeKey<BitMask>( "collisionMask", BitMask.class, ECollision.class );
+    public static final AttributeKey<Rectangle> CONTACT_SCAN_BOUNDS = new AttributeKey<Rectangle>( "contactScanBounds", Rectangle.class, ECollision.class );
     public static final AttributeKey<String> COLLISION_RESOLVER_NAME = new AttributeKey<String>( "collisionResolverName", String.class, ECollision.class );
     public static final AttributeKey<Integer> COLLISION_RESOLVER_ID = new AttributeKey<Integer>( "collisionResolverId", Integer.class, ECollision.class );
     public static final AttributeKey<IntBag> COLLISION_LAYER_IDS = new AttributeKey<IntBag>( "collisionLayersIds", IntBag.class, ECollision.class );
@@ -29,80 +26,81 @@ public final class ECollision extends EntityComponent {
     public static final AttributeKey<Aspect> CONTACT_TYPE = new AttributeKey<Aspect>( "contactType", Aspect.class, ECollision.class );
     public static final AttributeKey<Boolean> SOLID = new AttributeKey<Boolean>( "solid", Boolean.class, ECollision.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
-        BOUNDING,
-        BIT_MASK_ID,
-        COLLISION_CONSTRAINT_ID,
+        COLLISION_BOUNDS,
+        COLLISION_MASK,
+        CONTACT_SCAN_BOUNDS,
         COLLISION_RESOLVER_ID,
         COLLISION_LAYER_IDS,
         MATERIAL_TYPE,
         CONTACT_TYPE,
     };
     
-    Rectangle outerBounding;
-    Rectangle bounding;
-    int bitmaskId;
-    int collisionConstraintId;
+    final Rectangle collisionBounds;
+    BitMask collisionMask;
+    final Rectangle contactScanBounds;
     int collisionResolverId;
     final IntBag collisionLayerIds;
     Aspect materialType;
     Aspect contactType;
     boolean solid;
     
-    final DynArray<Contact> contacts;
-    final Aspects contactAspects;
+    final ContactScan contactScan;
 
     ECollision() {
         super( TYPE_KEY );
+        collisionBounds = new Rectangle();
+        contactScanBounds = new Rectangle();
         collisionLayerIds = new IntBag( 5, -1 );
-        contacts = new DynArray<Contact>();
-        contactAspects = CollisionSystem.CONTACT_ASPECT_GROUP.createAspects();
+        contactScan = new ContactScan();
         resetAttributes();
     }
     
     @Override
     public final void resetAttributes() {
-        outerBounding = null;
-        bounding = null;
-        bitmaskId = -1;
-        collisionConstraintId = -1;
+        collisionMask = null;
         collisionResolverId = -1;
         collisionLayerIds.clear();
         contactType = null;
         materialType = null;
         solid = true;
-        clearContacts();
     }
 
-    public final int getBitmaskId() {
-        return bitmaskId;
+    public final Rectangle getCollisionBounds() {
+        return collisionBounds;
     }
 
-    public final void setBitmaskId( int bitmaskId ) {
-        this.bitmaskId = bitmaskId;
+    public final void setCollisionBounds( Rectangle collisionBounds ) {
+        if ( collisionBounds == null ) {
+            this.collisionBounds.x = 0;
+            this.collisionBounds.y = 0;
+            this.collisionBounds.width = 0;
+            this.collisionBounds.height = 0;
+            return;
+        }
+        this.collisionBounds.setFrom( collisionBounds );
     }
 
-    public final Rectangle getBounding() {
-        return bounding;
+    public final BitMask getCollisionMask() {
+        return collisionMask;
     }
 
-    public final void setBounding( Rectangle bounding ) {
-        this.bounding = bounding;
-    }
- 
-    public final Rectangle getOuterBounding() {
-        return outerBounding;
+    public final void setCollisionMask( BitMask collisionMask ) {
+        this.collisionMask = collisionMask;
     }
 
-    public final void setOuterBounding( Rectangle outerBounding ) {
-        this.outerBounding = outerBounding;
+    public final Rectangle getContactScanBounds() {
+        return contactScanBounds;
     }
-
-    public final int getCollisionConstraintId() {
-        return collisionConstraintId;
-    }
-
-    public final void setCollisionConstraintId( int collisionConstraintId ) {
-        this.collisionConstraintId = collisionConstraintId;
+    
+    public final void setContactScanBounds( Rectangle contactScanBounds ) {
+        if ( contactScanBounds == null ) {
+            this.contactScanBounds.x = 0;
+            this.contactScanBounds.y = 0;
+            this.contactScanBounds.width = 0;
+            this.contactScanBounds.height = 0;
+            return;
+        }
+        this.contactScanBounds.setFrom( contactScanBounds );
     }
 
     public final int getCollisionResolverId() {
@@ -121,53 +119,9 @@ public final class ECollision extends EntityComponent {
         this.collisionLayerIds.clear();
         this.collisionLayerIds.addAll( collisionLayerIds );
     }
-    
-    public final void addContact( Contact contact ) {
-        contacts.add( contact );
-        Aspect contactType = contact.contactType();
-        if ( contactType != null ) {
-            contactAspects.set( contactType );
-        }
-    }
-    
-    public final boolean hasAnyContact() {
-        return contacts.size() > 0;
-    }
-    
-    public final boolean hasSolidContact() {
-        for ( Contact contact : contacts ) {
-            if ( contact.isSolid() ) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
 
-    public final boolean hasContact( Aspect contact ) {
-        return contactAspects.contains( contact );
-    }
-
-    public final void clearContacts() {
-        for ( Contact contact : contacts ) {
-            contact.dispose();
-        }
-        contacts.clear();
-        contactAspects.clear();
-    }
-
-    public final DynArray<Contact> getContacts() {
-        return contacts;
-    }
-    
-    public final Contact getFirstContact( Aspect contactType ) {
-        for ( Contact c : contacts ) {
-            if ( c.contactType() == contactType ) {
-                return c;
-            }
-        }
-        
-        return null;
+    public final ContactScan getContactScan() {
+        return contactScan;
     }
 
     public final Aspect getMaterialType() {
@@ -201,10 +155,10 @@ public final class ECollision extends EntityComponent {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        collisionConstraintId = attributes.getIdForName( COLLISION_CONSTRAINT_NAME, COLLISION_CONSTRAINT_ID, CollisionConstraint.TYPE_KEY, collisionConstraintId );
+        setCollisionBounds( attributes.getValue( COLLISION_BOUNDS, collisionBounds ) );
+        collisionMask = attributes.getValue( COLLISION_MASK, collisionMask );
+        setContactScanBounds( attributes.getValue( CONTACT_SCAN_BOUNDS, contactScanBounds ) );
         collisionResolverId = attributes.getIdForName( COLLISION_RESOLVER_NAME, COLLISION_RESOLVER_ID, CollisionResolver.TYPE_KEY, collisionResolverId );
-        bitmaskId = attributes.getIdForName( BIT_MASK_NAME, BIT_MASK_ID, BitMask.TYPE_KEY, bitmaskId );
-        bounding = attributes.getValue( BOUNDING, bounding );
         if ( attributes.contains( COLLISION_LAYER_IDS ) ) {
             setCollisionLayerIds( attributes.getValue( COLLISION_LAYER_IDS, collisionLayerIds ) );
         }
@@ -215,10 +169,10 @@ public final class ECollision extends EntityComponent {
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
-        attributes.put( BIT_MASK_ID, bitmaskId );
-        attributes.put( BOUNDING, bounding );
+        attributes.put( COLLISION_BOUNDS, collisionBounds );
+        attributes.put( COLLISION_MASK, collisionMask );
+        attributes.put( CONTACT_SCAN_BOUNDS, contactScanBounds );
         attributes.put( COLLISION_RESOLVER_ID, collisionResolverId );
-        attributes.put( COLLISION_CONSTRAINT_ID, collisionConstraintId );
         attributes.put( COLLISION_LAYER_IDS, collisionLayerIds );
         attributes.put( MATERIAL_TYPE, materialType );
         attributes.put( CONTACT_TYPE, contactType );

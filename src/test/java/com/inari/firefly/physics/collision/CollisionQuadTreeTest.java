@@ -89,7 +89,7 @@ public class CollisionQuadTreeTest extends FFTest {
             .set( EEntity.ENTITY_NAME, name )
             .set( ETransform.XPOSITION, x )
             .set( ETransform.YPOSITION, y )
-            .set( ECollision.BOUNDING, new Rectangle( 0, 0, 10, 10 ) )
+            .set( ECollision.COLLISION_BOUNDS, new Rectangle( 0, 0, 10, 10 ) )
         .activate();
         
         return name;

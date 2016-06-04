@@ -39,16 +39,13 @@ public class SimpleCollisionTest extends FFTest {
             .set( CollisionQuadTree.MAX_LEVEL, 5 )
             .set( CollisionQuadTree.WORLD_AREA, WORLD_BOUNDS )
         .build();
-        int constraintId = collisionSystem.getCollisionConstraintBuilder()
-            .set( CollisionConstraint.NAME, "Test" )
-        .build( CollisionConstraintImpl.class );
             
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.LAYER_ID, 0 )
             .set( ETransform.XPOSITION, 10 )
             .set( ETransform.YPOSITION, 10 )
-            .set( ECollision.BOUNDING, new Rectangle( 0, 0, 10, 10 ) )
+            .set( ECollision.COLLISION_BOUNDS, new Rectangle( 0, 0, 10, 10 ) )
             .set( EMovement.VELOCITY_X, 3f )
             .set( EMovement.ACTIVE, true )
         .activateAndNext()
@@ -56,8 +53,7 @@ public class SimpleCollisionTest extends FFTest {
             .set( ETransform.LAYER_ID, 0 )
             .set( ETransform.XPOSITION, 30 )
             .set( ETransform.YPOSITION, 10 )
-            .set( ECollision.BOUNDING, new Rectangle( 0, 0, 10, 10 ) )
-            .set( ECollision.COLLISION_CONSTRAINT_ID, constraintId )
+            .set( ECollision.COLLISION_BOUNDS, new Rectangle( 0, 0, 10, 10 ) )
         .activate();
         
         assertEquals( 
@@ -124,7 +120,7 @@ public class SimpleCollisionTest extends FFTest {
             .set( ETransform.LAYER_ID, 0 )
             .set( ETransform.XPOSITION, 10 )
             .set( ETransform.YPOSITION, 10 )
-            .set( ECollision.BOUNDING, new Rectangle( 0, 0, 10, 10 ) )
+            .set( ECollision.COLLISION_BOUNDS, new Rectangle( 0, 0, 10, 10 ) )
             .set( EMovement.VELOCITY_X, 3f )
             .set( EMovement.ACTIVE, true )
         .activateAndNext()
@@ -132,7 +128,7 @@ public class SimpleCollisionTest extends FFTest {
             .set( ETransform.LAYER_ID, 0 )
             .set( ETile.GRID_X_POSITION, 2 )
             .set( ETile.GRID_Y_POSITION, 1 )
-            .set( ECollision.BOUNDING, new Rectangle( 0, 0, 16, 16 ) )
+            .set( ECollision.COLLISION_BOUNDS, new Rectangle( 0, 0, 16, 16 ) )
         .activate();
         
         assertEquals( 

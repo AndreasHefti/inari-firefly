@@ -2,22 +2,25 @@ package com.inari.firefly.physics.collision;
 
 import java.util.Iterator;
 
+import com.inari.commons.GeomUtils;
+import com.inari.commons.geom.BitMask;
+import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
-import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
+import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.graphics.view.ViewEvent;
 import com.inari.firefly.graphics.view.ViewEvent.Type;
 import com.inari.firefly.graphics.view.ViewEventListener;
+import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.physics.movement.MoveEvent;
 import com.inari.firefly.physics.movement.MoveEventListener;
 import com.inari.firefly.system.FFContext;
@@ -39,27 +42,23 @@ public final class CollisionSystem
     public static final AspectGroup CONTACT_ASPECT_GROUP = new AspectGroup( "CONTACT_ASPECT_GROUP" );
 
     private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
-        BitMask.TYPE_KEY,
         CollisionQuadTree.TYPE_KEY,
-        CollisionConstraint.TYPE_KEY
+        CollisionResolver.TYPE_KEY
     };
     
-    private final DynArray<BitMask> bitmasks;
     private final DynArray<CollisionQuadTree> quadTrees;
     private final DynArray<DynArray<CollisionQuadTree>> quadTreesPerViewAndLayer;
-    private final DynArray<CollisionConstraint> collisionConstraints;
     private final DynArray<CollisionResolver> collisionResolvers;
     
     private TileGridSystem tileGridSystem;
+    private final Rectangle checkPivot = new Rectangle( 0, 0, 0, 0 );
     
     private final ContactEvent contactEvent = new ContactEvent();
 
     CollisionSystem() {
         super( SYSTEM_KEY );
-        bitmasks = new DynArray<BitMask>();
         quadTrees = new DynArray<CollisionQuadTree>();
         quadTreesPerViewAndLayer = new DynArray<DynArray<CollisionQuadTree>>();
-        collisionConstraints = new DynArray<CollisionConstraint>();
         collisionResolvers = new DynArray<CollisionResolver>();
     }
     
@@ -131,156 +130,157 @@ public final class CollisionSystem
         final IntIterator movedEntiyIterator = event.movedEntityIds();
         while ( movedEntiyIterator.hasNext() ) {
             final int entityId = movedEntiyIterator.next();
-            final Aspects aspects = context.getEntityComponentAspects( entityId );
-            if ( !aspects.contains( ECollision.TYPE_KEY ) ) {
-                continue;
-            }
-            
-            ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+            final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+            final ContactScan contactScan = collision.getContactScan();
             final int collisionResolverId = collision.getCollisionResolverId();
-            final int collisionConstraintId = collision.getCollisionConstraintId();
             
-            collision.clearContacts();
-            if ( collisionConstraintId < 0 ) {
-                return;
+            scanContacts( entityId, collision );
+            
+            if ( collisionResolverId >= 0 ) {
+                collisionResolvers.get( collisionResolverId ).resolve( entityId );
             }
             
-            collisionConstraints
-                .get( collisionConstraintId )
-                .checkCollisions( entityId, false );
-            
-            if ( collision.hasAnyContact() && collision.hasSolidContact() ) {
+            if ( contactScan.hasSolidContact() ) {
                 contactEvent.entityId = entityId;
                 context.notify( contactEvent );
-                
-                if ( collisionResolverId >= 0 ) {
-                    collisionResolvers.get( collisionResolverId ).resolve( entityId );
-                }
             }
+            
+            
         }
     }
     
     public final void updateContacts( int entityId ) {
-        ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
-        collision.clearContacts();
-        final int collisionConstraintId = collision.getCollisionConstraintId();
-        if ( collisionConstraintId < 0 ) {
-            return;
-        }
-        
-        collisionConstraints
-            .get( collisionConstraintId )
-            .checkCollisions( entityId, true );
-    }
-    
-    public final void contactScan( final ContactScan contactScan, final int viewId, final IntBag layerIds ) {
-        contactScan.clearContacts();
-        final IntIterator layerIterator = layerIds.iterator();
-        
-        while ( layerIterator.hasNext() ) {
-            addToContactScan( contactScan, viewId, layerIterator.next() );
-        }
-    }
-    
-    public final void addToContactScan( final ContactScan contactScan, final int viewId, final int layerId ) {
-        TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
-        TileIterator scanIterator = tileGridSystem.getTiles( tileGrid.index(), contactScan.getBounds() );
-        if ( !scanIterator.hasNext() ) {
-            return;
-        }
-        
-        while ( scanIterator.hasNext() ) {
-            final int tileId = scanIterator.next();
-            final ECollision tileCollision = context.getEntityComponent( tileId, ECollision.TYPE_KEY );
-            
-            contactScan.addContact( 
-                (int) scanIterator.getWorldXPos(), 
-                (int) scanIterator.getWorldYPos(),
-                tileId, tileCollision
-            );
-        }
-    }
-    
-    @Deprecated
-    public final RayScan rayScan( final RayScan rayScan, final int viewId, final IntBag layerIds ) {
-        rayScan.clear();
-        final IntIterator layerIterator = layerIds.iterator();
-        
-        while ( layerIterator.hasNext() ) {
-            addToRayScan( rayScan, viewId, layerIterator.next() );
-        }
-        
-        return rayScan;
-    }
-    
-    @Deprecated
-    public final RayScan addToRayScan( final RayScan rayScan, final int viewId, final int layerId ) {
-        TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
-        TileIterator scanIterator = tileGridSystem.getTiles( tileGrid.index(), rayScan.bounds );
-        if ( !scanIterator.hasNext() ) {
-            return rayScan;
-        }
-        
-        while ( scanIterator.hasNext() ) {
-            final int tileId = scanIterator.next();
-            final ECollision tileCollision = context.getEntityComponent( tileId, ECollision.TYPE_KEY );
-      
-            final int bitmaskId = tileCollision.getBitmaskId();
-            BitMask bitMask = ( bitmaskId >= 0 )? context.getSystemComponent( BitMask.TYPE_KEY, bitmaskId ) : null;
-            
-            rayScan.addScan( 
-                (int) scanIterator.getWorldXPos(), 
-                (int) scanIterator.getWorldYPos(),
-                bitMask,
-                tileCollision.isSolid(),
-                tileCollision.getContactType()
-            );
-        }
-        
-        return rayScan;
+        final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+        scanContacts( entityId, collision );
     }
 
-    public final BitMask getBitMask( int bitMaskId ) {
-        if ( !bitmasks.contains( bitMaskId ) ) {
-            return null;
-        }
-        return bitmasks.get( bitMaskId );
-    }
-    
-    public final int getBitMaskId( String name ) {
-        for ( BitMask bitmask : bitmasks ) {
-            if ( bitmask.getName().equals( name ) ) {
-                return bitmask.index();
-            }
-        }
-        return -1;
-    }
-    
-    public final BitMask getBitMask( String name ) {
-        for ( BitMask bitmask : bitmasks ) {
-            if ( bitmask.getName().equals( name ) ) {
-                return bitmask;
-            }
-        }
-        return null;
-    }
-    
-    public final void deleteBitMask( int bitMaskId ) {
-        disposeBitMask( bitmasks.remove( bitMaskId ) );
-    }
-    
-    public final void deleteBitMask( String name ) {
-        int bitmaskId = getBitMaskId( name );
-        if ( bitmaskId < 0 ) {
+    private void scanContacts( int entityId, ECollision collision ) {
+        final Aspects aspects = context.getEntityComponentAspects( entityId );
+        if ( !aspects.contains( ECollision.TYPE_KEY ) ) {
             return;
         }
-        disposeBitMask( bitmasks.remove( bitmaskId ) );
+        
+        final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
+        final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
+        final ContactScan contactScan = collision.getContactScan();
+        
+        contactScan.clearContacts();
+        contactScan.updateWorldBounds( 
+            transform.getXpos(),
+            transform.getYpos(),
+            movement.getVelocityX(),
+            movement.getVelocityY(),
+            ( collision.collisionBounds != null )? collision.contactScanBounds : collision.collisionBounds
+        );
+        
+        final int viewId = transform.getViewId();
+        if ( collision.collisionLayerIds != null ) {
+            final IntIterator iterator = collision.collisionLayerIds.iterator();
+            while ( iterator.hasNext() ) {
+                final int layerId = iterator.next();
+                scanTileContacts( entityId, viewId, layerId, contactScan );
+                scanSpriteContacts( entityId, viewId, layerId, contactScan );
+            }
+        }
+    }
+
+    
+    private void scanSpriteContacts( final int entityId, final int viewId, final int layerId, final ContactScan contactScan ) {
+        final CollisionQuadTree quadTree = getCollisionQuadTree( viewId, layerId );
+        if ( quadTree == null ) {
+            return;
+        }
+        
+        IntIterator entityIterator = quadTree.get( contactScan.getWorldBounds() );
+        if ( entityIterator == null || !entityIterator.hasNext() ) {
+            return;
+        }
+        
+        while ( entityIterator.hasNext() ) {
+            final int entityId2 = entityIterator.next();
+            if ( entityId == entityId2 ) {
+                continue;
+            }
+            
+            final ETransform transform = context.getEntityComponent( entityId2, ETransform.TYPE_KEY );
+            scanContact( contactScan, entityId2, transform.getXpos(), transform.getYpos() );
+        }
+    }
+
+    private final void scanTileContacts( final int entityId, final int viewId, final int layerId, final ContactScan contactScan ) {
+        TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
+        if ( tileGrid == null ) {
+            return;
+        }
+        
+        TileIterator tileIterator = tileGrid.iterator( contactScan.getWorldBounds() );
+        if ( tileIterator == null || !tileIterator.hasNext() ) {
+            return;
+        }
+        
+        while ( tileIterator.hasNext() ) {
+            final int entityId2 = tileIterator.next();
+            if ( entityId == entityId2 ) {
+                continue;
+            }
+            
+            scanContact( contactScan, entityId2, tileIterator.getWorldXPos(), tileIterator.getWorldYPos() );
+        }
     }
     
-    private final void disposeBitMask( BitMask bitmask ) {
-        if ( bitmask != null ) {
-            bitmask.dispose();
+    public void scanContact( final ContactScan contactScan, final int entityId, final float xpos, final float ypos ) {
+        if ( entityId < 0 || !context.getEntityComponentAspects( entityId ).contains( ECollision.TYPE_KEY ) ) {
+            return;
         }
+        
+        final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+        final Rectangle collisionBounds = collision.getCollisionBounds();
+        final Contact contact = Contact.createContact(
+            entityId,
+            collision.solid,
+            collision.contactType,
+            (int) Math.floor( xpos ) + collisionBounds.x,
+            (int) Math.floor( ypos ) + collisionBounds.y,
+            collisionBounds.width,
+            collisionBounds.height
+        );
+        
+        final Rectangle movingWorldBounds = contactScan.getWorldBounds();
+        final Rectangle contactWorldBounds = contact.worldBounds();
+        final Rectangle intersectionBounds = contact.intersectionBounds();
+        GeomUtils.intersection( 
+            movingWorldBounds, 
+            contactWorldBounds, 
+            intersectionBounds 
+        );
+        
+        if ( intersectionBounds.area() <= 0 ) {
+            contact.dispose();
+            return;
+        }
+        
+        // normalize the intersection to origin of coordinate system
+        intersectionBounds.x -= movingWorldBounds.x;
+        intersectionBounds.y -= movingWorldBounds.y;
+        
+        
+        final BitMask bitmask2 = collision.getCollisionMask();
+        if ( bitmask2 == null ) {
+            contactScan.addContact( contact );
+            return;
+        }
+        
+        checkPivot.x = movingWorldBounds.x - contactWorldBounds.x;
+        checkPivot.y = movingWorldBounds.y - contactWorldBounds.y;
+        checkPivot.width = movingWorldBounds.width;
+        checkPivot.height = movingWorldBounds.height;
+
+        if ( bitmask2 != null && BitMask.createIntersectionMask( checkPivot, bitmask2, contact.intersectionMask(), true ) ) {
+            contactScan.addContact( contact );
+            return;
+        }
+        
+        contact.dispose();
     }
     
     public final CollisionQuadTree getCollisionQuadTree( int id ) {
@@ -333,48 +333,6 @@ public final class CollisionSystem
         }
     }
     
-    public final CollisionConstraint getCollisionConstraint( int id ) {
-        if ( collisionConstraints.contains( id ) ) {
-            return collisionConstraints.get( id );
-        }
-        
-        return null;
-    }
-
-    public final CollisionConstraint getCollisionConstraint( String name ) {
-        for ( CollisionConstraint cc : collisionConstraints ) {
-            if ( name.equals( cc.getName() ) ) {
-                return cc;
-            }
-        }
-        
-        return null;
-    }
-    
-    public final int getCollisionConstraintId( String name ) {
-        for ( CollisionConstraint cc : collisionConstraints ) {
-            if ( name.equals( cc.getName() ) ) {
-                return cc.index();
-            }
-        }
-        
-        return -1;
-    }
-
-    public final void deleteCollisionConstraint( String name ) {
-        disposeCollisionConstraint( collisionConstraints.remove( getCollisionConstraintId( name ) ) );
-    }
-
-    public final void deleteCollisionConstraint( int id ) {
-        disposeCollisionConstraint( collisionConstraints.remove( id ) );
-    }
-    
-    private void disposeCollisionConstraint( CollisionConstraint cc ) {
-        if ( cc != null ) {
-            cc.dispose();
-        }
-    }
-
     public final CollisionResolver getCollisionResolver( int id ) {
         if ( collisionResolvers.contains( id ) ) {
             return collisionResolvers.get( id );
@@ -421,72 +379,33 @@ public final class CollisionSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new BitMaskBuilderAdapter( this ),
             new CollisionQuadTreeBuilderAdapter( this ),
-            new CollisionConstraintBuilderAdapter( this ),
             new CollisionResolverBuilderAdapter( this )
         };
-    }
-    
-    public final BitMaskBuilder getBitMaskBuilder() {
-        return new BitMaskBuilder();
     }
     
     public final CollisionQuadTreeBuilder getCollisionQuadTreeBuilder() {
         return new CollisionQuadTreeBuilder();
     }
-    
-    public final CollisionConstraintBuilder getCollisionConstraintBuilder() {
-        return new CollisionConstraintBuilder();
-    }
-    
+
     public final CollisionResolverBuilder getCollisionResolverBuilder() {
         return new CollisionResolverBuilder();
     }
 
     @Override
     public final void clear() {
-        for ( BitMask bitmask : bitmasks) {
-            disposeBitMask( bitmask );
-        }
         for ( CollisionQuadTree quadTree : quadTrees ) {
             disposeQuadTree( quadTree );
-        }
-        for ( CollisionConstraint cc : collisionConstraints ) {
-            disposeCollisionConstraint( cc );
         }
         for ( CollisionResolver cr : collisionResolvers ) {
             disposeCollisionConstraint( cr );
         }
         
-        bitmasks.clear();
         quadTrees.clear();
         quadTreesPerViewAndLayer.clear();
-        collisionConstraints.clear();
         collisionResolvers.clear();
     }
 
-    public final class BitMaskBuilder extends SystemComponentBuilder {
-        
-        protected BitMaskBuilder() {
-            super( context );
-        }
-        
-        @Override
-        public final SystemComponentKey<BitMask> systemComponentKey() {
-            return BitMask.TYPE_KEY;
-        }
-
-        public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            BitMask bitmask = new BitMask( componentId );
-            bitmask.fromAttributes( attributes );
-            
-            bitmasks.set( bitmask.index(), bitmask );
-            
-            return bitmask.index();
-        }
-    }
-    
     public final class CollisionQuadTreeBuilder extends SystemComponentBuilder {
         
         protected CollisionQuadTreeBuilder() {
@@ -529,24 +448,6 @@ public final class CollisionSystem
         }
     }
     
-    public final class CollisionConstraintBuilder extends SystemComponentBuilder {
-        
-        protected CollisionConstraintBuilder() {
-            super( context );
-        }
-        
-        @Override
-        public final SystemComponentKey<CollisionConstraint> systemComponentKey() {
-            return CollisionConstraint.TYPE_KEY;
-        }
-
-        public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            CollisionConstraint cc = createSystemComponent( componentId, componentType, context );
-            collisionConstraints.set( cc.index(), cc );
-            return cc.index();
-        }
-    }
-    
     public final class CollisionResolverBuilder extends SystemComponentBuilder {
         
         protected CollisionResolverBuilder() {
@@ -562,37 +463,6 @@ public final class CollisionSystem
             CollisionResolver cr = createSystemComponent( componentId, componentType, context );
             collisionResolvers.set( cr.index(), cr );
             return cr.index();
-        }
-    }
-
-    private final class BitMaskBuilderAdapter extends SystemBuilderAdapter<BitMask> {
-        public BitMaskBuilderAdapter( CollisionSystem system ) {
-            super( system, new BitMaskBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<BitMask> componentTypeKey() {
-            return BitMask.TYPE_KEY;
-        }
-        @Override
-        public final BitMask getComponent( int id ) {
-            return bitmasks.get( id );
-        }
-        @Override
-        public final Iterator<BitMask> getAll() {
-            return bitmasks.iterator();
-        }
-        @Override
-        public final void deleteComponent( int id ) {
-            deleteBitMask( id );
-        }
-        @Override
-        public final void deleteComponent( String name ) {
-            deleteBitMask( name );
-            
-        }
-        @Override
-        public final BitMask getComponent( String name ) {
-            return getBitMask( name );
         }
     }
 
@@ -624,37 +494,6 @@ public final class CollisionSystem
         @Override
         public final CollisionQuadTree getComponent( String name ) {
             return getCollisionQuadTree( name );
-        }
-    }
-    
-    private final class CollisionConstraintBuilderAdapter extends SystemBuilderAdapter<CollisionConstraint> {
-        public CollisionConstraintBuilderAdapter( CollisionSystem system ) {
-            super( system, new CollisionConstraintBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<CollisionConstraint> componentTypeKey() {
-            return CollisionConstraint.TYPE_KEY;
-        }
-        @Override
-        public final CollisionConstraint getComponent( int id ) {
-            return getCollisionConstraint( id );
-        }
-        @Override
-        public final Iterator<CollisionConstraint> getAll() {
-            return collisionConstraints.iterator();
-        }
-        @Override
-        public final void deleteComponent( int id ) {
-            deleteCollisionConstraint( id );
-        }
-        @Override
-        public final void deleteComponent( String name ) {
-            deleteCollisionConstraint( name );
-            
-        }
-        @Override
-        public final CollisionConstraint getComponent( String name ) {
-            return getCollisionConstraint( name );
         }
     }
 
