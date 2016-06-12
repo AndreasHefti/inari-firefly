@@ -39,14 +39,16 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         View.TYPE_KEY,
         Layer.TYPE_KEY,
+        LayerGroup.TYPE_KEY
     };
 
     public static final int BASE_VIEW_ID = 0;
-    private static final int INITAL_SIZE = 20;
+    private static final int INITAL_SIZE = 10;
     
     private final DynArray<View> views;
     private final DynArray<Layer> layers;
     private final DynArray<IntBag> layersOfView;
+    private final DynArray<LayerGroup> layerGroups;
     
     private final List<View> orderedViewports;
     private final List<View> activeViewports;
@@ -55,6 +57,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         super( SYSTEM_KEY );
         views = new DynArray<View>( INITAL_SIZE );
         layers = new DynArray<Layer>( INITAL_SIZE );
+        layerGroups = new DynArray<LayerGroup>( INITAL_SIZE );
         orderedViewports = new ArrayList<View>( INITAL_SIZE );
         activeViewports = new ArrayList<View>( INITAL_SIZE );
         layersOfView = new DynArray<IntBag>( INITAL_SIZE );
@@ -197,6 +200,9 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     }
     
     public final void clear() {
+        for ( LayerGroup layerGroup : layerGroups ) {
+            deleteLayerGroup( layerGroup.index() );
+        }
         for ( View view : views ) {
             disableLayering( view.index() );
             deleteView( view.index() );
@@ -205,6 +211,8 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         layersOfView.clear();
     }
     
+    
+
     public final boolean hasLayer( int layerId ) {
         return layers.contains( layerId );
     }
@@ -293,6 +301,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         }
         
         Layer toDelete = layers.get( layerId );
+        removeLayerFromGroup( layerId );
         IntBag layersOfView = this.layersOfView.get( toDelete.getViewId() );
         layersOfView.remove( toDelete.index() );
         toDelete.dispose();
@@ -335,13 +344,55 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     public final boolean isLayeringEnabledAndHasLayers( int viewId ) {
         return layersOfView.contains( viewId ) && layersOfView.get( viewId ).size() > 1 ;
     }
+    
+    
+    
+    public final void deleteLayerGroup( int layerGroupId ) {
+        if ( !layerGroups.contains( layerGroupId ) ) {
+            return;
+        }
+        
+        LayerGroup toDelete = layerGroups.remove( layerGroupId );
+        toDelete.dispose();
+    }
+    
+    private final void removeLayerFromGroup( int layerId ) {
+        for ( LayerGroup layerGroup : layerGroups ) {
+            layerGroup.removeLayer( layerId );
+            if ( layerGroup.isEmpty() ) {
+                deleteLayerGroup( layerGroup.index() );
+            }
+        }
+    }
+    
+    public final LayerGroup getLayerGroup( int id ) {
+        if ( !layerGroups.contains( id ) ) {
+            return null;
+        }
+        
+        return layerGroups.get( id );
+    }
 
-    public final LayerBuilder getLayerBuilder() {
-        return new LayerBuilder();
+    public final int getLayerGroupId( String name ) {
+        for ( LayerGroup layerGroup : layerGroups ) {
+            if ( name.equals( layerGroup.getName() ) ) {
+                return layerGroup.index();
+            }
+        }
+        
+        return -1;
     }
 
     public final ViewBuilder getViewBuilder() {
         return new ViewBuilder();
+    }
+    
+    public final LayerBuilder getLayerBuilder() {
+        return new LayerBuilder();
+    }
+    
+    public final LayerGroupBuilder getLayerGroupBuilder() {
+        return new LayerGroupBuilder();
     }
 
     @Override
@@ -353,7 +404,8 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
             new ViewBuilderAdapter( this ),
-            new LayerBuilderAdapter( this )
+            new LayerBuilderAdapter( this ),
+            new LayerGroupBuilderAdapter( this )
         };
     }
     
@@ -455,6 +507,37 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         }
     }
     
+    public final class LayerGroupBuilder extends SystemComponentBuilder {
+        
+        public LayerGroupBuilder() {
+            super( context );
+        }
+
+        @Override
+        public final SystemComponentKey<LayerGroup> systemComponentKey() {
+            return LayerGroup.TYPE_KEY;
+        }
+
+        @Override
+        public int doBuild( int componentId, Class<?> subType, boolean activate ) {
+            LayerGroup layerGroup = createSystemComponent( componentId, subType, context );
+            checkName( layerGroup );
+            
+            IntIterator iterator = layerGroup.getLayerIds().iterator();
+            while ( iterator.hasNext() ) {
+                int layerId = iterator.next();
+                if ( !hasLayer( layerId ) ) {
+                    throw new ComponentCreationException( "There is no existing Layer withi id: " + layerId );
+                }
+            }
+            
+            int index = layerGroup.index();
+            layerGroups.set( index, layerGroup );
+            
+            return index;
+        }
+    }
+    
     private final class ViewBuilderAdapter extends SystemBuilderAdapter<View> {
         public ViewBuilderAdapter( ViewSystem system ) {
             super( system, new ViewBuilder() );
@@ -516,7 +599,37 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return getLayer( getLayerId( name ) );
         }
     }
-
     
+    private final class LayerGroupBuilderAdapter extends SystemBuilderAdapter<LayerGroup> {
+        public LayerGroupBuilderAdapter( ViewSystem system ) {
+            super( system, new LayerGroupBuilder() );
+        }
+        @Override
+        public final SystemComponentKey<LayerGroup> componentTypeKey() {
+            return LayerGroup.TYPE_KEY;
+        }
+        @Override
+        public final LayerGroup getComponent( int id ) {
+            return getLayerGroup( id );
+        }
+        
+        @Override
+        public final Iterator<LayerGroup> getAll() {
+            return layerGroups.iterator();
+        }
+        @Override
+        public final void deleteComponent( int id ) {
+            deleteLayerGroup( id );
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteLayerGroup( getLayerGroupId( name ) );
+            
+        }
+        @Override
+        public final LayerGroup getComponent( String name ) {
+            return getLayerGroup( getLayerGroupId( name ) );
+        }
+    }
 
 }

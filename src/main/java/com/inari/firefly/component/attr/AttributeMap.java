@@ -19,7 +19,6 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentId;
-import com.inari.firefly.control.Controller;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public interface AttributeMap {
@@ -66,7 +65,7 @@ public interface AttributeMap {
     IntBag getIdsForNames( 
         AttributeKey<DynArray<String>> namesAttribute, 
         AttributeKey<IntBag> idsAttribute,
-        SystemComponentKey<Controller> typeKey, 
+        SystemComponentKey<? extends Component> typeKey, 
         IntBag defaultValue 
     );
 

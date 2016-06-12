@@ -20,6 +20,7 @@ import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.graphics.view.ViewEvent;
 import com.inari.firefly.graphics.view.ViewEvent.Type;
 import com.inari.firefly.graphics.view.ViewEventListener;
+import com.inari.firefly.graphics.view.ViewSystem;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.physics.movement.MoveEvent;
 import com.inari.firefly.physics.movement.MoveEventListener;
@@ -51,6 +52,7 @@ public final class CollisionSystem
     private final DynArray<CollisionResolver> collisionResolvers;
     
     private TileGridSystem tileGridSystem;
+    private ViewSystem viewSystem;
     private final Rectangle checkPivot = new Rectangle( 0, 0, 0, 0 );
     
     private final ContactEvent contactEvent = new ContactEvent();
@@ -76,6 +78,7 @@ public final class CollisionSystem
         context.registerListener( MoveEvent.TYPE_KEY, this );
         
         tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
+        viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
     }
 
     @Override
@@ -163,6 +166,7 @@ public final class CollisionSystem
         final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
         final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
         final ContactScan contactScan = collision.getContactScan();
+        final Rectangle collisionBounds = collision.getCollisionBounds();
         
         contactScan.clearContacts();
         contactScan.updateWorldBounds( 
@@ -170,17 +174,22 @@ public final class CollisionSystem
             transform.getYpos(),
             movement.getVelocityX(),
             movement.getVelocityY(),
-            ( collision.collisionBounds != null )? collision.contactScanBounds : collision.collisionBounds
+            ( collisionBounds != null )? collision.getContactScanBounds() : collisionBounds
         );
         
         final int viewId = transform.getViewId();
-        if ( collision.collisionLayerIds != null ) {
-            final IntIterator iterator = collision.collisionLayerIds.iterator();
+        final int layerGroupId = collision.getLayerGroupId();
+        if ( layerGroupId >= 0 ) {
+            final IntIterator iterator = viewSystem.getLayerGroup( layerGroupId ).getLayerIds().iterator();
             while ( iterator.hasNext() ) {
                 final int layerId = iterator.next();
                 scanTileContacts( entityId, viewId, layerId, contactScan );
                 scanSpriteContacts( entityId, viewId, layerId, contactScan );
             }
+        } else {
+            final int layerId = transform.getLayerId();
+            scanTileContacts( entityId, viewId, layerId, contactScan );
+            scanSpriteContacts( entityId, viewId, layerId, contactScan );
         }
     }
 
@@ -237,8 +246,8 @@ public final class CollisionSystem
         final Rectangle collisionBounds = collision.getCollisionBounds();
         final Contact contact = Contact.createContact(
             entityId,
-            collision.solid,
-            collision.contactType,
+            collision.isSolid(),
+            collision.getContactType(),
             (int) Math.floor( xpos ) + collisionBounds.x,
             (int) Math.floor( ypos ) + collisionBounds.y,
             collisionBounds.width,

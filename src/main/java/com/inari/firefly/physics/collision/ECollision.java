@@ -7,10 +7,10 @@ import java.util.Set;
 import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
-import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
+import com.inari.firefly.graphics.view.LayerGroup;
 
 public final class ECollision extends EntityComponent {
     
@@ -21,7 +21,8 @@ public final class ECollision extends EntityComponent {
     public static final AttributeKey<Rectangle> CONTACT_SCAN_BOUNDS = new AttributeKey<Rectangle>( "contactScanBounds", Rectangle.class, ECollision.class );
     public static final AttributeKey<String> COLLISION_RESOLVER_NAME = new AttributeKey<String>( "collisionResolverName", String.class, ECollision.class );
     public static final AttributeKey<Integer> COLLISION_RESOLVER_ID = new AttributeKey<Integer>( "collisionResolverId", Integer.class, ECollision.class );
-    public static final AttributeKey<IntBag> COLLISION_LAYER_IDS = new AttributeKey<IntBag>( "collisionLayersIds", IntBag.class, ECollision.class );
+    public static final AttributeKey<String> LAYER_GROUP_NAME = new AttributeKey<String>( "layerGroupName", String.class, ECollision.class );
+    public static final AttributeKey<Integer> LAYER_GROUP_ID = new AttributeKey<Integer>( "layerGroupId", Integer.class, ECollision.class );
     public static final AttributeKey<Aspect> MATERIAL_TYPE = new AttributeKey<Aspect>( "materialType", Aspect.class, ECollision.class );
     public static final AttributeKey<Aspect> CONTACT_TYPE = new AttributeKey<Aspect>( "contactType", Aspect.class, ECollision.class );
     public static final AttributeKey<Boolean> SOLID = new AttributeKey<Boolean>( "solid", Boolean.class, ECollision.class );
@@ -30,19 +31,19 @@ public final class ECollision extends EntityComponent {
         COLLISION_MASK,
         CONTACT_SCAN_BOUNDS,
         COLLISION_RESOLVER_ID,
-        COLLISION_LAYER_IDS,
+        LAYER_GROUP_ID,
         MATERIAL_TYPE,
         CONTACT_TYPE,
     };
     
-    final Rectangle collisionBounds;
-    BitMask collisionMask;
-    final Rectangle contactScanBounds;
-    int collisionResolverId;
-    final IntBag collisionLayerIds;
-    Aspect materialType;
-    Aspect contactType;
-    boolean solid;
+    private final Rectangle collisionBounds;
+    private BitMask collisionMask;
+    private final Rectangle contactScanBounds;
+    private int collisionResolverId;
+    private int layerGroupId;
+    private Aspect materialType;
+    private Aspect contactType;
+    private boolean solid;
     
     final ContactScan contactScan;
 
@@ -50,7 +51,6 @@ public final class ECollision extends EntityComponent {
         super( TYPE_KEY );
         collisionBounds = new Rectangle();
         contactScanBounds = new Rectangle();
-        collisionLayerIds = new IntBag( 5, -1 );
         contactScan = new ContactScan();
         resetAttributes();
     }
@@ -59,7 +59,7 @@ public final class ECollision extends EntityComponent {
     public final void resetAttributes() {
         collisionMask = null;
         collisionResolverId = -1;
-        collisionLayerIds.clear();
+        layerGroupId = -1;
         contactType = null;
         materialType = null;
         solid = true;
@@ -111,13 +111,12 @@ public final class ECollision extends EntityComponent {
         this.collisionResolverId = collisionResolverId;
     }
 
-    public final IntBag getCollisionLayerIds() {
-        return collisionLayerIds;
+    public final int getLayerGroupId() {
+        return layerGroupId;
     }
 
-    public final void setCollisionLayerIds( IntBag collisionLayerIds ) {
-        this.collisionLayerIds.clear();
-        this.collisionLayerIds.addAll( collisionLayerIds );
+    public final void setLayerGroupId( int layerGroupId ) {
+        this.layerGroupId = layerGroupId;
     }
 
     public final ContactScan getContactScan() {
@@ -159,9 +158,7 @@ public final class ECollision extends EntityComponent {
         collisionMask = attributes.getValue( COLLISION_MASK, collisionMask );
         setContactScanBounds( attributes.getValue( CONTACT_SCAN_BOUNDS, contactScanBounds ) );
         collisionResolverId = attributes.getIdForName( COLLISION_RESOLVER_NAME, COLLISION_RESOLVER_ID, CollisionResolver.TYPE_KEY, collisionResolverId );
-        if ( attributes.contains( COLLISION_LAYER_IDS ) ) {
-            setCollisionLayerIds( attributes.getValue( COLLISION_LAYER_IDS, collisionLayerIds ) );
-        }
+        layerGroupId = attributes.getIdForName( LAYER_GROUP_NAME, LAYER_GROUP_ID, LayerGroup.TYPE_KEY, layerGroupId );
         materialType = attributes.getValue( MATERIAL_TYPE, materialType );
         contactType = attributes.getValue( CONTACT_TYPE, contactType );
         solid = attributes.getValue( SOLID, solid );
@@ -173,7 +170,7 @@ public final class ECollision extends EntityComponent {
         attributes.put( COLLISION_MASK, collisionMask );
         attributes.put( CONTACT_SCAN_BOUNDS, contactScanBounds );
         attributes.put( COLLISION_RESOLVER_ID, collisionResolverId );
-        attributes.put( COLLISION_LAYER_IDS, collisionLayerIds );
+        attributes.put( LAYER_GROUP_ID, layerGroupId );
         attributes.put( MATERIAL_TYPE, materialType );
         attributes.put( CONTACT_TYPE, contactType );
         attributes.put( SOLID, solid );
