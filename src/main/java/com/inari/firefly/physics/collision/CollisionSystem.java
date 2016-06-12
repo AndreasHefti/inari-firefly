@@ -147,8 +147,6 @@ public final class CollisionSystem
                 contactEvent.entityId = entityId;
                 context.notify( contactEvent );
             }
-            
-            
         }
     }
     

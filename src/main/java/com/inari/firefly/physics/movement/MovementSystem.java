@@ -74,13 +74,13 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
                 continue;
             }
 
-            if ( movement.velocity.dx == 0 && movement.velocity.dy == 0 ) {
+            if ( movement.velocity.dx == 0f && movement.velocity.dy == 0f ) {
                 continue;
             }
 
             ETransform transform = components.get( ETransform.TYPE_KEY );
-            transform.move( movement.velocity.dx, movement.velocity.dy);
-            
+            transform.move( movement.velocity.dx, movement.velocity.dy );
+
             moveEvent.add( entityId );
         }
         context.notify( moveEvent );
