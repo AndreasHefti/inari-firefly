@@ -7,6 +7,7 @@ import java.util.Set;
 import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -18,7 +19,6 @@ public final class ECollision extends EntityComponent {
     
     public static final AttributeKey<Rectangle> COLLISION_BOUNDS = new AttributeKey<Rectangle>( "collisionBounds", Rectangle.class, ECollision.class );
     public static final AttributeKey<BitMask> COLLISION_MASK = new AttributeKey<BitMask>( "collisionMask", BitMask.class, ECollision.class );
-    public static final AttributeKey<Rectangle> CONTACT_SCAN_BOUNDS = new AttributeKey<Rectangle>( "contactScanBounds", Rectangle.class, ECollision.class );
     public static final AttributeKey<String> COLLISION_RESOLVER_NAME = new AttributeKey<String>( "collisionResolverName", String.class, ECollision.class );
     public static final AttributeKey<Integer> COLLISION_RESOLVER_ID = new AttributeKey<Integer>( "collisionResolverId", Integer.class, ECollision.class );
     public static final AttributeKey<String> LAYER_GROUP_NAME = new AttributeKey<String>( "layerGroupName", String.class, ECollision.class );
@@ -26,31 +26,30 @@ public final class ECollision extends EntityComponent {
     public static final AttributeKey<Aspect> MATERIAL_TYPE = new AttributeKey<Aspect>( "materialType", Aspect.class, ECollision.class );
     public static final AttributeKey<Aspect> CONTACT_TYPE = new AttributeKey<Aspect>( "contactType", Aspect.class, ECollision.class );
     public static final AttributeKey<Boolean> SOLID = new AttributeKey<Boolean>( "solid", Boolean.class, ECollision.class );
+    public static final AttributeKey<DynArray<ContactConstraint>> CONTACT_CONSTRAINTS = AttributeKey.createForDynArray( "contactConstraints", ECollision.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         COLLISION_BOUNDS,
         COLLISION_MASK,
-        CONTACT_SCAN_BOUNDS,
         COLLISION_RESOLVER_ID,
         LAYER_GROUP_ID,
         MATERIAL_TYPE,
         CONTACT_TYPE,
+        CONTACT_CONSTRAINTS
     };
     
     private final Rectangle collisionBounds;
     private BitMask collisionMask;
-    private final Rectangle contactScanBounds;
     private int collisionResolverId;
     private int layerGroupId;
     private Aspect materialType;
     private Aspect contactType;
     private boolean solid;
     
-    final ContactScan contactScan;
+    private ContactScan contactScan;
 
     ECollision() {
         super( TYPE_KEY );
         collisionBounds = new Rectangle();
-        contactScanBounds = new Rectangle();
         contactScan = new ContactScan();
         resetAttributes();
     }
@@ -63,6 +62,7 @@ public final class ECollision extends EntityComponent {
         contactType = null;
         materialType = null;
         solid = true;
+        contactScan = new ContactScan();
     }
 
     public final Rectangle getCollisionBounds() {
@@ -86,21 +86,6 @@ public final class ECollision extends EntityComponent {
 
     public final void setCollisionMask( BitMask collisionMask ) {
         this.collisionMask = collisionMask;
-    }
-
-    public final Rectangle getContactScanBounds() {
-        return contactScanBounds;
-    }
-    
-    public final void setContactScanBounds( Rectangle contactScanBounds ) {
-        if ( contactScanBounds == null ) {
-            this.contactScanBounds.x = 0;
-            this.contactScanBounds.y = 0;
-            this.contactScanBounds.width = 0;
-            this.contactScanBounds.height = 0;
-            return;
-        }
-        this.contactScanBounds.setFrom( contactScanBounds );
     }
 
     public final int getCollisionResolverId() {
@@ -146,6 +131,10 @@ public final class ECollision extends EntityComponent {
     public final void setSolid( boolean solid ) {
         this.solid = solid;
     }
+    
+    public final void addContactConstraint( ContactConstraint constraint ) {
+        contactScan.addContactContstraint( constraint );
+    }
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
@@ -156,19 +145,24 @@ public final class ECollision extends EntityComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         setCollisionBounds( attributes.getValue( COLLISION_BOUNDS, collisionBounds ) );
         collisionMask = attributes.getValue( COLLISION_MASK, collisionMask );
-        setContactScanBounds( attributes.getValue( CONTACT_SCAN_BOUNDS, contactScanBounds ) );
         collisionResolverId = attributes.getIdForName( COLLISION_RESOLVER_NAME, COLLISION_RESOLVER_ID, CollisionResolver.TYPE_KEY, collisionResolverId );
         layerGroupId = attributes.getIdForName( LAYER_GROUP_NAME, LAYER_GROUP_ID, LayerGroup.TYPE_KEY, layerGroupId );
         materialType = attributes.getValue( MATERIAL_TYPE, materialType );
         contactType = attributes.getValue( CONTACT_TYPE, contactType );
         solid = attributes.getValue( SOLID, solid );
+        
+        if ( attributes.contains( CONTACT_CONSTRAINTS ) ) {
+            DynArray<ContactConstraint> constraints = attributes.getValue( CONTACT_CONSTRAINTS );
+            for ( ContactConstraint constraint : constraints ) {
+                addContactConstraint( constraint );
+            }
+        }
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( COLLISION_BOUNDS, collisionBounds );
         attributes.put( COLLISION_MASK, collisionMask );
-        attributes.put( CONTACT_SCAN_BOUNDS, contactScanBounds );
         attributes.put( COLLISION_RESOLVER_ID, collisionResolverId );
         attributes.put( LAYER_GROUP_ID, layerGroupId );
         attributes.put( MATERIAL_TYPE, materialType );

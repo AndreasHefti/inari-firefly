@@ -1,40 +1,39 @@
 package com.inari.firefly.physics.collision;
 
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.Iterator;
 
-import com.inari.commons.geom.BitMask;
+import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
-import com.inari.commons.lang.list.DynArray;
 
-public final class ContactScan implements Iterable<Contact> {
+public final class ContactScan implements Iterable<ContactConstraint> {
 
+    private Rectangle contactScanBounds;
     private final Rectangle worldBounds = new Rectangle();
     
     private boolean solidContacts = false;
     private final BitSet contactAspects = new BitSet();
-    private final BitMask intersectionMask = new BitMask( 0, 0 );
-    private final DynArray<Contact> contacts = new DynArray<Contact>();
+    private final HashMap<String, ContactConstraint> constraints = new HashMap<String, ContactConstraint>();
 
     public final Rectangle getWorldBounds() {
         return worldBounds;
     }
 
-    public final void updateWorldBounds( float x, float y, float vx, float vy, Rectangle contactScanBounds ) {
+    public final void update( float x, float y, float vx, float vy ) {
         worldBounds.x = ( ( vx > 0 )? (int) Math.ceil( x ) : (int) Math.floor( x ) ) + contactScanBounds.x;
         worldBounds.y = ( ( vy > 0 )? (int) Math.ceil( y ) : (int) Math.floor( y ) ) + contactScanBounds.y;
         worldBounds.width = contactScanBounds.width;
         worldBounds.height = contactScanBounds.height;
-        intersectionMask.reset( 0, 0, worldBounds.width, worldBounds.height );
-    }
-
-    public final BitMask getIntersectionMask() {
-        return intersectionMask;
+        
+        for ( ContactConstraint constraint : constraints.values() ) {
+            constraint.update( x, y, vx, vy );
+        }
     }
 
     public boolean hasAnyContact() {
-        return !contacts.isEmpty();
+        return !contactAspects.isEmpty();
     }
 
     public boolean hasSolidContact() {
@@ -45,64 +44,55 @@ public final class ContactScan implements Iterable<Contact> {
         return contactAspects.get( contact.index() );
     }
 
-    public final Iterator<Contact> iterator() {
-        return contacts.iterator();
-    }
-
-    public final Contact getFirstContact( Aspect contactType ) {
-        for ( Contact contact : contacts ) {
-            if ( contact.contactType() == contactType ) {
-                return contact;
-            }
-        }
-        
-        return null;
-    }
-
     public final void clearContacts() {
-         contacts.clear();
          contactAspects.clear();
-         intersectionMask.clearMask();
-         solidContacts = false;
+         for ( ContactConstraint constraint : constraints.values() ) {
+             constraint.clear();
+         }
+    }
+    
+    public final void addContactContstraint( ContactConstraint constraint ) {
+        constraints.put( constraint.name(), constraint );
+        if ( contactScanBounds == null ) {
+            contactScanBounds = new Rectangle( constraint.contactScanBounds );
+        } else {
+            contactScanBounds = GeomUtils.union( contactScanBounds, constraint.contactScanBounds );
+        }
     }
 
     public final void addContact( Contact contact ) {
-        if ( contact != null ) {
-            if ( !solidContacts && contact.isSolid() ) {
-                solidContacts = true;
-            }
-            Aspect contactType = contact.contactType();
-            if ( contactType != null ) {
-                contactAspects.set( contactType.index() );
-            }
-            
-            if ( contact.isSolid() ) {
-                BitMask intersectionMask = contact.intersectionMask();
-                if ( intersectionMask != null && !intersectionMask.isEmpty() ) {
-                    this.intersectionMask.or( intersectionMask );
-                } else {
-                    Rectangle intersectionBounds = contact.intersectionBounds();
-                    this.intersectionMask.setRegion( intersectionBounds, false );
+        for ( ContactConstraint constraint : constraints.values() ) {
+            if ( constraint.addContact( contact ) ) {
+                final Aspect contactType = contact.contactType();
+                if ( contactType != null ) {
+                    contactAspects.set( contactType.index() );
                 }
             }
-            
-            contacts.add( contact );
         }
+    }
+    
+    @Override
+    public final Iterator<ContactConstraint> iterator() {
+        return constraints.values().iterator();
+    }
+    
+    public final ContactConstraint getContactContstraint( String name ) {
+        return constraints.get( name );
     }
 
     @Override
     public final String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append( "ContactScan [worldBounds=" );
+        builder.append( "ContactScan [contactScanBounds=" );
+        builder.append( contactScanBounds );
+        builder.append( ", worldBounds=" );
         builder.append( worldBounds );
         builder.append( ", solidContacts=" );
         builder.append( solidContacts );
         builder.append( ", contactAspects=" );
         builder.append( contactAspects );
-        builder.append( ", intersectionMask=" );
-        builder.append( intersectionMask );
-        builder.append( ", contacts=" );
-        builder.append( contacts );
+        builder.append( ", contstraints=" );
+        builder.append( constraints );
         builder.append( "]" );
         return builder.toString();
     }

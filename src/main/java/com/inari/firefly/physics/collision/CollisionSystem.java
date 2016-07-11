@@ -164,15 +164,13 @@ public final class CollisionSystem
         final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
         final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
         final ContactScan contactScan = collision.getContactScan();
-        final Rectangle collisionBounds = collision.getCollisionBounds();
         
         contactScan.clearContacts();
-        contactScan.updateWorldBounds( 
+        contactScan.update( 
             transform.getXpos(),
             transform.getYpos(),
             movement.getVelocityX(),
-            movement.getVelocityY(),
-            ( collisionBounds != null )? collision.getContactScanBounds() : collisionBounds
+            movement.getVelocityY()
         );
         
         final int viewId = transform.getViewId();
