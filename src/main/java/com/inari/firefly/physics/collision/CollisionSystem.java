@@ -20,7 +20,6 @@ import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.graphics.view.ViewEvent;
 import com.inari.firefly.graphics.view.ViewEvent.Type;
 import com.inari.firefly.graphics.view.ViewEventListener;
-import com.inari.firefly.graphics.view.ViewSystem;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.physics.movement.MoveEvent;
 import com.inari.firefly.physics.movement.MoveEventListener;
@@ -52,7 +51,6 @@ public final class CollisionSystem
     private final DynArray<CollisionResolver> collisionResolvers;
     
     private TileGridSystem tileGridSystem;
-    private ViewSystem viewSystem;
     private final Rectangle checkPivot = new Rectangle( 0, 0, 0, 0 );
     
     private final ContactEvent contactEvent = new ContactEvent();
@@ -78,7 +76,6 @@ public final class CollisionSystem
         context.registerListener( MoveEvent.TYPE_KEY, this );
         
         tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
-        viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
     }
 
     @Override
@@ -174,9 +171,8 @@ public final class CollisionSystem
         );
         
         final int viewId = transform.getViewId();
-        final int layerGroupId = collision.getLayerGroupId();
-        if ( layerGroupId >= 0 ) {
-            final IntIterator iterator = viewSystem.getLayerGroup( layerGroupId ).getLayerIds().iterator();
+        if ( collision.hasGroupedLayers() ) {
+            final IntIterator iterator = collision.getGroupedLayers();
             while ( iterator.hasNext() ) {
                 final int layerId = iterator.next();
                 scanTileContacts( entityId, viewId, layerId, contactScan );
@@ -233,7 +229,7 @@ public final class CollisionSystem
         }
     }
     
-    public void scanContact( final ContactScan contactScan, final int entityId, final float xpos, final float ypos ) {
+    private void scanContact( final ContactScan contactScan, final int entityId, final float xpos, final float ypos ) {
         if ( entityId < 0 || !context.getEntityComponentAspects( entityId ).contains( ECollision.TYPE_KEY ) ) {
             return;
         }

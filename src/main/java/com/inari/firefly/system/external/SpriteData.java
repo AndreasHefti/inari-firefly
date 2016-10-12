@@ -10,5 +10,9 @@ public interface SpriteData {
     Rectangle getTextureRegion();
     
     <A> A getDynamicAttribute( AttributeKey<A> key );
+    
+    boolean isHorizontalFlip();
+    
+    boolean isVerticalFlip();
 
 }

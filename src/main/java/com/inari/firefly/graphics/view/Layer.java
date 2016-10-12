@@ -38,6 +38,8 @@ public final class Layer extends SystemComponent {
 
     private int viewId;
     
+    boolean active = false;
+    
     Layer( int layerId ) {
         super( layerId );
     }
@@ -49,6 +51,10 @@ public final class Layer extends SystemComponent {
 
     public int getViewId() {
         return viewId;
+    }
+
+    public final boolean isActive() {
+        return active;
     }
 
     @Override

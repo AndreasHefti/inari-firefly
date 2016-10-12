@@ -253,6 +253,16 @@ public final class FontAsset extends Asset implements TextureData {
         public final <A> A getDynamicAttribute( AttributeKey<A> key ) {
             return fontAsset.getDynamicAttribute( key );
         }
+        
+        @Override
+        public final boolean isHorizontalFlip() {
+            return false;
+        }
+
+        @Override
+        public final boolean isVerticalFlip() {
+            return false;
+        }
     }
 
 }

@@ -34,9 +34,13 @@ public final class SpriteAsset extends Asset implements SpriteData {
     public static final AttributeKey<String> TEXTURE_ASSET_NAME = new AttributeKey<String>( "textureAssetName", String.class, SpriteAsset.class );
     public static final AttributeKey<Integer> TEXTURE_ASSET_ID = new AttributeKey<Integer>( "textureAssetId", Integer.class, SpriteAsset.class );
     public static final AttributeKey<Rectangle> TEXTURE_REGION  = new AttributeKey<Rectangle>( "textureRegion", Rectangle.class, SpriteAsset.class );
+    public static final AttributeKey<Boolean> HORIZONTAL_FLIP = new AttributeKey<Boolean>( "horizontalFlip", Boolean.class, ESprite.class );
+    public static final AttributeKey<Boolean> VERTICAL_FLIP = new AttributeKey<Boolean>( "verticalFlip", Boolean.class, ESprite.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
         TEXTURE_ASSET_ID,
-        TEXTURE_REGION
+        TEXTURE_REGION,
+        HORIZONTAL_FLIP,
+        VERTICAL_FLIP
     } ) );
     
     private int textureAssetId;
@@ -44,6 +48,9 @@ public final class SpriteAsset extends Asset implements SpriteData {
     
     private int textureId = -1;
     private int spriteId = -1;
+    
+    private boolean horizontalFlip = false;
+    private boolean verticalFlip = false;
     
     SpriteAsset( int assetId ) {
         super( assetId );
@@ -89,6 +96,22 @@ public final class SpriteAsset extends Asset implements SpriteData {
         this.textureRegion.width = textureRegion.width;
         this.textureRegion.height = textureRegion.height;
     }
+    
+    public final boolean isHorizontalFlip() {
+        return horizontalFlip;
+    }
+
+    public final void setHorizontalFlip( boolean horizontalFlip ) {
+        this.horizontalFlip = horizontalFlip;
+    }
+
+    public final boolean isVerticalFlip() {
+        return verticalFlip;
+    }
+
+    public final void setVerticalFlip( boolean verticalFlip ) {
+        this.verticalFlip = verticalFlip;
+    }
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
@@ -107,6 +130,9 @@ public final class SpriteAsset extends Asset implements SpriteData {
         if ( textureRegion != null ) {
             setTextureRegion( textureRegion );
         }
+        
+        horizontalFlip = attributes.getValue( HORIZONTAL_FLIP, horizontalFlip );
+        verticalFlip = attributes.getValue( VERTICAL_FLIP, verticalFlip );
     }
 
     @Override
@@ -114,6 +140,8 @@ public final class SpriteAsset extends Asset implements SpriteData {
         super.toAttributes( attributes );
         attributes.put( TEXTURE_ASSET_ID, textureAssetId );
         attributes.put( TEXTURE_REGION, new Rectangle( textureRegion ) );
+        attributes.put( HORIZONTAL_FLIP, horizontalFlip );
+        attributes.put( VERTICAL_FLIP, verticalFlip );
     }
 
     @Override

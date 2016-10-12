@@ -10,6 +10,7 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
 
+@Deprecated // create and use a general ComponentGroup type for this that is not a component by itself
 public final class LayerGroup extends SystemComponent {
     
     public static final SystemComponentKey<LayerGroup> TYPE_KEY = SystemComponentKey.create( LayerGroup.class );

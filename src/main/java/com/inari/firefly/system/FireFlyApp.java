@@ -21,7 +21,6 @@ import java.util.Random;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.IntIterator;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.audio.AudioSystem;
 import com.inari.firefly.control.ControllerSystem;
@@ -31,6 +30,7 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.prefab.EntityPrefabSystem;
 import com.inari.firefly.graphics.sprite.SpriteViewSystem;
 import com.inari.firefly.graphics.tile.TileGridSystem;
+import com.inari.firefly.graphics.view.Layer;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewSystem;
 import com.inari.firefly.physics.animation.AnimationSystem;
@@ -141,16 +141,16 @@ public abstract class FireFlyApp {
 
         graphics.startRendering( view, true );
         
-        if ( viewSystem.isLayeringEnabledAndHasLayers( viewId ) ) {
-            IntIterator layerIterator = viewSystem.getLayersOfView( viewId ).iterator();
+        if ( !viewSystem.isLayeringEnabled( viewId ) ) {
+            context.notify( renderEvent );
+        } else if ( viewSystem.hasActiveLayers( viewId ) ) {
+            Iterator<Layer> layerIterator = viewSystem.getActiveLayersOfView( viewId );
             while ( layerIterator.hasNext() ) {
-                renderEvent.layerId = layerIterator.next();
+                renderEvent.layerId = layerIterator.next().index();
                 context.notify( renderEvent );
             }
             renderEvent.layerId = 0;
-        } else {
-            context.notify( renderEvent );
-        }
+        } 
 
         graphics.endRendering( view );
     }
