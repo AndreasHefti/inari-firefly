@@ -97,12 +97,12 @@ public final class ContactConstraint implements Iterable<Contact> {
          intersectionMask.clearMask();
     }
     
-    final void update( float x, float y, float vx, float vy ) {
+    final void update( float x, float y, float vx, float vy, Rectangle outerScanBounds ) {
         worldBounds.x = ( ( vx > 0 )? (int) Math.ceil( x ) : (int) Math.floor( x ) ) + contactScanBounds.x;
         worldBounds.y = ( ( vy > 0 )? (int) Math.ceil( y ) : (int) Math.floor( y ) ) + contactScanBounds.y;
         worldBounds.width = contactScanBounds.width;
         worldBounds.height = contactScanBounds.height;
-        intersectionMask.reset( 0, 0, worldBounds.width, worldBounds.height );
+        intersectionMask.reset( contactScanBounds.x - outerScanBounds.x, contactScanBounds.y - outerScanBounds.y, worldBounds.width, worldBounds.height );
     }
     
     final boolean addContact( final Contact contact ) {
@@ -130,7 +130,7 @@ public final class ContactConstraint implements Iterable<Contact> {
             this.intersectionMask.or( intersectionMask );
         } else {
             Rectangle intersectionBounds = contact.intersectionBounds();
-            this.intersectionMask.setRegion( intersectionBounds, false );
+            this.intersectionMask.setRegion( intersectionBounds, true );
         }
         
         if ( contactType != null ) {

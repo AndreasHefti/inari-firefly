@@ -162,15 +162,15 @@ public final class TileGrid extends SystemComponent {
         return worldXPos;
     }
 
-    public final void setWorldXPos( Float worldXPos ) {
+    public final void setWorldXPos( float worldXPos ) {
         this.worldXPos = worldXPos;
     }
 
-    public final Float getWorldYPos() {
+    public final float getWorldYPos() {
         return worldYPos;
     }
 
-    public final void setWorldYPos( Float worldYPos ) {
+    public final void setWorldYPos( float worldYPos ) {
         this.worldYPos = worldYPos;
     }
 

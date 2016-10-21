@@ -136,6 +136,10 @@ public final class CollisionSystem
             
             scanContacts( entityId, collision );
             
+            if ( !contactScan.hasAnyContact() ) {
+                continue;
+            }
+            
             if ( collisionResolverId >= 0 ) {
                 collisionResolvers.get( collisionResolverId ).resolve( entityId );
             }
@@ -249,6 +253,8 @@ public final class CollisionSystem
         final Rectangle movingWorldBounds = contactScan.getWorldBounds();
         final Rectangle contactWorldBounds = contact.worldBounds();
         final Rectangle intersectionBounds = contact.intersectionBounds();
+        final BitMask intersectionMask = contact.intersectionMask();
+        
         GeomUtils.intersection( 
             movingWorldBounds, 
             contactWorldBounds, 
@@ -261,9 +267,8 @@ public final class CollisionSystem
         }
         
         // normalize the intersection to origin of coordinate system
-        intersectionBounds.x -= movingWorldBounds.x;
-        intersectionBounds.y -= movingWorldBounds.y;
-        
+        intersectionBounds.x = intersectionBounds.x - movingWorldBounds.x /*+ contactScan.contactScanBounds.x */ ;
+        intersectionBounds.y = intersectionBounds.y - movingWorldBounds.y /*+ contactScan.contactScanBounds.y */;
         
         final BitMask bitmask2 = collision.getCollisionMask();
         if ( bitmask2 == null ) {
@@ -276,7 +281,7 @@ public final class CollisionSystem
         checkPivot.width = movingWorldBounds.width;
         checkPivot.height = movingWorldBounds.height;
 
-        if ( bitmask2 != null && BitMask.createIntersectionMask( checkPivot, bitmask2, contact.intersectionMask(), true ) ) {
+        if ( bitmask2 != null && BitMask.createIntersectionMask( checkPivot, bitmask2, intersectionMask, true ) ) {
             contactScan.addContact( contact );
             return;
         }

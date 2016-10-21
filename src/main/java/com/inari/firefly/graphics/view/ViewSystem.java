@@ -461,6 +461,10 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             int layerId = layer.index();
             viewLayers.add( layer );
             
+            if ( activate ) {
+                layer.active = true;
+            }
+            
             return layerId;
         }
     }

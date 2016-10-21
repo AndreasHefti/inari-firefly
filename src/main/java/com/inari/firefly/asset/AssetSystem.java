@@ -187,7 +187,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     public final int getAssetId( String assetName ) {
         Asset asset = getAsset( assetName );
         if ( asset == null ) {
-            return -1;
+            throw new IllegalArgumentException( "No Asset with Name: " + assetName + " found." );
         }
         
         return asset.index();

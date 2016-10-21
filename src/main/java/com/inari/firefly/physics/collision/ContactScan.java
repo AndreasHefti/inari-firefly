@@ -10,7 +10,7 @@ import com.inari.commons.lang.aspect.Aspect;
 
 public final class ContactScan implements Iterable<ContactConstraint> {
 
-    private Rectangle contactScanBounds;
+    Rectangle contactScanBounds;
     private final Rectangle worldBounds = new Rectangle();
     
     private boolean solidContacts = false;
@@ -28,7 +28,7 @@ public final class ContactScan implements Iterable<ContactConstraint> {
         worldBounds.height = contactScanBounds.height;
         
         for ( ContactConstraint constraint : constraints.values() ) {
-            constraint.update( x, y, vx, vy );
+            constraint.update( x, y, vx, vy, contactScanBounds );
         }
     }
 

@@ -21,12 +21,14 @@ public class ComponentGroup {
         return componentIds.iterator();
     }
     
-    public final void add( int componentId ) {
+    public final ComponentGroup add( int componentId ) {
         componentIds.add( componentId );
+        return this;
     }
     
-    public final void remove( int componentId ) {
+    public final ComponentGroup remove( int componentId ) {
         componentIds.remove( componentId );
+        return this;
     }
 
 }
