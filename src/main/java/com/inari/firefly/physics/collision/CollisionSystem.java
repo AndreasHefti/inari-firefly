@@ -136,10 +136,6 @@ public final class CollisionSystem
             
             scanContacts( entityId, collision );
             
-            if ( !contactScan.hasAnyContact() ) {
-                continue;
-            }
-            
             if ( collisionResolverId >= 0 ) {
                 collisionResolvers.get( collisionResolverId ).resolve( entityId );
             }

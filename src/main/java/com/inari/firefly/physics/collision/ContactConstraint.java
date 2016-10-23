@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.BitMask;
+import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.list.DynArray; 
@@ -58,6 +59,14 @@ public final class ContactConstraint implements Iterable<Contact> {
     
     public final boolean allTypes() {
         return allTypes;
+    }
+    
+    public final boolean hasContact( final Position pos ) {
+        return intersectionMask.getBit( pos.x, pos.y );
+    }
+    
+    public final boolean hasContact( int x, int y ) {
+        return intersectionMask.getBit( x, y );
     }
     
     public final void clearFilter() {
@@ -164,6 +173,5 @@ public final class ContactConstraint implements Iterable<Contact> {
         builder.append( "]" );
         return builder.toString();
     }
-
 
 }

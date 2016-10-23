@@ -109,6 +109,8 @@ public final class ShapeRenderSystem
     }
     
     final class ShapeRenderer extends BaseRenderer {
+        
+        protected final TransformDataCollector transformCollector = new DiskreteTransformDataCollector();
 
         protected ShapeRenderer( FFContext context ) {
             super( 0 );
@@ -130,7 +132,7 @@ public final class ShapeRenderSystem
                 EShape shape = entitySystem.getComponent( entityId, EShape.TYPE_KEY );
                 ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
                 transformCollector.set( transform );
-                render( shape, transform.getParentId() );
+                render( shape, transform.getParentId(), transformCollector );
             }
         }
 

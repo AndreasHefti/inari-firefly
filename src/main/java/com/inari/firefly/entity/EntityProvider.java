@@ -20,13 +20,13 @@ import com.inari.firefly.system.FFSystem;
 public final class EntityProvider implements FFSystem  {
     
     public static final FFSystemTypeKey<EntityProvider> SYSTEM_KEY = FFSystemTypeKey.create( EntityProvider.class );
+    
+    private FFContext context;
 
     final ArrayDeque<IndexedTypeSet> disposedComponentSets;
     final DynArray<ArrayDeque<EntityComponent>> disposedComponents;
 
     private int componentSetCapacity = 20;
-    
-    private ControllerSystem controllerSystem;
 
     EntityProvider() {
         disposedComponentSets = new ArrayDeque<IndexedTypeSet>();
@@ -45,8 +45,7 @@ public final class EntityProvider implements FFSystem  {
 
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
-        
+        this.context = context;
         Integer compSetCap = context.getProperty( FFContext.Properties.ENTITY_COMPONENT_SET_CAPACITY );
         if ( compSetCap != null ) {
             componentSetCapacity = compSetCap;
@@ -79,6 +78,8 @@ public final class EntityProvider implements FFSystem  {
     public final void dispose( FFContext context ) {
         disposedComponentSets.clear();
         disposedComponents.clear();
+        
+        context = null;
     }
     
     public <T extends EntityComponent> T getComponent( Class<T> componentType ) {
@@ -165,8 +166,10 @@ public final class EntityProvider implements FFSystem  {
             return;
         }
         
-        IntBag controllerIds = attributes.getValue( EEntity.CONTROLLER_IDS );
-        IntIterator iterator = controllerIds.iterator();
+        final IntBag controllerIds = attributes.getValue( EEntity.CONTROLLER_IDS );
+        final IntIterator iterator = controllerIds.iterator();
+        final ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
+        
         while ( iterator.hasNext() ) {
             EntityController controller = controllerSystem.getControllerAs( iterator.next(), EntityController.class );
             controller.initEntity( attributes );

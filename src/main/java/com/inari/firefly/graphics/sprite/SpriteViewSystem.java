@@ -139,6 +139,8 @@ public final class SpriteViewSystem
     };
     
     final class SpriteRenderer extends BaseRenderer { 
+        
+        protected final TransformDataCollector transformCollector = new DiskreteTransformDataCollector();
 
         protected SpriteRenderer( FFContext context ) {
             super( 0 );
@@ -164,7 +166,7 @@ public final class SpriteViewSystem
                 ETransform transform = components.get( ETransform.TYPE_KEY );
                 transformCollector.set( transform );
                 
-                render( sprite, transform.getParentId() );
+                render( sprite, transform.getParentId(), transformCollector );
             }
         }
 

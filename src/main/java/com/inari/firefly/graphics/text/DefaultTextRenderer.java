@@ -6,6 +6,8 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.system.RenderEvent;
 
 public final class DefaultTextRenderer extends TextRenderer {
+    
+    protected final DiskreteTransformDataCollector transformCollector = new DiskreteTransformDataCollector();
 
     protected DefaultTextRenderer( int id ) {
         super( id );
@@ -56,7 +58,7 @@ public final class DefaultTextRenderer extends TextRenderer {
                 }
 
                 textRenderable.spriteId = font.getSpriteId( character );
-                render( textRenderable );
+                render( textRenderable, transformCollector );
                 transformCollector.xpos += horizontalStep;
             }
         }

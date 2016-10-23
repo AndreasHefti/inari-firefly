@@ -8,6 +8,8 @@ public final class NormalFullTileGridRenderer extends TileGridRenderer {
     
     public static final String NAME = "NormalFullTileGridRenderer";
     
+    protected final DiskreteTransformDataCollector transformCollector = new DiskreteTransformDataCollector();
+    
     NormalFullTileGridRenderer( int id ) {
         super( id );
     }
@@ -36,7 +38,7 @@ public final class NormalFullTileGridRenderer extends TileGridRenderer {
             transformCollector.xpos += iterator.getWorldXPos();
             transformCollector.ypos += iterator.getWorldYPos();
             
-            render( tile, transform.getParentId() );
+            render( tile, transform.getParentId(), transformCollector );
         }
     }
 

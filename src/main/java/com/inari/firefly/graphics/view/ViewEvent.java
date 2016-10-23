@@ -52,7 +52,4 @@ public final class ViewEvent extends Event<ViewEventListener> {
         builder.append( "]" );
         return builder.toString();
     }
-
-    
-
 }
