@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.FFTest;
 import com.inari.firefly.entity.ETransform;
@@ -43,16 +44,14 @@ public class SimpleCollisionTest extends FFTest {
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.LAYER_ID, 0 )
-            .set( ETransform.XPOSITION, 10 )
-            .set( ETransform.YPOSITION, 10 )
+            .set( ETransform.POSITION, new PositionF( 10, 10 ) )
             .set( ECollision.COLLISION_BOUNDS, new Rectangle( 0, 0, 10, 10 ) )
             .set( EMovement.VELOCITY_X, 3f )
             .set( EMovement.ACTIVE, true )
         .activateAndNext()
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.LAYER_ID, 0 )
-            .set( ETransform.XPOSITION, 30 )
-            .set( ETransform.YPOSITION, 10 )
+            .set( ETransform.POSITION, new PositionF( 30, 10 ) )
             .set( ECollision.COLLISION_BOUNDS, new Rectangle( 0, 0, 10, 10 ) )
         .activate();
         
@@ -118,8 +117,7 @@ public class SimpleCollisionTest extends FFTest {
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.LAYER_ID, 0 )
-            .set( ETransform.XPOSITION, 10 )
-            .set( ETransform.YPOSITION, 10 )
+            .set( ETransform.POSITION, new PositionF( 10, 10 ) )
             .set( ECollision.COLLISION_BOUNDS, new Rectangle( 0, 0, 10, 10 ) )
             .set( EMovement.VELOCITY_X, 3f )
             .set( EMovement.ACTIVE, true )

@@ -7,7 +7,7 @@ import com.inari.firefly.system.RenderEvent;
 
 public final class DefaultTextRenderer extends TextRenderer {
     
-    protected final DiskreteTransformDataCollector transformCollector = new DiskreteTransformDataCollector();
+    protected final ExactTransformDataCollector transformCollector = new ExactTransformDataCollector();
 
     protected DefaultTextRenderer( int id ) {
         super( id );

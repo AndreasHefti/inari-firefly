@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.commons.geom.Position;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.audio.AudioSystem;
@@ -130,12 +130,12 @@ public abstract class FireFlyApp {
     
     private void render( final View view ) {
         Rectangle bounds = view.getBounds();
-        Position worldPosition = view.getWorldPosition();
+        PositionF worldPosition = view.getWorldPosition();
         int viewId = view.index();
         
         renderEvent.viewId = viewId;
-        renderEvent.clip.x = worldPosition.x;
-        renderEvent.clip.y = worldPosition.y;
+        renderEvent.clip.x = (int) Math.floor( worldPosition.x );
+        renderEvent.clip.y = (int) Math.floor( worldPosition.y );
         renderEvent.clip.width = bounds.width;
         renderEvent.clip.height = bounds.height;
 

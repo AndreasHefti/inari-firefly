@@ -8,7 +8,7 @@ public final class NormalFullTileGridRenderer extends TileGridRenderer {
     
     public static final String NAME = "NormalFullTileGridRenderer";
     
-    protected final DiskreteTransformDataCollector transformCollector = new DiskreteTransformDataCollector();
+    protected final ExactTransformDataCollector transformCollector = new ExactTransformDataCollector();
     
     NormalFullTileGridRenderer( int id ) {
         super( id );

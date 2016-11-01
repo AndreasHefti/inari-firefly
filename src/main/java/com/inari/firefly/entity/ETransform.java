@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.geom.PositionF;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.graphics.view.Layer;
@@ -32,10 +33,12 @@ public final class ETransform extends EntityComponent {
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, ETransform.class );
     public static final AttributeKey<String> LAYER_NAME = new AttributeKey<String>( "layerName", String.class, ETransform.class );
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, ETransform.class );
-    public static final AttributeKey<Float> XPOSITION = new AttributeKey<Float>( "xpos", Float.class, ETransform.class );
-    public static final AttributeKey<Float> YPOSITION = new AttributeKey<Float>( "ypos", Float.class, ETransform.class );
-    public static final AttributeKey<Float> PIVOT_X = new AttributeKey<Float>( "pivotx", Float.class, ETransform.class );
-    public static final AttributeKey<Float> PIVOT_Y = new AttributeKey<Float>( "pivoty", Float.class, ETransform.class );
+    public static final AttributeKey<PositionF> POSITION = new AttributeKey<PositionF>( "position", PositionF.class, ETransform.class );
+    public static final AttributeKey<PositionF> PIVOT_POSITION = new AttributeKey<PositionF>( "pivotPosition", PositionF.class, ETransform.class );
+//    public static final AttributeKey<Float> XPOSITION = new AttributeKey<Float>( "xpos", Float.class, ETransform.class );
+//    public static final AttributeKey<Float> YPOSITION = new AttributeKey<Float>( "ypos", Float.class, ETransform.class );
+//    public static final AttributeKey<Float> PIVOT_X = new AttributeKey<Float>( "pivotx", Float.class, ETransform.class );
+//    public static final AttributeKey<Float> PIVOT_Y = new AttributeKey<Float>( "pivoty", Float.class, ETransform.class );
     public static final AttributeKey<Float> SCALE_X = new AttributeKey<Float>( "scalex", Float.class, ETransform.class );
     public static final AttributeKey<Float> SCALE_Y = new AttributeKey<Float>( "scaley", Float.class, ETransform.class );
     public static final AttributeKey<Float> ROTATION = new AttributeKey<Float>( "rotation", Float.class, ETransform.class );
@@ -43,10 +46,8 @@ public final class ETransform extends EntityComponent {
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         VIEW_ID,
         LAYER_ID, 
-        XPOSITION, 
-        YPOSITION,
-        PIVOT_X,
-        PIVOT_Y,
+        POSITION,
+        PIVOT_POSITION,
         SCALE_X,
         SCALE_Y,
         ROTATION,
@@ -54,14 +55,16 @@ public final class ETransform extends EntityComponent {
     };
     
     private int viewId, layerId;
-    private float xpos, ypos;
-    private float pivotx, pivoty;
+    private final PositionF position;
+    private final PositionF pivotPosition;
     private float scalex, scaley;
     private float rotation;
     private int parentId;
     
     ETransform() {
         super( TYPE_KEY );
+        position = new PositionF();
+        pivotPosition = new PositionF();
         resetAttributes();
     }
 
@@ -69,10 +72,10 @@ public final class ETransform extends EntityComponent {
     public final void resetAttributes() {
         viewId = 0;
         layerId = 0;
-        xpos = 0;
-        ypos = 0;
-        pivotx = 0;
-        pivoty = 0;
+        position.x = 0;
+        position.y = 0;
+        pivotPosition.x = 0;
+        pivotPosition.y = 0;
         scalex = 1;
         scaley = 1;
         rotation = 0;
@@ -96,40 +99,40 @@ public final class ETransform extends EntityComponent {
     }
 
     public final float getXpos() {
-        return xpos;
+        return position.x;
     }
 
     public final void setXpos( float xpos ) {
-        this.xpos = xpos;
+        position.x = xpos;
     }
 
     public final float getYpos() {
-        return ypos;
+        return position.y;
     }
 
     public final void setYpos( float ypos ) {
-        this.ypos = ypos;
+        position.y = ypos;
     }
 
     public final float getPivotx() {
-        return pivotx;
+        return pivotPosition.x;
     }
 
     public final void setPivotx( float pivotx ) {
-        this.pivotx = pivotx;
+        pivotPosition.x = pivotx;
     }
 
     public final float getPivoty() {
-        return pivoty;
+        return pivotPosition.y;
     }
 
     public final void setPivoty( float pivoty ) {
-        this.pivoty = pivoty;
+        pivotPosition.y = pivoty;
     }
 
     public final void move( final float dx, final float dy ) {
-        xpos += dx;
-        ypos += dy;
+        position.x += dx;
+        position.y += dy;
     }
 
     public final float getScalex() {
@@ -173,10 +176,16 @@ public final class ETransform extends EntityComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         viewId = attributes.getIdForName( VIEW_NAME, VIEW_ID, View.TYPE_KEY, viewId );
         layerId = attributes.getIdForName( LAYER_NAME, LAYER_ID, Layer.TYPE_KEY, layerId );
-        xpos = attributes.getValue( XPOSITION, xpos );
-        ypos = attributes.getValue( YPOSITION, ypos );
-        pivotx = attributes.getValue( PIVOT_X, pivotx );
-        pivoty = attributes.getValue( PIVOT_Y, pivoty );
+        if ( attributes.contains( POSITION ) ) {
+            PositionF pos = attributes.getValue( POSITION );
+            position.x = pos.x;
+            position.y = pos.y;
+        }
+        if ( attributes.contains( PIVOT_POSITION ) ) {
+            PositionF pos = attributes.getValue( PIVOT_POSITION );
+            pivotPosition.x = pos.x;
+            pivotPosition.y = pos.y;
+        }
         scalex = attributes.getValue( SCALE_X, scalex );
         scaley = attributes.getValue( SCALE_Y, scaley );
         
@@ -188,10 +197,8 @@ public final class ETransform extends EntityComponent {
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( VIEW_ID, viewId );
         attributes.put( LAYER_ID, layerId );
-        attributes.put( XPOSITION, xpos );
-        attributes.put( YPOSITION, ypos );
-        attributes.put( PIVOT_X, pivotx );
-        attributes.put( PIVOT_Y, pivoty );
+        attributes.put( POSITION, position );
+        attributes.put( PIVOT_POSITION, pivotPosition );
         attributes.put( SCALE_X, scalex );
         attributes.put( SCALE_Y, scalex );
         attributes.put( ROTATION, rotation );

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.FFTest;
 import com.inari.firefly.entity.EEntity;
@@ -87,8 +88,7 @@ public class CollisionQuadTreeTest extends FFTest {
         String name = "Entity("+x+","+y+")"; 
         entitySystem.getEntityBuilder()
             .set( EEntity.ENTITY_NAME, name )
-            .set( ETransform.XPOSITION, x )
-            .set( ETransform.YPOSITION, y )
+            .set( ETransform.POSITION, new PositionF( x, y ) )
             .set( ECollision.COLLISION_BOUNDS, new Rectangle( 0, 0, 10, 10 ) )
         .activate();
         

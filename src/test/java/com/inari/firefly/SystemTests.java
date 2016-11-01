@@ -49,8 +49,6 @@ public class SystemTests extends FFTest {
         int entityId = entitySystem
             .getEntityBuilder()
                 .set( ETransform.VIEW_ID, 0 )
-                .set( ETransform.XPOSITION, 0 )
-                .set( ETransform.XPOSITION, 0 )
                 .set( ESprite.SPRITE_ID, assetSystem.getAssetInstanceId( SPRITE_ASSET_NAME ) )
             .build()
             ;

@@ -140,7 +140,7 @@ public final class SpriteViewSystem
     
     final class SpriteRenderer extends BaseRenderer { 
         
-        protected final TransformDataCollector transformCollector = new DiskreteTransformDataCollector();
+        protected final TransformDataCollector transformCollector = new ExactTransformDataCollector();
 
         protected SpriteRenderer( FFContext context ) {
             super( 0 );

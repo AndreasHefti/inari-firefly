@@ -18,7 +18,7 @@ package com.inari.firefly.graphics.view;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.commons.geom.Position;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
@@ -34,7 +34,7 @@ public class View extends SystemComponent {
     public static final SystemComponentKey<View> TYPE_KEY = SystemComponentKey.create( View.class );
     
     public static final AttributeKey<Rectangle> BOUNDS = new AttributeKey<Rectangle>( "bounds", Rectangle.class, View.class );
-    public static final AttributeKey<Position> WORLD_POSITION = new AttributeKey<Position>( "worldPosition", Position.class, View.class );
+    public static final AttributeKey<PositionF> WORLD_POSITION = new AttributeKey<PositionF>( "worldPosition", PositionF.class, View.class );
     public static final AttributeKey<RGBColor> CLEAR_COLOR = new AttributeKey<RGBColor>( "clearColor", RGBColor.class, View.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, ESprite.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ESprite.class );
@@ -58,7 +58,7 @@ public class View extends SystemComponent {
     
     private boolean layeringEnabled;
     private final Rectangle bounds;
-    private final Position worldPosition;
+    private final PositionF worldPosition;
     private final RGBColor clearColor;
     private final RGBColor tintColor;
     private BlendMode blendMode;
@@ -69,7 +69,7 @@ public class View extends SystemComponent {
         super( viewId );
         layeringEnabled = false;
         bounds = new Rectangle( 0, 0, 1, 1);
-        worldPosition = new Position( 0, 0 );
+        worldPosition = new PositionF( 0, 0 );
         clearColor = new RGBColor( 0f, 0f, 0f, 1f );
         tintColor = new RGBColor( 1f, 1f, 1f, 1f );
         blendMode = BlendMode.NONE;
@@ -113,12 +113,12 @@ public class View extends SystemComponent {
         return bounds;
     }
     
-    public final void setWorldPosition( Position worldPosition ) {
+    public final void setWorldPosition( PositionF worldPosition ) {
         this.worldPosition.x = worldPosition.x;
         this.worldPosition.y = worldPosition.y;
     }
 
-    public final Position getWorldPosition() {
+    public final PositionF getWorldPosition() {
         return worldPosition;
     }
     
@@ -198,7 +198,7 @@ public class View extends SystemComponent {
         super.toAttributes( attributes );
         
         attributes.put( BOUNDS, new Rectangle( bounds ) );
-        attributes.put( WORLD_POSITION, new Position( worldPosition ) );
+        attributes.put( WORLD_POSITION, new PositionF( worldPosition ) );
         attributes.put( CLEAR_COLOR, new RGBColor( clearColor ) );
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
         attributes.put( BLEND_MODE, blendMode );

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.inari.commons.geom.PositionF;
 import com.inari.firefly.FFTest;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.graphics.sprite.ESprite;
@@ -68,8 +69,7 @@ public class EntitySystemTest extends FFTest {
         
         int entityId = entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 1 )
-            .set( ETransform.XPOSITION, 234 )
-            .set( ETransform.YPOSITION, 134 )
+            .set( ETransform.POSITION, new PositionF( 234, 134 ) )
             .set( ESprite.SPRITE_ID, 555 )
         .activate();
         
@@ -78,14 +78,11 @@ public class EntitySystemTest extends FFTest {
         assertEquals( "1", String.valueOf( entitySystem.components.size() ) );
         ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         assertEquals(
-            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=0 "
-            + "SystemComponent:Entity(0)::"
+            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=0 SystemComponent:Entity(0)::"
             + "viewId:Integer:ETransform=1, "
             + "layerId:Integer:ETransform=0, "
-            + "xpos:Float:ETransform=234.0, "
-            + "ypos:Float:ETransform=134.0, "
-            + "pivotx:Float:ETransform=0.0, "
-            + "pivoty:Float:ETransform=0.0, "
+            + "position:PositionF:ETransform=[x=234.0,y=134.0], "
+            + "pivotPosition:PositionF:ETransform=[x=0.0,y=0.0], "
             + "scalex:Float:ETransform=1.0, "
             + "scaley:Float:ETransform=1.0, "
             + "rotation:Float:ETransform=0.0, "

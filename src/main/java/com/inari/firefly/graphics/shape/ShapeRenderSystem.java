@@ -110,7 +110,7 @@ public final class ShapeRenderSystem
     
     final class ShapeRenderer extends BaseRenderer {
         
-        protected final TransformDataCollector transformCollector = new DiskreteTransformDataCollector();
+        protected final TransformDataCollector transformCollector = new ExactTransformDataCollector();
 
         protected ShapeRenderer( FFContext context ) {
             super( 0 );
