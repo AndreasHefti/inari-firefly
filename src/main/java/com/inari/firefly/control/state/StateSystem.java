@@ -218,7 +218,7 @@ public class StateSystem
             return Workflow.TYPE_KEY;
         }
         @Override
-        public final Workflow getComponent( int id ) {
+        public final Workflow get( int id ) {
             return workflows.get( id );
         }
         @Override
@@ -226,16 +226,20 @@ public class StateSystem
             return workflows.iterator();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteWorkflow( id );
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deleteWorkflow( name );
+        public final int getId( String name ) {
+            return getWorkflowId( name );
         }
         @Override
-        public final Workflow getComponent( String name ) {
-            return getWorkflow( name );
+        public final void activate( int id ) {
+            activateWorkflow( id );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
     }
     

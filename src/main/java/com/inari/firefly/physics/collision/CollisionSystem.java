@@ -311,6 +311,15 @@ public final class CollisionSystem
         return ofLayer.get( layerId );
     }
     
+    public final int getCollisionQuadTreeId( String name ) {
+        for ( CollisionQuadTree quadTree : quadTrees ) {
+            if ( name.equals( quadTree.getName() ) ) {
+                return quadTree.index();
+            }
+        }
+        return -1;
+    }
+    
     public final void deleteCollisionQuadTree( int id ) {
         CollisionQuadTree quadTree = getCollisionQuadTree( id );
         if ( quadTree == null ) {
@@ -351,6 +360,16 @@ public final class CollisionSystem
         }
         
         return null;
+    }
+    
+    public final int getCollisionResolverId( String name ) {
+        for ( CollisionResolver cr : collisionResolvers ) {
+            if ( name.equals( cr.getName() ) ) {
+                return cr.index();
+            }
+        }
+        
+        return -1;
     }
 
     public final void deleteCollisionResolver( String name ) {
@@ -477,7 +496,7 @@ public final class CollisionSystem
             return CollisionQuadTree.TYPE_KEY;
         }
         @Override
-        public final CollisionQuadTree getComponent( int id ) {
+        public final CollisionQuadTree get( int id ) {
             return getCollisionQuadTree( id );
         }
         @Override
@@ -485,18 +504,22 @@ public final class CollisionSystem
             return quadTrees.iterator();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteCollisionQuadTree( id );
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deleteCollisionQuadTree( name );
-            
+        public final int getId( String name ) {
+            return getCollisionQuadTreeId( name );
         }
         @Override
-        public final CollisionQuadTree getComponent( String name ) {
-            return getCollisionQuadTree( name );
+        public final void activate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+
     }
 
     private final class CollisionResolverBuilderAdapter extends SystemBuilderAdapter<CollisionResolver> {
@@ -508,7 +531,7 @@ public final class CollisionSystem
             return CollisionResolver.TYPE_KEY;
         }
         @Override
-        public final CollisionResolver getComponent( int id ) {
+        public final CollisionResolver get( int id ) {
             return getCollisionResolver( id );
         }
         @Override
@@ -516,17 +539,21 @@ public final class CollisionSystem
             return collisionResolvers.iterator();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteCollisionResolver( id );
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deleteCollisionResolver( name );
-            
+        public final int getId( String name ) {
+            return getCollisionResolverId( name );
         }
         @Override
-        public final CollisionResolver getComponent( String name ) {
-            return getCollisionResolver( name );
+        public final void activate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
     }
+
 }

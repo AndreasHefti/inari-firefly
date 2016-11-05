@@ -1,8 +1,5 @@
 package com.inari.firefly.physics.animation;
 
-import com.inari.firefly.physics.animation.FloatAnimation;
-import com.inari.firefly.system.external.FFTimer;
-
 public class TestAnimation extends FloatAnimation {
 
     protected TestAnimation( int id ) {
@@ -33,7 +30,7 @@ public class TestAnimation extends FloatAnimation {
     }
 
     @Override
-    public void update( FFTimer timer ) {
+    public void update() {
         // TODO Auto-generated method stub
         
     }

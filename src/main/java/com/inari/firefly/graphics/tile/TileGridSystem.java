@@ -167,13 +167,22 @@ public final class TileGridSystem
         return getTileGrid( viewId, layerId ) != null;
     }
     
-    public final TileGrid getTileGrid( String tileGridName ) {
+    public final TileGrid getTileGrid( final String tileGridName ) {
         for ( TileGrid tileGrid : tileGrids ) {
             if ( tileGrid != null && tileGrid.getName().equals(  tileGridName ) ) {
                 return tileGrid;
             }
         }
         return null;
+    }
+    
+    public final int getTileGridId( final String tileGridName ) {
+        for ( TileGrid tileGrid : tileGrids ) {
+            if ( tileGrid != null && tileGrid.getName().equals(  tileGridName ) ) {
+                return tileGrid.index();
+            }
+        }
+        return -1;
     }
     
     public final TileGrid getTileGrid( int tileGridId ) {
@@ -385,7 +394,7 @@ public final class TileGridSystem
             return TileGrid.TYPE_KEY;
         }
         @Override
-        public final TileGrid getComponent( int id ) {
+        public final TileGrid get( int id ) {
             return getTileGrid( id );
         }
         @Override
@@ -393,16 +402,20 @@ public final class TileGridSystem
             return tileGrids.iterator();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteTileGrid( id );
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deleteTileGrid( getTileGrid( name ).index() );
+        public final int getId( String name ) {
+            return getTileGridId( name );
         }
         @Override
-        public final TileGrid getComponent( String name ) {
-            return getTileGrid( name );
+        public final void activate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
     }
     
@@ -415,25 +428,28 @@ public final class TileGridSystem
             return TileGridRenderer.TYPE_KEY;
         }
         @Override
-        public final TileGridRenderer getComponent( int id ) {
+        public final TileGridRenderer get( int id ) {
             return getRenderer( id );
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteRenderer( id );
         }
         @Override
         public final Iterator<TileGridRenderer> getAll() {
             return renderer.iterator();
         }
-        
         @Override
-        public final void deleteComponent( String name ) {
-            deleteRenderer( getRendererId( name ) );
+        public final int getId( String name ) {
+            return getRendererId( name );
         }
         @Override
-        public final TileGridRenderer getComponent( String name ) {
-            return getRenderer( getRendererId( name ) );
+        public final void activate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
     }
 

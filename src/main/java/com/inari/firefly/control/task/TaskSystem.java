@@ -155,7 +155,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
             return Task.TYPE_KEY;
         }
         @Override
-        public final Task getComponent( int id ) {
+        public final Task get( int id ) {
             return tasks.get( id );
         }
         @Override
@@ -163,16 +163,20 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
             return tasks.iterator();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteTask( id );
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deleteTask( getTaskId( name ) );
+        public final int getId( String name ) {
+            return getTaskId( name );
         }
         @Override
-        public final Task getComponent( String name ) {
-            return getTask( getTaskId( name ) );
+        public final void activate( int id ) {
+            runTask( id );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
     }
 

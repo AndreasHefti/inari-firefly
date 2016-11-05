@@ -15,7 +15,6 @@
  ******************************************************************************/ 
 package com.inari.firefly.physics.animation;
 
-
 public abstract class IntAnimation extends Animation {
 
     protected IntAnimation( int id ) {

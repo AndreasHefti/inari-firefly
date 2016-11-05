@@ -139,6 +139,14 @@ public final class FFContext {
         return timer;
     }
     
+    public final long getTime() {
+        return timer.getTime();
+    }
+    
+    public final long getTimeElapsed() {
+        return timer.getTimeElapsed();
+    }
+    
     /** Use this to get the underling {@link FFInput} implementation 
      * @return underling {@link FFInput} implementation
      */
@@ -268,47 +276,59 @@ public final class FFContext {
      */
     public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, int componentId ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        return key.<C>type().cast( builderHelper.getComponent( componentId ) );
+        return key.<C>type().cast( builderHelper.get( componentId ) );
     }
-    
-    @SuppressWarnings( "unchecked" )
+
     public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentKey<C> key, int componentId, Class<CS> subType ) {
+        @SuppressWarnings( "unchecked" )
         SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
-        C component = builderHelper.getComponent( componentId );
+        C component = builderHelper.get( componentId );
         if ( component == null ) {
             return null;
         }
         return subType.cast( component );
     }
-    
+
     public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        return key.<C>type().cast( builderHelper.getComponent( componentName ) );
+        return key.<C>type().cast( builderHelper.get( builderHelper.getId( componentName ) ) );
     }
     
     public final <C extends SystemComponent> int getSystemComponentId( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        return key.<C>type().cast( builderHelper.getComponent( componentName ) ).index();
+        return builderHelper.getId( componentName );
     }
     
     @SuppressWarnings( "unchecked" )
     public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentKey<C> key, String componentName, Class<CS> subType ) {
         SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
-        C component = builderHelper.getComponent( componentName );
+        C component = builderHelper.get( builderHelper.getId( componentName ) );
         if ( component == null ) {
             return null;
         }
         return subType.cast( component );
     }
     
+    public final <C extends SystemComponent, CS extends C> void activateSystemComponent( SystemComponentKey<C> key, int id ) {
+        @SuppressWarnings( "unchecked" )
+        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        builderHelper.activate( id );
+    }
+    
+    public final <C extends SystemComponent, CS extends C> void deactivateSystemComponent( SystemComponentKey<C> key, int id ) {
+        @SuppressWarnings( "unchecked" )
+        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        builderHelper.deactivate( id );
+    }
+    
     public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, int componentIndex ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        builderHelper.deleteComponent( componentIndex );
+        builderHelper.delete( componentIndex );
     }
     
     public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
-        builderHelper.deleteComponent( componentName );
+        builderHelper.delete( builderHelper.getId( componentName ) );
     }
 
     @SuppressWarnings( "unchecked" )

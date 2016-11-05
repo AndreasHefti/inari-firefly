@@ -146,7 +146,7 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
             return Prototype.TYPE_KEY;
         }
         @Override
-        public final Prototype getComponent( int id ) {
+        public final Prototype get( int id ) {
             return prototypes.get( id );
         }
         @Override
@@ -154,16 +154,20 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
             return prototypes.iterator();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deletePrototype( id );
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deletePrototype( getPrototypeId( name ) );
+        public final int getId( String name ) {
+            return getPrototypeId( name );
         }
         @Override
-        public final Prototype getComponent( String name ) {
-            return getPrototype( name );
+        public final void activate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
     }
 

@@ -25,7 +25,6 @@ import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class AnimationSystem 
     extends 
@@ -111,8 +110,8 @@ public final class AnimationSystem
         return animation.isActive();
     }
     
-    public final void activate( int animationId, final FFTimer timer ) {
-        animations.get( animationId ).activate( timer );
+    public final void activateAnimation( int animationId ) {
+        animations.get( animationId ).activate();
     }
     
     public final void resetAnimation( int animationId ) {
@@ -125,7 +124,7 @@ public final class AnimationSystem
             Animation animation = animations.get( i );
             if ( animation != null ) {
                 if ( animation.active ) {
-                    animation.systemUpdate( event.timer );
+                    animation.systemUpdate();
                     continue;
                 }
                 
@@ -136,7 +135,7 @@ public final class AnimationSystem
                 }
                 
                 if ( animation.startTime > 0 && event.timer.getTime() >= animation.startTime ) {
-                    animation.activate( event.timer );
+                    animation.activate();
                     continue;
                 }
             }
@@ -341,25 +340,28 @@ public final class AnimationSystem
             return Animation.TYPE_KEY;
         }
         @Override
-        public final Animation getComponent( int id ) {
+        public final Animation get( int id ) {
             return getAnimation( id );
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteAnimation( id );
         }
         @Override
         public final Iterator<Animation> getAll() {
             return animations.iterator();
         }
-        
         @Override
-        public final void deleteComponent( String name ) {
-            deleteAnimation( getAnimationId( name ) );
+        public final int getId( String name ) {
+            return getAnimationId( name );
         }
         @Override
-        public final Animation getComponent( String name ) {
-            return getAnimation( getAnimationId( name ) );
+        public final void activate( int id ) {
+            activateAnimation( id );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            resetAnimation( id );
         }
     }
     
@@ -372,25 +374,28 @@ public final class AnimationSystem
             return AnimationResolver.TYPE_KEY;
         }
         @Override
-        public final AnimationResolver getComponent( int id ) {
+        public final AnimationResolver get( int id ) {
             return getAnimationResolver( id );
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteAnimationResolver( id );
         }
         @Override
         public final Iterator<AnimationResolver> getAll() {
             return animationResolver.iterator();
         }
-        
         @Override
-        public final void deleteComponent( String name ) {
-            deleteAnimationResolver( getAnimationResolverId( name ) );
+        public final int getId( String name ) {
+            return getAnimationResolverId( name );
         }
         @Override
-        public final AnimationResolver getComponent( String name ) {
-            return getAnimationResolver( getAnimationResolverId( name ) );
+        public final void activate( int id ) {
+            throw new UnsupportedOperationException( "Action is not activable" );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( "Action is not activable" );
         }
     }
 

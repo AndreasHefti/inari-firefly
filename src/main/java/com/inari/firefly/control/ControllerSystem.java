@@ -191,7 +191,7 @@ public final class ControllerSystem
             return Controller.TYPE_KEY;
         }
         @Override
-        public final Controller getComponent( int id ) {
+        public final Controller get( int id ) {
             return controller.get( id );
         }
         @Override
@@ -199,16 +199,20 @@ public final class ControllerSystem
             return controller.iterator();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteController( id );
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deleteController( name );
+        public final int getId( String name ) {
+            return getControllerId( name );
         }
         @Override
-        public final Controller getComponent( String name ) {
-            return getController( getControllerId( name ) );
+        public final void activate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
         
     }

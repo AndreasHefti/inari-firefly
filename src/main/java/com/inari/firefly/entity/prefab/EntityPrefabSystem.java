@@ -94,13 +94,22 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
         deletePrefab( prefab );
     }
     
-    public final EntityPrefab getPrefab( String prefabName ) {
+    public final EntityPrefab getPrefab( final String prefabName ) {
         for ( EntityPrefab prefab : prefabs ) {
             if ( prefabName.equals( prefab.getName() ) ) {
                 return prefab;
             }
         }
         return null;
+    }
+    
+    public final int getPrefabId( final String prefabName ) {
+        for ( EntityPrefab prefab : prefabs ) {
+            if ( prefabName.equals( prefab.getName() ) ) {
+                return prefab.index();
+            }
+        }
+        return -1;
     }
     
     public final void cacheComponents( String prefabName, int number ) {
@@ -270,7 +279,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
             return EntityPrefab.TYPE_KEY;
         }
         @Override
-        public final EntityPrefab getComponent( int id ) {
+        public final EntityPrefab get( int id ) {
             return prefabs.get( id );
         }
         @Override
@@ -278,17 +287,21 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
             return prefabs.iterator();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deletePrefab( id );
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deletePrefab( name );
-            
+        public final int getId( String name ) {
+            return getPrefabId( name );
         }
         @Override
-        public final EntityPrefab getComponent( String name ) {
-            return getPrefab( name );
+        public final void activate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
     }
+
 }

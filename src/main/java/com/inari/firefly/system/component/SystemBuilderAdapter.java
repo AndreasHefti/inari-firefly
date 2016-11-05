@@ -73,12 +73,12 @@ public abstract class SystemBuilderAdapter<C extends SystemComponent> implements
         for ( AttributeMap attributes : attrs.getAllOfType( subType ) ) {
             int componentId = attributes.getComponentId().getIndexId();
             if ( buildType == BuildType.MERGE_ATTRIBUTES ) {
-                C component = getComponent( componentId );
+                C component = get( componentId );
                 if ( component != null ) {
                     component.toAttributes( componentBuilder.getAttributes() );
                 }
             } else if ( buildType == BuildType.OVERWRITE ) {
-                deleteComponent( componentId );
+                delete( componentId );
             }
             componentBuilder
                 .setAttributes( attributes )

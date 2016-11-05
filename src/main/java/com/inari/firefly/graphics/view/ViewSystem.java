@@ -229,8 +229,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         return -1;
     }
     
-    public final void activateLayer( String layerName ) {
-        int layerId = getLayerId( layerName );
+    public final void activateLayer( int layerId ) {
         if ( layerId < 0 ) {
             return;
         }
@@ -238,8 +237,15 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         getLayer( layerId ).active = true;
     }
     
+    public final void activateLayer( String layerName ) {
+        activateLayer( getLayerId( layerName ) );
+    }
+    
     public final void deactivateLayer( String layerName ) {
-        int layerId = getLayerId( layerName );
+        deactivateLayer( getLayerId( layerName ) );
+    }
+    
+    public final void deactivateLayer( int layerId ) {
         if ( layerId < 0 ) {
             return;
         }
@@ -478,7 +484,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return View.TYPE_KEY;
         }
         @Override
-        public final View getComponent( int id ) {
+        public final View get( int id ) {
             return views.get( id );
         }
         @Override
@@ -486,17 +492,20 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return views.iterator();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteView( id );
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deleteView( name );
-            
+        public int getId( String name ) {
+            return getViewId( name );
         }
         @Override
-        public final View getComponent( String name ) {
-            return getView( name );
+        public void activate( int id ) {
+            activateView( id );
+        }
+        @Override
+        public void deactivate( int id ) {
+            deactivateView( id );
         }
     }
     
@@ -509,7 +518,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return Layer.TYPE_KEY;
         }
         @Override
-        public final Layer getComponent( int id ) {
+        public final Layer get( int id ) {
             return getLayer( id );
         }
         @Override
@@ -525,17 +534,20 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             return allLayers.iterator();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteLayer( id );
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deleteLayer( getLayerId( name ) );
-            
+        public final int getId( String name ) {
+            return getLayerId( name );
         }
         @Override
-        public final Layer getComponent( String name ) {
-            return getLayer( getLayerId( name ) );
+        public final void activate( int id ) {
+            activateLayer( id );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            deactivateLayer( id );
         }
     }
     

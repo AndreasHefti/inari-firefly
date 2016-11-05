@@ -198,26 +198,30 @@ public class TextSystem
             return TextRenderer.TYPE_KEY;
         }
         @Override
-        public final TextRenderer getComponent( int id ) {
+        public final TextRenderer get( int id ) {
             return getRenderer( id );
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteRenderer( id );
         }
         @Override
         public final Iterator<TextRenderer> getAll() {
             return renderer.iterator();
         }
+        @Override
+        public final int getId( String name ) {
+            return getRendererId( name );
+        }
+        @Override
+        public final void activate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
         
-        @Override
-        public final void deleteComponent( String name ) {
-            deleteRenderer( getRendererId( name ) );
-        }
-        @Override
-        public final TextRenderer getComponent( String name ) {
-            return getRenderer( getRendererId( name ) );
-        }
     }
 
 }

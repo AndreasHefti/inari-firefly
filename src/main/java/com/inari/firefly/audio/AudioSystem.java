@@ -225,7 +225,7 @@ public final class AudioSystem
             return Sound.TYPE_KEY;
         }
         @Override
-        public final Sound getComponent( int id ) {
+        public final Sound get( int id ) {
             return sounds.get( id );
         }
         @Override
@@ -233,16 +233,20 @@ public final class AudioSystem
             return sounds.iterator();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteSound( id );
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deleteSound( name );
+        public final int getId( String name ) {
+            return getSoundId( name );
         }
         @Override
-        public final Sound getComponent( String name ) {
-            return getSound( name );
+        public final void activate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
     }
 

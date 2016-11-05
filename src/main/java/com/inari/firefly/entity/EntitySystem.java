@@ -458,23 +458,15 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             return Entity.ENTITY_TYPE_KEY;
         }
         @Override
-        public final Entity getComponent( int id ) {
+        public final Entity get( int id ) {
             throw new UnsupportedOperationException();
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             throw new UnsupportedOperationException();
         }
         @Override
         public final Iterator<Entity> getAll() {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public final void deleteComponent( String name ) {
-            deleteEntity( getEntityId( name ) );
-        }
-        @Override
-        public final Entity getComponent( String name ) {
             throw new UnsupportedOperationException();
         }
         @Override
@@ -538,6 +530,18 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
                 int entityId = inactive.next();
                 entityToAttribute( attributes, entityId );
             }
+        }
+        @Override
+        public final int getId( String name ) {
+            return getEntityId( name );
+        }
+        @Override
+        public final void activate( int id ) {
+            activateEntity( id );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            deactivateEntity( id );
         }
     }
     

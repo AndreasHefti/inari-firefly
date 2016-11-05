@@ -15,7 +15,6 @@
  ******************************************************************************/ 
 package com.inari.firefly.physics.animation;
 
-
 public abstract class ValueAnimation<V> extends Animation {
 
     protected ValueAnimation( int id ) {

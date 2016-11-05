@@ -139,11 +139,11 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
             return Action.TYPE_KEY;
         }
         @Override
-        public final Action getComponent( int id ) {
+        public final Action get( int id ) {
             return actions.get( id );
         }
         @Override
-        public void deleteComponent( int id ) {
+        public void delete( int id ) {
             deleteAction( id );
         }
         @Override
@@ -151,13 +151,16 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
             return actions.iterator();
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deleteAction( getActionId( name ) );
-            
+        public final int getId( String name ) {
+            return getActionId( name );
         }
         @Override
-        public final Action getComponent( String name ) {
-            return getAction( getActionId( name ) );
+        public final void activate( int id ) {
+            throw new UnsupportedOperationException( "Action is not activable" );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            throw new UnsupportedOperationException( "Action is not activable" );
         }
     }
 

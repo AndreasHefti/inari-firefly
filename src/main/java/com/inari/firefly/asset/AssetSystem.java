@@ -342,25 +342,28 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
             return Asset.TYPE_KEY;
         }
         @Override
-        public final Asset getComponent( int id ) {
+        public final Asset get( int id ) {
             return getAsset( id );
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteAsset( id );
         }
-        
         @Override
         public final Iterator<Asset> getAll() {
             return assets.iterator();
         }
         @Override
-        public final void deleteComponent( String name ) {
-            deleteAsset( getAssetId( name ) );
+        public final int getId( String name ) {
+            return getAssetId( name );
         }
         @Override
-        public final Asset getComponent( String name ) {
-            return getAsset( getAssetId( name ) );
+        public final void activate( int id ) {
+            loadAsset( id );
+        }
+        @Override
+        public final void deactivate( int id ) {
+            disposeAsset( id );
         }
     }
 

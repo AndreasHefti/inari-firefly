@@ -22,7 +22,6 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
-import com.inari.firefly.system.external.FFTimer;
 
 /** General and abstract implementation of the Animation SystemComponent.
  * 
@@ -111,8 +110,8 @@ public abstract class Animation extends SystemComponent {
         finished = true;
     }
     
-    public void activate( final FFTimer timer  ) {
-        startedTime = timer.getTime();
+    public void activate() {
+        startedTime = context.getTime();
         active = true;
     }
     
@@ -120,9 +119,9 @@ public abstract class Animation extends SystemComponent {
         active = false;
     } 
 
-    final void systemUpdate( final FFTimer timer ) {
-        runningTime += timer.getTimeElapsed();
-        update( timer );
+    final void systemUpdate() {
+        runningTime += context.getTimeElapsed();
+        update();
     }
     
     /** This is called on every update by the AnimationSystem with the current FFTimer.
@@ -132,7 +131,7 @@ public abstract class Animation extends SystemComponent {
      * 
      *  Override this do to other update stuff if needed for a concrete implementation of Animation.
      */
-    public abstract void update( final FFTimer timer );
+    public abstract void update();
     
     public void reset() {
         active = false;
