@@ -142,7 +142,7 @@ public final class ControllerSystem
         for ( int i = 0; i < controller.capacity(); i++ ) {
             Controller c = controller.get( i );
             if ( c != null ) {
-                c.processUpdate( event.timer );
+                c.processUpdate();
             }
         }
     }

@@ -1,8 +1,10 @@
 package com.inari.firefly.system;
 
+import java.awt.Font;
 import java.lang.reflect.Constructor;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.event.AspectedEventListener;
@@ -12,6 +14,7 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.event.PredicatedEvent;
 import com.inari.commons.event.PredicatedEventListener;
 import com.inari.commons.lang.TypedKey;
+import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
@@ -24,8 +27,8 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.entity.EntitySystem.Entity;
 import com.inari.firefly.entity.EntitySystem.EntityBuilder;
-import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.system.FFSystem.FFSystemTypeKey;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
@@ -36,6 +39,7 @@ import com.inari.firefly.system.external.FFAudio;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFTimer;
+import com.inari.firefly.system.info.SystemInfo;
 import com.inari.firefly.system.info.SystemInfoDisplay;
 import com.inari.firefly.system.utils.Disposable;
 
@@ -63,6 +67,9 @@ import com.inari.firefly.system.utils.Disposable;
  *  TODO: provide some example code that shows how to work with the FFContext
  **/
 public final class FFContext {
+    
+    private static final String NO_NAME = "NO_NAME_";
+    private static final AtomicInteger NON_NAME_COUNTER = new AtomicInteger( 0 );
     
     /** Defines the name of the default {@link Font} that is pre created and installed with the native firefly-engine */
     public static final String DEFAULT_FONT = "FIREFLY_DEFAULT_FONT";
@@ -407,7 +414,16 @@ public final class FFContext {
     }
     
     public final int getAssetInstanceId( String assetName ) {
-        Asset asset = getSystemComponent( TextureAsset.TYPE_KEY, assetName );
+        Asset asset = getSystemComponent( Asset.TYPE_KEY, assetName );
+        if ( asset == null ) {
+            return -1;
+        }
+        
+        return asset.getInstanceId();
+    }
+    
+    public final int getAssetInstanceId( int id ) {
+        Asset asset = getSystemComponent( Asset.TYPE_KEY, id );
         if ( asset == null ) {
             return -1;
         }
@@ -479,6 +495,10 @@ public final class FFContext {
         return graphics.getScreenHeight();
     }
     
+    public final String createNextNoName() {
+        return NO_NAME + NON_NAME_COUNTER.getAndIncrement();
+    }
+    
     public final void exit() {
         this.exit = true;
     }
@@ -505,5 +525,7 @@ public final class FFContext {
             }
         }
     }
+
+    
 
 }

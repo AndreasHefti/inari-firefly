@@ -18,7 +18,6 @@ package com.inari.firefly.entity;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.control.Controller;
-import com.inari.firefly.system.external.FFTimer;
 
 // TODO think about add and remove entityIds directly in the EntitySystem instead of listening to EntityActivationListener
 public abstract class EntityController extends Controller implements EntityActivationListener {
@@ -63,16 +62,16 @@ public abstract class EntityController extends Controller implements EntityActiv
     }
 
     @Override
-    public void update( final FFTimer timer ) {
+    public void update() {
         for ( int i = 0; i < componentIds.length(); i++ ) {
             int entityId = componentIds.get( i );
             if ( entityId >= 0 ) {
-                update( timer, entityId );
+                update( entityId );
             }
         }
     }
 
-    protected abstract void update( final FFTimer timer, int entityId );
+    protected abstract void update( int entityId );
     
     private final boolean hasControllerId( int entityId ) {
         EEntity controllerComponent = context.getEntityComponent( entityId, EEntity.TYPE_KEY );

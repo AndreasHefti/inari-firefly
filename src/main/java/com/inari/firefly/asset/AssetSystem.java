@@ -36,7 +36,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Asset.TYPE_KEY
     };
-    
+
     private final DynArray<Asset> assets;
     private final Map<String, Asset> nameMapping;
     
@@ -321,8 +321,12 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
             }
 
             assets.set( asset.index(), asset );
-            nameMapping.put( asset.getName(), asset );
-
+            String name = asset.getName();
+            if ( name == null ) {
+                asset.setName( context.createNextNoName() );
+                name = asset.getName();
+            }
+            nameMapping.put( name, asset );
             context.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
             
             if ( activate ) {

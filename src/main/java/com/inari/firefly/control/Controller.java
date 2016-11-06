@@ -23,7 +23,6 @@ import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
-import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
 public abstract class Controller extends SystemComponent {
@@ -90,20 +89,20 @@ public abstract class Controller extends SystemComponent {
         attributes.put( UPDATE_RESOLUTION, updateResolution );
     }
     
-    final void processUpdate( final FFTimer timer ) {
+    final void processUpdate() {
         if ( updateResolution >= 0 ) {
             if ( updateScheduler == null ) {
-                updateScheduler = timer.createUpdateScheduler( updateResolution );
+                updateScheduler = context.getTimer().createUpdateScheduler( updateResolution );
             }
             if ( updateScheduler.needsUpdate() ) {
-                update( timer );
+                update();
             }
             return;
         }
         
-        update( timer );
+        update();
     }
     
-    public abstract void update( final FFTimer timer );
+    public abstract void update();
 
 }

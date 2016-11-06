@@ -16,7 +16,6 @@
 package com.inari.firefly.audio;
 
 import com.inari.firefly.control.Controller;
-import com.inari.firefly.system.external.FFTimer;
 
 public abstract class SoundController extends Controller {
 
@@ -27,17 +26,17 @@ public abstract class SoundController extends Controller {
     }
 
     @Override
-    public final void update( final FFTimer timer ) {
+    public final void update() {
         for ( int i = 0; i < componentIds.length(); i++ ) {
             if ( componentIds.isEmpty( i ) ) {
                 continue;
             }
             int soundId = componentIds.get( i );
-            update( timer, soundSystem.getSound( soundId ) );
+            update( soundSystem.getSound( soundId ) );
         }
     }
 
 
-    public abstract void update(  final FFTimer timer , Sound sound );
+    public abstract void update( Sound sound );
 
 }

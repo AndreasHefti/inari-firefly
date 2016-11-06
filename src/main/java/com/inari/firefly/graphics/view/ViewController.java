@@ -1,7 +1,6 @@
 package com.inari.firefly.graphics.view;
 
 import com.inari.firefly.control.Controller;
-import com.inari.firefly.system.external.FFTimer;
 
 public abstract class ViewController extends Controller implements ViewEventListener {
     
@@ -44,7 +43,7 @@ public abstract class ViewController extends Controller implements ViewEventList
     }
 
     @Override
-    public final void update( final FFTimer timer ) {
+    public final void update() {
         if ( componentIds.size() <= 0 ) {
             return;
         }
@@ -54,11 +53,11 @@ public abstract class ViewController extends Controller implements ViewEventList
                 continue;
             }
             int viewId = componentIds.get( i );
-            update( timer, viewSystem.getView( viewId ) );
+            update( viewSystem.getView( viewId ) );
         }
     }
     
     
-    public abstract void update( final FFTimer timer, final View view );
+    public abstract void update( final View view );
 
 }

@@ -10,7 +10,6 @@ import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationResolver;
 import com.inari.firefly.physics.animation.AnimationSystem;
-import com.inari.firefly.system.external.FFTimer;
 
 public abstract class AnimatedEntityAttribute extends EntityController {
 
@@ -72,10 +71,10 @@ public abstract class AnimatedEntityAttribute extends EntityController {
         attributes.put( ANIMATION_RESOLVER_ID, animationResolverId );
     } 
     
-    @Override
-    public final void update( final FFTimer timer ) {
-        animationId = context.getSystem( AnimationSystem.SYSTEM_KEY ).getAnimationId( animationResolverId, animationId );
-        super.update( timer );
+    protected final void updateAnimationId( final AnimationSystem animationSystem ) {
+        if ( animationResolverId >= 0 ) {
+            animationId = animationSystem.getAnimationId( animationResolverId, animationId );
+        }
     }
 
     public abstract AttributeKey<?> getControlledAttribute();
