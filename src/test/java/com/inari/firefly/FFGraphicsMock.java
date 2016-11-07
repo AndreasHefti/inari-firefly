@@ -74,13 +74,13 @@ public class FFGraphicsMock implements FFGraphics {
 
     @Override
     public void onViewEvent( ViewEvent event ) {
-        switch ( event.eventType ) {
+        switch ( event.getType() ) {
             case VIEW_CREATED: {
-                views.add( event.view.getName() );
+                views.add( event.getView().getName() );
                 break;
             }
             case VIEW_DELETED: {
-                views.remove( event.view.getName() );
+                views.remove( event.getView().getName() );
             }
             default: {}
         }

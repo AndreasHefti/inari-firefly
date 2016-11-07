@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.inari.commons.event.EventPool;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.build.ComponentCreationException;
@@ -45,6 +46,8 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     private final DynArray<View> views;
     private final List<View> orderedViewports;
     private final DynArray<List<Layer>> oderedLayersOfView;
+    
+    private ViewEventPool viewEventPool;
 
     ViewSystem() {
         super( SYSTEM_KEY );
@@ -56,6 +59,10 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     @Override
     public void init( FFContext context ) {
         super.init( context );
+        
+        viewEventPool = new ViewEventPool();
+        context.getEventDispatcher().registerEventPool( ViewEvent.TYPE_KEY, viewEventPool );
+        viewEventPool.populate( 5 );
 
         // create the base view that is the screen
         Rectangle screenBounds = new Rectangle(
@@ -70,6 +77,8 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     @Override
     public final void dispose( FFContext context ) {
         clear();
+        viewEventPool.clear();
+        viewEventPool = null;
     }
 
     public final boolean hasView( int viewId ) {
@@ -126,7 +135,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         View view = views.get( viewId );
         if ( view != null && !view.isActive() ) {
             view.active = true;
-            context.notify( new ViewEvent( view, ViewEvent.Type.VIEW_ACTIVATED ) );
+            context.notify( viewEventPool.createEvent( ViewEvent.Type.VIEW_ACTIVATED, view ) );
         }
     }
 
@@ -137,7 +146,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         View view = views.get( viewId );
         if ( view != null && view.isActive() ) {
             view.active = false;
-            context.notify( new ViewEvent( view, ViewEvent.Type.VIEW_DISPOSED ) );
+            context.notify( viewEventPool.createEvent( ViewEvent.Type.VIEW_DISPOSED, view ) );
         }
     }
     
@@ -177,7 +186,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             view.active = false;
             orderedViewports.remove( view );
             disableLayering( viewId );
-            context.notify( new ViewEvent( view, ViewEvent.Type.VIEW_DELETED ) );
+            context.notify( viewEventPool.createEvent( ViewEvent.Type.VIEW_DELETED, view ) );
             view.dispose();
         }
     }
@@ -412,7 +421,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
                 view.order = orderedViewports.size();
                 orderedViewports.add( view );
             }
-            context.notify( new ViewEvent( view, ViewEvent.Type.VIEW_CREATED ) );
+            context.notify( viewEventPool.createEvent( ViewEvent.Type.VIEW_CREATED, view ) );
             
             if ( activate ) {
                 activateView( view.index() );
@@ -623,7 +632,25 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
                 }
             }
         }
+    }
+    
+    private final class ViewEventPool extends EventPool<ViewEvent> {
+        @Override
+        protected final ViewEvent create() {
+            return new ViewEvent();
+        }
+        @Override
+        protected final void clearEvent( ViewEvent event ) {
+            event.eventType = null;
+            event.view = null;
+        }
         
+        final ViewEvent createEvent( final ViewEvent.Type type, final View view ) {
+            ViewEvent viewEvent = get();
+            viewEvent.eventType = type;
+            viewEvent.view = view;
+            return viewEvent;
+        }
     }
 
 }

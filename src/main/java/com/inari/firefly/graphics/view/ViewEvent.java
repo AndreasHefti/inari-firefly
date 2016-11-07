@@ -28,13 +28,23 @@ public final class ViewEvent extends Event<ViewEventListener> {
         VIEW_DELETED
     }
     
-    public final View view;
-    public final Type eventType;
-
-    public ViewEvent( View view, Type eventType ) {
+    View view;
+    Type eventType;
+    
+    ViewEvent() {
         super( TYPE_KEY );
-        this.eventType = eventType;
-        this.view = view;
+    }
+    
+    public final View getView() {
+        return view;
+    }
+    
+    public final Type getType() {
+        return eventType;
+    }
+    
+    public final boolean isOfType( Type type ) {
+        return eventType == type;
     }
 
     @Override

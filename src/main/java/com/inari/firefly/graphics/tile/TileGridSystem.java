@@ -126,8 +126,8 @@ public final class TileGridSystem
     
     @Override
     public final void onViewEvent( ViewEvent event ) {
-        if ( event.eventType == Type.VIEW_DELETED ) {
-            deleteAllTileGrid( event.view.index() );
+        if ( event.isOfType( Type.VIEW_DELETED ) ) {
+            deleteAllTileGrid( event.getView().index() );
             return;
         }
     }

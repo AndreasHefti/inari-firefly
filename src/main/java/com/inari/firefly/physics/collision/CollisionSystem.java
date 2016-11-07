@@ -88,9 +88,8 @@ public final class CollisionSystem
     
     @Override
     public final void onViewEvent( ViewEvent event ) {
-        int viewId = event.view.index();
-        if ( event.eventType == Type.VIEW_DELETED ) {
-            quadTreesPerViewAndLayer.remove( viewId );
+        if ( event.isOfType( Type.VIEW_DELETED ) ) {
+            quadTreesPerViewAndLayer.remove( event.getView().index() );
             return;
         }
     }
@@ -263,8 +262,8 @@ public final class CollisionSystem
         }
         
         // normalize the intersection to origin of coordinate system
-        intersectionBounds.x = intersectionBounds.x - movingWorldBounds.x /*+ contactScan.contactScanBounds.x */ ;
-        intersectionBounds.y = intersectionBounds.y - movingWorldBounds.y /*+ contactScan.contactScanBounds.y */;
+        intersectionBounds.x = intersectionBounds.x - movingWorldBounds.x;
+        intersectionBounds.y = intersectionBounds.y - movingWorldBounds.y;
         
         final BitMask bitmask2 = collision.getCollisionMask();
         if ( bitmask2 == null ) {

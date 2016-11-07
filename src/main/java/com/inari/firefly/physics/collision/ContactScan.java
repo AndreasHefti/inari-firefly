@@ -22,6 +22,7 @@ public final class ContactScan implements Iterable<ContactConstraint> {
     }
 
     public final void update( float x, float y, float vx, float vy ) {
+        
         worldBounds.x = ( ( vx > 0 )? (int) Math.ceil( x ) : (int) Math.floor( x ) ) + contactScanBounds.x;
         worldBounds.y = ( ( vy > 0 )? (int) Math.ceil( y ) : (int) Math.floor( y ) ) + contactScanBounds.y;
         worldBounds.width = contactScanBounds.width;

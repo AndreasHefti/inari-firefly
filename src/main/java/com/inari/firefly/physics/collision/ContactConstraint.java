@@ -14,6 +14,7 @@ public final class ContactConstraint implements Iterable<Contact> {
     
     final String name;
     final Rectangle contactScanBounds = new Rectangle();
+    final Rectangle normalizedContactScanBounds = new Rectangle();
     
     private boolean solidOnly = true;
     private boolean allTypes = true;
@@ -27,6 +28,9 @@ public final class ContactConstraint implements Iterable<Contact> {
     public ContactConstraint( String name, Rectangle contactScanBounds ) {
         this.name = name;
         this.contactScanBounds.setFrom( contactScanBounds );
+        normalizedContactScanBounds.setFrom( contactScanBounds );
+        normalizedContactScanBounds.x = 0;
+        normalizedContactScanBounds.y = 0;
     }
     
     public final String name() {
@@ -130,7 +134,7 @@ public final class ContactConstraint implements Iterable<Contact> {
             }
         }
         
-        if ( !GeomUtils.intersect( contact.intersectionBounds(), contactScanBounds ) ) {
+        if ( !GeomUtils.intersect( contact.intersectionBounds(), normalizedContactScanBounds ) ) {
             return false;
         }
 

@@ -161,11 +161,11 @@ public final class SpriteViewSystem
                 if ( components == null ) {
                     continue;
                 }
-                
+
                 ESprite sprite = components.get( ESprite.TYPE_KEY );
                 ETransform transform = components.get( ETransform.TYPE_KEY );
                 transformCollector.set( transform );
-                
+
                 render( sprite, transform.getParentId(), transformCollector );
             }
         }
