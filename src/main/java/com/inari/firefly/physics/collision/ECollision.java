@@ -6,10 +6,8 @@ import java.util.Set;
 
 import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.component.ComponentGroup;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -22,7 +20,6 @@ public final class ECollision extends EntityComponent {
     public static final AttributeKey<BitMask> COLLISION_MASK = new AttributeKey<BitMask>( "collisionMask", BitMask.class, ECollision.class );
     public static final AttributeKey<String> COLLISION_RESOLVER_NAME = new AttributeKey<String>( "collisionResolverName", String.class, ECollision.class );
     public static final AttributeKey<Integer> COLLISION_RESOLVER_ID = new AttributeKey<Integer>( "collisionResolverId", Integer.class, ECollision.class );
-    public static final AttributeKey<ComponentGroup> LAYER_GROUP = new AttributeKey<ComponentGroup>( "layerGroup", ComponentGroup.class, ECollision.class );
     public static final AttributeKey<Aspect> MATERIAL_TYPE = new AttributeKey<Aspect>( "materialType", Aspect.class, ECollision.class );
     public static final AttributeKey<Aspect> CONTACT_TYPE = new AttributeKey<Aspect>( "contactType", Aspect.class, ECollision.class );
     public static final AttributeKey<Boolean> SOLID = new AttributeKey<Boolean>( "solid", Boolean.class, ECollision.class );
@@ -31,7 +28,6 @@ public final class ECollision extends EntityComponent {
         COLLISION_BOUNDS,
         COLLISION_MASK,
         COLLISION_RESOLVER_ID,
-        LAYER_GROUP,
         MATERIAL_TYPE,
         CONTACT_TYPE,
         CONTACT_CONSTRAINTS
@@ -40,7 +36,6 @@ public final class ECollision extends EntityComponent {
     private final Rectangle collisionBounds;
     private BitMask collisionMask;
     private int collisionResolverId;
-    private ComponentGroup layerGroup;
     private Aspect materialType;
     private Aspect contactType;
     private boolean solid;
@@ -58,7 +53,6 @@ public final class ECollision extends EntityComponent {
     public final void resetAttributes() {
         collisionMask = null;
         collisionResolverId = -1;
-        layerGroup = null;
         contactType = null;
         materialType = null;
         solid = true;
@@ -94,18 +88,6 @@ public final class ECollision extends EntityComponent {
 
     public final void setCollisionResolverId( int collisionResolverId ) {
         this.collisionResolverId = collisionResolverId;
-    }
-    
-    public final boolean hasGroupedLayers() {
-        return layerGroup != null;
-    }
-
-    public final IntIterator getGroupedLayers() {
-        if ( layerGroup == null ) {
-            return null;
-        }
-        
-        return layerGroup.getComponentIds();
     }
 
     public final ContactScan getContactScan() {
@@ -150,7 +132,6 @@ public final class ECollision extends EntityComponent {
         setCollisionBounds( attributes.getValue( COLLISION_BOUNDS, collisionBounds ) );
         collisionMask = attributes.getValue( COLLISION_MASK, collisionMask );
         collisionResolverId = attributes.getIdForName( COLLISION_RESOLVER_NAME, COLLISION_RESOLVER_ID, CollisionResolver.TYPE_KEY, collisionResolverId );
-        layerGroup = attributes.getValue( LAYER_GROUP, layerGroup );
         materialType = attributes.getValue( MATERIAL_TYPE, materialType );
         contactType = attributes.getValue( CONTACT_TYPE, contactType );
         solid = attributes.getValue( SOLID, solid );
@@ -168,7 +149,6 @@ public final class ECollision extends EntityComponent {
         attributes.put( COLLISION_BOUNDS, collisionBounds );
         attributes.put( COLLISION_MASK, collisionMask );
         attributes.put( COLLISION_RESOLVER_ID, collisionResolverId );
-        attributes.put( LAYER_GROUP, layerGroup );
         attributes.put( MATERIAL_TYPE, materialType );
         attributes.put( CONTACT_TYPE, contactType );
         attributes.put( SOLID, solid );

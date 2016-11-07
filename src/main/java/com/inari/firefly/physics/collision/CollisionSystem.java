@@ -139,7 +139,7 @@ public final class CollisionSystem
                 collisionResolvers.get( collisionResolverId ).resolve( entityId );
             }
             
-            if ( contactScan.hasSolidContact() ) {
+            if ( contactScan.hasAnyContact() ) {
                 contactEvent.entityId = entityId;
                 context.notify( contactEvent );
             }
@@ -170,28 +170,39 @@ public final class CollisionSystem
         );
         
         final int viewId = transform.getViewId();
-        if ( collision.hasGroupedLayers() ) {
-            final IntIterator iterator = collision.getGroupedLayers();
-            while ( iterator.hasNext() ) {
-                final int layerId = iterator.next();
-                scanTileContacts( entityId, viewId, layerId, contactScan );
-                scanSpriteContacts( entityId, viewId, layerId, contactScan );
+        for ( ContactConstraint constraint : contactScan ) {
+            int layerId = constraint.layerId();
+            if ( layerId < 0 ) {
+                layerId = transform.getLayerId();
             }
-        } else {
-            final int layerId = transform.getLayerId();
-            scanTileContacts( entityId, viewId, layerId, contactScan );
-            scanSpriteContacts( entityId, viewId, layerId, contactScan );
+            
+            scanTileContacts( entityId, viewId, layerId, constraint );
+            scanSpriteContacts( entityId, viewId, layerId, constraint );
         }
+        
+        
+//        if ( collision.hasGroupedLayers() ) {
+//            final IntIterator iterator = collision.getGroupedLayers();
+//            while ( iterator.hasNext() ) {
+//                final int layerId = iterator.next();
+//                scanTileContacts( entityId, viewId, layerId, contactScan );
+//                scanSpriteContacts( entityId, viewId, layerId, contactScan );
+//            }
+//        } else {
+//            final int layerId = transform.getLayerId();
+//            scanTileContacts( entityId, viewId, layerId, contactScan );
+//            scanSpriteContacts( entityId, viewId, layerId, contactScan );
+//        }
     }
 
     
-    private void scanSpriteContacts( final int entityId, final int viewId, final int layerId, final ContactScan contactScan ) {
+    private void scanSpriteContacts( final int entityId, final int viewId, final int layerId, final ContactConstraint constraint ) {
         final CollisionQuadTree quadTree = getCollisionQuadTree( viewId, layerId );
         if ( quadTree == null ) {
             return;
         }
         
-        IntIterator entityIterator = quadTree.get( contactScan.getWorldBounds() );
+        IntIterator entityIterator = quadTree.get( constraint.worldBounds );
         if ( entityIterator == null || !entityIterator.hasNext() ) {
             return;
         }
@@ -203,17 +214,17 @@ public final class CollisionSystem
             }
             
             final ETransform transform = context.getEntityComponent( entityId2, ETransform.TYPE_KEY );
-            scanContact( contactScan, entityId2, transform.getXpos(), transform.getYpos() );
+            scanContact( constraint, entityId2, transform.getXpos(), transform.getYpos() );
         }
     }
 
-    private final void scanTileContacts( final int entityId, final int viewId, final int layerId, final ContactScan contactScan ) {
+    private final void scanTileContacts( final int entityId, final int viewId, final int layerId, final ContactConstraint constraint ) {
         TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
         if ( tileGrid == null ) {
             return;
         }
         
-        TileIterator tileIterator = tileGrid.iterator( contactScan.getWorldBounds() );
+        TileIterator tileIterator = tileGrid.iterator( constraint.worldBounds );
         if ( tileIterator == null || !tileIterator.hasNext() ) {
             return;
         }
@@ -224,11 +235,11 @@ public final class CollisionSystem
                 continue;
             }
             
-            scanContact( contactScan, entityId2, tileIterator.getWorldXPos(), tileIterator.getWorldYPos() );
+            scanContact( constraint, entityId2, tileIterator.getWorldXPos(), tileIterator.getWorldYPos() );
         }
     }
     
-    private void scanContact( final ContactScan contactScan, final int entityId, final float xpos, final float ypos ) {
+    private void scanContact( final ContactConstraint constraint, final int entityId, final float xpos, final float ypos ) {
         if ( entityId < 0 || !context.getEntityComponentAspects( entityId ).contains( ECollision.TYPE_KEY ) ) {
             return;
         }
@@ -245,13 +256,13 @@ public final class CollisionSystem
             collisionBounds.height
         );
         
-        final Rectangle movingWorldBounds = contactScan.getWorldBounds();
+        final Rectangle constraintWorldBounds = constraint.worldBounds;
         final Rectangle contactWorldBounds = contact.worldBounds();
         final Rectangle intersectionBounds = contact.intersectionBounds();
         final BitMask intersectionMask = contact.intersectionMask();
         
         GeomUtils.intersection( 
-            movingWorldBounds, 
+            constraintWorldBounds, 
             contactWorldBounds, 
             intersectionBounds 
         );
@@ -262,22 +273,22 @@ public final class CollisionSystem
         }
         
         // normalize the intersection to origin of coordinate system
-        intersectionBounds.x = intersectionBounds.x - movingWorldBounds.x;
-        intersectionBounds.y = intersectionBounds.y - movingWorldBounds.y;
+        intersectionBounds.x = intersectionBounds.x - constraintWorldBounds.x;
+        intersectionBounds.y = intersectionBounds.y - constraintWorldBounds.y;
         
         final BitMask bitmask2 = collision.getCollisionMask();
         if ( bitmask2 == null ) {
-            contactScan.addContact( contact );
+            constraint.addContact( contact );
             return;
         }
         
-        checkPivot.x = movingWorldBounds.x - contactWorldBounds.x;
-        checkPivot.y = movingWorldBounds.y - contactWorldBounds.y;
-        checkPivot.width = movingWorldBounds.width;
-        checkPivot.height = movingWorldBounds.height;
+        checkPivot.x = constraintWorldBounds.x - contactWorldBounds.x;
+        checkPivot.y = constraintWorldBounds.y - contactWorldBounds.y;
+        checkPivot.width = constraintWorldBounds.width;
+        checkPivot.height = constraintWorldBounds.height;
 
         if ( bitmask2 != null && BitMask.createIntersectionMask( checkPivot, bitmask2, intersectionMask, true ) ) {
-            contactScan.addContact( contact );
+            constraint.addContact( contact );
             return;
         }
         

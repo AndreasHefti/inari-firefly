@@ -16,11 +16,12 @@ public final class ContactConstraint implements Iterable<Contact> {
     final Rectangle contactScanBounds = new Rectangle();
     final Rectangle normalizedContactScanBounds = new Rectangle();
     
+    private int layerId = -1;
     private boolean solidOnly = true;
     private boolean allTypes = true;
     private final BitSet contactFilter = new BitSet();
     
-    private final Rectangle worldBounds = new Rectangle();
+    final Rectangle worldBounds = new Rectangle();
     private final BitSet contactAspects = new BitSet();
     private final BitMask intersectionMask = new BitMask( 0, 0 );
     private final DynArray<Contact> contacts = new DynArray<Contact>();
@@ -36,7 +37,16 @@ public final class ContactConstraint implements Iterable<Contact> {
     public final String name() {
         return name;
     }
-    
+
+    public final int layerId() {
+        return layerId;
+    }
+
+    public final ContactConstraint layerId( int layerId ) {
+        this.layerId = layerId;
+        return this;
+    }
+
     public final ContactConstraint solidOnly( boolean solidOnly ) {
         this.solidOnly = solidOnly;
         return this;
@@ -110,12 +120,12 @@ public final class ContactConstraint implements Iterable<Contact> {
          intersectionMask.clearMask();
     }
     
-    final void update( float x, float y, float vx, float vy, Rectangle outerScanBounds ) {
+    final void update( float x, float y, float vx, float vy ) {
         worldBounds.x = ( ( vx > 0 )? (int) Math.ceil( x ) : (int) Math.floor( x ) ) + contactScanBounds.x;
         worldBounds.y = ( ( vy > 0 )? (int) Math.ceil( y ) : (int) Math.floor( y ) ) + contactScanBounds.y;
         worldBounds.width = contactScanBounds.width;
         worldBounds.height = contactScanBounds.height;
-        intersectionMask.reset( contactScanBounds.x - outerScanBounds.x, contactScanBounds.y - outerScanBounds.y, worldBounds.width, worldBounds.height );
+        intersectionMask.reset( 0, 0, contactScanBounds.width, contactScanBounds.height );
     }
     
     final boolean addContact( final Contact contact ) {
