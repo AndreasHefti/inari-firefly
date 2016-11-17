@@ -22,7 +22,6 @@ public final class ECollision extends EntityComponent {
     public static final AttributeKey<Integer> COLLISION_RESOLVER_ID = new AttributeKey<Integer>( "collisionResolverId", Integer.class, ECollision.class );
     public static final AttributeKey<Aspect> MATERIAL_TYPE = new AttributeKey<Aspect>( "materialType", Aspect.class, ECollision.class );
     public static final AttributeKey<Aspect> CONTACT_TYPE = new AttributeKey<Aspect>( "contactType", Aspect.class, ECollision.class );
-    public static final AttributeKey<Boolean> SOLID = new AttributeKey<Boolean>( "solid", Boolean.class, ECollision.class );
     public static final AttributeKey<DynArray<ContactConstraint>> CONTACT_CONSTRAINTS = AttributeKey.createForDynArray( "contactConstraints", ECollision.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         COLLISION_BOUNDS,
@@ -38,7 +37,6 @@ public final class ECollision extends EntityComponent {
     private int collisionResolverId;
     private Aspect materialType;
     private Aspect contactType;
-    private boolean solid;
     
     private ContactScan contactScan;
 
@@ -55,7 +53,6 @@ public final class ECollision extends EntityComponent {
         collisionResolverId = -1;
         contactType = null;
         materialType = null;
-        solid = true;
         contactScan = new ContactScan();
     }
 
@@ -109,14 +106,6 @@ public final class ECollision extends EntityComponent {
     public final void setContactType( Aspect contactType ) {
         this.contactType = contactType;
     }
-
-    public final boolean isSolid() {
-        return solid;
-    }
-
-    public final void setSolid( boolean solid ) {
-        this.solid = solid;
-    }
     
     public final void addContactConstraint( ContactConstraint constraint ) {
         contactScan.addContactContstraint( constraint );
@@ -134,7 +123,6 @@ public final class ECollision extends EntityComponent {
         collisionResolverId = attributes.getIdForName( COLLISION_RESOLVER_NAME, COLLISION_RESOLVER_ID, CollisionResolver.TYPE_KEY, collisionResolverId );
         materialType = attributes.getValue( MATERIAL_TYPE, materialType );
         contactType = attributes.getValue( CONTACT_TYPE, contactType );
-        solid = attributes.getValue( SOLID, solid );
         
         if ( attributes.contains( CONTACT_CONSTRAINTS ) ) {
             DynArray<ContactConstraint> constraints = attributes.getValue( CONTACT_CONSTRAINTS );
@@ -151,7 +139,6 @@ public final class ECollision extends EntityComponent {
         attributes.put( COLLISION_RESOLVER_ID, collisionResolverId );
         attributes.put( MATERIAL_TYPE, materialType );
         attributes.put( CONTACT_TYPE, contactType );
-        attributes.put( SOLID, solid );
     }
 
 }

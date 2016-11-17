@@ -171,7 +171,7 @@ public final class CollisionSystem
         
         final int viewId = transform.getViewId();
         for ( ContactConstraint constraint : contactScan ) {
-            int layerId = constraint.layerId();
+            int layerId = constraint.layerId;
             if ( layerId < 0 ) {
                 layerId = transform.getLayerId();
             }
@@ -179,20 +179,6 @@ public final class CollisionSystem
             scanTileContacts( entityId, viewId, layerId, constraint );
             scanSpriteContacts( entityId, viewId, layerId, constraint );
         }
-        
-        
-//        if ( collision.hasGroupedLayers() ) {
-//            final IntIterator iterator = collision.getGroupedLayers();
-//            while ( iterator.hasNext() ) {
-//                final int layerId = iterator.next();
-//                scanTileContacts( entityId, viewId, layerId, contactScan );
-//                scanSpriteContacts( entityId, viewId, layerId, contactScan );
-//            }
-//        } else {
-//            final int layerId = transform.getLayerId();
-//            scanTileContacts( entityId, viewId, layerId, contactScan );
-//            scanSpriteContacts( entityId, viewId, layerId, contactScan );
-//        }
     }
 
     
@@ -245,10 +231,14 @@ public final class CollisionSystem
         }
         
         final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+        if ( !constraint.match( collision ) ) {
+            return;
+        }
+        
         final Rectangle collisionBounds = collision.getCollisionBounds();
         final Contact contact = Contact.createContact(
             entityId,
-            collision.isSolid(),
+            collision.getMaterialType(),
             collision.getContactType(),
             (int) Math.floor( xpos ) + collisionBounds.x,
             (int) Math.floor( ypos ) + collisionBounds.y,

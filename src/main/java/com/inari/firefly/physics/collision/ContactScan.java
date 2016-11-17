@@ -28,7 +28,7 @@ public final class ContactScan implements Iterable<ContactConstraint> {
         return false;
     }
 
-    public boolean hasContact( Aspect contact ) {
+    public final boolean hasContact( Aspect contact ) {
         for ( ContactConstraint constraint : this ) {
             if ( constraint.hasContact( contact ) ) {
                 return true;
@@ -47,17 +47,6 @@ public final class ContactScan implements Iterable<ContactConstraint> {
     public final void addContactContstraint( ContactConstraint constraint ) {
         constraints.put( constraint.name(), constraint );
     }
-
-//    public final void addContact( Contact contact ) {
-//        for ( ContactConstraint constraint : constraints.values() ) {
-//            if ( constraint.addContact( contact ) ) {
-//                final Aspect contactType = contact.contactType();
-//                if ( contactType != null ) {
-//                    contactAspects.set( contactType.index() );
-//                }
-//            }
-//        }
-//    }
     
     @Override
     public final Iterator<ContactConstraint> iterator() {

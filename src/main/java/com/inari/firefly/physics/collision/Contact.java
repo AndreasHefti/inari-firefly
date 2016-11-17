@@ -15,8 +15,8 @@ public class Contact implements Disposable {
     private final Rectangle worldBounds = new Rectangle();
     private final Rectangle intersectionBounds = new Rectangle();
     private final BitMask intersectionMask = new BitMask( 0, 0 );
-    private Aspect contactType;
-    private boolean solid = false;
+    Aspect contactType;
+    Aspect materialType;
 
     public final int entityId() {
         return entityId;
@@ -37,9 +37,9 @@ public class Contact implements Disposable {
     public final Aspect contactType() {
         return contactType;
     }
-
-    public final boolean isSolid() {
-        return solid;
+    
+    public final Aspect materialType() {
+        return materialType;
     }
 
     @Override
@@ -55,8 +55,8 @@ public class Contact implements Disposable {
         builder.append( intersectionMask );
         builder.append( ", contactType=" );
         builder.append( contactType );
-        builder.append( ", solid=" );
-        builder.append( solid );
+        builder.append( ", materialType=" );
+        builder.append( materialType );
         builder.append( "]" );
         return builder.toString();
     }
@@ -65,9 +65,9 @@ public class Contact implements Disposable {
     public final void dispose() {
         entityId = -1;
         intersectionMask.clearMask();
-        solid = false;
         worldBounds.clear();
         contactType = null;
+        materialType = null;
         intersectionBounds.clear();
         disposedContacts.add( this );
     }
@@ -82,14 +82,14 @@ public class Contact implements Disposable {
         return contact;
     }
 
-    public final static Contact createContact( int entityId, boolean solid, Aspect contactType, int x, int y, int width, int height ) {
+    public final static Contact createContact( int entityId, Aspect materialType, Aspect contactType, int x, int y, int width, int height ) {
         Contact contact = ( !disposedContacts.isEmpty() )? 
             disposedContacts.pollFirst() :
                 new Contact();
         
         contact.entityId = entityId;
-        contact.solid = solid;
         contact.contactType = contactType;
+        contact.materialType = materialType;
         contact.worldBounds.x = x;
         contact.worldBounds.y = y;
         contact.worldBounds.width = width;

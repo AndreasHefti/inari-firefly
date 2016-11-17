@@ -73,8 +73,8 @@ public abstract class FireFlyApp {
         context.loadSystem( ControllerSystem.SYSTEM_KEY );
         context.loadSystem( AnimationSystem.SYSTEM_KEY );
         context.loadSystem( AudioSystem.SYSTEM_KEY );
-        context.loadSystem( SpriteViewSystem.SYSTEM_KEY );
         context.loadSystem( TileGridSystem.SYSTEM_KEY );
+        context.loadSystem( SpriteViewSystem.SYSTEM_KEY );
         context.loadSystem( TaskSystem.SYSTEM_KEY );
         
         updateEvent = new UpdateEvent( timer );
