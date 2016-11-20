@@ -19,7 +19,7 @@ Firefly is implemented on-top of other existing java gaming frameworks like lwjg
 implementation while reusing as much of the game code as possible.
 
 
-Key features:
+Key features
 
 - Strong backing on Component and Component-Entity-System approach.
   Almost everything within Firefly is a Component or a Entity (composite of components) or a System
@@ -39,14 +39,18 @@ Key features:
 - Stringent Component builder API and Context driven
   Firefly is context driven, this means no static method calls like Firefly.files.createAsset(...) and since almost everything within Firefly
   is a Component, there is a component builder that is used to build every kind of Component within the same way and with good code completion 
-  suggestions possibilities and a fluent interface. example code:
+  suggestions possibilities and a fluent interface. 
+  
+Code example:
 
+```
   context.getComponentBuilder( TextureAsset.TYPE )
       .set( TextureAsset.NAME, "logoTexture" )
       .set( TextureAsset.RESOURCE, "logo.png" )
       .set( TextureAsset.WIDTH, 200 )
       .set( TextureAsset.HEIGHT, 100 )
       .build();
+```
 
 - Indexing for Component types and instances for fast access
   Firefly comes with an indexing system that allows to index Java types (Class types) within a defined root type on one hand and on the other

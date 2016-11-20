@@ -146,10 +146,12 @@ public final class FFContext {
         return timer;
     }
     
+    /** Use this to get the current time ( milliseconds since start of update loop ) as long */
     public final long getTime() {
         return timer.getTime();
     }
     
+    /** Use this to get the elapsed time since the last update */
     public final long getTimeElapsed() {
         return timer.getTimeElapsed();
     }
@@ -272,9 +274,8 @@ public final class FFContext {
         return null;
     }
 
-    /** Use this to get a {@link SystemComponent} for specified {@link SystemComponentKey} and component instance id.<p>
-     *  The {@link SystemComponentKey} usually is provided with a static field within the Component's base class. For example:
-     *  <p>
+    /** Use this to get a {@link SystemComponent} by component id.
+     *  <p>The {@link SystemComponentKey} usually is provided with a static field within the Component's base class. For example:<p>
      *  <code>View baseView = context.getSystemComponent( View.TYPE_KEY, 0 )</code>
      *  
      * @param key {@link SystemComponentKey} that defines the type of the {@link SystemComponent}
@@ -286,6 +287,16 @@ public final class FFContext {
         return key.<C>type().cast( builderHelper.get( componentId ) );
     }
 
+     /** Use this to get a {@link SystemComponent} of specified type by component id.
+      *  <p>The {@link SystemComponentKey} usually is provided with a static field within the Component's base class. For example:<p>
+      *  <code>PlayerMoveController playerMoveController = context.getSystemComponent( EntityController.TYPE_KEY, 0, PlayerMoveController.class )</code>
+      *  
+      * @param key {@link SystemComponentKey} that defines the type of the {@link SystemComponent}
+      * @param componentId the instance id/index of the specified {@link SystemComponent}
+      * @param subType the expected type of the {@link SystemComponent}
+      * @return the {@link SystemComponent} or null if no such component exists
+      * @throws ClassCastException if the requested component is not a substitute of the specified subType class
+      */
     public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentKey<C> key, int componentId, Class<CS> subType ) {
         @SuppressWarnings( "unchecked" )
         SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
@@ -295,17 +306,43 @@ public final class FFContext {
         }
         return subType.cast( component );
     }
-
+    
+    /** Use this to get a {@link SystemComponent} of specified base type by name.
+     *  <p>The {@link SystemComponentKey} usually is provided with a static field within the Component's base class. For example:<p>
+     *  <code>View view = context.getSystemComponent( View.TYPE_KEY, "MyView" )</code>    
+     *
+     * @param key {@link SystemComponentKey} that defines the type of the {@link SystemComponent}
+     * @param componentName the name of the {@link SystemComponent}
+     * @return the {@link SystemComponent} or null if no such component exists
+     */
     public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         return key.<C>type().cast( builderHelper.get( builderHelper.getId( componentName ) ) );
     }
     
+    /** Use this to get or verify the component id of a {@link SystemComponent} by name
+     *  <p>The {@link SystemComponentKey} usually is provided with a static field within the Component's base class. For example:<p>
+     *  <code>View view = context.getSystemComponent( View.TYPE_KEY, "MyView" )</code>    
+     *
+     * @param key {@link SystemComponentKey} that defines the type of the {@link SystemComponent}
+     * @param componentName the name of the {@link SystemComponent}
+     * @return the component id of the component (positiv number) or -1 no such component exists
+     */
     public final <C extends SystemComponent> int getSystemComponentId( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         return builderHelper.getId( componentName );
     }
     
+    /** Use this to get a {@link SystemComponent} of specified type by name.
+     *  <p>The {@link SystemComponentKey} usually is provided with a static field within the Component's base class. For example:<p>
+     *  <code>PlayerMoveController playerMoveController = context.getSystemComponent( EntityController.TYPE_KEY, "PlayerMoveController", PlayerMoveController.class )</code>
+     * 
+     * @param key {@link SystemComponentKey} that defines the type of the {@link SystemComponent}
+     * @param componentName the name of the {@link SystemComponent}
+     * @param subType the specified type class of the component
+     * @return the {@link SystemComponent} of specified type or null if no such component exists
+     * @throws ClassCastException if the requested component is not a substitute of the specified subType class
+     */
     @SuppressWarnings( "unchecked" )
     public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentKey<C> key, String componentName, Class<CS> subType ) {
         SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
