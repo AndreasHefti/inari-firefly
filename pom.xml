@@ -127,7 +127,7 @@
       </dependency>
       <dependency>
       	<groupId>com.github.inari-soft</groupId>
-      	<artifactId>commons</artifactId>
+      	<artifactId>inari-commons</artifactId>
       	<version>1.0.0</version>
       </dependency>
   </dependencies>
