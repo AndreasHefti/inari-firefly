@@ -27,25 +27,38 @@ public final class EntityActivationEvent extends AspectedEvent<EntityActivationL
         ENTITY_DEACTIVATED
     }
     
-    public final int entityId;
-    public final Aspects entityComponentAspects;
-    public final Type eventType;
+    int entityId;
+    final Aspects entityComponentAspects = EntityComponent.ASPECT_TYPE.createAspects();
+    Type eventType;
     
-    public EntityActivationEvent( int entityId, Aspects entityComponentAspects, Type eventType ) {
+    EntityActivationEvent() {
         super( TYPE_KEY );
-        this.entityId = entityId;
-        this.entityComponentAspects = entityComponentAspects;
-        this.eventType = eventType;
     }
-
+    
+//    public final int getEntityId() {
+//        return entityId;
+//    }
+//    
+//    public final Type getEventType() {
+//        return eventType;
+//    }
+//
     @Override
     public final Aspects getAspects() {
         return entityComponentAspects;
     }
 
     @Override
-    protected final void notify( EntityActivationListener listener ) {
-        listener.onEntityActivationEvent( this );
+    protected final void notify( final EntityActivationListener listener ) {
+        switch( eventType ) {
+            case ENTITY_ACTIVATED: {
+                listener.entityActivated( entityId, entityComponentAspects );
+                break;
+            }
+            case ENTITY_DEACTIVATED: {
+                listener.entityDeactivated( entityId, entityComponentAspects );
+            }
+        }
     }
 
     @Override

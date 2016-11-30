@@ -52,6 +52,7 @@ public abstract class Asset extends SystemComponent implements Loadable, Disposa
         return TYPE_KEY;
     }
 
+    @Override
     public final boolean isLoaded() {
         return loaded;
     }

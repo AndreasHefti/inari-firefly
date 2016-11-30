@@ -4,6 +4,8 @@ import com.inari.firefly.system.FFContext;
 
 public interface Loadable {
     
+    boolean isLoaded();
+    
     Disposable load( FFContext context );
 
 }

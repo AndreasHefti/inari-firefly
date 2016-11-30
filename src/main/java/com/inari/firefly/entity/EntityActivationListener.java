@@ -16,9 +16,12 @@
 package com.inari.firefly.entity;
 
 import com.inari.commons.event.AspectedEventListener;
+import com.inari.commons.lang.aspect.Aspects;
 
 public interface EntityActivationListener extends AspectedEventListener {
 
-    public void onEntityActivationEvent( EntityActivationEvent event );
+    void entityActivated( int entityId, final Aspects aspects );
+    
+    void entityDeactivated( int entityId, final Aspects aspects );
 
 }

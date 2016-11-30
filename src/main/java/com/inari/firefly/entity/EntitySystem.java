@@ -18,6 +18,7 @@ package com.inari.firefly.entity;
 import java.util.BitSet;
 import java.util.Iterator;
 
+import com.inari.commons.event.EventPool;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedType;
@@ -55,6 +56,8 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     final BitSet inactiveEntities;
     final DynArray<IndexedTypeSet> components;
     
+    private EntityActivationEventPool entityActivationEventPool;
+    
     EntitySystem() {
         super( SYSTEM_KEY );
         activeEntities = new BitSet( INIT_SIZE );
@@ -67,6 +70,10 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         super.init( context );
         
         entityProvider = context.getSystem( EntityProvider.SYSTEM_KEY );
+        
+        entityActivationEventPool = new EntityActivationEventPool();
+        context.registerEventPool( EntityActivationEvent.TYPE_KEY, entityActivationEventPool );
+        entityActivationEventPool.populate( 5 );
 
         Integer entityCapacity = context.getProperty( FFContext.Properties.ENTITY_MAP_CAPACITY );
         if ( entityCapacity != null ) {
@@ -81,6 +88,8 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     @Override
     public void dispose( FFContext context ) {
         clear();
+        entityActivationEventPool.clear();
+        entityActivationEventPool = null;
     }
     
     public final EntityBuilder getEntityBuilder() {
@@ -113,9 +122,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         activeEntities.set( entityId ) ;
         
         Aspects aspect = getEntityComponentAspects( entityId );
-        context.notify( 
-            new EntityActivationEvent( entityId, aspect, Type.ENTITY_ACTIVATED ) 
-        );
+        context.notify( entityActivationEventPool.createEvent( entityId, Type.ENTITY_ACTIVATED, aspect ) );
     }
     
     public final void deactivateEntity( int entityId ) {
@@ -129,9 +136,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         activeEntities.clear( entityId );
         inactiveEntities.set( entityId );
         
-        context.notify( 
-            new EntityActivationEvent( entityId, getEntityComponentAspects( entityId ), Type.ENTITY_DEACTIVATED ) 
-        );
+        context.notify( entityActivationEventPool.createEvent( entityId, Type.ENTITY_DEACTIVATED, getEntityComponentAspects( entityId ) ) );
     }
     
     public final void deleteEntity( int entityId ) {
@@ -558,6 +563,27 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         @Override
         public final IndexedTypeKey indexedTypeKey() {
             return ENTITY_TYPE_KEY;
+        }
+    }
+    
+    private final class EntityActivationEventPool extends EventPool<EntityActivationEvent> {
+        @Override
+        protected final EntityActivationEvent create() {
+            return new EntityActivationEvent();
+        }
+        @Override
+        protected final void clearEvent( EntityActivationEvent event ) {
+            event.eventType = null;
+            event.entityId = -1;
+            event.entityComponentAspects.clear();
+        }
+        
+        final EntityActivationEvent createEvent( int entityId, final EntityActivationEvent.Type type, final Aspects aspects ) {
+            EntityActivationEvent event = get();
+            event.entityId = entityId;
+            event.eventType = type;
+            event.entityComponentAspects.set( aspects );
+            return event;
         }
     }
 

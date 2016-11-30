@@ -109,24 +109,17 @@ public class TextSystem
     public final boolean match( Aspects aspects ) {
         return aspects.contains( EText.TYPE_KEY );
     }
-
-    @Override
-    public void onEntityActivationEvent( EntityActivationEvent event ) {
-        IndexedTypeSet components = entitySystem.getComponents( event.entityId );
-        ETransform transform = components.get( ETransform.TYPE_KEY );
-        int viewId = transform.getViewId();
-        int layerId = transform.getLayerId();
-        switch ( event.eventType ) {
-            case ENTITY_ACTIVATED: {
-                DynArray<IndexedTypeSet> renderablesOfView = getTexts( viewId, layerId, true );
-                renderablesOfView.add( components );
-                break;
-            }
-            case ENTITY_DEACTIVATED: {
-                DynArray<IndexedTypeSet> renderablesOfView = getTexts( viewId, layerId, false );
-                renderablesOfView.remove( components );
-            }
-        }
+    
+    public final void entityActivated( int entityId, final Aspects aspects ) {
+        final IndexedTypeSet components = entitySystem.getComponents( entityId );
+        final ETransform transform = components.get( ETransform.TYPE_KEY );
+        getTexts( transform.getViewId(), transform.getLayerId(), true ).add( components );
+    }
+    
+    public final void entityDeactivated( int entityId, final Aspects aspects ) {
+        final IndexedTypeSet components = entitySystem.getComponents( entityId );
+        final ETransform transform = components.get( ETransform.TYPE_KEY );
+        getTexts( transform.getViewId(), transform.getLayerId(), false ).remove( components );
     }
     
     public final DynArray<IndexedTypeSet> getTexts( int viewId, int layerId ) {

@@ -66,22 +66,16 @@ public final class ShapeRenderSystem
         return aspects.contains( EShape.TYPE_KEY );
     }
     
-    @Override
-    public final void onEntityActivationEvent( EntityActivationEvent event ) {
-        ETransform transform = entitySystem.getComponent( event.entityId, ETransform.TYPE_KEY );
-        int viewId = transform.getViewId();
-        int layerId = transform.getLayerId();
-        switch ( event.eventType ) {
-            case ENTITY_ACTIVATED: {
-                IntBag renderablesOfView = getShapeIds( viewId, layerId, true );
-                renderablesOfView.add( event.entityId );
-                break;
-            }
-            case ENTITY_DEACTIVATED: {
-                IntBag renderablesOfView = getShapeIds( viewId, layerId, false );
-                renderablesOfView.remove( event.entityId );
-            }
-        }
+    public final void entityActivated( int entityId, final Aspects aspects ) {
+        final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
+        final IntBag renderablesOfView = getShapeIds( transform.getViewId(), transform.getLayerId(), true );
+        renderablesOfView.add( entityId );
+    }
+    
+    public final void entityDeactivated( int entityId, final Aspects aspects ) {
+        final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
+        final IntBag renderablesOfView = getShapeIds( transform.getViewId(), transform.getLayerId(), false );
+        renderablesOfView.remove( entityId );
     }
     
     private final IntBag getShapeIds( int viewId, int layerId, boolean createNew ) {

@@ -69,24 +69,19 @@ public final class SpriteViewSystem
         return aspects.contains( ESprite.TYPE_KEY );
     }
     
-    @Override
-    public final void onEntityActivationEvent( EntityActivationEvent event ) {
-        IndexedTypeSet components = entitySystem.getComponents( event.entityId );
-        ETransform transform = components.get( ETransform.TYPE_KEY );
-        int viewId = transform.getViewId();
-        int layerId = transform.getLayerId();
-        switch ( event.eventType ) {
-            case ENTITY_ACTIVATED: {
-                DynArray<IndexedTypeSet> renderablesOfView = getSprites( viewId, layerId, true );
-                renderablesOfView.add( components );
-                renderablesOfView.sort( RENDERABLE_COMPARATOR );
-                break;
-            }
-            case ENTITY_DEACTIVATED: {
-                DynArray<IndexedTypeSet> renderablesOfView = getSprites( viewId, layerId, false );
-                renderablesOfView.remove( components );
-            }
-        }
+    public final void entityActivated( int entityId, final Aspects aspects ) {
+        final IndexedTypeSet components = entitySystem.getComponents( entityId );
+        final ETransform transform = components.get( ETransform.TYPE_KEY );
+        final DynArray<IndexedTypeSet> renderablesOfView = getSprites( transform.getViewId(), transform.getLayerId(), true );
+        renderablesOfView.add( components );
+        renderablesOfView.sort( RENDERABLE_COMPARATOR );
+    }
+    
+    public final void entityDeactivated( int entityId, final Aspects aspects ) {
+        final IndexedTypeSet components = entitySystem.getComponents( entityId );
+        final ETransform transform = components.get( ETransform.TYPE_KEY );
+        final DynArray<IndexedTypeSet> renderablesOfView = getSprites( transform.getViewId(), transform.getLayerId(), false );
+        renderablesOfView.remove( components );
     }
 
     private final DynArray<IndexedTypeSet> getSprites( int viewId, int layerId, boolean createNew ) {

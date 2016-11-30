@@ -61,7 +61,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         super.init( context );
         
         viewEventPool = new ViewEventPool();
-        context.getEventDispatcher().registerEventPool( ViewEvent.TYPE_KEY, viewEventPool );
+        context.registerEventPool( ViewEvent.TYPE_KEY, viewEventPool );
         viewEventPool.populate( 5 );
 
         // create the base view that is the screen

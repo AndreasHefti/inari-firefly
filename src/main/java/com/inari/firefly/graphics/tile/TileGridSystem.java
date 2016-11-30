@@ -109,18 +109,32 @@ public final class TileGridSystem
         tile.getGridPositions().add( new Position( x, y ) );
         getTileGrid( tileGridId ).set( entityId, x, y );
     }
-
-    @Override
-    public final void onEntityActivationEvent( EntityActivationEvent event ) {
-        switch ( event.eventType ) {
-            case ENTITY_ACTIVATED: {
-                registerEntity( event.entityId, event.entityComponentAspects );
-                break;
+    
+    public final void entityActivated( int entityId, final Aspects aspects ) {
+        ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
+        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
+        TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
+        if ( tile.isMultiPosition() ) {
+            for ( Position gridPosition : tile.getGridPositions() ) {
+                tileGrid.set( entityId, gridPosition.x, gridPosition.y );
             }
-            case ENTITY_DEACTIVATED: {
-                unregisterEntity( event.entityId, event.entityComponentAspects );
-                break;
+        } else {
+            Position gridPosition = tile.getGridPosition();
+            tileGrid.set( entityId, gridPosition.x, gridPosition.y );
+        }
+    }
+    
+    public final void entityDeactivated( int entityId, final Aspects aspects ) {
+        ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
+        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
+        TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
+        if ( tile.isMultiPosition() ) {
+            for ( Position gridPosition : tile.getGridPositions() ) {
+                tileGrid.resetIfMatch( entityId, gridPosition.x, gridPosition.y );
             }
+        } else {
+            Position gridPosition = tile.getGridPosition();
+            tileGrid.resetIfMatch( entityId, gridPosition.x, gridPosition.y );
         }
     }
     
@@ -275,34 +289,6 @@ public final class TileGridSystem
         TileGrid removed = tileGrids.get( tileGridId );
         tileGridOfViewsPerLayer.get( removed.getViewId() ).remove( removed.getLayerId() );
     };
-    
-    private final void registerEntity( int entityId, Aspects entityAspects ) {
-        ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
-        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
-        TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
-        if ( tile.isMultiPosition() ) {
-            for ( Position gridPosition : tile.getGridPositions() ) {
-                tileGrid.set( entityId, gridPosition.x, gridPosition.y );
-            }
-        } else {
-            Position gridPosition = tile.getGridPosition();
-            tileGrid.set( entityId, gridPosition.x, gridPosition.y );
-        }
-    }
-    
-    private final void unregisterEntity( int entityId, Aspects entityAspects ) {
-        ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
-        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
-        TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
-        if ( tile.isMultiPosition() ) {
-            for ( Position gridPosition : tile.getGridPositions() ) {
-                tileGrid.resetIfMatch( entityId, gridPosition.x, gridPosition.y );
-            }
-        } else {
-            Position gridPosition = tile.getGridPosition();
-            tileGrid.resetIfMatch( entityId, gridPosition.x, gridPosition.y );
-        }
-    }
 
     public final TileGridBuilder getTileGridBuilder() {
         return new TileGridBuilder();

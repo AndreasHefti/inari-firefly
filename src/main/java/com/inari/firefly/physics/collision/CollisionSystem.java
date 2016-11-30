@@ -93,34 +93,18 @@ public final class CollisionSystem
             return;
         }
     }
+    
+    public final void entityActivated( int entityId, final Aspects aspects ) {
+        CollisionQuadTree quadTree = getCollisionQuadTreeForEntity( entityId );
+        if ( quadTree != null ) {
+            quadTree.add( entityId );
+        }
+    }
 
-    @Override
-    public final void onEntityActivationEvent( EntityActivationEvent event ) {
-        ETransform transform = context.getEntityComponent( event.entityId, ETransform.TYPE_KEY );
-        int viewId = transform.getViewId();
-        int layerId = transform.getLayerId();
-        if ( !quadTreesPerViewAndLayer.contains( viewId ) ) {
-            return;
-        }
-        
-        DynArray<CollisionQuadTree> quadTreesPerView = quadTreesPerViewAndLayer.get( viewId );
-        if ( !quadTreesPerView.contains( layerId ) ) {
-            return;
-        }
-        CollisionQuadTree quadTree = quadTreesPerView.get( layerId );
-        if ( quadTree == null ) {
-            return;
-        }
-        
-        switch ( event.eventType ) {
-            case ENTITY_ACTIVATED: {
-                quadTree.add( event.entityId );
-                break;
-            }
-            case ENTITY_DEACTIVATED: {
-                quadTree.remove( event.entityId );
-                break;
-            }
+    public final void entityDeactivated( int entityId, final Aspects aspects ) {
+        CollisionQuadTree quadTree = getCollisionQuadTreeForEntity( entityId );
+        if ( quadTree != null ) {
+            quadTree.remove( entityId );
         }
     }
     
@@ -309,6 +293,27 @@ public final class CollisionSystem
         }
         
         return ofLayer.get( layerId );
+    }
+    
+    public final CollisionQuadTree getCollisionQuadTreeForEntity( int entityId ) {
+        final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
+        int viewId = transform.getViewId();
+        int layerId = transform.getLayerId();
+        if ( !quadTreesPerViewAndLayer.contains( viewId ) ) {
+            return null;
+        }
+        
+        DynArray<CollisionQuadTree> quadTreesPerView = quadTreesPerViewAndLayer.get( viewId );
+        if ( !quadTreesPerView.contains( layerId ) ) {
+            return null;
+        }
+        
+        CollisionQuadTree quadTree = quadTreesPerView.get( layerId );
+        if ( quadTree == null ) {
+            return null;
+        }
+        
+        return quadTree;
     }
     
     public final int getCollisionQuadTreeId( String name ) {

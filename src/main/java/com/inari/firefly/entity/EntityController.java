@@ -43,24 +43,17 @@ public abstract class EntityController extends Controller implements EntityActiv
     public final boolean match( Aspects aspects ) {
         return aspects.contains( EEntity.TYPE_KEY );
     }
-
-    @Override
-    public final void onEntityActivationEvent( EntityActivationEvent event ) {
-        switch ( event.eventType ) {
-            case ENTITY_ACTIVATED: {
-                if ( hasControllerId( event.entityId ) ) {
-                    componentIds.add( event.entityId );
-                }
-                break;
-            } 
-            case ENTITY_DEACTIVATED: {
-                componentIds.remove( event.entityId );
-                break;
-            }
-            default: {}
+    
+    public final void entityActivated( int entityId, final Aspects aspects ) {
+        if ( hasControllerId( entityId ) ) {
+            componentIds.add( entityId );
         }
     }
-
+    
+    public final void entityDeactivated( int entityId, final Aspects aspects ) {
+        componentIds.remove( entityId );
+    }
+    
     @Override
     public void update() {
         for ( int i = 0; i < componentIds.length(); i++ ) {
