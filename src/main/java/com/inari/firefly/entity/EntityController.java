@@ -25,6 +25,7 @@ public abstract class EntityController extends Controller implements EntityActiv
     protected EntityController( int id ) {
         super( id );
     }
+    
     @Override
     public void init() throws FFInitException {
         super.init();

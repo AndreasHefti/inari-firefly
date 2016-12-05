@@ -84,6 +84,10 @@ public class EEntity extends EntityComponent {
     public final void resetAspect( Aspect aspect ) {
         aspects.reset( aspect );
     }
+    
+    public final void resetAspects( Aspects aspects ) {
+        this.aspects.reset( aspects );
+    }
 
     public final void setAspects( Aspects aspects ) {
         this.aspects.set( aspects );
