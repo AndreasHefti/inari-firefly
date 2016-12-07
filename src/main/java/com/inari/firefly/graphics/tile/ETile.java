@@ -32,16 +32,16 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     
     public static final EntityComponentTypeKey<ETile> TYPE_KEY = EntityComponentTypeKey.create( ETile.class );
     
-    public static final AttributeKey<String> SPRITE_ASSET_NAME = new AttributeKey<String>( "spriteAssetName", String.class, ETile.class );
-    public static final AttributeKey<Integer> SPRITE_ID = new AttributeKey<Integer>( "spriteId", Integer.class, ETile.class );
-    public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, ETile.class );
-    public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ETile.class );
-    public static final AttributeKey<String> SHADER_ASSET_NAME = new AttributeKey<String>( "shaderAssetName", String.class, ETile.class );
-    public static final AttributeKey<Integer> SHADER_ID = new AttributeKey<Integer>( "shaderId", Integer.class, ETile.class );
-    public static final AttributeKey<Boolean> MULTI_POSITION = new AttributeKey<Boolean>( "multiPosition", Boolean.class, ETile.class );
-    public static final AttributeKey<Integer> GRID_X_POSITION = new AttributeKey<Integer>( "gridXPosition", Integer.class, ETile.class );
-    public static final AttributeKey<Integer> GRID_Y_POSITION = new AttributeKey<Integer>( "gridYPosition", Integer.class, ETile.class );
-    public static final AttributeKey<DynArray<Position>> GRID_POSITIONS = AttributeKey.createForDynArray( "gridPositions", ETile.class );
+    public static final AttributeKey<String> SPRITE_ASSET_NAME = AttributeKey.createString( "spriteAssetName", ETile.class );
+    public static final AttributeKey<Integer> SPRITE_ID = AttributeKey.createInt( "spriteId", ETile.class ); 
+    public static final AttributeKey<RGBColor> TINT_COLOR = AttributeKey.create( "tintColor", RGBColor.class, ETile.class );
+    public static final AttributeKey<BlendMode> BLEND_MODE = AttributeKey.create( "blendMode", BlendMode.class, ETile.class );
+    public static final AttributeKey<String> SHADER_ASSET_NAME = AttributeKey.createString( "shaderAssetName", ETile.class );
+    public static final AttributeKey<Integer> SHADER_ID = AttributeKey.createInt( "shaderId", ETile.class );
+    public static final AttributeKey<Boolean> MULTI_POSITION = AttributeKey.createBoolean( "multiPosition", ETile.class );
+    public static final AttributeKey<Integer> GRID_X_POSITION = AttributeKey.createInt( "gridXPosition", ETile.class );
+    public static final AttributeKey<Integer> GRID_Y_POSITION = AttributeKey.createInt( "gridYPosition", ETile.class );
+    public static final AttributeKey<DynArray<Position>> GRID_POSITIONS = AttributeKey.createDynArray( "gridPositions", ETile.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         SPRITE_ID,
         TINT_COLOR,

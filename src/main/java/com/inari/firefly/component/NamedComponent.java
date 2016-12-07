@@ -15,10 +15,18 @@
  ******************************************************************************/ 
 package com.inari.firefly.component;
 
+/** Defines a Component with a name.
+ */
 public interface NamedComponent extends Component {
 
+    /** Use this to get the name of the Component instance.
+     * @return the name of the Component instance
+     */
     String getName();
     
+    /** Use this to set the name of the Component instance.
+     * @param name the name
+     */
     void setName( String name );
     
 }

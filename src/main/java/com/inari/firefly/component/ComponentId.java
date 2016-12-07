@@ -2,21 +2,26 @@ package com.inari.firefly.component;
 
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 
+/** A ComponentId defines the unique identity of a Component instance and consists of the indexed type 
+ *  of the Component and an integer number.
+ *  
+ *  The typing and indexing of Components is done with the indexing API of firefly-commons project behind the scenes
+ *  
+ *  A ComponentId is automatically created with the creation of a Component. However most of the time there is no 
+ *  need to create a new ComponentId to access Components, there are methods that supports both as an attribute, the 
+ *  IIndexedTypeKey and the integer id.
+ *
+ */
 public final class ComponentId {
     
     public final IIndexedTypeKey typeKey;
     public final int indexId;
-    public final String name;
+    
     private int hash;
     
     public ComponentId( IIndexedTypeKey typeKey, int id ) {
-        this( typeKey, id, null );
-    }
-    
-    public ComponentId( IIndexedTypeKey typeKey, int id, String name ) {
         this.typeKey = typeKey;
         this.indexId = id;
-        this.name = name;
         
         final int prime = 31;
         int result = 1;
@@ -25,20 +30,25 @@ public final class ComponentId {
         hash = result;
     }
 
+    /** Use this to get the IIndexedTypeKey part of the identity of the ComponentId.
+     * @return IIndexedTypeKey part the identity of the ComponentId
+     */
     public final IIndexedTypeKey getTypeKey() {
         return typeKey;
     }
     
+    /** Use this to get the Class that defines the base type of the Component.
+     * @return the Class that defines the base type of the Component
+     */
     public final Class<? extends Component> getType() {
         return typeKey.type();
     }
 
+    /** Use this to get the index part of the ComponentId.
+     *  @return the index part of the ComponentId
+     */
     public final int getIndexId() {
         return indexId;
-    }
-
-    public final String getName() {
-        return name;
     }
 
     @Override

@@ -40,10 +40,11 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         NAME
     };
-    
+
     protected FFContext context;
-    
     private ComponentId componentId;
+    
+    private String name;
     
     protected SystemComponent( int index ) {
         super( index );
@@ -70,12 +71,12 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
 
     @Override
     public final String getName() {
-        return componentId.getName();
+        return name;
     }
 
     @Override
     public final void setName( String name ) {
-        componentId = new ComponentId( indexedTypeKey(), index, name );
+        this.name = name;
     }
 
     @Override

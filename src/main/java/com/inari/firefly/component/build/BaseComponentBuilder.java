@@ -157,8 +157,8 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     }
 
     @Override
-    public final ComponentBuilder add( Attribute... attributes ) {
-        for ( Attribute attribute : attributes ) {
+    public final ComponentBuilder add( Attribute<?>... attributes ) {
+        for ( Attribute<?> attribute : attributes ) {
             this.attributes.putUntyped( attribute.getKey(), attribute.getValue() );
         }
         return this;

@@ -9,8 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.event.AspectedEventListener;
 import com.inari.commons.event.Event;
-import com.inari.commons.event.EventPool;
 import com.inari.commons.event.Event.EventTypeKey;
+import com.inari.commons.event.EventPool;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.event.PredicatedEvent;
 import com.inari.commons.event.PredicatedEventListener;
@@ -22,7 +22,6 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentId;
-import com.inari.firefly.component.ContextComponent;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.entity.EntityComponent;
@@ -42,7 +41,6 @@ import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.info.SystemInfo;
 import com.inari.firefly.system.info.SystemInfoDisplay;
-import com.inari.firefly.system.utils.Disposable;
 
 /** This is the main access point of the firefly-engine API. A FFContext is a singleton instance and created by the application
  *  initializer. FFContext ususally is available in Systems, Components and Controllers. All this types get injected on 
@@ -86,9 +84,7 @@ public final class FFContext {
     
     private final Map<TypedKey<?>, Object> properties =  new LinkedHashMap<TypedKey<?>, Object>();
     
-    private final DynArray<ContextComponent> contextComponents = new DynArray<ContextComponent>();
     private final DynArray<FFSystem> systems = new DynArray<FFSystem>();
-    
     private final DynArray<SystemBuilderAdapter<?>> systemBuilderAdapter = new DynArray<SystemBuilderAdapter<?>>();
     
     private final IEventDispatcher eventDispatcher;
@@ -298,9 +294,7 @@ public final class FFContext {
             return (C) getSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
         } else if ( id.typeKey.baseType() == EntityComponent.class ) {
             return (C) getEntityComponent( id.indexId, EntityComponentTypeKey.class.cast( id.typeKey ) );
-        } else if ( id.typeKey.baseType() == ContextComponent.class ) {
-            return (C) getContextComponent( id.indexId );
-        }
+        } 
         
         return null;
     }
@@ -404,44 +398,6 @@ public final class FFContext {
     public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         builderHelper.delete( builderHelper.getId( componentName ) );
-    }
-
-    @SuppressWarnings( "unchecked" )
-    public final <C extends ContextComponent> C getContextComponent( int componentIndex ) {
-        return (C) contextComponents.get( componentIndex );
-    }
-    
-    @SuppressWarnings( "unchecked" )
-    public final <C extends ContextComponent> C getContextComponent( String name ) {
-        for ( ContextComponent contextComponent : contextComponents ) {
-            if ( name.equals( contextComponent.getName() ) ) {
-                return (C) contextComponent;
-            }
-        }
-        
-        return null;
-    }
-    
-    public final <C extends ContextComponent> C getContextComponent( int componentIndex, Class<C> type ) {
-        return type.cast(  contextComponents.get( componentIndex ) );
-    }
-    
-    public final <T extends ContextComponent> void setContextComponent( T component ) {
-        contextComponents.set( component.index(), component );
-    }
-    
-    public final void disposeContextComponent( int componentIndex ) {
-        ContextComponent component = contextComponents.remove( componentIndex );
-        if ( component != null && component instanceof Disposable ) {
-            ( (Disposable) component ).dispose( this );
-        }
-    }
-    
-    public final void disposeContextComponent( String componentName ) {
-        ContextComponent contextComponent = getContextComponent( componentName );
-        if ( contextComponent != null ) {
-            disposeContextComponent( contextComponent.index() );
-        }
     }
     
     public final ComponentBuilder getComponentBuilder( SystemComponentKey<?> key ) {
@@ -575,13 +531,6 @@ public final class FFContext {
     }
 
     public final void dispose() {
-        for ( ContextComponent component : contextComponents ) {
-            if ( component instanceof Disposable ) {
-                ( (Disposable) component ).dispose( this );
-            }
-        }
-        contextComponents.clear();
-        
         for ( FFSystem system : systems ) {
             system.dispose( this );
         }

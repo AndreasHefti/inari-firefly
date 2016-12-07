@@ -40,7 +40,7 @@ public interface ComponentBuilder {
     <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value );
     <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values );
     <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<T> values );
-    ComponentBuilder add( Attribute... attributes );
+    ComponentBuilder add( Attribute<?>... attributes );
     
     int build();
     void build( int componentId );
