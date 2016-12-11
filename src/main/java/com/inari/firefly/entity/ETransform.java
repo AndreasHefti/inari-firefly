@@ -35,10 +35,6 @@ public final class ETransform extends EntityComponent {
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, ETransform.class );
     public static final AttributeKey<PositionF> POSITION = new AttributeKey<PositionF>( "position", PositionF.class, ETransform.class );
     public static final AttributeKey<PositionF> PIVOT_POSITION = new AttributeKey<PositionF>( "pivotPosition", PositionF.class, ETransform.class );
-//    public static final AttributeKey<Float> XPOSITION = new AttributeKey<Float>( "xpos", Float.class, ETransform.class );
-//    public static final AttributeKey<Float> YPOSITION = new AttributeKey<Float>( "ypos", Float.class, ETransform.class );
-//    public static final AttributeKey<Float> PIVOT_X = new AttributeKey<Float>( "pivotx", Float.class, ETransform.class );
-//    public static final AttributeKey<Float> PIVOT_Y = new AttributeKey<Float>( "pivoty", Float.class, ETransform.class );
     public static final AttributeKey<Float> SCALE_X = new AttributeKey<Float>( "scalex", Float.class, ETransform.class );
     public static final AttributeKey<Float> SCALE_Y = new AttributeKey<Float>( "scaley", Float.class, ETransform.class );
     public static final AttributeKey<Float> ROTATION = new AttributeKey<Float>( "rotation", Float.class, ETransform.class );

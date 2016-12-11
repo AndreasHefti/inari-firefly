@@ -22,9 +22,6 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentId;
-import com.inari.firefly.component.attr.Attribute;
-import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.graphics.tile.ETile;
 
 public abstract class EntityComponent implements Component, IndexedType {
     

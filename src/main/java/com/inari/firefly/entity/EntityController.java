@@ -15,44 +15,26 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
-import com.inari.commons.lang.aspect.Aspects;
-import com.inari.firefly.FFInitException;
 import com.inari.firefly.control.Controller;
 
-// TODO think about add and remove entityIds directly in the EntitySystem instead of listening to EntityActivationListener
-public abstract class EntityController extends Controller implements EntityActivationListener {
+public abstract class EntityController extends Controller {
 
     protected EntityController( int id ) {
         super( id );
     }
     
-    @Override
-    public void init() throws FFInitException {
-        super.init();
-        
-        context.registerListener( EntityActivationEvent.TYPE_KEY, this );
-    }
-
-    @Override
-    public void dispose() {
-        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
-        
-        super.dispose();
-    }
-    
-    @Override
-    public final boolean match( Aspects aspects ) {
-        return aspects.contains( EEntity.TYPE_KEY );
-    }
-    
-    public final void entityActivated( int entityId, final Aspects aspects ) {
+    public void entityActivated( int entityId ) {
         if ( hasControllerId( entityId ) ) {
             componentIds.add( entityId );
         }
     }
     
-    public final void entityDeactivated( int entityId, final Aspects aspects ) {
+    public void entityDeactivated( int entityId ) {
         componentIds.remove( entityId );
+    }
+    
+    public void init( int entityId ) {
+        
     }
     
     @Override

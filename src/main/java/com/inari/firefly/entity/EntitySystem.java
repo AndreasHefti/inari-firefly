@@ -31,6 +31,7 @@ import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntityActivationEvent.Type;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.system.FFContext;
@@ -119,11 +120,16 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         }
         
         inactiveEntities.clear( entityId );
-        activeEntities.set( entityId ) ;
+        activeEntities.set( entityId );
+        final Aspects aspect = getEntityComponentAspects( entityId );
+        if ( aspect.contains( EEntity.TYPE_KEY ) ) {
+            notifyEntityController( entityId, true );
+        }
         
-        Aspects aspect = getEntityComponentAspects( entityId );
         context.notify( entityActivationEventPool.createEvent( entityId, Type.ENTITY_ACTIVATED, aspect ) );
     }
+
+    
     
     public final void deactivateEntity( int entityId ) {
         if ( entityId < 0 ) {
@@ -136,8 +142,15 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         activeEntities.clear( entityId );
         inactiveEntities.set( entityId );
         
+        final Aspects aspect = getEntityComponentAspects( entityId );
+        if ( aspect.contains( EEntity.TYPE_KEY ) ) {
+            notifyEntityController( entityId, false );
+        }
+        
         context.notify( entityActivationEventPool.createEvent( entityId, Type.ENTITY_DEACTIVATED, getEntityComponentAspects( entityId ) ) );
     }
+    
+    
     
     public final void deleteEntity( int entityId ) {
         delete( entityId );
@@ -281,6 +294,21 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         IndexedTypeSet components = getComponents( entityId );
         for ( EntityComponent component : components.<EntityComponent>getIterable() ) {
             component.toAttributes( attributeMap );
+        }
+    }
+    
+    private void notifyEntityController( int entityId, boolean activated ) {
+        final ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
+        final IntIterator controllerIds = getComponent( entityId, EEntity.TYPE_KEY ).getControllerIds().iterator();
+        while ( controllerIds.hasNext() ) {
+            EntityController entityController = controllerSystem.getControllerAs( controllerIds.next(), EntityController.class );
+            if ( entityController != null ) {
+                if ( activated ) {
+                    entityController.entityActivated( entityId );
+                } else {
+                    entityController.entityDeactivated( entityId );
+                }
+            }
         }
     }
 
