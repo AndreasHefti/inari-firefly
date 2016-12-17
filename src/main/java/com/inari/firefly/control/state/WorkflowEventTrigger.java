@@ -42,6 +42,10 @@ public abstract class WorkflowEventTrigger extends EventTrigger implements Workf
             return;
         }
         
+        if ( condition != null && !condition.check( context ) ) {
+            return;
+        }
+        
         switch ( triggerType ) {
             case STATE_CHANGE: {
                 if ( event.type != WorkflowEvent.Type.STATE_CHANGED || !triggerName.equals( event.stateChangeName ) ) {

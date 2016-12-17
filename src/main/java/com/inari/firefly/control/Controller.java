@@ -15,7 +15,6 @@
  ******************************************************************************/ 
 package com.inari.firefly.control;
 
-import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
@@ -28,23 +27,28 @@ import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 public abstract class Controller extends SystemComponent {
     
     public static final SystemComponentKey<Controller> TYPE_KEY = SystemComponentKey.create( Controller.class );
-    
     public static final AttributeKey<Float> UPDATE_RESOLUTION = new AttributeKey<Float>( "updateResolution", Float.class, Controller.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
-        UPDATE_RESOLUTION
-    };
 
     private float updateResolution;
     
+    private boolean active = true;
     private UpdateScheduler updateScheduler;
     protected final IntBag componentIds;
     
+    
     protected Controller( int id ) {
         super( id );
-        // TODO check if this is a proper init
         componentIds = new IntBag( 10, -1 );
         updateResolution = -1;
         updateScheduler = null;
+    }
+    
+    public final boolean isActive() {
+        return active;
+    }
+    
+    public final void setActive( boolean active ) {
+        this.active = active;
     }
 
     @Override
@@ -71,7 +75,7 @@ public abstract class Controller extends SystemComponent {
     @Override
     public Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
+        attributeKeys.add( UPDATE_RESOLUTION );
         return attributeKeys;
     }
 
@@ -90,6 +94,10 @@ public abstract class Controller extends SystemComponent {
     }
     
     final void processUpdate() {
+        if ( !active ) {
+            return;
+        }
+        
         if ( updateResolution >= 0 ) {
             if ( updateScheduler == null ) {
                 updateScheduler = context.getTimer().createUpdateScheduler( updateResolution );

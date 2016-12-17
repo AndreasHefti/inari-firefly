@@ -464,7 +464,7 @@ public final class FFContext {
         return key.cast( property );
     }
     
-    public final <T> void addProperty( TypedKey<T> key, T value ) {
+    public final <T> void setProperty( TypedKey<T> key, T value ) {
         properties.put( key, value );
     }
     

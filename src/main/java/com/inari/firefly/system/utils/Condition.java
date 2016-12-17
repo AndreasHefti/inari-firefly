@@ -15,5 +15,13 @@ public abstract class Condition implements StringConfigurable {
     public String toConfigString() {
         return "";
     }
+    
+    public void init( FFContext context ) {
+        // can be implemented if needed
+    }
+    
+    public void dispose( FFContext context ) {
+        // can be implemented if needed
+    }
 
 }

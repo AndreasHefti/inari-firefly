@@ -178,6 +178,11 @@ public final class ControllerSystem
         public final int doBuild( int componentId, Class<?> controllerType, boolean activate ) {
             Controller result = createSystemComponent( componentId, controllerType, context );
             controller.set( result.index(), result );
+            
+            if ( activate ) {
+                result.setActive( true );
+            }
+            
             return result.index();
         }
     }
@@ -208,13 +213,12 @@ public final class ControllerSystem
         }
         @Override
         public final void activate( int id ) {
-            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+            get( id ).setActive( true );
         }
         @Override
         public final void deactivate( int id ) {
-            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+            get( id ).setActive( false );
         }
-        
     }
 
 }

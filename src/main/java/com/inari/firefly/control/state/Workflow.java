@@ -24,6 +24,7 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.utils.Condition;
 
 public final class Workflow extends SystemComponent {
     
@@ -72,6 +73,30 @@ public final class Workflow extends SystemComponent {
     final void setCurrentState( String stateName ) {
         currentStateName = stateName;
     }
+    
+    final void changeState( String newStateName ) {
+        if ( currentStateName != null ) {
+            Iterator<StateChange> stateChanges = stateChangesForCurrentState();
+            while ( stateChanges.hasNext() ) {
+                StateChange stateChange = stateChanges.next();
+                Condition condition = stateChange.getCondition();
+                if ( condition != null ) {
+                    condition.dispose( context );
+                }
+            }
+        }
+        
+        currentStateName = newStateName;
+        
+        Iterator<StateChange> stateChanges = stateChangesForCurrentState();
+        while ( stateChanges.hasNext() ) {
+            StateChange stateChange = stateChanges.next();
+            Condition condition = stateChange.getCondition();
+            if ( condition != null ) {
+                condition.init( context );
+            }
+        }
+    }
 
     public final String getStartStateName() {
         return startStateName;
@@ -87,6 +112,16 @@ public final class Workflow extends SystemComponent {
 
     public final void setStates( DynArray<String> states ) {
         this.states = states;
+    }
+    
+    public final StateChange getStateChange( String name ) {
+        for ( StateChange stateChange : stateChanges ) {
+            if ( name.equals( stateChange.getName() ) ) {
+                return stateChange;
+            }
+        }
+        
+        return null;
     }
 
     public final DynArray<StateChange> getStateChanges() {
@@ -120,6 +155,7 @@ public final class Workflow extends SystemComponent {
         
         return null;
     }
+    
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
@@ -179,5 +215,7 @@ public final class Workflow extends SystemComponent {
         }
         
     }
+
+    
 
 }

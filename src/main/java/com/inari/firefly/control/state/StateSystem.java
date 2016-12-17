@@ -122,8 +122,8 @@ public class StateSystem
 
     private final void doStateChange( final Workflow workflow, final StateChange stateChange ) {
         String toStateName = stateChange.getToStateName();
-        workflow.setCurrentState( toStateName );
-        
+        workflow.changeState( toStateName );
+
         if ( toStateName != null ) {
             context.notify( WorkflowEvent.createStateChangedEvent( workflow.index(), workflow.getName(), stateChange ) );
         } else {
