@@ -25,6 +25,8 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.utils.Condition;
+import com.inari.firefly.system.utils.Disposable;
+import com.inari.firefly.system.utils.Initiable;
 
 public final class Workflow extends SystemComponent {
     
@@ -80,8 +82,8 @@ public final class Workflow extends SystemComponent {
             while ( stateChanges.hasNext() ) {
                 StateChange stateChange = stateChanges.next();
                 Condition condition = stateChange.getCondition();
-                if ( condition != null ) {
-                    condition.dispose( context );
+                if ( condition != null && condition instanceof Disposable ) {
+                    ( (Disposable) condition ).dispose( context );
                 }
             }
         }
@@ -92,8 +94,8 @@ public final class Workflow extends SystemComponent {
         while ( stateChanges.hasNext() ) {
             StateChange stateChange = stateChanges.next();
             Condition condition = stateChange.getCondition();
-            if ( condition != null ) {
-                condition.init( context );
+            if ( condition != null && condition instanceof Initiable ) {
+                ( (Initiable) condition ).init( context );
             }
         }
     }

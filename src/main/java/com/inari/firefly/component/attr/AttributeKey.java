@@ -20,6 +20,7 @@ import java.util.BitSet;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.entity.EntityComponent;
 
@@ -197,6 +198,10 @@ public final class AttributeKey<T> {
     public static final <S> AttributeKey<DynArray<S>> createDynArray( String name, Class<? extends Component> componentType ) {
         AttributeKey<?> result = new AttributeKey<DynArray>( name, DynArray.class, componentType );
         return (AttributeKey<DynArray<S>>) result;
+    }
+
+    public static final AttributeKey<IntBag> createIntBag( String name, Class<? extends Component> componentType ) {
+        return new AttributeKey<IntBag>( name, IntBag.class, componentType );
     }
 
 }

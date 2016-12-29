@@ -1,39 +1,69 @@
-package com.inari.firefly.control.action;
+package com.inari.firefly.control.behavior;
 
 import java.util.Iterator;
 
+import com.inari.commons.lang.IntIterator;
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
+import com.inari.firefly.entity.EntityActivationEvent;
+import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.UpdateEvent;
+import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public final class ActionSystem extends ComponentSystem<ActionSystem> {
+public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implements UpdateEventListener, EntityActivationListener {
     
-    public static final FFSystemTypeKey<ActionSystem> SYSTEM_KEY = FFSystemTypeKey.create( ActionSystem.class );
+    public static final FFSystemTypeKey<BehaviorSystem> SYSTEM_KEY = FFSystemTypeKey.create( BehaviorSystem.class );
     
     private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Action.TYPE_KEY
     };
 
-    private DynArray<Action> actions;
+    private final DynArray<BehaviorNode> behaviorNodes;
+    private final DynArray<Action> actions;
+    private final IntBag entityIds;
     
-    ActionSystem() {
+    BehaviorSystem() {
         super( SYSTEM_KEY );
         actions = new DynArray<Action>();
+        behaviorNodes = new DynArray<BehaviorNode>();
+        entityIds = new IntBag( 50, -1 );
     }
     
     @Override
-    public final void init( FFContext context ) throws FFInitException {
+    public final void init( final FFContext context ) throws FFInitException {
         super.init( context );
         
-        context.registerListener( ActionSystemEvent.TYPE_KEY, this );
+        context.registerListener( UpdateEvent.TYPE_KEY, this );
+        context.registerListener( EntityActivationEvent.TYPE_KEY, this );
     }
+    
     @Override
-    public final void dispose( FFContext context ) {
-        context.disposeListener( ActionSystemEvent.TYPE_KEY, this );
+    public final boolean match( final Aspects aspects ) {
+        return aspects.contains( EBehavoir.TYPE_KEY );
+    }
+
+    @Override
+    public final void entityActivated( int entityId, final Aspects aspects ) {
+        entityIds.add( entityId );
+    }
+
+    @Override
+    public final void entityDeactivated( int entityId, final Aspects aspects ) {
+        entityIds.remove( entityId );
+    }
+    
+    
+    @Override
+    public final void dispose( final FFContext context ) {
+        context.disposeListener( UpdateEvent.TYPE_KEY, this );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
     }
     
     public final Action getAction( int actionId ) {
@@ -93,6 +123,21 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
             action.action( entityId );
         }
     }
+    
+    @Override
+    public final void update( UpdateEvent event ) {
+        final IntIterator entities = entityIds.iterator();
+        while ( entities.hasNext() ) {
+            final int entityId = entities.next();
+            final EBehavoir behavior = context.getEntityComponent( entityId, EBehavoir.TYPE_KEY );
+            if ( behavior.runningActionId < 0 ) {
+                behaviorNodes.get( behavior.getRootNodeId() ).nextAction( entityId, behavior, context );
+            }
+            if ( behavior.runningActionId >= 0 ) {
+                actions.get( behavior.runningActionId ).action( entityId );
+            }
+        }
+    }
 
     public final ActionBuilder getActionBuilder() {
         return new ActionBuilder();
@@ -130,7 +175,7 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> {
 
     public final class ActionBuilderAdapter extends SystemBuilderAdapter<Action> {
         
-        protected ActionBuilderAdapter( ActionSystem system ) {
+        protected ActionBuilderAdapter( BehaviorSystem system ) {
             super( system, getActionBuilder() );
         }
         

@@ -2,8 +2,8 @@ package com.inari.firefly.system.utils;
 
 import com.inari.firefly.system.FFContext;
 
-public interface Condition {
+public interface Initiable {
     
-    public abstract boolean check( final FFContext context );
+    Disposable init( FFContext context );
 
 }

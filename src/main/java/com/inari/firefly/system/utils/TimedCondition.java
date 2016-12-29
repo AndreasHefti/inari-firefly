@@ -2,7 +2,7 @@ package com.inari.firefly.system.utils;
 
 import com.inari.firefly.system.FFContext;
 
-public final class TimedCondition extends Condition {
+public final class TimedCondition implements Condition, Initiable, Disposable {
     
     private final long timeTo;
     private long startTime = -1;
@@ -13,8 +13,9 @@ public final class TimedCondition extends Condition {
     }
 
     @Override
-    public final void init( FFContext context ) {
+    public final Disposable init( FFContext context ) {
         startTime = context.getTime();
+        return this;
     }
 
     @Override
