@@ -7,27 +7,33 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.control.behavior.Action.ActionState;
 import com.inari.firefly.system.FFContext;
 
-public class ConditionalLeaf extends BehaviorNode {
+public final class TimedLeaf extends BehaviorNode {
     
-    public static final AttributeKey<Integer> ACTION_ID = AttributeKey.createInt( "actionId", ConditionalLeaf.class );
-    public static final AttributeKey<BCondition> RUN_CONDITION = new AttributeKey<BCondition>( "runCondition", BCondition.class, ConditionalLeaf.class );
+    public static final AttributeKey<Integer> ACTION_ID = AttributeKey.createInt( "actionId", TimedLeaf.class );
+    public static final AttributeKey<Long> DURATION = AttributeKey.createLong( "actionId", TimedLeaf.class );
     
     private int actionId;
-    private BCondition runCondition;
+    private long duration;
+    
+    private long runStartTime;
 
-    protected ConditionalLeaf( int index ) {
+    protected TimedLeaf( int index ) {
         super( index );
     }
 
     @Override
-    final void nextAction( int entityId, final EBehavoir behavior, final FFContext context ) {
+    final void nextAction( int entityId, EBehavoir behavior, FFContext context ) {
         if ( behavior.actionState == ActionState.RUNNING ) {
-            // run further, succeed or fail
-            behavior.actionState = runCondition.check( entityId, behavior, context );
+            if ( context.getTime() - runStartTime > duration ) {
+                behavior.runningActionId = -1;
+                behavior.actionState = ActionState.SUCCESS;
+                return;
+            }
         } else {
             // start action
             behavior.runningActionId = actionId;
             behavior.actionState = ActionState.RUNNING;
+            runStartTime = context.getTime();
         }
     }
     
@@ -35,7 +41,7 @@ public class ConditionalLeaf extends BehaviorNode {
     public final Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
         attributeKeys.add( ACTION_ID );
-        attributeKeys.add( RUN_CONDITION );
+        attributeKeys.add( DURATION );
         return attributeKeys;
     }
 
@@ -44,7 +50,7 @@ public class ConditionalLeaf extends BehaviorNode {
         super.fromAttributes( attributes );
         
         actionId = attributes.getValue( ACTION_ID, actionId );
-        runCondition = attributes.getValue( RUN_CONDITION, runCondition );
+        duration = attributes.getValue( DURATION, duration );
     }
 
     @Override
@@ -52,7 +58,7 @@ public class ConditionalLeaf extends BehaviorNode {
         super.toAttributes( attributes );
         
         attributes.put( ACTION_ID, actionId );
-        attributes.put( RUN_CONDITION, runCondition );
+        attributes.put( DURATION, duration );
     }
 
 }

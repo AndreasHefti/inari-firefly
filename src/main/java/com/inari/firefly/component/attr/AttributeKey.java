@@ -204,4 +204,8 @@ public final class AttributeKey<T> {
         return new AttributeKey<IntBag>( name, IntBag.class, componentType );
     }
 
+    public static final AttributeKey<Long> createLong( String name, Class<? extends Component> componentType ) {
+        return new AttributeKey<Long>( name, Long.class, componentType );
+    }
+
 }

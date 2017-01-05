@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.lang.reflect.Constructor;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.inari.commons.event.AspectedEvent;
@@ -66,6 +67,8 @@ import com.inari.firefly.system.info.SystemInfoDisplay;
  *  TODO: provide some example code that shows how to work with the FFContext
  **/
 public final class FFContext {
+    
+    public static final Random RANDOM = new Random();
     
     private static final String NO_NAME = "NO_NAME_";
     private static final AtomicInteger NON_NAME_COUNTER = new AtomicInteger( 0 );

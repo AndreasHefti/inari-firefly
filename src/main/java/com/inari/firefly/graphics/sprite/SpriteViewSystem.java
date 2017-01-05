@@ -2,6 +2,7 @@ package com.inari.firefly.graphics.sprite;
 
 import java.util.Comparator;
 
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
@@ -28,7 +29,6 @@ public final class SpriteViewSystem
     public static final FFSystemTypeKey<SpriteViewSystem> SYSTEM_KEY = FFSystemTypeKey.create( SpriteViewSystem.class );
     
     private EntitySystem entitySystem;
-    // TODO another approach would be, storing only the id's within DynArray<DynArray<IntBag>>
     private final DynArray<DynArray<DynArray<IndexedTypeSet>>> spritesPerViewAndLayer;
     private SpriteRenderer spriteRenderer;
     
@@ -159,9 +159,17 @@ public final class SpriteViewSystem
 
                 ESprite sprite = components.get( ESprite.TYPE_KEY );
                 ETransform transform = components.get( ETransform.TYPE_KEY );
-                transformCollector.set( transform );
-
-                render( sprite, transform.getParentId(), transformCollector );
+                
+                
+                if ( sprite.isMultiPosition() ) {
+                    for ( PositionF pos : sprite.getPositions() ) {
+                        transformCollector.set( transform, pos.x, pos.y );
+                        render( sprite, transform.getParentId(), transformCollector );
+                    }
+                } else {
+                    transformCollector.set( transform );
+                    render( sprite, transform.getParentId(), transformCollector );
+                }
             }
         }
 

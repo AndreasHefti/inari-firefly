@@ -19,7 +19,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.graphics.RGBColor;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -37,22 +39,27 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ESprite.class );
     public static final AttributeKey<String> SHADER_ASSET_NAME = new AttributeKey<String>( "shaderAssetName", String.class, ESprite.class );
     public static final AttributeKey<Integer> SHADER_ID = new AttributeKey<Integer>( "shaderId", Integer.class, ESprite.class );
+    public static final AttributeKey<DynArray<PositionF>> MULTI_POSITIONS = AttributeKey.createDynArray( "positions", ESprite.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         SPRITE_ID,
         ORDERING,
         TINT_COLOR,
         BLEND_MODE,
-        SHADER_ID
+        SHADER_ID,
+        MULTI_POSITIONS
     };
 
     private int spriteId;
     private int ordering;
-    private final RGBColor tintColor = new RGBColor();
+    private final RGBColor tintColor;
     private BlendMode blendMode;
     private int shaderId;
+    private DynArray<PositionF> positions;
     
     public ESprite() {
         super( TYPE_KEY );
+        tintColor = new RGBColor();
+        positions = new DynArray<PositionF>();
         resetAttributes();
     }
 
@@ -62,6 +69,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         setTintColor( new RGBColor( 1, 1, 1, 1 ) );
         blendMode = BlendMode.NONE;
         shaderId = -1;
+        positions.clear();
     }
 
     @Override
@@ -111,6 +119,14 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     public final void setShaderId( int shaderId ) {
         this.shaderId = shaderId;
     }
+    
+    public final boolean isMultiPosition() {
+        return !positions.isEmpty();
+    }
+    
+    public final DynArray<PositionF> getPositions() {
+        return positions;
+    }
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
@@ -124,6 +140,11 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
         shaderId = attributes.getAssetInstanceId( SHADER_ASSET_NAME, SHADER_ID, shaderId );
+        
+        positions.clear();
+        if ( attributes.contains( MULTI_POSITIONS ) ) {
+            positions.addAll( attributes.getValue( MULTI_POSITIONS ) );
+        }
     }
 
     @Override
@@ -133,5 +154,9 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
         attributes.put( BLEND_MODE, blendMode );
         attributes.put( SHADER_ID, shaderId );
+        
+        if ( isMultiPosition() ) {
+            attributes.put( MULTI_POSITIONS, positions );
+        }
     }
 }

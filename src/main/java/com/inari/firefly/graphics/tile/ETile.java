@@ -173,13 +173,8 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         gridPosition.y = attributes.getValue( GRID_Y_POSITION, gridPosition.y );
         
         gridPositions.clear();
-        if ( multiPosition ) {
-            DynArray<Position> gp = attributes.getValue( GRID_POSITIONS );
-            if ( gp != null ) {
-                for ( Position pos : gp ) {
-                    gridPositions.add( pos );
-                }
-            }
+        if ( attributes.contains( GRID_POSITIONS ) ) {
+            gridPositions.addAll( attributes.getValue( GRID_POSITIONS ) );
         }
     }
 
