@@ -387,10 +387,22 @@ public final class FFContext {
         builderHelper.activate( id );
     }
     
+    public final <C extends SystemComponent, CS extends C> void activateSystemComponent( SystemComponentKey<C> key, String name ) {
+        @SuppressWarnings( "unchecked" )
+        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        builderHelper.activate( builderHelper.getId( name ) );
+    }
+    
     public final <C extends SystemComponent, CS extends C> void deactivateSystemComponent( SystemComponentKey<C> key, int id ) {
         @SuppressWarnings( "unchecked" )
         SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.deactivate( id );
+    }
+    
+    public final <C extends SystemComponent, CS extends C> void deactivateSystemComponent( SystemComponentKey<C> key, String name ) {
+        @SuppressWarnings( "unchecked" )
+        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        builderHelper.deactivate( builderHelper.getId( name ) );
     }
     
     public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, int componentIndex ) {
@@ -432,8 +444,16 @@ public final class FFContext {
         entitySystem.activateEntity( entityId );
     }
     
+    public final void activateEntity( String name ) {
+        entitySystem.activateEntity( entitySystem.getEntityId( name ) );
+    }
+    
     public final void deactivateEntity( int entityId ) {
         entitySystem.deactivateEntity( entityId );
+    }
+    
+    public final void deactivateEntity( String name  ) {
+        entitySystem.deactivateEntity( entitySystem.getEntityId( name ) );
     }
     
     public final void deleteEntity( int entityId ) {

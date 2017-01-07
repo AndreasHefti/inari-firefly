@@ -29,19 +29,20 @@ public class EEntity extends EntityComponent {
     };
     
     private String entityName;
-    private IntBag controllerIds;
+    private final IntBag controllerIds;
     
     final Aspects aspects;
     
     public EEntity() {
         super( TYPE_KEY );
         aspects = ENTITY_ASPECT_GROUP.createAspects();
+        controllerIds = new IntBag( 10, -1, 10 );
         resetAttributes();
     }
 
     @Override
     public final void resetAttributes() {
-        controllerIds = null;
+        controllerIds.clear();
         entityName = null;
         aspects.clear();
     }
@@ -59,9 +60,9 @@ public class EEntity extends EntityComponent {
     }
 
     public final void setControllerIds( IntBag controllerIds ) {
-        this.controllerIds = controllerIds;
+        this.controllerIds.clear();
         if ( controllerIds != null ) {
-            controllerIds.trim();
+            this.controllerIds.addAll( controllerIds );
         }
     }
     

@@ -593,6 +593,9 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
                     return;
                 }
             }
+            if ( next != null && !next.active ) {
+                next = null;
+            }
         }
         
     }
@@ -630,6 +633,9 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
                 if ( next.active ) {
                     return;
                 }
+            }
+            if ( next != null && !next.active ) {
+                next = null;
             }
         }
     }

@@ -111,12 +111,8 @@ public abstract class FireFlyApp {
         if ( viewSystem.hasActiveViewports() ) {
             Iterator<View> virtualViewIterator = viewSystem.activeViewportIterator();
             while ( virtualViewIterator.hasNext() ) {
-                View virtualView = virtualViewIterator.next();
-                if ( !virtualView.isActive() ) {
-                    continue;
-                }
-
-                render( virtualView );
+                View next = virtualViewIterator.next();
+                render( next );
             }
             
             graphics.flush( viewSystem.activeViewportIterator() );
