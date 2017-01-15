@@ -17,6 +17,8 @@ package com.inari.firefly.component.attr;
 
 import java.util.BitSet;
 
+import com.inari.commons.geom.Rectangle;
+import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
@@ -206,6 +208,14 @@ public final class AttributeKey<T> {
 
     public static final AttributeKey<Long> createLong( String name, Class<? extends Component> componentType ) {
         return new AttributeKey<Long>( name, Long.class, componentType );
+    }
+
+    public static AttributeKey<RGBColor> createColor( String name, Class<? extends Component> componentType ) {
+        return new AttributeKey<RGBColor>( name, RGBColor.class, componentType );
+    }
+
+    public static AttributeKey<Rectangle> createRectangle( String name, Class<? extends Component> componentType ) {
+        return new AttributeKey<Rectangle>( name, Rectangle.class, componentType );
     }
 
 }
