@@ -47,8 +47,8 @@ public final class DefaultTextRenderer extends TextRenderer {
             textRenderable.tintColor = text.getTintColor();
             textRenderable.shaderId = text.getShaderId();
             transformCollector.set( transform );
-            int horizontalStep = font.getCharWidth() + font.getCharSpace();
-            int verticalStep = font.getCharHeight() + font.getLineSpace();
+            float horizontalStep = ( font.getCharWidth() + font.getCharSpace() ) * transform.getScalex();
+            float verticalStep = ( font.getCharHeight() + font.getLineSpace() ) * transform.getScaley();
             
             for ( char character : chars ) {
                 if ( character == '\n' ) {
