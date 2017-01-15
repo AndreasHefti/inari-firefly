@@ -2,6 +2,7 @@ package com.inari.firefly.system;
 
 import java.awt.Font;
 import java.lang.reflect.Constructor;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
@@ -271,7 +272,7 @@ public final class FFContext {
      */
     public final <T extends FFSystem> void disposeSystem( FFSystemTypeKey<T> key ) {
         @SuppressWarnings( "unchecked" )
-        T system = (T) systems.remove( key.index() );
+        final T system = (T) systems.remove( key.index() );
         if ( system != null ) {
             system.dispose( this );
         }
@@ -311,7 +312,7 @@ public final class FFContext {
      * @return the {@link SystemComponent} or null if no such component exists
      */
     public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, int componentId ) {
-        SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
+        final SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         return key.<C>type().cast( builderHelper.get( componentId ) );
     }
 
@@ -327,8 +328,8 @@ public final class FFContext {
       */
     public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentKey<C> key, int componentId, Class<CS> subType ) {
         @SuppressWarnings( "unchecked" )
-        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
-        C component = builderHelper.get( componentId );
+        final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        final C component = builderHelper.get( componentId );
         if ( component == null ) {
             return null;
         }
@@ -344,7 +345,7 @@ public final class FFContext {
      * @return the {@link SystemComponent} or null if no such component exists
      */
     public final <C extends SystemComponent> C getSystemComponent( SystemComponentKey<C> key, String componentName ) {
-        SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
+        final SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         return key.<C>type().cast( builderHelper.get( builderHelper.getId( componentName ) ) );
     }
     
@@ -357,7 +358,7 @@ public final class FFContext {
      * @return the component id of the component (positiv number) or -1 no such component exists
      */
     public final <C extends SystemComponent> int getSystemComponentId( SystemComponentKey<C> key, String componentName ) {
-        SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
+        final SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         return builderHelper.getId( componentName );
     }
     
@@ -373,40 +374,46 @@ public final class FFContext {
      */
     @SuppressWarnings( "unchecked" )
     public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentKey<C> key, String componentName, Class<CS> subType ) {
-        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
-        C component = builderHelper.get( builderHelper.getId( componentName ) );
+        final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        final C component = builderHelper.get( builderHelper.getId( componentName ) );
         if ( component == null ) {
             return null;
         }
         return subType.cast( component );
     }
     
+    @SuppressWarnings( "unchecked" )
+    public <C extends SystemComponent> Iterator<C> getSystemComponents( SystemComponentKey<C> key ) {
+        final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        return builderHelper.getAll();
+    }
+    
     public final <C extends SystemComponent, CS extends C> void activateSystemComponent( SystemComponentKey<C> key, int id ) {
         @SuppressWarnings( "unchecked" )
-        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.activate( id );
     }
     
     public final <C extends SystemComponent, CS extends C> void activateSystemComponent( SystemComponentKey<C> key, String name ) {
         @SuppressWarnings( "unchecked" )
-        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.activate( builderHelper.getId( name ) );
     }
     
     public final <C extends SystemComponent, CS extends C> void deactivateSystemComponent( SystemComponentKey<C> key, int id ) {
         @SuppressWarnings( "unchecked" )
-        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.deactivate( id );
     }
     
     public final <C extends SystemComponent, CS extends C> void deactivateSystemComponent( SystemComponentKey<C> key, String name ) {
         @SuppressWarnings( "unchecked" )
-        SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.deactivate( builderHelper.getId( name ) );
     }
     
     public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, int componentIndex ) {
-        SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
+        final SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         builderHelper.delete( componentIndex );
     }
     

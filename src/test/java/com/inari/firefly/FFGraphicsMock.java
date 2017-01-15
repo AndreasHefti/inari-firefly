@@ -97,6 +97,11 @@ public class FFGraphicsMock implements FFGraphics {
     }
     
     @Override
+    public final void renderSprite( SpriteRenderable spriteRenderable, float xpos, float ypos, float scale ) {
+        log.add( "renderSprite::Sprite(" + spriteRenderable.getSpriteId() + ")" );
+    }
+    
+    @Override
     public final void renderSprite( SpriteRenderable spriteRenderable, TransformData transformData ) {
         log.add( "renderSprite::Sprite(" + spriteRenderable.getSpriteId() + ")" );
     }

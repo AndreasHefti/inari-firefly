@@ -46,6 +46,8 @@ public interface FFGraphics extends FFContextInitiable, ViewEventListener {
 
     void renderSprite( SpriteRenderable renderableSprite, float xpos, float ypos );
     
+    void renderSprite( SpriteRenderable renderableSprite, float xpos, float ypos, float scale );
+    
     void renderSprite( SpriteRenderable renderableSprite, TransformData tranform );
     
     void renderShape( ShapeData data );
