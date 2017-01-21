@@ -56,6 +56,11 @@ public final class DefaultTextRenderer extends TextRenderer {
                     transformCollector.ypos += verticalStep;
                     continue;
                 }
+                
+                if ( character == ' ' ) {
+                    transformCollector.xpos += horizontalStep;
+                    continue;
+                }
 
                 textRenderable.spriteId = font.getSpriteId( character );
                 render( textRenderable, transformCollector );
