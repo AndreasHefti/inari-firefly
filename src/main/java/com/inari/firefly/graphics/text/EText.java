@@ -19,7 +19,6 @@ public class EText extends EntityComponent {
     public static final AttributeKey<Integer> RENDERER_ID = new AttributeKey<Integer>( "rendererId", Integer.class, EText.class );
     public static final AttributeKey<String> FONT_ASSET_NAME = new AttributeKey<String>( "fontAssetName", String.class, EText.class );
     public static final AttributeKey<Integer> FONT_ASSET_ID = new AttributeKey<Integer>( "fontAssetId", Integer.class, EText.class );
-    //public static final AttributeKey<char[]> TEXT = new AttributeKey<char[]>( "text", char[].class, EText.class );
     public static final AttributeKey<String> TEXT = new AttributeKey<String>( "text", String.class, EText.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, EText.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, EText.class );

@@ -17,6 +17,7 @@ package com.inari.firefly.component.attr;
 
 import java.util.BitSet;
 
+import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.aspect.Aspect;
@@ -216,6 +217,10 @@ public final class AttributeKey<T> {
 
     public static AttributeKey<Rectangle> createRectangle( String name, Class<? extends Component> componentType ) {
         return new AttributeKey<Rectangle>( name, Rectangle.class, componentType );
+    }
+
+    public static AttributeKey<Position> createPosition( String name, Class<? extends Component> componentType ) {
+        return new AttributeKey<Position>( name, Position.class, componentType );
     }
 
 }
