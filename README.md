@@ -1,15 +1,10 @@
 # inari-firefly
 
-NOTE: Firefly is in development state and in a eraly stage.
-
 Introduction
 
 Firefly is a top level 2D game engine framework for Java focusing on intuitive API build on stringent architecture and design.
 What makes it different to other java gaming frameworks is its focus on build and manage components and game objects within a component-
 entity-system approach and being independent from low level implementation(s).
-
-"There are many good and exciting game frameworks for Java out there but what I always was missing was a good and stringent API that
-helps you to manager masses of game objects and their states and life-cycles." 
 
 The main idea of Firefly is to have a top-level 2D game API that comes with a in-build Component-Entity-System architecture that helps
 organizing all the game-objects, data and assets in a well defined form and also helps a lot on keeping the game codebase as flexible 
