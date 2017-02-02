@@ -17,7 +17,12 @@ public abstract class WorkflowEventTrigger extends Trigger implements WorkflowEv
     private final Type triggerType;
     private final String triggerName;
     
-    
+    public WorkflowEventTrigger( String workflowName, Type triggerType, String triggerName ) {
+        super( null );
+        this.workflowName = workflowName;
+        this.triggerType = triggerType;
+        this.triggerName = triggerName;
+    }
 
     public WorkflowEventTrigger( String workflowName, Type triggerType, String triggerName, Condition condition ) {
         super( condition );
