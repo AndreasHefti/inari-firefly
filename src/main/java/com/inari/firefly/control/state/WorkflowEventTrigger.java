@@ -2,9 +2,10 @@ package com.inari.firefly.control.state;
 
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.utils.Condition;
-import com.inari.firefly.system.utils.EventTrigger;
+import com.inari.firefly.system.utils.Trigger;
+import com.inari.firefly.system.utils.Triggerer;
 
-public abstract class WorkflowEventTrigger extends EventTrigger implements WorkflowEventListener {
+public abstract class WorkflowEventTrigger extends Trigger implements WorkflowEventListener {
     
     public enum Type {
         STATE_CHANGE,
@@ -26,8 +27,8 @@ public abstract class WorkflowEventTrigger extends EventTrigger implements Workf
     }
     
     @Override
-    public final void register( FFContext context, int componentId ) {
-        super.register( context, componentId );
+    public final void register( FFContext context, int componentId, Triggerer triggerer ) {
+        super.register( context, componentId, triggerer );
         context.registerListener( WorkflowEvent.TYPE_KEY, this );
     }
 
@@ -67,21 +68,6 @@ public abstract class WorkflowEventTrigger extends EventTrigger implements Workf
             }
         }
         
-        trigger();
+        triggerer.trigger( context, componentId );
     }
-    
-    protected abstract void trigger();
-    
-    @Override
-    public final void fromConfigString( String stringValue ) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public final String toConfigString() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }
