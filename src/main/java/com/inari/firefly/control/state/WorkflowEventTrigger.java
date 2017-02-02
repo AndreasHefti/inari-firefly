@@ -5,7 +5,7 @@ import com.inari.firefly.system.utils.Condition;
 import com.inari.firefly.system.utils.Trigger;
 import com.inari.firefly.system.utils.Triggerer;
 
-public abstract class WorkflowEventTrigger extends Trigger implements WorkflowEventListener {
+public class WorkflowEventTrigger extends Trigger implements WorkflowEventListener {
     
     public enum Type {
         STATE_CHANGE,
