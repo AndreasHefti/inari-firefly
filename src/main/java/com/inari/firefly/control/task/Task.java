@@ -51,7 +51,7 @@ public abstract class Task extends SystemComponent {
     
     protected Task( int id ) {
         super( id );
-        trigger = new DynArray<Trigger>();
+        trigger = new DynArray<Trigger>( 1, 2 );
     }
     
     @Override

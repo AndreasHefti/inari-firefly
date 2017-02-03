@@ -4,7 +4,7 @@ import com.inari.firefly.system.FFContext;
 
 public final class ConditionInverter extends ConditionDecorator {
 
-    protected ConditionInverter( Condition decoratedCondition ) {
+    public ConditionInverter( Condition decoratedCondition ) {
         super( decoratedCondition );
     }
 
