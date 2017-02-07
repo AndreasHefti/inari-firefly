@@ -11,7 +11,7 @@ public abstract class ViewController extends Controller implements ViewEventList
     }
 
     @Override
-    public final void init() {
+    protected void init() {
         super.init();
         
         viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );

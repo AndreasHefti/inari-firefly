@@ -1,13 +1,19 @@
 package com.inari.firefly.system.external;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class FFTimer {
     
     protected long lastUpdateTime, time, timeElapsed;
+    
+    private final Map<Float, UpdateScheduler> updateSchedulers;
     
     protected FFTimer() {
         lastUpdateTime = 0;
         time = 0;
         timeElapsed = 0;
+        updateSchedulers = new HashMap<Float, UpdateScheduler>();
     }
 
     public final long getLastUpdateTime() {
@@ -25,7 +31,13 @@ public abstract class FFTimer {
     public abstract void tick();
     
     public final UpdateScheduler createUpdateScheduler( float resolution ) {
-        return new UpdateScheduler( resolution );
+        UpdateScheduler updateScheduler = updateSchedulers.get( resolution );
+        if ( updateScheduler == null ) {
+            updateScheduler = new UpdateScheduler( resolution );
+            updateSchedulers.put( resolution, updateScheduler );
+        }
+        
+        return updateScheduler;
     }
 
     @Override
