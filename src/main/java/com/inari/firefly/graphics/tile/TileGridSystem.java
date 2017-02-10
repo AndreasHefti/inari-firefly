@@ -71,7 +71,8 @@ public final class TileGridSystem
         // build and register default tile grid renderer
         getRendererBuilder( NormalFastTileGridRenderer.class )
             .set( TileGridRenderer.NAME, NormalFastTileGridRenderer.NAME )
-            .buildAndNext()
+            .build();
+        getRendererBuilder( NormalFullTileGridRenderer.class )
             .set( TileGridRenderer.NAME, NormalFullTileGridRenderer.NAME )
             .build();
 
