@@ -41,16 +41,6 @@ import com.inari.firefly.component.attr.AttributeMap;
  */
 public interface Component {
     
-    /** This is used as a special Component Attribute key for abstract Component types that can have different implementations
-     *  for the same Component type. In this case normally only one ComponentBuilder exists for the abstract type of component and
-     *  needs a instance type to instantiate the component. This INSTANCE_TYPE_NAME defines the name of the class to instance by
-     *  creation within an Attribute.
-     *  
-     *  Use this if you have an abstract Component implementation, where your component-type and-instance type are different, to
-     *  give the ComonentBuilder the instance-type to be able to create an instance form from the type on building
-     */
-    public static final AttributeKey<String> INSTANCE_TYPE_NAME = new AttributeKey<String>( "instanceTypeName", String.class, Component.class );
-    
     /** Use this to get the ComponentId of this Component that identifies the Component by type and instance */
     ComponentId componentId();
     

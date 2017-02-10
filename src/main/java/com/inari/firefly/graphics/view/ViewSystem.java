@@ -70,7 +70,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             context.getScreenWidth(),
             context.getScreenHeight()
         );
-        ViewBuilder viewBuilder = getViewBuilder();
+        ViewBuilder viewBuilder = new ViewBuilder();
         viewBuilder.buildBaseView( screenBounds );
     }
     
@@ -371,11 +371,11 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         return false;
     }
 
-    public final ViewBuilder getViewBuilder() {
+    public final SystemComponentBuilder getViewBuilder() {
         return new ViewBuilder();
     }
     
-    public final LayerBuilder getLayerBuilder() {
+    public final SystemComponentBuilder getLayerBuilder() {
         return new LayerBuilder();
     }
 
@@ -387,8 +387,8 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new ViewBuilderAdapter( this ),
-            new LayerBuilderAdapter( this )
+            new ViewBuilderAdapter(),
+            new LayerBuilderAdapter()
         };
     }
     
@@ -401,9 +401,9 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     }
     
     
-    public final class ViewBuilder extends SystemComponentBuilder {
+    private final class ViewBuilder extends SystemComponentBuilder {
 
-        protected ViewBuilder() {
+        private ViewBuilder() {
             super( context );
         }
         
@@ -440,9 +440,9 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         }
     }
     
-    public final class LayerBuilder extends SystemComponentBuilder {
+    private final class LayerBuilder extends SystemComponentBuilder {
         
-        public LayerBuilder() {
+        private LayerBuilder() {
             super( context );
         }
 
@@ -485,12 +485,8 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     }
 
     private final class ViewBuilderAdapter extends SystemBuilderAdapter<View> {
-        public ViewBuilderAdapter( ViewSystem system ) {
-            super( system, new ViewBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<View> componentTypeKey() {
-            return View.TYPE_KEY;
+        private ViewBuilderAdapter() {
+            super( ViewSystem.this, View.TYPE_KEY );
         }
         @Override
         public final View get( int id ) {
@@ -516,15 +512,15 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         public void deactivate( int id ) {
             deactivateView( id );
         }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends View> componentType ) {
+            return new ViewBuilder();
+        }
     }
     
     private final class LayerBuilderAdapter extends SystemBuilderAdapter<Layer> {
-        public LayerBuilderAdapter( ViewSystem system ) {
-            super( system, new LayerBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<Layer> componentTypeKey() {
-            return Layer.TYPE_KEY;
+        private LayerBuilderAdapter() {
+            super( ViewSystem.this, Layer.TYPE_KEY );
         }
         @Override
         public final Layer get( int id ) {
@@ -557,6 +553,10 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         @Override
         public final void deactivate( int id ) {
             deactivateLayer( id );
+        }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends Layer> componentType ) {
+            return new LayerBuilder();
         }
     }
     

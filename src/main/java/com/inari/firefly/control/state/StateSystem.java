@@ -193,7 +193,7 @@ public class StateSystem
         return workflows.contains( workflowId );
     }
 
-    public final WorkflowBuilder getWorkflowBuilder() {
+    public final SystemComponentBuilder getWorkflowBuilder() {
         return new WorkflowBuilder();
     }
 
@@ -205,18 +205,15 @@ public class StateSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-                new WorkflowBuilderAdapter( this ),
+                new WorkflowBuilderAdapter(),
             };
     }
 
     private final class WorkflowBuilderAdapter extends SystemBuilderAdapter<Workflow> {
-        public WorkflowBuilderAdapter( StateSystem system ) {
-            super( system, new WorkflowBuilder() );
+        private WorkflowBuilderAdapter() {
+            super( StateSystem.this, Workflow.TYPE_KEY );
         }
-        @Override
-        public final SystemComponentKey<Workflow> componentTypeKey() {
-            return Workflow.TYPE_KEY;
-        }
+        
         @Override
         public final Workflow get( int id ) {
             return workflows.get( id );
@@ -241,11 +238,15 @@ public class StateSystem
         public final void deactivate( int id ) {
             throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends Workflow> componentType ) {
+            return new WorkflowBuilder();
+        }
     }
     
-    public final class WorkflowBuilder extends SystemComponentBuilder {
+    private final class WorkflowBuilder extends SystemComponentBuilder {
         
-        protected WorkflowBuilder() {
+        private WorkflowBuilder() {
             super( context );
         }
         

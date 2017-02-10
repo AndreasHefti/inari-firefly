@@ -405,17 +405,20 @@ public final class CollisionSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new CollisionQuadTreeBuilderAdapter( this ),
-            new CollisionResolverBuilderAdapter( this )
+            new CollisionQuadTreeBuilderAdapter(),
+            new CollisionResolverBuilderAdapter()
         };
     }
     
-    public final CollisionQuadTreeBuilder getCollisionQuadTreeBuilder() {
+    public final SystemComponentBuilder getCollisionQuadTreeBuilder() {
         return new CollisionQuadTreeBuilder();
     }
 
-    public final CollisionResolverBuilder getCollisionResolverBuilder() {
-        return new CollisionResolverBuilder();
+    public final SystemComponentBuilder getCollisionResolverBuilder( Class<? extends CollisionResolver> componentType ) {
+        if ( componentType == null ) {
+            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + CollisionResolver.TYPE_KEY.name() );
+        }
+        return new CollisionResolverBuilder( componentType );
     }
 
     @Override
@@ -432,9 +435,9 @@ public final class CollisionSystem
         collisionResolvers.clear();
     }
 
-    public final class CollisionQuadTreeBuilder extends SystemComponentBuilder {
+    private final class CollisionQuadTreeBuilder extends SystemComponentBuilder {
         
-        protected CollisionQuadTreeBuilder() {
+        private CollisionQuadTreeBuilder() {
             super( context );
         }
         
@@ -474,10 +477,10 @@ public final class CollisionSystem
         }
     }
     
-    public final class CollisionResolverBuilder extends SystemComponentBuilder {
+    private final class CollisionResolverBuilder extends SystemComponentBuilder {
         
-        protected CollisionResolverBuilder() {
-            super( context );
+        private CollisionResolverBuilder( Class<? extends CollisionResolver> componentType ) {
+            super( context, componentType );
         }
         
         @Override
@@ -493,12 +496,8 @@ public final class CollisionSystem
     }
 
     private final class CollisionQuadTreeBuilderAdapter extends SystemBuilderAdapter<CollisionQuadTree> {
-        public CollisionQuadTreeBuilderAdapter( CollisionSystem system ) {
-            super( system, new CollisionQuadTreeBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<CollisionQuadTree> componentTypeKey() {
-            return CollisionQuadTree.TYPE_KEY;
+        private CollisionQuadTreeBuilderAdapter() {
+            super( CollisionSystem.this, CollisionQuadTree.TYPE_KEY );
         }
         @Override
         public final CollisionQuadTree get( int id ) {
@@ -524,16 +523,16 @@ public final class CollisionSystem
         public final void deactivate( int id ) {
             throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends CollisionQuadTree> componentType ) {
+            return new CollisionQuadTreeBuilder();
+        }
 
     }
 
     private final class CollisionResolverBuilderAdapter extends SystemBuilderAdapter<CollisionResolver> {
-        public CollisionResolverBuilderAdapter( CollisionSystem system ) {
-            super( system, new CollisionResolverBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<CollisionResolver> componentTypeKey() {
-            return CollisionResolver.TYPE_KEY;
+        private CollisionResolverBuilderAdapter() {
+            super( CollisionSystem.this, CollisionResolver.TYPE_KEY );
         }
         @Override
         public final CollisionResolver get( int id ) {
@@ -558,6 +557,10 @@ public final class CollisionSystem
         @Override
         public final void deactivate( int id ) {
             throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends CollisionResolver> componentType ) {
+            return getCollisionResolverBuilder( componentType );
         }
     }
 

@@ -219,7 +219,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
         prefab.dispose();
     }
     
-    public final EntityPrefabBuilder getEntityPrefabBuilder() {
+    public final SystemComponentBuilder getEntityPrefabBuilder() {
         return new EntityPrefabBuilder();
     }
     @Override
@@ -230,12 +230,12 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new EntityPrefabBuilderAdapter( this )
+            new EntityPrefabBuilderAdapter()
         };
     }
 
     
-    public final class EntityPrefabBuilder extends SystemComponentBuilder {
+    private final class EntityPrefabBuilder extends SystemComponentBuilder {
         
         private EntityPrefabBuilder() {
             super( new EntityAttributeMap( context ) );
@@ -271,12 +271,8 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     }
     
     private final class EntityPrefabBuilderAdapter extends SystemBuilderAdapter<EntityPrefab> {
-        public EntityPrefabBuilderAdapter( EntityPrefabSystem system ) {
-            super( system, new EntityPrefabBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<EntityPrefab> componentTypeKey() {
-            return EntityPrefab.TYPE_KEY;
+        private EntityPrefabBuilderAdapter() {
+            super( EntityPrefabSystem.this, EntityPrefab.TYPE_KEY );
         }
         @Override
         public final EntityPrefab get( int id ) {
@@ -301,6 +297,11 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
         @Override
         public final void deactivate( int id ) {
             throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends EntityPrefab> componentType ) {
+            return new EntityPrefabBuilder();
         }
     }
 

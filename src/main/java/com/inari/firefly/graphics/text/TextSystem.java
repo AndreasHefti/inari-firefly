@@ -46,9 +46,9 @@ public class TextSystem
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
         // build and register default text renderer
-        getRendererBuilder()
+        getRendererBuilder( DefaultTextRenderer.class )
             .set( TextRenderer.NAME, DEFAULT_TEXT_RENDERER_NAME )
-            .build( DefaultTextRenderer.class );
+            .build();
         
         context.registerListener( EntityActivationEvent.TYPE_KEY, this );
         
@@ -93,8 +93,11 @@ public class TextSystem
         }
     }
     
-    public final TextRendererBuilder getRendererBuilder() {
-        return new TextRendererBuilder();
+    public final SystemComponentBuilder getRendererBuilder( Class<? extends TextRenderer> componentType ) {
+        if ( componentType == null ) {
+            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + TextRenderer.TYPE_KEY.name() );
+        }
+        return new TextRendererBuilder( componentType );
     }
     
     public final boolean hasTexts( int viewId ) {
@@ -158,15 +161,15 @@ public class TextSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new TextRendererBuilderAdapter( this ),
+            new TextRendererBuilderAdapter(),
         };
     }
     
     
-    public final class TextRendererBuilder extends SystemComponentBuilder {
+    private final class TextRendererBuilder extends SystemComponentBuilder {
         
-        private TextRendererBuilder() {
-            super( context );
+        private TextRendererBuilder( Class<? extends TextRenderer> componentType ) {
+            super( context, componentType );
         }
         
         @Override
@@ -183,12 +186,8 @@ public class TextSystem
     }
 
     private final class TextRendererBuilderAdapter extends SystemBuilderAdapter<TextRenderer> {
-        public TextRendererBuilderAdapter( TextSystem system ) {
-            super( system, new TextRendererBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<TextRenderer> componentTypeKey() {
-            return TextRenderer.TYPE_KEY;
+        private TextRendererBuilderAdapter() {
+            super( TextSystem.this, TextRenderer.TYPE_KEY );
         }
         @Override
         public final TextRenderer get( int id ) {
@@ -213,6 +212,10 @@ public class TextSystem
         @Override
         public final void deactivate( int id ) {
             throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends TextRenderer> componentType ) {
+            return getRendererBuilder( componentType );
         }
         
     }

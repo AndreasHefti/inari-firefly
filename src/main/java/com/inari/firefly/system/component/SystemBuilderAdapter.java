@@ -25,26 +25,27 @@ import com.inari.firefly.system.component.ComponentSystem.BuildType;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public abstract class SystemBuilderAdapter<C extends SystemComponent> implements ComponentSystemAdapter<C> {
-    
-    protected final ComponentSystem<?> system;
-    protected final SystemComponentBuilder componentBuilder;
 
-    public SystemBuilderAdapter( ComponentSystem<?> system, SystemComponentBuilder componentBuilder ) {
+    private final ComponentSystem<?> system;
+    private final SystemComponentKey<C> componentKey;
+
+    public SystemBuilderAdapter( ComponentSystem<?> system, SystemComponentKey<C> componentKey ) {
+        super();
         this.system = system;
-        this.componentBuilder = componentBuilder;
+        this.componentKey = componentKey;
     }
 
     public final ComponentSystem<?> getSystem() {
         return system;
     }
 
-    public final SystemComponentBuilder getComponentBuilder() {
-        return componentBuilder;
+    public final SystemComponentKey<C> componentTypeKey() {
+        return componentKey;
     }
-
+        
     public void fromAttributes( Attributes attributes, BuildType buildType ) {
         if ( buildType == BuildType.CLEAR_OLD ) {
-            system.clear();
+            getSystem().clear();
         }
         @SuppressWarnings( "unchecked" )
         Class<C> indexedType = (Class<C>) componentTypeKey().indexedType;
@@ -70,6 +71,7 @@ public abstract class SystemBuilderAdapter<C extends SystemComponent> implements
         BuildType buildType,
         Attributes attrs
     ) {
+        SystemComponentBuilder componentBuilder = createComponentBuilder( subType );
         for ( AttributeMap attributes : attrs.getAllOfType( subType ) ) {
             int componentId = attributes.getComponentId().getIndexId();
             if ( buildType == BuildType.MERGE_ATTRIBUTES ) {
@@ -82,13 +84,12 @@ public abstract class SystemBuilderAdapter<C extends SystemComponent> implements
             }
             componentBuilder
                 .setAttributes( attributes )
-                .buildAndNext( subType )
+                .buildAndNext()
                 .clear();
         }
     }
 
-    public abstract SystemComponentKey<C> componentTypeKey();
-
+    public abstract SystemComponentBuilder createComponentBuilder( Class<? extends C> componentType );
     public abstract Iterator<C> getAll();
 
 }

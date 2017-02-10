@@ -139,8 +139,11 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
         }
     }
 
-    public final ActionBuilder getActionBuilder() {
-        return new ActionBuilder();
+    public final SystemComponentBuilder getActionBuilder( Class<? extends Action> componentType ) {
+        if ( componentType == null ) {
+            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Action.TYPE_KEY.name() );
+        }
+        return new ActionBuilder( componentType );
     }
 
     @Override
@@ -151,14 +154,14 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter[] {
-            new ActionBuilderAdapter( this )
+            new ActionBuilderAdapter()
         };
     };
 
-    public final class ActionBuilder extends SystemComponentBuilder {
+    private final class ActionBuilder extends SystemComponentBuilder {
         
-        protected ActionBuilder() {
-            super( context );
+        private ActionBuilder( Class<? extends Action> componentType ) {
+            super( context, componentType );
         }
         
         @Override
@@ -173,15 +176,13 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
         }
     }
 
-    public final class ActionBuilderAdapter extends SystemBuilderAdapter<Action> {
-        
-        protected ActionBuilderAdapter( BehaviorSystem system ) {
-            super( system, getActionBuilder() );
+    private final class ActionBuilderAdapter extends SystemBuilderAdapter<Action> {
+        private ActionBuilderAdapter() {
+            super( BehaviorSystem.this, Action.TYPE_KEY );
         }
-        
         @Override
-        public final SystemComponentKey<Action> componentTypeKey() {
-            return Action.TYPE_KEY;
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends Action> componentType ) {
+            return getActionBuilder( componentType );
         }
         @Override
         public final Action get( int id ) {

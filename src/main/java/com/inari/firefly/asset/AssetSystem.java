@@ -102,8 +102,11 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         return asset.getInstanceId();
     }
 
-    public final AssetBuilder getAssetBuilder() {
-        return new AssetBuilder();
+    public final SystemComponentBuilder getAssetBuilder( Class<? extends Asset> assetType ) {
+        if ( assetType == null ) {
+            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Asset.TYPE_KEY.name() );
+        }
+        return new AssetBuilder( assetType );
     }
     
     public final void loadAsset( String assetName ) {
@@ -210,7 +213,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new AssetBuilderAdapter( this )
+            new AssetBuilderAdapter()
         };
     }
 
@@ -302,10 +305,10 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
 
     
-    public final class AssetBuilder extends SystemComponentBuilder {
+    private final class AssetBuilder extends SystemComponentBuilder {
         
-        private AssetBuilder() {
-            super( context );
+        private AssetBuilder( Class<? extends Asset> componentType ) {
+            super( context, componentType );
         }
         
         @Override
@@ -338,12 +341,12 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
     
     private final class AssetBuilderAdapter extends SystemBuilderAdapter<Asset> {
-        public AssetBuilderAdapter( AssetSystem system ) {
-            super( system, new AssetBuilder() );
+        private AssetBuilderAdapter() {
+            super( AssetSystem.this, Asset.TYPE_KEY );
         }
         @Override
-        public final SystemComponentKey<Asset> componentTypeKey() {
-            return Asset.TYPE_KEY;
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends Asset> assetType ) {
+            return getAssetBuilder( assetType );
         }
         @Override
         public final Asset get( int id ) {

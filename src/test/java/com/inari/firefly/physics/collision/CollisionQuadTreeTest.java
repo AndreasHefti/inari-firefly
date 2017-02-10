@@ -25,11 +25,11 @@ public class CollisionQuadTreeTest extends FFTest {
         String entity4 = createEntity( 60, 60, entitySystem );
         String entity5 = createEntity( 70, 70, entitySystem );
         
-        ffContext.getComponentBuilder( CollisionQuadTree.TYPE_KEY )
+        ffContext.getComponentBuilder( CollisionQuadTree.TYPE_KEY, CollisionQuadTree.class )
             .set( CollisionQuadTree.MAX_ENTRIES_OF_AREA, 4 )
             .set( CollisionQuadTree.MAX_LEVEL, 4 )
             .set( CollisionQuadTree.WORLD_AREA, new Rectangle( 0, 0, 100, 100 ) )
-        .build( 1, CollisionQuadTree.class );
+        .build( 1 );
         CollisionQuadTree quadTree = ffContext.getSystemComponent( CollisionQuadTree.TYPE_KEY, 1 );
 
         assertEquals( 

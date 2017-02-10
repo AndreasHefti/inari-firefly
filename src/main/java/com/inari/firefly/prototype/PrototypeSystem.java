@@ -97,8 +97,11 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
         return getPrototype( prototypeId ).createOne( attributes );
     }
 
-    public final PrototypeBuilder getPrototypeBuilder() {
-        return new PrototypeBuilder();
+    public final SystemComponentBuilder getPrototypeBuilder( Class<? extends Prototype> componentType ) {
+        if ( componentType == null ) {
+            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Prototype.TYPE_KEY.name() );
+        }
+        return new PrototypeBuilder( componentType );
     }
 
     @Override
@@ -109,14 +112,14 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new PrototypeBuilderAdapter( this )
+            new PrototypeBuilderAdapter()
         };
     }
 
-    public final class PrototypeBuilder extends SystemComponentBuilder {
+    private final class PrototypeBuilder extends SystemComponentBuilder {
         
-        public PrototypeBuilder() {
-            super( context );
+        private PrototypeBuilder( Class<? extends Prototype> componentType ) {
+            super( context, componentType );
         }
 
         @Override
@@ -138,12 +141,8 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
     }
     
     private final class PrototypeBuilderAdapter extends SystemBuilderAdapter<Prototype> {
-        public PrototypeBuilderAdapter( PrototypeSystem system ) {
-            super( system, new PrototypeBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<Prototype> componentTypeKey() {
-            return Prototype.TYPE_KEY;
+        private PrototypeBuilderAdapter() {
+            super( PrototypeSystem.this, Prototype.TYPE_KEY );
         }
         @Override
         public final Prototype get( int id ) {
@@ -168,6 +167,10 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
         @Override
         public final void deactivate( int id ) {
             throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends Prototype> componentType ) {
+            return getPrototypeBuilder( componentType );
         }
     }
 

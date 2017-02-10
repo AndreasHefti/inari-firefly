@@ -69,19 +69,19 @@ public final class TileGridSystem
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
         // build and register default tile grid renderer
-        getRendererBuilder()
+        getRendererBuilder( NormalFastTileGridRenderer.class )
             .set( TileGridRenderer.NAME, NormalFastTileGridRenderer.NAME )
-            .buildAndNext( NormalFastTileGridRenderer.class )
+            .buildAndNext()
             .set( TileGridRenderer.NAME, NormalFullTileGridRenderer.NAME )
-            .build( NormalFullTileGridRenderer.class );
+            .build();
 
         context.registerListener( ViewEvent.TYPE_KEY, this );
         context.registerListener( EntityActivationEvent.TYPE_KEY, this );
         context.registerListener( TileSystemEvent.TYPE_KEY, this );
     }
 
-    public final TileGridRendererBuilder getRendererBuilder() {
-        return new TileGridRendererBuilder();
+    public final TileGridRendererBuilder getRendererBuilder( Class<? extends TileGridRenderer> componentType ) {
+        return new TileGridRendererBuilder( componentType );
     }
 
     @Override
@@ -290,7 +290,7 @@ public final class TileGridSystem
         tileGridOfViewsPerLayer.get( removed.getViewId() ).remove( removed.getLayerId() );
     };
 
-    public final TileGridBuilder getTileGridBuilder() {
+    public final SystemComponentBuilder getTileGridBuilder() {
         return new TileGridBuilder();
     }
     
@@ -302,8 +302,8 @@ public final class TileGridSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new TileGridBuilderAdapter( this ),
-            new TileGridRendererBuilderAdapter( this )
+            new TileGridBuilderAdapter(),
+            new TileGridRendererBuilderAdapter()
         };
     }
 
@@ -313,9 +313,9 @@ public final class TileGridSystem
         renderer.clear();
     }
     
-    public final class TileGridBuilder extends SystemComponentBuilder {
+    private final class TileGridBuilder extends SystemComponentBuilder {
         
-        public TileGridBuilder() {
+        private TileGridBuilder() {
             super( context );
         }
         
@@ -352,10 +352,10 @@ public final class TileGridSystem
         }
     }
     
-    public final class TileGridRendererBuilder extends SystemComponentBuilder {
+    private final class TileGridRendererBuilder extends SystemComponentBuilder {
         
-        private TileGridRendererBuilder() {
-            super( context );
+        private TileGridRendererBuilder( Class<? extends TileGridRenderer> componentType ) {
+            super( context, componentType );
         }
         
         @Override
@@ -372,12 +372,8 @@ public final class TileGridSystem
     }
     
     private final class TileGridBuilderAdapter extends SystemBuilderAdapter<TileGrid> {
-        public TileGridBuilderAdapter( TileGridSystem system ) {
-            super( system, new TileGridBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<TileGrid> componentTypeKey() {
-            return TileGrid.TYPE_KEY;
+        private TileGridBuilderAdapter() {
+            super( TileGridSystem.this, TileGrid.TYPE_KEY );
         }
         @Override
         public final TileGrid get( int id ) {
@@ -403,15 +399,15 @@ public final class TileGridSystem
         public final void deactivate( int id ) {
             throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends TileGrid> componentType ) {
+            return new TileGridBuilder();
+        }
     }
     
     private final class TileGridRendererBuilderAdapter extends SystemBuilderAdapter<TileGridRenderer> {
-        public TileGridRendererBuilderAdapter( TileGridSystem system ) {
-            super( system, new TileGridRendererBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<TileGridRenderer> componentTypeKey() {
-            return TileGridRenderer.TYPE_KEY;
+        private TileGridRendererBuilderAdapter() {
+            super( TileGridSystem.this, TileGridRenderer.TYPE_KEY );
         }
         @Override
         public final TileGridRenderer get( int id ) {
@@ -436,6 +432,13 @@ public final class TileGridSystem
         @Override
         public final void deactivate( int id ) {
             throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends TileGridRenderer> componentType ) {
+            if ( componentType == null ) {
+                throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + componentTypeKey().name() );
+            }
+            return new TileGridRendererBuilder( componentType );
         }
     }
 

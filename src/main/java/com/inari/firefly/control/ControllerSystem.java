@@ -147,8 +147,8 @@ public final class ControllerSystem
         }
     }
     
-    public final ControllerBuilder getControllerBuilder() {
-        return new ControllerBuilder();
+    public final ControllerBuilder getControllerBuilder( Class<? extends Controller> componentType ) {
+        return new ControllerBuilder( componentType );
     }
 
     @Override
@@ -159,14 +159,14 @@ public final class ControllerSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new ControllerBuilderAdapter( this )
+            new ControllerBuilderAdapter()
         };
     }
 
-    public final class ControllerBuilder extends SystemComponentBuilder {
+    private final class ControllerBuilder extends SystemComponentBuilder {
         
-        protected ControllerBuilder() {
-            super( context );
+        private ControllerBuilder( Class<? extends Controller> componentType ) {
+            super( context, componentType );
         }
         
         @Override
@@ -188,12 +188,8 @@ public final class ControllerSystem
     }
 
     private final class ControllerBuilderAdapter extends SystemBuilderAdapter<Controller> {
-        public ControllerBuilderAdapter( ControllerSystem system ) {
-            super( system, new ControllerBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<Controller> componentTypeKey() {
-            return Controller.TYPE_KEY;
+        private ControllerBuilderAdapter() {
+            super( ControllerSystem.this, Controller.TYPE_KEY );
         }
         @Override
         public final Controller get( int id ) {
@@ -218,6 +214,13 @@ public final class ControllerSystem
         @Override
         public final void deactivate( int id ) {
             get( id ).setActive( false );
+        }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends Controller> componentType ) {
+            if ( componentType == null ) {
+                throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + componentTypeKey().name() );
+            }
+            return new ControllerBuilder( componentType );
         }
     }
 

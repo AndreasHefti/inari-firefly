@@ -31,11 +31,11 @@ public class AnimationSystemTest extends FFTest {
     public void testOneAnimation() {
         AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.SYSTEM_KEY );
 
-        animationSystem.getAnimationBuilder()
+        animationSystem.getAnimationBuilder( TestAnimation.class )
             .set( Animation.NAME, "testAnimation" )
             .set( Animation.START_TIME, 10l )
             .set( Animation.LOOPING, false )
-            .build( 0, TestAnimation.class );
+            .build( 0 );
 
         Attributes attrs = new Attributes();
         ffContext.toAttributes( attrs, Animation.TYPE_KEY );
@@ -55,11 +55,11 @@ public class AnimationSystemTest extends FFTest {
     public void testUpdate() {
         AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.SYSTEM_KEY );
 
-        animationSystem.getAnimationBuilder(  )
+        animationSystem.getAnimationBuilder( TestAnimation.class )
             .set( Animation.NAME, "testAnimation" )
             .set( Animation.START_TIME, 10l )
             .set( Animation.LOOPING, false )
-            .build( 0, TestAnimation.class );
+            .build( 0 );
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",

@@ -173,7 +173,7 @@ public final class AudioSystem
         }
     }
 
-    public final SoundBuilder getSoundBuilder() {
+    public final SystemComponentBuilder getSoundBuilder() {
         return new SoundBuilder();
     }
     
@@ -185,13 +185,13 @@ public final class AudioSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new SoundBuilderAdapter( this )
+            new SoundBuilderAdapter()
         };
     }
 
-    public final class SoundBuilder extends SystemComponentBuilder {
+    private final class SoundBuilder extends SystemComponentBuilder {
         
-        public SoundBuilder() {
+        private SoundBuilder() {
             super( context );
         }
 
@@ -217,12 +217,12 @@ public final class AudioSystem
     }
     
     private final class SoundBuilderAdapter extends SystemBuilderAdapter<Sound> {
-        public SoundBuilderAdapter( AudioSystem system ) {
-            super( system, new SoundBuilder() );
+        private SoundBuilderAdapter() {
+            super( AudioSystem.this, Sound.TYPE_KEY );
         }
         @Override
-        public final SystemComponentKey<Sound> componentTypeKey() {
-            return Sound.TYPE_KEY;
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends Sound> soundType ) {
+            return new SoundBuilder();
         }
         @Override
         public final Sound get( int id ) {

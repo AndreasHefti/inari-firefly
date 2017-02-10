@@ -263,12 +263,18 @@ public final class AnimationSystem
         return animationResolver.get( animationResolverId ).getAnimationId();
     }
     
-    public final AnimationBuilder getAnimationBuilder() {
-        return new AnimationBuilder();
+    public final SystemComponentBuilder getAnimationBuilder( Class<? extends Animation> componentType ) {
+        if ( componentType == null ) {
+            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Animation.TYPE_KEY.name() );
+        }
+        return new AnimationBuilder( componentType );
     }
     
-    public final AnimationResolverBuilder getAnimationResolverBuilder() {
-        return new AnimationResolverBuilder();
+    public final SystemComponentBuilder getAnimationResolverBuilder( Class<? extends AnimationResolver> componentType ) {
+        if ( componentType == null ) {
+            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + AnimationResolver.TYPE_KEY.name() );
+        }
+        return new AnimationResolverBuilder( componentType );
     }
     
     @Override
@@ -280,16 +286,16 @@ public final class AnimationSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter[] {
-            new AnimationBuilderAdapter( this ),
-            new AnimationResolverBuilderAdapter( this )
+            new AnimationBuilderAdapter(),
+            new AnimationResolverBuilderAdapter()
         };
     };
     
 
-    public final class AnimationBuilder extends SystemComponentBuilder {
+    private final class AnimationBuilder extends SystemComponentBuilder {
         
-        private AnimationBuilder() { 
-            super( context ); 
+        private AnimationBuilder( Class<? extends Animation> componentType ) { 
+            super( context, componentType ); 
         }
         
         @Override
@@ -310,10 +316,10 @@ public final class AnimationSystem
         }
     }
     
-    public final class AnimationResolverBuilder extends SystemComponentBuilder {
+    private final class AnimationResolverBuilder extends SystemComponentBuilder {
         
-        private AnimationResolverBuilder() {
-            super( context );
+        private AnimationResolverBuilder( Class<? extends AnimationResolver> componentType ) {
+            super( context, componentType );
         }
         
         @Override
@@ -332,12 +338,8 @@ public final class AnimationSystem
     }
 
     private final class AnimationBuilderAdapter extends SystemBuilderAdapter<Animation> {
-        public AnimationBuilderAdapter( AnimationSystem system ) {
-            super( system, new AnimationBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<Animation> componentTypeKey() {
-            return Animation.TYPE_KEY;
+        private AnimationBuilderAdapter() {
+            super( AnimationSystem.this, Animation.TYPE_KEY );
         }
         @Override
         public final Animation get( int id ) {
@@ -363,15 +365,15 @@ public final class AnimationSystem
         public final void deactivate( int id ) {
             resetAnimation( id );
         }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends Animation> componentType ) {
+            return getAnimationBuilder( componentType );
+        }
     }
     
     private final class AnimationResolverBuilderAdapter extends SystemBuilderAdapter<AnimationResolver> {
-        public AnimationResolverBuilderAdapter( AnimationSystem system ) {
-            super( system, new AnimationResolverBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<AnimationResolver> componentTypeKey() {
-            return AnimationResolver.TYPE_KEY;
+        private AnimationResolverBuilderAdapter() {
+            super( AnimationSystem.this, AnimationResolver.TYPE_KEY );
         }
         @Override
         public final AnimationResolver get( int id ) {
@@ -396,6 +398,10 @@ public final class AnimationSystem
         @Override
         public final void deactivate( int id ) {
             throw new UnsupportedOperationException( "Action is not activable" );
+        }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends AnimationResolver> componentType ) {
+            return getAnimationResolverBuilder( componentType );
         }
     }
 

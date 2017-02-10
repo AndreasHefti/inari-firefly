@@ -25,14 +25,16 @@ public class SystemTests extends FFTest {
         FFGraphics lowerSystemMock = ffContext.getGraphics();
         
         assetSystem
-            .getAssetBuilder()
+            .getAssetBuilder( TextureAsset.class )
                 .set( TextureAsset.NAME, TEXTURE_ASSET_NAME )
                 .set( TextureAsset.RESOURCE_NAME, "origTiles.png" )
-            .buildAndNext( TextureAsset.class )
+            .build();
+         assetSystem
+            .getAssetBuilder( SpriteAsset.class )
                 .set( SpriteAsset.NAME, SPRITE_ASSET_NAME )
                 .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( TEXTURE_ASSET_NAME ) )
                 .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, 32, 32 ) )
-            .build( SpriteAsset.class )
+            .build()
             ;
         
         assertEquals( 

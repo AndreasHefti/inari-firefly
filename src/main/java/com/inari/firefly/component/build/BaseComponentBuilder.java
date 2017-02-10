@@ -31,9 +31,11 @@ import com.inari.firefly.component.attr.AttributeMap;
 public abstract class BaseComponentBuilder<C extends Component> implements ComponentBuilder {
     
     protected final AttributeMap attributes;
+    protected final Class<? extends C> componentType;
     
-    protected BaseComponentBuilder( AttributeMap attributes ) {
+    protected BaseComponentBuilder( AttributeMap attributes, Class<? extends C> componentType ) {
         this.attributes = attributes;
+        this.componentType = componentType;
     }
     
     @Override
@@ -165,34 +167,6 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     }
 
     @Override
-    public final int build( Class<?> componentType ) {
-        int componentId = getId();
-        int id = doBuild( componentId, componentType, false );
-        attributes.clear();
-        return id;
-    }
-
-    @Override
-    public final void build( int componentId, Class<?> componentType ) {
-        doBuild( componentId, componentType, false );
-        attributes.clear();
-    }
-    
-    @Override
-    public final int activate( Class<?> componentType ) {
-        int componentId = getId();
-        int id = doBuild( componentId, componentType, true );
-        attributes.clear();
-        return id;
-    }
-
-    @Override
-    public final void activate( int componentId, Class<?> componentType ) {
-        doBuild( componentId, componentType, true );
-        attributes.clear();
-    }
-
-    @Override
     public final ComponentBuilder buildAndNext() {
         build();
         return this;
@@ -205,19 +179,6 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     }
 
     @Override
-    public final ComponentBuilder buildAndNext( Class<?> componentType ) {
-        build( getId(), componentType );
-        return this;
-    }
-
-
-    @Override
-    public final ComponentBuilder buildAndNext( int componentId, Class<?> componentType ) {
-        build( componentId, componentType );
-        return this;
-    }
-    
-    @Override
     public final ComponentBuilder activateAndNext() {
         activate();
         return this;
@@ -229,35 +190,9 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return this;
     }
 
-    @Override
-    public final ComponentBuilder activateAndNext( Class<?> componentType ) {
-        activate( getId(), componentType );
-        return this;
-    }
-
-    @Override
-    public final ComponentBuilder activateAndNext( int componentId, Class<?> componentType ) {
-        activate( componentId, componentType );
-        return this;
-    }
-    
-    
     protected abstract int doBuild( int componentId, Class<?> componentType, boolean activate );
 
-    @SuppressWarnings( "unchecked" )
-    protected <CC extends C> CC getInstance( Integer componentId ) {
-        String className = attributes.getValue( Component.INSTANCE_TYPE_NAME );
-        if ( className == null ) {
-            throw new ComponentCreationException( "Missing mandatory attribute " + Component.INSTANCE_TYPE_NAME + " for Component creation" );
-        }
-        
-        Class<CC> typeClass = null;
-        try {
-            typeClass = (Class<CC>) Class.forName( className );
-        } catch ( Exception e ) {
-            throw new ComponentCreationException( "Failed to getComponent class for name: " + className );
-        }
-        
+    protected <CC extends C> CC getInstance( Integer componentId, Class<CC> typeClass ) {
         if ( componentId == null ) {
             try {
                 Constructor<CC> constructor = typeClass.getDeclaredConstructor();
@@ -271,7 +206,7 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
             } catch ( InvocationTargetException ite ) {
                 throw new ComponentCreationException( "Error while constructing: " + typeClass, ite.getCause() );
             } catch ( Throwable t ) {
-                throw new ComponentCreationException( "No Component: " + className + " with default constructor found", t );
+                throw new ComponentCreationException( "No Component: " + typeClass.getName() + " with default constructor found", t );
             }
         } else {
             try {
@@ -286,7 +221,7 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
             } catch ( InvocationTargetException ite ) {
                 throw new ComponentCreationException( "Error while constructing: " + typeClass, ite.getCause() );
             } catch ( Throwable t ) {
-                throw new ComponentCreationException( "No Component: " + className + " with default constructor found", t );
+                throw new ComponentCreationException( "No Component: " + typeClass.getName() + " with default constructor found", t );
             }
         }
     }

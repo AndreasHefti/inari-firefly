@@ -99,6 +99,11 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
         SystemComponentKey( Class<C> indexedType ) {
             super( indexedType );
         }
+        
+        @SuppressWarnings( "unchecked" )
+        public final Class<? extends C> baseComponentType() {
+            return (Class<? extends C>) indexedType;
+        }
 
         @Override
         public final Class<SystemComponent> baseType() {

@@ -111,8 +111,11 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         }
     }
 
-    public final TaskBuilder getTaskBuilder() {
-        return new TaskBuilder();
+    public final SystemComponentBuilder getTaskBuilder( Class<? extends Task> componentType ) {
+        if ( componentType == null ) {
+            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Task.TYPE_KEY.name() );
+        }
+        return new TaskBuilder( componentType );
     }
 
     @Override
@@ -123,14 +126,14 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new TaskBuilderAdapter( this )
+            new TaskBuilderAdapter()
         };
     }
 
-    public final class TaskBuilder extends SystemComponentBuilder {
+    private final class TaskBuilder extends SystemComponentBuilder {
         
-        public TaskBuilder() {
-            super( context );
+        private TaskBuilder( Class<? extends Task> componentType ) {
+            super( context, componentType );
         }
 
         @Override
@@ -147,12 +150,8 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
     }
     
     private final class TaskBuilderAdapter extends SystemBuilderAdapter<Task> {
-        public TaskBuilderAdapter( TaskSystem system ) {
-            super( system, new TaskBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<Task> componentTypeKey() {
-            return Task.TYPE_KEY;
+        private TaskBuilderAdapter() {
+            super( TaskSystem.this, Task.TYPE_KEY );
         }
         @Override
         public final Task get( int id ) {
@@ -177,6 +176,10 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         @Override
         public final void deactivate( int id ) {
             throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends Task> componentType ) {
+            return getTaskBuilder( componentType );
         }
     }
 

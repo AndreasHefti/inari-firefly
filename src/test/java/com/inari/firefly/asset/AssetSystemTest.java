@@ -11,11 +11,11 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.inari.firefly.FFTest;
-import com.inari.firefly.asset.AssetSystem.AssetBuilder;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.utils.Disposable;
 
 public class AssetSystemTest extends FFTest {
@@ -40,10 +40,10 @@ public class AssetSystemTest extends FFTest {
         service.init( ffContext );
         Attributes attrs = new Attributes();
         
-        AssetBuilder assetBuilder = service.getAssetBuilder();
+        SystemComponentBuilder assetBuilder = service.getAssetBuilder( TestAsset.class );
         assetBuilder
             .set( TestAsset.NAME, "asset1" )
-            .build( 0, TestAsset.class );
+            .build();
         
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
@@ -54,16 +54,16 @@ public class AssetSystemTest extends FFTest {
         attrs.clear();
         assetBuilder
             .set( TestAsset.NAME, "asset2" )
-            .build( 1, TestAsset.class );
+            .build( 1 );
         assetBuilder
             .set( TestAsset.NAME, "asset3" )
-            .build( 2, TestAsset.class );
+            .build( 2 );
         assetBuilder
             .set( TestAsset.NAME, "asset4" )
-            .build( 3, TestAsset.class );
+            .build( 3 );
         assetBuilder
             .set( TestAsset.NAME, "asset5" )
-            .build( 4, TestAsset.class );
+            .build( 4 );
         
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
@@ -85,9 +85,9 @@ public class AssetSystemTest extends FFTest {
         Attributes attrs = new Attributes();
         
         service
-            .getAssetBuilder()
+            .getAssetBuilder( TestAsset.class )
                 .set( TestAsset.NAME, "asset1" )
-            .build( TestAsset.class );
+            .build();
         
         assertEquals( 
             "EventLog [events=[AssetEvent [eventType=ASSET_CREATED, assetId=0]]]", 
@@ -150,14 +150,14 @@ public class AssetSystemTest extends FFTest {
         AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
         Attributes attrs = new Attributes();
         
-        service.getAssetBuilder()
+        service.getAssetBuilder( TestAsset.class )
             .set( Asset.NAME, "asset2" )
-            .buildAndNext( 1, TestAsset.class );
+            .buildAndNext( 1 );
         
         try {
-            service.getAssetBuilder()
+            service.getAssetBuilder( TestAsset.class )
                 .set( Asset.NAME, "asset2" )
-                .buildAndNext( 1, TestAsset.class );
+                .buildAndNext( 1 );
             fail( "Exception expected here" );
         } catch ( Exception e ) {
             e.printStackTrace();
@@ -184,24 +184,24 @@ public class AssetSystemTest extends FFTest {
         
         Attributes attrs = new Attributes();
         
-        service.getAssetBuilder()
+        service.getAssetBuilder( TestAsset.class )
             .set( Asset.NAME, "asset2" )
-            .buildAndNext( 1, TestAsset.class )
+            .buildAndNext( 1 )
             .set( Asset.NAME, "asset3" )
-            .buildAndNext( 2, TestAsset.class )
+            .buildAndNext( 2 )
             .set( Asset.NAME, "asset4" )
-            .buildAndNext( 3, TestAsset.class )
+            .buildAndNext( 3 )
             .set( Asset.NAME, "asset5" )
-            .build( 4, TestAsset.class );
-        service.getAssetBuilder()
+            .build( 4 );
+        service.getAssetBuilder( TestAsset2.class )
             .set( Asset.NAME, "asset22" )
-            .buildAndNext( 21, TestAsset2.class )
+            .buildAndNext( 21 )
             .set( Asset.NAME, "asset23" )
-            .buildAndNext( 22, TestAsset2.class )
+            .buildAndNext( 22 )
             .set( Asset.NAME, "asset24" )
-            .buildAndNext( 23, TestAsset2.class )
+            .buildAndNext( 23 )
             .set( Asset.NAME, "asset25" )
-            .build( 24, TestAsset2.class );
+            .build( 24 );
         
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 

@@ -315,7 +315,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new EntityBuilderHelper( this )
+            new EntityBuilderHelper()
         };
     }
     
@@ -483,12 +483,12 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     
     private final class EntityBuilderHelper extends SystemBuilderAdapter<Entity> {
         
-        public EntityBuilderHelper( EntitySystem system ) {
-            super( system, getEntityBuilder() );
+        private EntityBuilderHelper() {
+            super( EntitySystem.this, Entity.ENTITY_TYPE_KEY );
         }
         @Override
-        public final SystemComponentKey<Entity> componentTypeKey() {
-            return Entity.ENTITY_TYPE_KEY;
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends Entity> componentType ) {
+            return new EntityBuilder();
         }
         @Override
         public final Entity get( int id ) {

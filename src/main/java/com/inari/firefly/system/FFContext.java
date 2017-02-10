@@ -422,13 +422,24 @@ public final class FFContext {
         builderHelper.delete( builderHelper.getId( componentName ) );
     }
     
-    public final ComponentBuilder getComponentBuilder( SystemComponentKey<?> key ) {
+    public final <C extends SystemComponent> ComponentBuilder getComponentBuilder( SystemComponentKey<C> key ) {
         int id = key.index();
         if ( !systemBuilderAdapter.contains( id ) ) {
             throw new FFInitException( "No component builder for key: " + key + " found. Maybe the appropriate System is not loaded?" );
         }
-        
-        return systemBuilderAdapter.get( id ).getComponentBuilder();
+        @SuppressWarnings( "unchecked" )
+        SystemBuilderAdapter<C> builderAdapter = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( id );
+        return builderAdapter.createComponentBuilder( null );
+    }
+    
+    public final <C extends SystemComponent> ComponentBuilder getComponentBuilder( SystemComponentKey<C> key, Class<? extends C> componentType ) {
+        int id = key.index();
+        if ( !systemBuilderAdapter.contains( id ) ) {
+            throw new FFInitException( "No component builder for key: " + key + " found. Maybe the appropriate System is not loaded?" );
+        }
+        @SuppressWarnings( "unchecked" )
+        SystemBuilderAdapter<C> builderAdapter = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( id );
+        return builderAdapter.createComponentBuilder( componentType );
     }
     
     public final EntityBuilder getEntityBuilder() {
