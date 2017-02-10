@@ -147,7 +147,7 @@ public final class ControllerSystem
         }
     }
     
-    public final ControllerBuilder getControllerBuilder( Class<? extends Controller> componentType ) {
+    public final SystemComponentBuilder getControllerBuilder( Class<? extends Controller> componentType ) {
         return new ControllerBuilder( componentType );
     }
 
