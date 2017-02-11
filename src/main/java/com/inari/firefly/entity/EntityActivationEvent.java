@@ -15,12 +15,17 @@
  ******************************************************************************/ 
 package com.inari.firefly.entity;
 
+import java.util.ArrayDeque;
+
 import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.firefly.graphics.view.ViewEvent;
 
 public final class EntityActivationEvent extends AspectedEvent<EntityActivationListener> {
     
     public static final EventTypeKey TYPE_KEY = createTypeKey( EntityActivationEvent.class );
+    
+    private static final ArrayDeque<EntityActivationEvent> POOL = new ArrayDeque<EntityActivationEvent>( 2 );
     
     public enum Type {
         ENTITY_ACTIVATED,
@@ -34,15 +39,7 @@ public final class EntityActivationEvent extends AspectedEvent<EntityActivationL
     EntityActivationEvent() {
         super( TYPE_KEY );
     }
-    
-//    public final int getEntityId() {
-//        return entityId;
-//    }
-//    
-//    public final Type getEventType() {
-//        return eventType;
-//    }
-//
+
     @Override
     public final Aspects getAspects() {
         return entityComponentAspects;
@@ -62,6 +59,15 @@ public final class EntityActivationEvent extends AspectedEvent<EntityActivationL
     }
 
     @Override
+    protected final void restore() {
+        entityId = -1;
+        eventType = null;
+        entityComponentAspects.clear();
+        
+        POOL.addLast( this );
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append( "EntityActivationEvent [eventType=" );
@@ -70,6 +76,22 @@ public final class EntityActivationEvent extends AspectedEvent<EntityActivationL
         builder.append( entityId );
         builder.append( "]" );
         return builder.toString();
+    }
+    
+    public static final EntityActivationEvent create( int entityId, Type eventType, Aspects entityComponentAspects ) {
+        final EntityActivationEvent result;
+        if ( POOL.isEmpty() ) {
+            result = new EntityActivationEvent();
+            POOL.addLast( result );
+        } else {
+            result = POOL.removeLast();
+        }
+        
+        result.entityId = entityId;
+        result.eventType = eventType;
+        result.entityComponentAspects.set( entityComponentAspects );
+        
+        return result;
     }
 
 }

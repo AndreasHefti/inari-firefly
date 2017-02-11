@@ -12,7 +12,6 @@ import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.event.AspectedEventListener;
 import com.inari.commons.event.Event;
 import com.inari.commons.event.Event.EventTypeKey;
-import com.inari.commons.event.EventPool;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.event.PredicatedEvent;
 import com.inari.commons.event.PredicatedEventListener;
@@ -92,7 +91,6 @@ public final class FFContext {
     private final DynArray<SystemBuilderAdapter<?>> systemBuilderAdapter = new DynArray<SystemBuilderAdapter<?>>();
     
     private final IEventDispatcher eventDispatcher;
-    private final DynArray<EventPool<?>> eventPools = new DynArray<EventPool<?>>();
     
     private final FFGraphics graphics;
     private final FFAudio audio;
@@ -126,34 +124,6 @@ public final class FFContext {
      */
     public final IEventDispatcher getEventDispatcher() {
         return eventDispatcher;
-    }
-    
-    /** Use this to register a EventPool for specified type of Event(s).
-     *  Once a EventPool is registered for a type of Event, the events of that types gets pooled.
-     *  
-     * @param eventType the type of the Event
-     * @param pool the EventPool instance that handles the pooling
-     */
-    public final void registerEventPool( final EventTypeKey eventType, final EventPool<?> pool ) {
-        eventPools.set( eventType.index(), pool );
-    }
-    
-    /** use this to stop pooling of Event of a specified type 
-     * 
-     * @param eventType the type of the Event
-     */
-    public final void unregisterEventPool( final EventTypeKey eventType ) {
-        eventPools.remove( eventType.index() );
-    }
-    
-    /** Use this to get a registered EventPool for a specified type of Event.
-     * 
-     * @param eventType the type of the Event
-     * @return The registered instance of EventPool for specified type of Event. Or null of there is none registered.
-     */
-    @SuppressWarnings( "unchecked" )
-    public final <E extends Event<?>> EventPool<E> getEventPool( final EventTypeKey eventType ) {
-        return (EventPool<E>) eventPools.get( eventType.index() );
     }
 
     /** Use this to get the underling {@link FFGraphics} implementation 
@@ -519,17 +489,14 @@ public final class FFContext {
     
     public final <L> void notify( final Event<L> event ) {
         eventDispatcher.notify( event );
-        restoreEvent( event );
     }
     
     public final <L extends AspectedEventListener> void notify( final AspectedEvent<L> event ) {
         eventDispatcher.notify( event );
-        restoreEvent( event );
     }
     
     public final <L extends PredicatedEventListener> void notify( final PredicatedEvent<L> event ) {
         eventDispatcher.notify( event );
-        restoreEvent( event );
     }
     
     public final void fromAttributes( Attributes attributes ) {
@@ -584,13 +551,6 @@ public final class FFContext {
             for ( int i = 0; i < supportedBuilderAdapter.length; i++ ) {
                 systemBuilderAdapter.set( supportedBuilderAdapter[ i ].componentTypeKey().index(), supportedBuilderAdapter[ i ] );
             }
-        }
-    }
-
-    @SuppressWarnings( "unchecked" )
-    private final void restoreEvent( final Event<?> event ) {
-        if ( eventPools.contains( event.index() ) ) {
-            ( (EventPool<Event<?>>) eventPools.get( event.index() ) ).restore( event );
         }
     }
 

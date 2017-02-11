@@ -15,11 +15,15 @@
  ******************************************************************************/ 
 package com.inari.firefly.graphics.view;
 
+import java.util.ArrayDeque;
+
 import com.inari.commons.event.Event;
 
 public final class ViewEvent extends Event<ViewEventListener> {
     
     public static final EventTypeKey TYPE_KEY = createTypeKey( ViewEvent.class );
+    
+    private static final ArrayDeque<ViewEvent> POOL = new ArrayDeque<ViewEvent>( 2 );
     
     public static enum Type {
         VIEW_CREATED,
@@ -51,6 +55,14 @@ public final class ViewEvent extends Event<ViewEventListener> {
     protected final void notify( ViewEventListener listener ) {
         listener.onViewEvent( this );
     }
+    
+    @Override
+    protected final void restore() {
+        eventType = null;
+        view = null;
+        
+        POOL.addLast( this );
+    }
 
     @Override
     public String toString() {
@@ -61,5 +73,20 @@ public final class ViewEvent extends Event<ViewEventListener> {
         builder.append( view.index() );
         builder.append( "]" );
         return builder.toString();
+    }
+    
+    public static final ViewEvent create( final Type type, final View view ) {
+        final ViewEvent result;
+        if ( POOL.isEmpty() ) {
+            result = new ViewEvent();
+            POOL.addLast( result );
+        } else {
+            result = POOL.removeLast();
+        }
+
+        result.eventType = type;
+        result.view = view;
+        
+        return result;
     }
 }
