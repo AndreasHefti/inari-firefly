@@ -19,7 +19,6 @@ import java.util.ArrayDeque;
 
 import com.inari.commons.event.AspectedEvent;
 import com.inari.commons.lang.aspect.Aspects;
-import com.inari.firefly.graphics.view.ViewEvent;
 
 public final class EntityActivationEvent extends AspectedEvent<EntityActivationListener> {
     
