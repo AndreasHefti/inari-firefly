@@ -66,10 +66,10 @@ public final class TileGrid extends SystemComponent {
     
     private int width;
     private int height;
-    private int cellWidth;
-    private int cellHeight;
-    private float worldXPos;
-    private float worldYPos;
+    int cellWidth;
+    int cellHeight;
+    float worldXPos;
+    float worldYPos;
     private boolean spherical;
     
     int[][] grid;

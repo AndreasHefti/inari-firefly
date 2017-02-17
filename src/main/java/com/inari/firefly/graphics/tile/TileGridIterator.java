@@ -14,14 +14,8 @@ public final class TileGridIterator implements IntIterator {
     private int xorig;
     private int xsize;
     private int ysize;
-    
+    private TileGrid tileGrid;
 
-    private int[][] grid;
-    private int cellWidth;
-    private int cellHeight;
-    private float worldXPos;
-    private float worldYPos;
-    
     private boolean hasNext;
     
     public final void reset( final TileGrid tileGrid ) {
@@ -42,20 +36,16 @@ public final class TileGridIterator implements IntIterator {
         xsize = clip.x + clip.width;
         ysize = clip.y + clip.height;
 
-        grid = tileGrid.grid;
-        cellWidth = tileGrid.getCellWidth();
-        cellHeight = tileGrid.getCellHeight();
-        worldXPos = tileGrid.getWorldXPos();
-        worldYPos = tileGrid.getWorldYPos();
+        this.tileGrid = tileGrid;
         
         findNext();
     }
     
     final Rectangle mapWorldClipToTileGridClip( final Rectangle worldClip, TileGrid tileGrid ) {
-        tmpClip.x = (int) Math.floor( (double) ( worldClip.x - worldXPos ) / cellWidth );
-        tmpClip.y = (int) Math.floor( (double) ( worldClip.y - worldYPos ) / cellHeight );
-        int x2 = (int) Math.ceil( (double) ( worldClip.x - worldXPos + worldClip.width ) / cellWidth );
-        int y2 = (int) Math.ceil( (double) ( worldClip.y - worldYPos + worldClip.height ) / cellHeight );
+        tmpClip.x = (int) Math.floor( (double) ( worldClip.x - tileGrid.worldXPos ) / tileGrid.cellWidth );
+        tmpClip.y = (int) Math.floor( (double) ( worldClip.y - tileGrid.worldYPos ) / tileGrid.cellHeight );
+        int x2 = (int) Math.ceil( (double) ( worldClip.x - tileGrid.worldXPos + worldClip.width ) / tileGrid.cellWidth );
+        int y2 = (int) Math.ceil( (double) ( worldClip.y - tileGrid.worldYPos + worldClip.height ) / tileGrid.cellHeight );
         tmpClip.width = x2 - tmpClip.x;
         tmpClip.height = y2 - tmpClip.y;
         return GeomUtils.intersection( tmpClip, tileGrid.normalisedWorldBounds );
@@ -68,7 +58,7 @@ public final class TileGridIterator implements IntIterator {
 
     @Override
     public final int next() {
-        int result = grid[ clip.y ][ clip.x ];
+        int result = tileGrid.grid[ clip.y ][ clip.x ];
         calcWorldPosition();
         clip.x++;
         findNext();
@@ -86,7 +76,7 @@ public final class TileGridIterator implements IntIterator {
     private void findNext() {
         while ( clip.y < ysize ) {
             while( clip.x < xsize ) {
-                if ( grid[ clip.y ][ clip.x ] != TileGrid.NULL_VALUE ) {
+                if ( tileGrid.grid[ clip.y ][ clip.x ] != TileGrid.NULL_VALUE ) {
                     hasNext = true;
                     return;
                 }
@@ -99,7 +89,7 @@ public final class TileGridIterator implements IntIterator {
     }
     
     private void calcWorldPosition() {
-        worldPosition.dx = worldXPos + ( clip.x * cellWidth );
-        worldPosition.dy = worldYPos + ( clip.y * cellHeight );
+        worldPosition.dx = tileGrid.worldXPos + ( clip.x * tileGrid.cellWidth );
+        worldPosition.dy = tileGrid.worldYPos + ( clip.y * tileGrid.cellHeight );
     }
 }
