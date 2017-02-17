@@ -18,7 +18,6 @@ package com.inari.firefly.graphics.tile;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
@@ -75,9 +74,8 @@ public final class TileGrid extends SystemComponent {
     
     int[][] grid;
     
-    private final Rectangle normalisedWorldBounds = new Rectangle( 0, 0, 0, 0 );
-    private final Rectangle tmpClip = new Rectangle();
-    
+    final Rectangle normalisedWorldBounds = new Rectangle( 0, 0, 0, 0 );
+
     protected TileGrid( int id ) {
         super( id );
         rendererId = -1;
@@ -304,24 +302,6 @@ public final class TileGrid extends SystemComponent {
         }
         
         return get( xpos, ypos );
-    }
-    
-//    public final TileIterator iterator() {
-//        return new TileIterator( new Rectangle( 0, 0, width, height ) );
-//    }
-//    
-//    public final TileIterator iterator( Rectangle worldClip ) {
-//        return new TileIterator( mapWorldClipToTileGridClip( worldClip ) );
-//    }
-
-    final Rectangle mapWorldClipToTileGridClip( final Rectangle worldClip ) {
-        tmpClip.x = (int) Math.floor( (double) ( worldClip.x - worldXPos ) / cellWidth );
-        tmpClip.y = (int) Math.floor( (double) ( worldClip.y - worldYPos ) / cellHeight );
-        int x2 = (int) Math.ceil( (double) ( worldClip.x - worldXPos + worldClip.width ) / cellWidth );
-        int y2 = (int) Math.ceil( (double) ( worldClip.y - worldYPos + worldClip.height ) / cellHeight );
-        tmpClip.width = x2 - tmpClip.x;
-        tmpClip.height = y2 - tmpClip.y;
-        return GeomUtils.intersection( tmpClip, normalisedWorldBounds );
     }
 
     private void createGrid() {

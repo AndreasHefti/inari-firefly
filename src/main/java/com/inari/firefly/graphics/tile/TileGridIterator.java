@@ -1,11 +1,13 @@
 package com.inari.firefly.graphics.tile;
 
+import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.geom.Vector2f;
 import com.inari.commons.lang.IntIterator;
 
 public final class TileGridIterator implements IntIterator {
     
+    private final Rectangle tmpClip = new Rectangle();
     private final Vector2f worldPosition = new Vector2f();
     private final Rectangle clip = new Rectangle();
     
@@ -22,7 +24,7 @@ public final class TileGridIterator implements IntIterator {
     
     private boolean hasNext = true;
     
-    public final void reset( TileGrid tileGrid ) {
+    public final void reset( final TileGrid tileGrid ) {
         clip.x = 0;
         clip.y = 0;
         clip.width = tileGrid.getWidth();
@@ -30,12 +32,12 @@ public final class TileGridIterator implements IntIterator {
         init( tileGrid );
     }
     
-    public final void reset( Rectangle clip, TileGrid tileGrid ) {
-        this.clip.setFrom( clip );
+    public final void reset( final Rectangle clip, final TileGrid tileGrid ) {
+        this.clip.setFrom( mapWorldClipToTileGridClip( clip, tileGrid ) );
         init( tileGrid );
     }
 
-    private void init( TileGrid tileGrid ) {
+    private void init( final TileGrid tileGrid ) {
         xorig = clip.x;
         xsize = clip.x + clip.width;
         ysize = clip.y + clip.height;
@@ -47,6 +49,16 @@ public final class TileGridIterator implements IntIterator {
         worldYPos = tileGrid.getWorldYPos();
         
         findNext();
+    }
+    
+    final Rectangle mapWorldClipToTileGridClip( final Rectangle worldClip, TileGrid tileGrid ) {
+        tmpClip.x = (int) Math.floor( (double) ( worldClip.x - worldXPos ) / cellWidth );
+        tmpClip.y = (int) Math.floor( (double) ( worldClip.y - worldYPos ) / cellHeight );
+        int x2 = (int) Math.ceil( (double) ( worldClip.x - worldXPos + worldClip.width ) / cellWidth );
+        int y2 = (int) Math.ceil( (double) ( worldClip.y - worldYPos + worldClip.height ) / cellHeight );
+        tmpClip.width = x2 - tmpClip.x;
+        tmpClip.height = y2 - tmpClip.y;
+        return GeomUtils.intersection( tmpClip, tileGrid.normalisedWorldBounds );
     }
 
     @Override
