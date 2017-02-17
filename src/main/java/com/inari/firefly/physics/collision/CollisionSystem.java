@@ -15,7 +15,7 @@ import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
-import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
+import com.inari.firefly.graphics.tile.TileGridIterator;
 import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.graphics.view.ViewEvent;
 import com.inari.firefly.graphics.view.ViewEvent.Type;
@@ -53,13 +53,16 @@ public final class CollisionSystem
     private TileGridSystem tileGridSystem;
     private final Rectangle checkPivot = new Rectangle( 0, 0, 0, 0 );
     
+    // TODO make Event pooling within ContactEvent
     private final ContactEvent contactEvent = new ContactEvent();
+    private final TileGridIterator tileGridIterator;
 
     CollisionSystem() {
         super( SYSTEM_KEY );
         quadTrees = new DynArray<CollisionQuadTree>();
         quadTreesPerViewAndLayer = new DynArray<DynArray<CollisionQuadTree>>();
         collisionResolvers = new DynArray<CollisionResolver>();
+        tileGridIterator = new TileGridIterator();
     }
     
     @Override
@@ -194,18 +197,14 @@ public final class CollisionSystem
             return;
         }
         
-        TileIterator tileIterator = tileGrid.iterator( constraint.worldBounds );
-        if ( tileIterator == null || !tileIterator.hasNext() ) {
-            return;
-        }
-        
-        while ( tileIterator.hasNext() ) {
-            final int entityId2 = tileIterator.next();
+        tileGridIterator.reset( constraint.worldBounds, tileGrid );
+        while ( tileGridIterator.hasNext() ) {
+            final int entityId2 = tileGridIterator.next();
             if ( entityId == entityId2 ) {
                 continue;
             }
             
-            scanContact( constraint, entityId2, tileIterator.getWorldXPos(), tileIterator.getWorldYPos() );
+            scanContact( constraint, entityId2, tileGridIterator.getWorldXPos(), tileGridIterator.getWorldYPos() );
         }
     }
     

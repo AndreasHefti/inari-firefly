@@ -15,7 +15,6 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.FFTest;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
-import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 public class TileGridTest extends FFTest {
     
     private TileGrid grid1;
@@ -575,13 +574,15 @@ public class TileGridTest extends FFTest {
             StringUtils.array2DToString( grid1.grid )
         );
         
-        TileIterator iterator = grid1.iterator();
-        assertNotNull( iterator );
-        assertTrue( "should have next", iterator.hasNext() );
-        assertEquals( "expected next", 100, iterator.next() );
-        assertEquals( "expected next", 100, iterator.next() );
-        assertEquals( "expected next", 100, iterator.next() );
-        assertFalse( "expected no next", iterator.hasNext() );
+        
+        TileGridIterator tileGridIterator = new TileGridIterator();
+        tileGridIterator.reset( grid1 );
+        assertNotNull( tileGridIterator );
+        assertTrue( "should have next", tileGridIterator.hasNext() );
+        assertEquals( "expected next", 100, tileGridIterator.next() );
+        assertEquals( "expected next", 100, tileGridIterator.next() );
+        assertEquals( "expected next", 100, tileGridIterator.next() );
+        assertFalse( "expected no next", tileGridIterator.hasNext() );
     }
     
     @Test

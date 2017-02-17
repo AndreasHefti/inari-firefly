@@ -22,8 +22,6 @@ import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.geom.Vector2f;
-import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -75,7 +73,7 @@ public final class TileGrid extends SystemComponent {
     private float worldYPos;
     private boolean spherical;
     
-    protected int[][] grid;
+    int[][] grid;
     
     private final Rectangle normalisedWorldBounds = new Rectangle( 0, 0, 0, 0 );
     private final Rectangle tmpClip = new Rectangle();
@@ -308,13 +306,13 @@ public final class TileGrid extends SystemComponent {
         return get( xpos, ypos );
     }
     
-    public final TileIterator iterator() {
-        return new TileIterator( new Rectangle( 0, 0, width, height ) );
-    }
-    
-    public final TileIterator iterator( Rectangle worldClip ) {
-        return new TileIterator( mapWorldClipToTileGridClip( worldClip ) );
-    }
+//    public final TileIterator iterator() {
+//        return new TileIterator( new Rectangle( 0, 0, width, height ) );
+//    }
+//    
+//    public final TileIterator iterator( Rectangle worldClip ) {
+//        return new TileIterator( mapWorldClipToTileGridClip( worldClip ) );
+//    }
 
     final Rectangle mapWorldClipToTileGridClip( final Rectangle worldClip ) {
         tmpClip.x = (int) Math.floor( (double) ( worldClip.x - worldXPos ) / cellWidth );
@@ -346,66 +344,6 @@ public final class TileGrid extends SystemComponent {
         
         normalisedWorldBounds.width = width;
         normalisedWorldBounds.height = height;
-    }
-    
-    public final class TileIterator implements IntIterator {
-        
-        private final int xorig;
-        private final int xsize;
-        private final int ysize;
-        private final Rectangle clip;
-        private final Vector2f worldPosition;
-        private boolean hasNext = true;
-        
-        private TileIterator( Rectangle clip ) {
-            xorig = clip.x;
-            xsize = clip.x + clip.width;
-            ysize = clip.y + clip.height;
-            this.clip = clip; 
-            worldPosition = new Vector2f();
-            findNext();
-        }
-
-        @Override
-        public final boolean hasNext() {
-            return hasNext;
-        }
-
-        @Override
-        public final int next() {
-            int result = grid[ clip.y ][ clip.x ];
-            calcWorldPosition();
-            clip.x++;
-            findNext();
-            return result;
-        }
-
-        public final float getWorldXPos() {
-            return worldPosition.dx;
-        }
-        
-        public final float getWorldYPos() {
-            return worldPosition.dy;
-        }
-
-        private void findNext() {
-            while ( clip.y < ysize ) {
-                while( clip.x < xsize ) {
-                    if ( grid[ clip.y ][ clip.x ] != NULL_VALUE ) {
-                        return;
-                    }
-                    clip.x++;
-                }
-                clip.x = xorig;
-                clip.y++;
-            }
-            hasNext = false;
-        }
-        
-        private void calcWorldPosition() {
-            worldPosition.dx = worldXPos + ( clip.x * cellWidth );
-            worldPosition.dy = worldYPos + ( clip.y * cellHeight );
-        }
     }
 
 }

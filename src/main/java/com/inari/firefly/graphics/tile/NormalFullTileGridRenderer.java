@@ -1,7 +1,6 @@
 package com.inari.firefly.graphics.tile;
 
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.system.RenderEvent;
 
 public final class NormalFullTileGridRenderer extends TileGridRenderer {
@@ -9,9 +8,11 @@ public final class NormalFullTileGridRenderer extends TileGridRenderer {
     public static final String NAME = "NormalFullTileGridRenderer";
     
     protected final ExactTransformDataCollector transformCollector = new ExactTransformDataCollector();
+    private final TileGridIterator tileGridIterator;
     
     NormalFullTileGridRenderer( int id ) {
         super( id );
+        tileGridIterator = new TileGridIterator();
     }
 
     @Override
@@ -24,19 +25,15 @@ public final class NormalFullTileGridRenderer extends TileGridRenderer {
             return;
         }
         
-        TileIterator iterator = tileGrid.iterator( event.getClip() );
-        if ( iterator == null ) {
-            return;
-        }
-
-        while( iterator.hasNext() ) {
-            int entityId = iterator.next();
+        tileGridIterator.reset( event.getClip(), tileGrid );
+        while( tileGridIterator.hasNext() ) {
+            int entityId = tileGridIterator.next();
             ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
             ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
             
             transformCollector.set( transform );
-            transformCollector.xpos += iterator.getWorldXPos();
-            transformCollector.ypos += iterator.getWorldYPos();
+            transformCollector.xpos += tileGridIterator.getWorldXPos();
+            transformCollector.ypos += tileGridIterator.getWorldYPos();
             
             render( tile, transform.getParentId(), transformCollector );
         }

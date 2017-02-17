@@ -18,7 +18,6 @@ package com.inari.firefly.graphics.tile;
 import java.util.Iterator;
 
 import com.inari.commons.geom.Position;
-import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
@@ -26,7 +25,6 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.graphics.view.ViewEvent;
 import com.inari.firefly.graphics.view.ViewEvent.Type;
 import com.inari.firefly.graphics.view.ViewEventListener;
@@ -234,24 +232,6 @@ public final class TileGridSystem
         }
         
         return tileGrid.getTileAt( position );
-    }
-    
-    public final TileIterator getTiles( int viewId, int layerId, Rectangle bounds ) {
-        TileGrid tileGrid = getTileGrid( viewId, layerId );
-        if ( tileGrid == null ) {
-            return null;
-        }
-        
-        return tileGrid.iterator( bounds );
-    }
-    
-    public final TileIterator getTiles( int tileGridId, Rectangle bounds ) {
-        TileGrid tileGrid = getTileGrid( tileGridId );
-        if ( tileGrid == null ) {
-            return null;
-        }
-        
-        return tileGrid.iterator( bounds );
     }
 
     public final void deleteAllTileGrid( int viewId ) {
