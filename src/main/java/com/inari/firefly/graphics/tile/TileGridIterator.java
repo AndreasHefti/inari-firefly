@@ -22,7 +22,7 @@ public final class TileGridIterator implements IntIterator {
     private float worldXPos;
     private float worldYPos;
     
-    private boolean hasNext = true;
+    private boolean hasNext;
     
     public final void reset( final TileGrid tileGrid ) {
         clip.x = 0;
@@ -87,6 +87,7 @@ public final class TileGridIterator implements IntIterator {
         while ( clip.y < ysize ) {
             while( clip.x < xsize ) {
                 if ( grid[ clip.y ][ clip.x ] != TileGrid.NULL_VALUE ) {
+                    hasNext = true;
                     return;
                 }
                 clip.x++;
