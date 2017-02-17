@@ -2,12 +2,12 @@ package com.inari.firefly;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.SpriteRenderable;
-import com.inari.firefly.graphics.view.ActiveViewportProvider;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewEvent;
 import com.inari.firefly.system.FFContext;
@@ -122,7 +122,7 @@ public class FFGraphicsMock implements FFGraphics {
     }
 
     @Override
-    public void flush( ActiveViewportProvider virtualViews ) {
+    public void flush( List<View> virtualViews ) {
         log.add( "flush" );
     }
 

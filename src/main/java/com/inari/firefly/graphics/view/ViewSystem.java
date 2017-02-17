@@ -30,7 +30,7 @@ import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public final class ViewSystem extends ComponentSystem<ViewSystem> implements ActiveViewportProvider {
+public final class ViewSystem extends ComponentSystem<ViewSystem> {
 
     public static final FFSystemTypeKey<ViewSystem> SYSTEM_KEY = FFSystemTypeKey.create( ViewSystem.class );
     
@@ -99,21 +99,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> implements Act
         return getView( getViewId( viewName ) );
     };
     
-    public final View getNextActiveView( int index ) {
-        if ( index < 0 || index >= orderedViewports.size() ) {
-            return null;
-        }
-        
-        while ( index >= orderedViewports.size() ) {
-            View view = orderedViewports.get( index );
-            if ( view.active ) {
-                return view;
-            }
-            index++;
-        }
-        
-        return null;
-    }
+    
     
     public final Collection<View> getAllViewports() {
         return Collections.unmodifiableCollection( orderedViewports );
@@ -123,8 +109,14 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> implements Act
         return !orderedViewports.isEmpty();
     }
     
+    
+    
     public final boolean hasActiveViewports() {
         return hasActiveViewports;
+    }
+    
+    public final List<View> getViewports() {
+        return orderedViewports;
     }
     
     public final void activateView( int viewId ) {
@@ -245,6 +237,14 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> implements Act
         return -1;
     }
     
+    public final List<Layer> getLayersOfView( int viewId ) {
+        if ( !oderedLayersOfView.contains( viewId ) ) {
+            return Collections.emptyList();
+        }
+        
+        return oderedLayersOfView.get( viewId );
+    }
+    
     public final void activateLayer( int layerId ) {
         if ( layerId < 0 ) {
             return;
@@ -357,29 +357,6 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> implements Act
         View view = getView( viewId );
         deleteLayers( viewId );
         view.setLayeringEnabled( false );
-    }
-    
-    @Override
-    public final Layer getNextActiveLayer( int viewId, int index ) {
-        if ( !oderedLayersOfView.contains( viewId ) ) {
-            return null;
-        }
-        
-        List<Layer> layersOfView = oderedLayersOfView.get( viewId );
-        
-        if ( index < 0 || index >= layersOfView.size() ) {
-            return null;
-        }
-        
-        while ( index >= layersOfView.size() ) {
-            Layer layer = layersOfView.get( index );
-            if ( layer.active ) {
-                return layer;
-            }
-            index++;
-        }
-        
-        return null;
     }
 
     public final SystemComponentBuilder getViewBuilder() {

@@ -15,6 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.system;
 
+import java.util.List;
 import java.util.Random;
 
 import com.inari.commons.event.IEventDispatcher;
@@ -108,15 +109,16 @@ public abstract class FireFlyApp {
         // NOTE: for now there is no renderer that works with approximationTime so I skip the calculation so far.
         // TODO: implements the calculation of approximationTime and set it to the event.
         if ( viewSystem.hasActiveViewports() ) {
-            int index = 0;
-            View nextActiveView = viewSystem.getNextActiveView( index );
-            while ( nextActiveView != null ) {
-                render( nextActiveView );
-                index++;
-                nextActiveView = viewSystem.getNextActiveView( index );
+            final List<View> viewports = viewSystem.getViewports();
+            for ( int i = 0; i < viewports.size(); i++ ) {
+                View view = viewports.get( i );
+                if ( !view.isActive() ) {
+                    continue;
+                }
+                render( view );
             }
             
-            graphics.flush( viewSystem );
+            graphics.flush( viewports );
         } else {
             render( baseView );
             graphics.flush( null );
@@ -141,13 +143,15 @@ public abstract class FireFlyApp {
         if ( !viewSystem.isLayeringEnabled( viewId ) ) {
             context.notify( renderEvent );
         } else {
-            int index = 0;
-            Layer nextActiveLayer = viewSystem.getNextActiveLayer( viewId, index );
-            while ( nextActiveLayer != null ) {
-                renderEvent.layerId = nextActiveLayer.index();
+            
+            List<Layer> layersOfView = viewSystem.getLayersOfView( viewId );
+            for ( int i = 0; i < layersOfView.size(); i++ ) {
+                Layer layer = layersOfView.get( i );
+                if ( !layer.isActive() ) {
+                    continue;
+                }
+                renderEvent.layerId = layer.index();
                 context.notify( renderEvent );
-                index++;
-                nextActiveLayer = viewSystem.getNextActiveLayer( viewId, index );
             }
             renderEvent.layerId = 0;
         } 

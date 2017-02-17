@@ -15,10 +15,11 @@
  ******************************************************************************/ 
 package com.inari.firefly.system.external;
 
+import java.util.List;
+
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.SpriteRenderable;
-import com.inari.firefly.graphics.view.ActiveViewportProvider;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewEventListener;
 import com.inari.firefly.system.utils.FFContextInitiable;
@@ -55,7 +56,7 @@ public interface FFGraphics extends FFContextInitiable, ViewEventListener {
 
     void endRendering( View view );
     
-    void flush( ActiveViewportProvider virtualViews );
+    void flush( List<View> virtualViews );
     
     byte[] getScreenshotPixels( Rectangle area );
 
