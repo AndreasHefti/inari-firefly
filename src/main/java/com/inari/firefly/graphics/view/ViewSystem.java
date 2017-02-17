@@ -30,7 +30,7 @@ import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public final class ViewSystem extends ComponentSystem<ViewSystem> {
+public final class ViewSystem extends ComponentSystem<ViewSystem> implements ActiveViewportProvider {
 
     public static final FFSystemTypeKey<ViewSystem> SYSTEM_KEY = FFSystemTypeKey.create( ViewSystem.class );
     
@@ -45,6 +45,8 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     private final DynArray<View> views;
     private final List<View> orderedViewports;
     private final DynArray<List<Layer>> oderedLayersOfView;
+    
+    private boolean hasActiveViewports = false;
 
     ViewSystem() {
         super( SYSTEM_KEY );
@@ -97,8 +99,20 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         return getView( getViewId( viewName ) );
     };
     
-    public final Iterator<View> activeViewportIterator() {
-        return new ActiveViewportIterator();
+    public final View getNextActiveView( int index ) {
+        if ( index < 0 || index >= orderedViewports.size() ) {
+            return null;
+        }
+        
+        while ( index >= orderedViewports.size() ) {
+            View view = orderedViewports.get( index );
+            if ( view.active ) {
+                return view;
+            }
+            index++;
+        }
+        
+        return null;
     }
     
     public final Collection<View> getAllViewports() {
@@ -110,13 +124,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     }
     
     public final boolean hasActiveViewports() {
-        for ( View view : orderedViewports ) {
-            if ( view.isActive() ) {
-                return true;
-            }
-        }
-        
-        return false;
+        return hasActiveViewports;
     }
     
     public final void activateView( int viewId ) {
@@ -126,6 +134,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         View view = views.get( viewId );
         if ( view != null && !view.isActive() ) {
             view.active = true;
+            hasActiveViewports = true;
             context.notify( ViewEvent.create( ViewEvent.Type.VIEW_ACTIVATED, view ) );
         }
     }
@@ -137,6 +146,13 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         View view = views.get( viewId );
         if ( view != null && view.isActive() ) {
             view.active = false;
+            hasActiveViewports = false;
+            for ( View _view : orderedViewports ) {
+                if ( _view.active ) {
+                    hasActiveViewports = true;
+                    break;
+                }
+            }
             context.notify( ViewEvent.create( ViewEvent.Type.VIEW_DISPOSED, view ) );
         }
     }
@@ -293,10 +309,6 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         return true;
     }
     
-    public final Iterator<Layer> getActiveLayersOfView( int viewId ) {
-        return new ActiveLayerIterator( viewId );
-    }
-
     public final void deleteLayers( int viewId ) {
         if ( !isLayeringEnabled( viewId ) ) {
             return;
@@ -347,19 +359,27 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         view.setLayeringEnabled( false );
     }
     
-    public final boolean hasActiveLayers( int viewId ) {
-        if ( !isLayeringEnabled( viewId ) ) {
-            return false;
+    @Override
+    public final Layer getNextActiveLayer( int viewId, int index ) {
+        if ( !oderedLayersOfView.contains( viewId ) ) {
+            return null;
         }
         
-        List<Layer> layers = oderedLayersOfView.get( viewId );
-        for ( Layer layer : layers ) {
+        List<Layer> layersOfView = oderedLayersOfView.get( viewId );
+        
+        if ( index < 0 || index >= layersOfView.size() ) {
+            return null;
+        }
+        
+        while ( index >= layersOfView.size() ) {
+            Layer layer = layersOfView.get( index );
             if ( layer.active ) {
-                return true;
+                return layer;
             }
+            index++;
         }
         
-        return false;
+        return null;
     }
 
     public final SystemComponentBuilder getViewBuilder() {
@@ -468,7 +488,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             viewLayers.add( layer );
             
             if ( activate ) {
-                layer.active = true;
+                activateLayer( layerId );
             }
             
             return layerId;
@@ -548,86 +568,6 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         @Override
         public final SystemComponentBuilder createComponentBuilder( Class<? extends Layer> componentType ) {
             return new LayerBuilder();
-        }
-    }
-    
-    private final class ActiveViewportIterator implements Iterator<View> {
-        
-        final Iterator<View> viewIterator;
-        View next;
-        
-        ActiveViewportIterator() {
-            viewIterator = orderedViewports.iterator();
-            findNext();
-        }
-
-        @Override
-        public final boolean hasNext() {
-            return next != null;
-        }
-        @Override
-        public final View next() {
-            View result = next;
-            findNext();
-            return result;
-        }
-
-        @Override
-        public final void remove() {
-        }
-        
-        private void findNext() {
-            next = null;
-            while ( viewIterator.hasNext() ) {
-                next = viewIterator.next();
-                if ( next.active ) {
-                    return;
-                }
-            }
-            if ( next != null && !next.active ) {
-                next = null;
-            }
-        }
-        
-    }
-    
-    private final class ActiveLayerIterator implements Iterator<Layer> {
-        
-        final Iterator<Layer> layersOfView;
-        Layer next = null;
-        
-        ActiveLayerIterator( int viewId ) {
-            layersOfView = oderedLayersOfView.get( viewId ).iterator();
-            findNext();
-        }
-
-        @Override
-        public final boolean hasNext() {
-            return next != null;
-        }
-
-        @Override
-        public final Layer next() {
-            Layer result = next;
-            findNext();
-            return result;
-        }
-
-        @Override
-        public final void remove() {
-        }
-        
-        private void findNext() {
-            next = null;
-            while ( layersOfView.hasNext() ) {
-                next = layersOfView.next();
-                if ( next.active ) {
-                    return;
-                }
-            }
-            if ( next != null && !next.active ) {
-                next = null;
-            }
         }
     }
 
