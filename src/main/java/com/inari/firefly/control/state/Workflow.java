@@ -66,7 +66,7 @@ public final class Workflow extends SystemComponent {
     }
     
     final void activate() {
-        currentStateName = startStateName;
+        setCurrentState( startStateName );
     }
 
     public final String getCurrentState() {
@@ -168,7 +168,6 @@ public final class Workflow extends SystemComponent {
         
         return null;
     }
-    
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
