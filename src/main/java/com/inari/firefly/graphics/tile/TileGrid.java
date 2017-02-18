@@ -459,7 +459,6 @@ public final class TileGrid extends SystemComponent {
             TileGridIterator instance;
             if ( POOL.isEmpty() ) {
                 instance = new TileGridIterator();
-                POOL.add( instance );
             } else {
                 instance = POOL.pollLast();
             }
