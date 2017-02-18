@@ -2,7 +2,6 @@ package com.inari.firefly.control.behavior;
 
 import java.util.Iterator;
 
-import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;

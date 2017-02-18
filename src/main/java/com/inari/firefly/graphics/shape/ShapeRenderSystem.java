@@ -1,6 +1,5 @@
 package com.inari.firefly.graphics.shape;
 
-import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
