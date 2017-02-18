@@ -14,6 +14,7 @@ import com.inari.commons.StringUtils;
 import com.inari.firefly.FFTest;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
+import com.inari.firefly.graphics.tile.TileGrid.TileGridIterator;
 public class TileGridTest extends FFTest {
     
     private TileGrid grid1;
@@ -574,8 +575,7 @@ public class TileGridTest extends FFTest {
         );
         
         
-        TileGridIterator tileGridIterator = new TileGridIterator();
-        tileGridIterator.reset( grid1 );
+        TileGridIterator tileGridIterator = grid1.getTileGridIterator();
         assertNotNull( tileGridIterator );
         assertTrue( "should have next", tileGridIterator.hasNext() );
         assertEquals( "expected next", 100, tileGridIterator.next() );

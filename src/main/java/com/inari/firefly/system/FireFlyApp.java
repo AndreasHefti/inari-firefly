@@ -21,6 +21,7 @@ import java.util.Random;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.audio.AudioSystem;
 import com.inari.firefly.control.ControllerSystem;
@@ -109,7 +110,7 @@ public abstract class FireFlyApp {
         // NOTE: for now there is no renderer that works with approximationTime so I skip the calculation so far.
         // TODO: implements the calculation of approximationTime and set it to the event.
         if ( viewSystem.hasActiveViewports() ) {
-            final List<View> viewports = viewSystem.getViewports();
+            final DynArray<View> viewports = viewSystem.getActiveViewports();
             for ( int i = 0; i < viewports.size(); i++ ) {
                 View view = viewports.get( i );
                 if ( !view.isActive() ) {

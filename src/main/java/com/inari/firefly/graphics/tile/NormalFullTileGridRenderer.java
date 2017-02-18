@@ -1,6 +1,7 @@
 package com.inari.firefly.graphics.tile;
 
 import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.graphics.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.RenderEvent;
 
 public final class NormalFullTileGridRenderer extends TileGridRenderer {
@@ -8,11 +9,9 @@ public final class NormalFullTileGridRenderer extends TileGridRenderer {
     public static final String NAME = "NormalFullTileGridRenderer";
     
     protected final ExactTransformDataCollector transformCollector = new ExactTransformDataCollector();
-    private final TileGridIterator tileGridIterator;
     
     NormalFullTileGridRenderer( int id ) {
         super( id );
-        tileGridIterator = new TileGridIterator();
     }
 
     @Override
@@ -25,7 +24,7 @@ public final class NormalFullTileGridRenderer extends TileGridRenderer {
             return;
         }
         
-        tileGridIterator.reset( event.getClip(), tileGrid );
+        TileGridIterator tileGridIterator = tileGrid.getTileGridIterator( event.getClip() );
         while( tileGridIterator.hasNext() ) {
             int entityId = tileGridIterator.next();
             ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );

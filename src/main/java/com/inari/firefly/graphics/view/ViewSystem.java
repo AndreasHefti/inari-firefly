@@ -44,15 +44,15 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     
     private final DynArray<View> views;
     private final List<View> orderedViewports;
+    private final DynArray<View> activeOrderedViewports;
     private final DynArray<List<Layer>> oderedLayersOfView;
-    
-    private boolean hasActiveViewports = false;
 
     ViewSystem() {
         super( SYSTEM_KEY );
         views = new DynArray<View>( INITAL_SIZE );
         oderedLayersOfView = new DynArray<List<Layer>>( INITAL_SIZE );
         orderedViewports = new ArrayList<View>( INITAL_SIZE );
+        activeOrderedViewports = new DynArray<View>( INITAL_SIZE, 1 );
     }
     
     @Override
@@ -108,15 +108,13 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     public final boolean hasViewports() {
         return !orderedViewports.isEmpty();
     }
-    
-    
-    
+
     public final boolean hasActiveViewports() {
-        return hasActiveViewports;
+        return !activeOrderedViewports.isEmpty();
     }
     
-    public final List<View> getViewports() {
-        return orderedViewports;
+    public final DynArray<View> getActiveViewports() {
+        return activeOrderedViewports;
     }
     
     public final void activateView( int viewId ) {
@@ -126,7 +124,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         View view = views.get( viewId );
         if ( view != null && !view.isActive() ) {
             view.active = true;
-            hasActiveViewports = true;
+            refreshAcriveViewports();
             context.notify( ViewEvent.create( ViewEvent.Type.VIEW_ACTIVATED, view ) );
         }
     }
@@ -138,10 +136,9 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         View view = views.get( viewId );
         if ( view != null && view.isActive() ) {
             view.active = false;
-            hasActiveViewports = false;
             for ( View _view : orderedViewports ) {
                 if ( _view.active ) {
-                    hasActiveViewports = true;
+                    refreshAcriveViewports();
                     break;
                 }
             }
@@ -386,9 +383,22 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             viewport.order = order;
             order++;
         }
+        refreshAcriveViewports();
     }
     
     
+    private void refreshAcriveViewports() {
+        activeOrderedViewports.clear();
+        for ( int i = 0; i < orderedViewports.size(); i++ ) {
+            View view = orderedViewports.get( i );
+            if ( !view.active ) {
+                continue;
+            }
+            activeOrderedViewports.add( view );
+        }
+    }
+
+
     private final class ViewBuilder extends SystemComponentBuilder {
 
         private ViewBuilder() {

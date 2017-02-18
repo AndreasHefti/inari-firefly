@@ -16,7 +16,6 @@
 package com.inari.firefly.control.state;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Set;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
@@ -46,6 +45,7 @@ public final class Workflow extends SystemComponent {
     private DynArray<StateChange> stateChanges;
     
     private String currentStateName;
+    private final DynArray<StateChange> stateChangesOfCurrentState;
 
     Workflow( int workflowId ) {
         super( workflowId );
@@ -53,6 +53,7 @@ public final class Workflow extends SystemComponent {
         states = null;
         stateChanges = null;
         currentStateName = null;
+        stateChangesOfCurrentState = new DynArray<StateChange>( 10, 1 );
     }
     
     @Override
@@ -74,13 +75,24 @@ public final class Workflow extends SystemComponent {
     
     final void setCurrentState( String stateName ) {
         currentStateName = stateName;
+        updateStateChangesOfCurrentState();
     }
-    
+
+    private void updateStateChangesOfCurrentState() {
+        stateChangesOfCurrentState.clear();
+        for ( int i = 0; i < stateChanges.capacity(); i++ ) {
+            StateChange stateChange = stateChanges.get( i );
+            if ( stateChange == null || !stateChange.fromStateName.equals( currentStateName ) ) {
+                continue;
+            }
+            stateChangesOfCurrentState.add( stateChange );
+        }
+    }
+
     final void changeState( String newStateName ) {
         if ( currentStateName != null ) {
-            Iterator<StateChange> stateChanges = stateChangesForCurrentState();
-            while ( stateChanges.hasNext() ) {
-                StateChange stateChange = stateChanges.next();
+            for ( int i = 0; i < stateChangesOfCurrentState.size(); i++ ) {
+                StateChange stateChange = stateChangesOfCurrentState.get( i );
                 Condition condition = stateChange.getCondition();
                 if ( condition != null && condition instanceof Disposable ) {
                     ( (Disposable) condition ).dispose( context );
@@ -88,11 +100,10 @@ public final class Workflow extends SystemComponent {
             }
         }
         
-        currentStateName = newStateName;
+        setCurrentState( newStateName );
         
-        Iterator<StateChange> stateChanges = stateChangesForCurrentState();
-        while ( stateChanges.hasNext() ) {
-            StateChange stateChange = stateChanges.next();
+        for ( int i = 0; i < stateChangesOfCurrentState.size(); i++ ) {
+            StateChange stateChange = stateChangesOfCurrentState.get( i );
             Condition condition = stateChange.getCondition();
             if ( condition != null && condition instanceof Initiable ) {
                 ( (Initiable) condition ).init( context );
@@ -130,8 +141,8 @@ public final class Workflow extends SystemComponent {
         return stateChanges;
     }
     
-    public final Iterator<StateChange> stateChangesForCurrentState() {
-        return new CurrentStateChangeIterator();
+    public final DynArray<StateChange> getStateChangesOfCurrentState() {
+        return stateChangesOfCurrentState;
     }
 
     public final void setStateChanges( DynArray<StateChange> stateChanges ) {
@@ -183,41 +194,5 @@ public final class Workflow extends SystemComponent {
         attributes.put( STATES, states );
         attributes.put( STATE_CHANGES, stateChanges );
     }
-    
-    private final class CurrentStateChangeIterator implements Iterator<StateChange> {
-        
-        private int nextIndex = -1;
-        
-        CurrentStateChangeIterator() {
-            findNextIndex();
-        }
-
-        @Override
-        public final boolean hasNext() {
-            return stateChanges != null && nextIndex < stateChanges.capacity();
-        }
-
-        @Override
-        public final StateChange next() {
-            StateChange result = stateChanges.get( nextIndex );
-            findNextIndex();
-            return result;
-        }
-
-        @Override
-        public final void remove() {
-            throw new UnsupportedOperationException();
-        }
-        
-        private final void findNextIndex() {
-            nextIndex++;
-            while( nextIndex < stateChanges.capacity() && !( stateChanges.contains( nextIndex ) && stateChanges.get( nextIndex ).fromStateName.equals( currentStateName ) ) ) {
-                nextIndex++;
-            }
-        }
-        
-    }
-
-    
 
 }

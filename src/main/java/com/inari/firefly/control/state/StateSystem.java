@@ -85,18 +85,15 @@ public class StateSystem
     @Override
     public final void update( UpdateEvent event ) {
         
-        for ( Workflow workflow : workflows ) {
-            if ( !workflow.isActive() ) {
+        for ( int w = 0; w < workflows.size(); w++ ) {
+            Workflow workflow = workflows.get( w );
+            if ( workflow != null && !workflow.isActive() ) {
                 continue;
             }
             
-            Iterator<StateChange> stateChanges = workflow.stateChangesForCurrentState();
-            if ( stateChanges == null ) {
-                continue;
-            }
-            
-            while ( stateChanges.hasNext() ) {
-                StateChange stateChange = stateChanges.next();
+            DynArray<StateChange> stateChangesOfCurrentState = workflow.getStateChangesOfCurrentState();
+            for ( int s = 0; s < stateChangesOfCurrentState.size(); s++ ) {
+                StateChange stateChange = stateChangesOfCurrentState.get( s );
                 Condition condition = stateChange.getCondition();
                 if ( condition == null ) {
                     continue;

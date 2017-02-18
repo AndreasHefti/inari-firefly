@@ -15,12 +15,16 @@
  ******************************************************************************/ 
 package com.inari.firefly.graphics.tile;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.geom.Vector2f;
+import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -303,6 +307,14 @@ public final class TileGrid extends SystemComponent {
         
         return get( xpos, ypos );
     }
+    
+    public final TileGridIterator getTileGridIterator() {
+        return TileGridIterator.getInstance( this );
+    }
+    
+    public final TileGridIterator getTileGridIterator( Rectangle worldClip ) {
+        return TileGridIterator.getInstance( worldClip, this );
+    }
 
     private void createGrid() {
         int[][] old = grid;
@@ -324,6 +336,135 @@ public final class TileGrid extends SystemComponent {
         
         normalisedWorldBounds.width = width;
         normalisedWorldBounds.height = height;
+    }
+    
+    
+    public final static class TileGridIterator implements IntIterator {
+        
+        private static final ArrayDeque<TileGridIterator> POOL = new ArrayDeque<TileGridIterator>( 5 );
+    
+        private final Rectangle tmpClip = new Rectangle();
+        private final Vector2f worldPosition = new Vector2f();
+        private final Rectangle clip = new Rectangle();
+        
+        private int xorig;
+        private int xsize;
+        private int ysize;
+        private TileGrid tileGrid;
+    
+        private boolean hasNext;
+        
+        private TileGridIterator() {}
+
+        @Override
+        public final boolean hasNext() {
+            return hasNext;
+        }
+    
+        @Override
+        public final int next() {
+            int result = tileGrid.grid[ clip.y ][ clip.x ];
+            calcWorldPosition();
+            clip.x++;
+            findNext();
+            return result;
+        }
+    
+        public final float getWorldXPos() {
+            return worldPosition.dx;
+        }
+        
+        public final float getWorldYPos() {
+            return worldPosition.dy;
+        }
+        
+        private final void reset( final TileGrid tileGrid ) {
+            clip.x = 0;
+            clip.y = 0;
+            clip.width = tileGrid.getWidth();
+            clip.height = tileGrid.getHeight();
+            init( tileGrid );
+        }
+        
+        private final void reset( final Rectangle clip, final TileGrid tileGrid ) {
+            this.clip.setFrom( mapWorldClipToTileGridClip( clip, tileGrid ) );
+            init( tileGrid );
+        }
+    
+        private void init( final TileGrid tileGrid ) {
+            xorig = clip.x;
+            xsize = clip.x + clip.width;
+            ysize = clip.y + clip.height;
+    
+            this.tileGrid = tileGrid;
+            
+            findNext();
+        }
+        
+        final Rectangle mapWorldClipToTileGridClip( final Rectangle worldClip, TileGrid tileGrid ) {
+            tmpClip.x = (int) Math.floor( (double) ( worldClip.x - tileGrid.worldXPos ) / tileGrid.cellWidth );
+            tmpClip.y = (int) Math.floor( (double) ( worldClip.y - tileGrid.worldYPos ) / tileGrid.cellHeight );
+            int x2 = (int) Math.ceil( (double) ( worldClip.x - tileGrid.worldXPos + worldClip.width ) / tileGrid.cellWidth );
+            int y2 = (int) Math.ceil( (double) ( worldClip.y - tileGrid.worldYPos + worldClip.height ) / tileGrid.cellHeight );
+            tmpClip.width = x2 - tmpClip.x;
+            tmpClip.height = y2 - tmpClip.y;
+            return GeomUtils.intersection( tmpClip, tileGrid.normalisedWorldBounds );
+        }
+    
+        private void findNext() {
+            while ( clip.y < ysize ) {
+                while( clip.x < xsize ) {
+                    if ( tileGrid.grid[ clip.y ][ clip.x ] != TileGrid.NULL_VALUE ) {
+                        hasNext = true;
+                        return;
+                    }
+                    clip.x++;
+                }
+                clip.x = xorig;
+                clip.y++;
+            }
+            
+            dispose();
+        }
+        
+        private void dispose() {
+            hasNext = false;
+            tileGrid = null;
+            xorig = -1;
+            xsize = -1;
+            ysize = -1;
+            POOL.add( this );
+        }
+
+        private void calcWorldPosition() {
+            worldPosition.dx = tileGrid.worldXPos + ( clip.x * tileGrid.cellWidth );
+            worldPosition.dy = tileGrid.worldYPos + ( clip.y * tileGrid.cellHeight );
+        }
+        
+        static final TileGridIterator getInstance( final Rectangle clip, final TileGrid tileGrid ) {
+            TileGridIterator instance = getInstance();
+            
+            instance.reset( clip, tileGrid );
+            return instance;
+        }
+
+        static final TileGridIterator getInstance( final TileGrid tileGrid ) {
+            TileGridIterator instance = getInstance();
+            
+            instance.reset( tileGrid );
+            return instance;
+        }
+        
+        static final private TileGridIterator getInstance() {
+            TileGridIterator instance;
+            if ( POOL.isEmpty() ) {
+                instance = new TileGridIterator();
+                POOL.add( instance );
+            } else {
+                instance = POOL.pollLast();
+            }
+            return instance;
+        }
     }
 
 }

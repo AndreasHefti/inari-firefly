@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.FFTest;
+import com.inari.firefly.graphics.tile.TileGrid.TileGridIterator;
 
 public class TileGridIteratorTest extends FFTest {
     
@@ -34,8 +35,7 @@ public class TileGridIteratorTest extends FFTest {
         grid1.setWidth( 10 );
         grid1.setHeight( 10 );
         
-        TileGridIterator iterator = new TileGridIterator();
-        iterator.reset( grid1 );
+        TileGridIterator iterator = grid1.getTileGridIterator();
         
         Rectangle worldClip1 = new Rectangle( 0, 0, 100, 100 );
         Rectangle tileGridClip1 = iterator.mapWorldClipToTileGridClip( worldClip1, grid1 );

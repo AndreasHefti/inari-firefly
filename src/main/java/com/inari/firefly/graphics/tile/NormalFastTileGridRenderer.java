@@ -1,16 +1,14 @@
 package com.inari.firefly.graphics.tile;
 
+import com.inari.firefly.graphics.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.RenderEvent;
 
 public class NormalFastTileGridRenderer extends TileGridRenderer {
     
     public static final String NAME = "NormalFastTileGridRenderer";
     
-    private final TileGridIterator tileGridIterator;
-    
     NormalFastTileGridRenderer( int id ) {
         super( id );
-        tileGridIterator = new TileGridIterator();
     }
 
     @Override
@@ -23,7 +21,7 @@ public class NormalFastTileGridRenderer extends TileGridRenderer {
           return;
         }
         
-        tileGridIterator.reset( event.getClip(), tileGrid );
+        TileGridIterator tileGridIterator = tileGrid.getTileGridIterator( event.getClip() );
         while( tileGridIterator.hasNext() ) {
             ETile tile = entitySystem.getComponent( tileGridIterator.next(), ETile.TYPE_KEY );
             graphics.renderSprite( tile, tileGridIterator.getWorldXPos(), tileGridIterator.getWorldYPos() );

@@ -15,7 +15,7 @@ import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
-import com.inari.firefly.graphics.tile.TileGridIterator;
+import com.inari.firefly.graphics.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.graphics.view.ViewEvent;
 import com.inari.firefly.graphics.view.ViewEvent.Type;
@@ -55,14 +55,12 @@ public final class CollisionSystem
     
     // TODO make Event pooling within ContactEvent
     private final ContactEvent contactEvent = new ContactEvent();
-    private final TileGridIterator tileGridIterator;
 
     CollisionSystem() {
         super( SYSTEM_KEY );
         quadTrees = new DynArray<CollisionQuadTree>();
         quadTreesPerViewAndLayer = new DynArray<DynArray<CollisionQuadTree>>();
         collisionResolvers = new DynArray<CollisionResolver>();
-        tileGridIterator = new TileGridIterator();
     }
     
     @Override
@@ -197,7 +195,7 @@ public final class CollisionSystem
             return;
         }
         
-        tileGridIterator.reset( constraint.worldBounds, tileGrid );
+        TileGridIterator tileGridIterator = tileGrid.getTileGridIterator( constraint.worldBounds );
         while ( tileGridIterator.hasNext() ) {
             final int entityId2 = tileGridIterator.next();
             if ( entityId == entityId2 ) {
