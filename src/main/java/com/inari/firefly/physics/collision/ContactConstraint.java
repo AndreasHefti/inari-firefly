@@ -1,7 +1,5 @@
 package com.inari.firefly.physics.collision;
 
-import java.util.Iterator;
-
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Position;
@@ -10,7 +8,7 @@ import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray; 
 
-public final class ContactConstraint implements Iterable<Contact> {
+public final class ContactConstraint  {
     
     final String name;
     int layerId = -1;
@@ -92,13 +90,17 @@ public final class ContactConstraint implements Iterable<Contact> {
         return contactTypes.contains( contact );
     }
     
-    @Override
-    public final Iterator<Contact> iterator() {
-        return contacts.iterator();
+    public final DynArray<Contact> allContacts() {
+        return contacts;
     }
-    
+
     public final Contact getFirstContact( Aspect contactType ) {
-        for ( Contact contact : contacts ) {
+        for ( int i = 0; i < contacts.capacity(); i++ ) {
+            Contact contact = contacts.get( i );
+            if ( contact == null ) {
+                continue;
+            }
+            
             if ( contact.contactType() == contactType ) {
                 return contact;
             }
@@ -108,9 +110,17 @@ public final class ContactConstraint implements Iterable<Contact> {
     }
     
     final void clear() {
-         contacts.clear();
-         contactTypes.clear();
-         intersectionMask.clearMask();
+        for ( int i = 0; i < contacts.capacity(); i++ ) {
+            Contact contact = contacts.get( i );
+            if ( contact == null ) {
+                continue;
+            }
+            
+            contact.dispose();
+        }
+        contacts.clear();
+        contactTypes.clear();
+        intersectionMask.clearMask();
     }
     
     final void update( float x, float y, float vx, float vy ) {
