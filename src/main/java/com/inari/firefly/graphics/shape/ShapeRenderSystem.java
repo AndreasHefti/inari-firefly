@@ -120,9 +120,13 @@ public final class ShapeRenderSystem
                 return;
             }
             
-            IntIterator iterator = shapeIds.iterator();
-            while( iterator.hasNext() ) {
-                int entityId = iterator.next();
+            final int nullValue = shapeIds.getNullValue();
+            for ( int i = 0; i < shapeIds.length(); i++ ) {
+                int entityId = shapeIds.get( i );
+                if ( nullValue == entityId ) {
+                    continue;
+                }
+                
                 EShape shape = entitySystem.getComponent( entityId, EShape.TYPE_KEY );
                 ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
                 transformCollector.set( transform );

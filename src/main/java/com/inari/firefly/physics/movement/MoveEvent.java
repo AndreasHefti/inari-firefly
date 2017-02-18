@@ -33,7 +33,11 @@ public final class MoveEvent extends Event<MoveEventListener> {
         entityIds.add( entityId );
     }
     
-    public final IntIterator movedEntityIds() {
+    public final IntBag movedEntityIds() {
+        return entityIds;
+    }
+    
+    public final IntIterator movedEntityIdsIterator() {
         return entityIds.iterator();
     }
 

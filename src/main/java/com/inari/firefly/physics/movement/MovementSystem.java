@@ -15,13 +15,13 @@
  ******************************************************************************/ 
 package com.inari.firefly.physics.movement;
 
-import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.entity.EntitySystem.EntityIterator;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.UpdateEvent;
@@ -35,6 +35,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
 
     private FFContext context;
     private EntitySystem entitySystem;
+    private EntityIterator entityIterator;
     
     private final MoveEvent moveEvent = new MoveEvent();
     
@@ -53,6 +54,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
         this.context = context;
         
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        entityIterator = entitySystem.entities( MOVEMENT_ASPECT );
         
         context.registerListener( UpdateEvent.TYPE_KEY, this );
     }
@@ -65,9 +67,9 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
     @Override
     public final void update( UpdateEvent event ) {
         moveEvent.entityIds.clear();
-        IntIterator entities = entitySystem.entities( MOVEMENT_ASPECT );
-        while ( entities.hasNext() ) {
-            int entityId = entities.next();
+        entityIterator.reset();
+        while ( entityIterator.hasNext() ) {
+            int entityId = entityIterator.next();
             IndexedTypeSet components = entitySystem.getComponents( entityId );
             EMovement movement = components.get( EMovement.TYPE_KEY );
             if ( !movement.active || !movement.needsUpdate( event.timer ) ) {

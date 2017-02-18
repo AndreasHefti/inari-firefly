@@ -126,9 +126,13 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
     
     @Override
     public final void update( UpdateEvent event ) {
-        final IntIterator entities = entityIds.iterator();
-        while ( entities.hasNext() ) {
-            final int entityId = entities.next();
+        final int nullValue = entityIds.getNullValue();
+        for ( int i = 0; i < entityIds.length(); i++ ) {
+            final int entityId = entityIds.get( i );
+            if ( nullValue == entityId ) {
+                continue;
+            }
+            
             final EBehavoir behavior = context.getEntityComponent( entityId, EBehavoir.TYPE_KEY );
             if ( behavior.runningActionId < 0 ) {
                 behaviorNodes.get( behavior.getRootNodeId() ).nextAction( entityId, behavior, context );

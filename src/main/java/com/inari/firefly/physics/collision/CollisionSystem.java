@@ -9,6 +9,7 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityActivationEvent;
@@ -111,9 +112,14 @@ public final class CollisionSystem
     
     @Override
     public final void onMoveEvent( final MoveEvent event ) {
-        final IntIterator movedEntiyIterator = event.movedEntityIds();
-        while ( movedEntiyIterator.hasNext() ) {
-            final int entityId = movedEntiyIterator.next();
+        final IntBag movedEntityIds = event.movedEntityIds();
+        final int nullValue = movedEntityIds.getNullValue();
+        for ( int i = 0; i < movedEntityIds.length(); i++ ) {
+            final int entityId = movedEntityIds.get( i );
+            if ( entityId == nullValue ) {
+                continue;
+            }
+            
             final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
             final ContactScan contactScan = collision.getContactScan();
             final int collisionResolverId = collision.getCollisionResolverId();

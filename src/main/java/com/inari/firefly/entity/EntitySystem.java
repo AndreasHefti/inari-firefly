@@ -209,14 +209,19 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             return -1;
         }
         
-        ComponentIterator<EEntity> iterator = new ComponentIterator<EEntity>( EEntity.TYPE_KEY.index(), false );
-        while ( iterator.hasNext() ) {
-            EEntity entityComponent = iterator.next();
-            if ( name.equals( entityComponent.getEntityName() ) ) {
-                return iterator.entityId();
+        int entityAspect = EEntity.TYPE_KEY.index();
+        for ( int i = 0; i < components.capacity(); i++ ) {
+            IndexedTypeSet comps = components.get( i );
+            if ( comps == null || !comps.contains( entityAspect ) ) {
+                continue;
+            }
+            
+            EEntity entity = comps.get( entityAspect );
+            if ( name.equals( entity.getEntityName() ) ) {
+                return i;
             }
         }
-
+        
         return -1;
     }
 
@@ -228,30 +233,17 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         
         return components.getAspect();
     }
-    
-    public final <T extends EntityComponent> Iterable<T> components( final EntityComponentTypeKey<T> componentType ) {
-        return components( componentType, true );
+
+    public final EntityIterator entities() {
+        return new EntityIterator( new ActiveEntityCondition() );
     }
     
-    public final <T extends EntityComponent> Iterable<T> components( final EntityComponentTypeKey<T> componentType, final boolean onlyActive ) {
-        return new Iterable<T>() {
-            @Override
-            public final Iterator<T> iterator() {
-                return new ComponentIterator<T>( componentType.index(), onlyActive );
-            }
-        };
-    }
-    
-    public final IntIterator entities() {
-        return new ActiveEntityIterator();
-    }
-    
-    public final IntIterator entities( boolean active ) {
-        return ( active )?  new ActiveEntityIterator() : new InactiveEntityIterator();
+    public final EntityIterator entities( boolean active ) {
+        return ( active )?  new EntityIterator( new ActiveEntityCondition() ) : new EntityIterator( new InactiveEntityCondition() );
     }
 
-    public final IntIterator entities( final Aspects aspects ) {
-        return new AspectedEntityIterator( aspects );
+    public final EntityIterator entities( final Aspects aspects ) {
+        return new EntityIterator( new AspectedEntityCondition( aspects ) );
     }
 
     public final <T extends EntityComponent> T getComponent( int entityId, EntityComponentTypeKey<T> componentType ) {
@@ -312,109 +304,118 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     
     // ---- Utilities --------------------------------------------------------
 
-    public final class ComponentIterator<C extends EntityComponent> implements Iterator<C> {
+//    public final class ComponentIterator<C extends EntityComponent> implements Iterator<C> {
+//        
+//        private final int componentIndex;
+//        private final boolean onlyActive;
+//        private int currentEntityIndex = -1;
+//        private int nextEntityIndex = -1;
+//        
+//        ComponentIterator( int componentIndex, boolean onlyActive ) {
+//            this.componentIndex = componentIndex;
+//            this.onlyActive = onlyActive;
+//            findNext();
+//        }
+//        
+//        private final void findNext() {
+//            while ( nextEntityIndex < components.capacity() ) {
+//                nextEntityIndex++;
+//                if ( onlyActive && !activeEntities.get( nextEntityIndex ) ) {
+//                    continue;
+//                }
+//                if ( components.contains( nextEntityIndex ) && components.get( nextEntityIndex ).contains( componentIndex ) ) {
+//                    return;
+//                }
+//            }
+//            nextEntityIndex = -1;
+//        }
+//
+//        @Override
+//        public final boolean hasNext() {
+//            return nextEntityIndex >= 0 ;
+//        }
+//        
+//        public final int entityId() {
+//            return currentEntityIndex;
+//        }
+//
+//        @Override
+//        public final C next() {
+//            C component = components.get( nextEntityIndex ).get( componentIndex );
+//            currentEntityIndex = nextEntityIndex;
+//            findNext();
+//            return component;
+//        }
+//
+//        @Override
+//        public final void remove() {
+//            delete( currentEntityIndex );
+//        }
+//    }
+    
+    private interface EntityIteratorCondition {
         
-        private final int componentIndex;
-        private final boolean onlyActive;
-        private int currentEntityIndex = -1;
-        private int nextEntityIndex = -1;
+        int findNext( int currentIndex );
         
-        ComponentIterator( int componentIndex, boolean onlyActive ) {
-            this.componentIndex = componentIndex;
-            this.onlyActive = onlyActive;
-            findNext();
+    }
+    
+    public final static class EntityIterator implements IntIterator {
+        
+        private int nextEntityId = -1;
+        private final EntityIteratorCondition condition;
+        
+        EntityIterator( EntityIteratorCondition condition ) {
+            this.condition = condition; 
+            reset();
         }
         
-        private final void findNext() {
-            while ( nextEntityIndex < components.capacity() ) {
-                nextEntityIndex++;
-                if ( onlyActive && !activeEntities.get( nextEntityIndex ) ) {
-                    continue;
-                }
-                if ( components.contains( nextEntityIndex ) && components.get( nextEntityIndex ).contains( componentIndex ) ) {
-                    return;
-                }
-            }
-            nextEntityIndex = -1;
+        public final void reset() {
+            nextEntityId = -1;
+            nextEntityId = condition.findNext( nextEntityId );
         }
 
         @Override
         public final boolean hasNext() {
-            return nextEntityIndex >= 0 ;
-        }
-        
-        public final int entityId() {
-            return currentEntityIndex;
-        }
-
-        @Override
-        public final C next() {
-            C component = components.get( nextEntityIndex ).get( componentIndex );
-            currentEntityIndex = nextEntityIndex;
-            findNext();
-            return component;
-        }
-
-        @Override
-        public final void remove() {
-            delete( currentEntityIndex );
-        }
-    }
-    
-    private abstract class EntityIterator implements IntIterator {
-        
-        protected int nextEntityId = -1;
-        protected int currentEntityId = -1;
-
-        @Override
-        public boolean hasNext() {
             return nextEntityId >= 0;
         }
 
         @Override
-        public int next() {
-            currentEntityId = nextEntityId;
-            findNext();
+        public final int next() {
+            int currentEntityId = nextEntityId;
+            nextEntityId = condition.findNext( nextEntityId );
             return currentEntityId;
         }
-
-        protected abstract void findNext();
     }
-    
-    private final class ActiveEntityIterator extends EntityIterator {
-        ActiveEntityIterator() { findNext(); }
-        @Override
-        protected void findNext() {
-            nextEntityId = activeEntities.nextSetBit( nextEntityId + 1 );
-        }
-    } 
-    
-    private final class InactiveEntityIterator extends EntityIterator {
-        InactiveEntityIterator() { findNext(); }
-        @Override
-        protected void findNext() {
-            nextEntityId = inactiveEntities.nextSetBit( nextEntityId + 1 );
-        }
-    } 
-    
-    private final class AspectedEntityIterator extends EntityIterator {
-        
-        private final Aspects aspects;
-        
-        public AspectedEntityIterator( Aspects aspects ) {
-            this.aspects = aspects;
-            findNext();
-        }
 
+    private final class ActiveEntityCondition implements EntityIteratorCondition {
         @Override
-        protected void findNext() {
-            while ( nextEntityId < activeEntities.size() ) {
-                nextEntityId = activeEntities.nextSetBit( nextEntityId + 1 );
-                if ( nextEntityId < 0 || getEntityComponentAspects( nextEntityId ).include( aspects ) ) {
-                    return;
+        public int findNext( int currentIndex ) {
+            return activeEntities.nextSetBit( currentIndex + 1 );
+        }
+    } 
+    
+    private final class InactiveEntityCondition implements EntityIteratorCondition {
+        @Override
+        public int findNext( int currentIndex ) {
+            return inactiveEntities.nextSetBit( currentIndex + 1 );
+        }
+    } 
+    
+    private final class AspectedEntityCondition  implements EntityIteratorCondition {
+        private final Aspects aspects;
+        public AspectedEntityCondition( Aspects aspects ) {
+            this.aspects = aspects;
+        }
+        @Override
+        public int findNext( int currentIndex ) {
+            while ( currentIndex < activeEntities.size() ) {
+                currentIndex = activeEntities.nextSetBit( currentIndex + 1 );
+                if ( currentIndex < 0 || getEntityComponentAspects( currentIndex ).include( aspects ) ) {
+                    return currentIndex;
                 }
             }
-            nextEntityId = -1;
+            
+            return -1;
         }
     }
     
