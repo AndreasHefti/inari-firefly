@@ -38,39 +38,40 @@ public class TileGridIteratorTest extends FFTest {
         TileGridIterator iterator = grid1.getTileGridIterator();
         
         Rectangle worldClip1 = new Rectangle( 0, 0, 100, 100 );
-        Rectangle tileGridClip1 = iterator.mapWorldClipToTileGridClip( worldClip1, grid1 );
-        assertEquals( "[x=0,y=0,width=10,height=10]", tileGridClip1.toString() );
-        assertEquals( "100", String.valueOf( tileGridClip1.area() ) );
+        Rectangle result = new Rectangle();
+        iterator.mapWorldClipToTileGridClip( worldClip1, grid1, result );
+        assertEquals( "[x=0,y=0,width=10,height=10]", result.toString() );
+        assertEquals( "100", String.valueOf( result.area() ) );
         
         Rectangle worldClip2 = new Rectangle( 5, 5, 95, 95 );
-        Rectangle tileGridClip2 = iterator.mapWorldClipToTileGridClip( worldClip2, grid1 );
-        assertEquals( "[x=0,y=0,width=10,height=10]", tileGridClip2.toString() );
-        assertEquals( "100", String.valueOf( tileGridClip2.area() ) );
+        iterator.mapWorldClipToTileGridClip( worldClip2, grid1, result );
+        assertEquals( "[x=0,y=0,width=10,height=10]", result.toString() );
+        assertEquals( "100", String.valueOf( result.area() ) );
         
         Rectangle worldClip3 = new Rectangle( 9, 9, 91, 91 );
-        Rectangle tileGridClip3 = iterator.mapWorldClipToTileGridClip( worldClip3, grid1 );
-        assertEquals( "[x=0,y=0,width=10,height=10]", tileGridClip3.toString() );
-        assertEquals( "100", String.valueOf( tileGridClip3.area() ) );
+        iterator.mapWorldClipToTileGridClip( worldClip3, grid1, result );
+        assertEquals( "[x=0,y=0,width=10,height=10]", result.toString() );
+        assertEquals( "100", String.valueOf( result.area() ) );
         
         Rectangle worldClip4 = new Rectangle( 10, 10, 90, 90 );
-        Rectangle tileGridClip4 = iterator.mapWorldClipToTileGridClip( worldClip4, grid1 );
-        assertEquals( "[x=1,y=1,width=9,height=9]", tileGridClip4.toString() );
-        assertEquals( "81", String.valueOf( tileGridClip4.area() ) );
+        iterator.mapWorldClipToTileGridClip( worldClip4, grid1, result );
+        assertEquals( "[x=1,y=1,width=9,height=9]", result.toString() );
+        assertEquals( "81", String.valueOf( result.area() ) );
         
         Rectangle worldClip5 = new Rectangle( -50, -50, 100, 100 );
-        Rectangle tileGridClip5 = iterator.mapWorldClipToTileGridClip( worldClip5, grid1 );
-        assertEquals( "[x=0,y=0,width=5,height=5]", tileGridClip5.toString() );
-        assertEquals( "25", String.valueOf( tileGridClip5.area() ) );
+        iterator.mapWorldClipToTileGridClip( worldClip5, grid1, result );
+        assertEquals( "[x=0,y=0,width=5,height=5]", result.toString() );
+        assertEquals( "25", String.valueOf( result.area() ) );
         
         Rectangle worldClip6 = new Rectangle( 50, 50, 100, 100 );
-        Rectangle tileGridClip6 = iterator.mapWorldClipToTileGridClip( worldClip6, grid1 );
-        assertEquals( "[x=5,y=5,width=5,height=5]", tileGridClip6.toString() );
-        assertEquals( "25", String.valueOf( tileGridClip6.area() ) );
+        iterator.mapWorldClipToTileGridClip( worldClip6, grid1, result );
+        assertEquals( "[x=5,y=5,width=5,height=5]", result.toString() );
+        assertEquals( "25", String.valueOf( result.area() ) );
         
         Rectangle worldClip7 = new Rectangle( 100, 0, 100, 100 );
-        Rectangle tileGridClip7 = iterator.mapWorldClipToTileGridClip( worldClip7, grid1 );
-        assertEquals( "[x=10,y=0,width=0,height=10]", tileGridClip7.toString() );
-        assertEquals( "0", String.valueOf( tileGridClip7.area() ) );
+        iterator.mapWorldClipToTileGridClip( worldClip7, grid1, result );
+        assertEquals( "[x=10,y=0,width=0,height=10]", result.toString() );
+        assertEquals( "0", String.valueOf( result.area() ) );
     }
 
 }

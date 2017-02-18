@@ -76,18 +76,22 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
     
     @Override
     public final void postRendering( FFContext context ) {
-        //if ( systemInfoDisplay.isActive() ) {
         View baseView = context.getSystemComponent( View.TYPE_KEY, ViewSystem.BASE_VIEW_ID );
         graphics.startRendering( baseView, false );
         renderSystemInfoDisplay();
         graphics.endRendering( baseView );
         graphics.flush( null );
-        //}
     }
     
     final void update() {
         int startIndex = 0;
-        for ( SystemInfo info : infos ) {
+        
+        for ( int i = 0; i < infos.capacity(); i++ ) {
+            SystemInfo info = infos.get( i );
+            if ( info == null ) {
+                continue;
+            }
+            
             info.update( context, textbuffer, startIndex );
             startIndex += info.getLength() + 1;
         }

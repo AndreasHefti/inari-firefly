@@ -162,7 +162,13 @@ public final class SpriteViewSystem
                 
                 
                 if ( sprite.isMultiPosition() ) {
-                    for ( PositionF pos : sprite.getPositions() ) {
+                    DynArray<PositionF> positions = sprite.getPositions();
+                    for ( int p = 0; p < positions.capacity(); p++ ) {
+                        PositionF pos = positions.get( p );
+                        if ( pos == null ) {
+                            continue;
+                        }
+                        
                         transformCollector.set( transform, pos.x, pos.y );
                         render( sprite, transform.getParentId(), transformCollector );
                     }
