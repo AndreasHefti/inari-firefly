@@ -146,23 +146,24 @@ public final class SpriteViewSystem
 
         @Override
         public final void render( RenderEvent event ) {
-            DynArray<IndexedTypeSet> spritesToRender = getSprites( event.getViewId(), event.getLayerId(), false );
+            final DynArray<IndexedTypeSet> spritesToRender = getSprites( event.getViewId(), event.getLayerId(), false );
             if ( spritesToRender == null ) {
                 return;
             }
             
             for ( int i = 0; i < spritesToRender.capacity(); i++ ) {
-                IndexedTypeSet components = spritesToRender.get( i );
+                final IndexedTypeSet components = spritesToRender.get( i );
                 if ( components == null ) {
                     continue;
                 }
 
-                ESprite sprite = components.get( ESprite.TYPE_KEY );
-                ETransform transform = components.get( ETransform.TYPE_KEY );
+                final ESprite sprite = components.get( ESprite.TYPE_KEY );
+                final ETransform transform = components.get( ETransform.TYPE_KEY );
                 
-                
-                if ( sprite.isMultiPosition() ) {
-                    DynArray<PositionF> positions = sprite.getPositions();
+                if ( components.contains( ESpriteMultiplier.TYPE_KEY.index() ) ) {
+                    final ESpriteMultiplier multiplier = components.get( ESpriteMultiplier.TYPE_KEY );
+                    final DynArray<PositionF> positions = multiplier.getPositions();
+                    
                     for ( int p = 0; p < positions.capacity(); p++ ) {
                         PositionF pos = positions.get( p );
                         if ( pos == null ) {
