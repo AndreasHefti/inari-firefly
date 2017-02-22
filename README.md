@@ -1,4 +1,6 @@
-# inari-firefly
+# Firefly
+
+[![Build Status](https://travis-ci.org/Inari-Soft/inari-firefly.svg?branch=master)](https://travis-ci.org/Inari-Soft/inari-firefly)
 
 Introduction
 
