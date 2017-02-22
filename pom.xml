@@ -43,6 +43,7 @@
       <plugin>
            <groupId>org.apache.maven.plugins</groupId>
            <artifactId>maven-compiler-plugin</artifactId>
+           <version>3.6.1</version>
            <configuration>
                <source>1.7</source>
                <target>1.7</target>
@@ -51,6 +52,7 @@
        <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>3.0.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -86,17 +88,5 @@
           <artifactId>inari-commons</artifactId>
           <version>-SNAPSHOT</version>
       </dependency>
-
-      
-<!--       <dependency> -->
-<!--         <groupId>com.github.inari-soft</groupId> -->
-<!--         <artifactId>commons</artifactId> -->
-<!--         <version>1.0-SNAPSHOT</version> -->
-<!--       </dependency> -->
-<!--       <dependency> -->
-<!--         <groupId>com.github.inari-soft</groupId> -->
-<!--         <artifactId>inari-commons</artifactId> -->
-<!--         <version>v1.0.0</version> -->
-<!--       </dependency> -->
   </dependencies>
 </project>

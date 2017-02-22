@@ -8,8 +8,8 @@ import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.FFTest;
 import com.inari.firefly.entity.EEntity;
-import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.graphics.ETransform;
 
 public class CollisionQuadTreeTest extends FFTest {
     

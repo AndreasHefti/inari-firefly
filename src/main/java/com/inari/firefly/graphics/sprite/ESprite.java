@@ -20,11 +20,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.graphics.RGBColor;
+import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.SpriteRenderable;
+import com.inari.firefly.physics.animation.EntityIntAnimationAdapter;
+import com.inari.firefly.physics.animation.EntityValueAnimationAdapter;
+import com.inari.firefly.physics.animation.FloatAnimation;
+import com.inari.firefly.physics.animation.IntAnimation;
+import com.inari.firefly.physics.animation.ValueAnimation;
+import com.inari.firefly.physics.animation.AttributeAnimationAdapter.AttributeAnimationAdapterKey;
+import com.inari.firefly.physics.animation.EntityFloatAnimationAdapter;
+import com.inari.firefly.system.FFContext;
 
 public final class ESprite extends EntityComponent implements SpriteRenderable {
     
@@ -135,5 +144,79 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
         attributes.put( BLEND_MODE, blendMode );
         attributes.put( SHADER_ID, shaderId );
+    }
+    
+    
+    public interface AnimationAdapter {
+        AttributeAnimationAdapterKey<SpriteIdAnimationAdapter> SPRITE_ID = SpriteIdAnimationAdapter.TYPE_KEY;
+        AttributeAnimationAdapterKey<TintColorRedAnimationAdapter> TINT_COLOR_RED = TintColorRedAnimationAdapter.TYPE_KEY;
+        AttributeAnimationAdapterKey<TintColorGreenAnimationAdapter> TINT_COLOR_GREEN = TintColorGreenAnimationAdapter.TYPE_KEY;
+        AttributeAnimationAdapterKey<TintColorBlueAnimationAdapter> TINT_COLOR_BLUE = TintColorBlueAnimationAdapter.TYPE_KEY;
+        AttributeAnimationAdapterKey<TintColorAlphaAnimationAdapter> TINT_COLOR_ALPHA = TintColorAlphaAnimationAdapter.TYPE_KEY;
+        AttributeAnimationAdapterKey<TintColorAnimationAdapter> TINT_COLOR = TintColorAnimationAdapter.TYPE_KEY;
+    }
+    
+    private static final class SpriteIdAnimationAdapter implements EntityIntAnimationAdapter {
+        public static final AttributeAnimationAdapterKey<SpriteIdAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new SpriteIdAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, IntAnimation animation, FFContext context ) {
+            final ESprite sprite = context.getEntityComponent( entityId, ESprite.TYPE_KEY );
+            sprite.setSpriteId( animation.getValue( entityId, sprite.getSpriteId() ) );
+        }
+    }
+    
+    private static final class TintColorRedAnimationAdapter implements EntityFloatAnimationAdapter {
+        public static final AttributeAnimationAdapterKey<TintColorRedAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorRedAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
+            final ESprite sprite = context.getEntityComponent( entityId, ESprite.TYPE_KEY );
+            final RGBColor tintColor = sprite.getTintColor();
+            tintColor.r = animation.getValue( entityId, tintColor.r );
+        }
+    }
+    
+    private static final class TintColorGreenAnimationAdapter implements EntityFloatAnimationAdapter {
+        public static final AttributeAnimationAdapterKey<TintColorGreenAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorGreenAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
+            final ESprite sprite = context.getEntityComponent( entityId, ESprite.TYPE_KEY );
+            final RGBColor tintColor = sprite.getTintColor();
+            tintColor.g = animation.getValue( entityId, tintColor.g );
+        }
+    }
+    
+    private static final class TintColorBlueAnimationAdapter implements EntityFloatAnimationAdapter {
+        public static final AttributeAnimationAdapterKey<TintColorBlueAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorBlueAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
+            final ESprite sprite = context.getEntityComponent( entityId, ESprite.TYPE_KEY );
+            final RGBColor tintColor = sprite.getTintColor();
+            tintColor.b = animation.getValue( entityId, tintColor.b );
+        }
+    }
+    
+    private static final class TintColorAlphaAnimationAdapter implements EntityFloatAnimationAdapter {
+        public static final AttributeAnimationAdapterKey<TintColorAlphaAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorAlphaAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
+            final ESprite sprite = context.getEntityComponent( entityId, ESprite.TYPE_KEY );
+            final RGBColor tintColor = sprite.getTintColor();
+            tintColor.a = animation.getValue( entityId, tintColor.a );
+        }
+    }
+    
+    private static final class TintColorAnimationAdapter implements EntityValueAnimationAdapter<RGBColor> {
+        public static final AttributeAnimationAdapterKey<TintColorAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, ValueAnimation<RGBColor> animation, FFContext context ) {
+            final ESprite sprite = context.getEntityComponent( entityId, ESprite.TYPE_KEY );
+            sprite.setTintColor( animation.getValue( entityId, sprite.getTintColor() ) );
+        }
     }
 }

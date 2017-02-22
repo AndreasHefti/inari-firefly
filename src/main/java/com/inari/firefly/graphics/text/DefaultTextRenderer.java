@@ -2,7 +2,7 @@ package com.inari.firefly.graphics.text;
 
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.system.RenderEvent;
 
 public final class DefaultTextRenderer extends TextRenderer {

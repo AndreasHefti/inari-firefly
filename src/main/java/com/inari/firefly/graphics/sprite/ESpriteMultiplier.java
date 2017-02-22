@@ -19,7 +19,7 @@ public final class ESpriteMultiplier extends EntityComponent {
         MULTI_POSITIONS
     };
     
-    private DynArray<PositionF> positions;
+    private final DynArray<PositionF> positions;
     
     public ESpriteMultiplier() {
         super( TYPE_KEY );

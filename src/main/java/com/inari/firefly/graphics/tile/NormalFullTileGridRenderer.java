@@ -1,6 +1,6 @@
 package com.inari.firefly.graphics.tile;
 
-import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.RenderEvent;
 

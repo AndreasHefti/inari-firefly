@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.inari.commons.geom.PositionF;
 import com.inari.firefly.FFTest;
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.sprite.ESprite;
 
 public class EntitySystemTest extends FFTest {
@@ -78,11 +79,14 @@ public class EntitySystemTest extends FFTest {
         assertEquals( "1", String.valueOf( entitySystem.components.size() ) );
         ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         assertEquals(
-            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=0 SystemComponent:Entity(0)::"
+            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=0 "
+            + "SystemComponent:Entity(0)::"
             + "viewId:Integer:ETransform=1, "
             + "layerId:Integer:ETransform=0, "
-            + "position:PositionF:ETransform=[x=234.0,y=134.0], "
-            + "pivotPosition:PositionF:ETransform=[x=0.0,y=0.0], "
+            + "position_x:Float:ETransform=234.0, "
+            + "position_y:Float:ETransform=134.0, "
+            + "pivotPosition_x:Float:ETransform=0.0, "
+            + "pivotPosition_y:Float:ETransform=0.0, "
             + "scalex:Float:ETransform=1.0, "
             + "scaley:Float:ETransform=1.0, "
             + "rotation:Float:ETransform=0.0, "

@@ -32,7 +32,7 @@ public final class EntityActivationEvent extends AspectedEvent<EntityActivationL
     }
     
     int entityId;
-    final Aspects entityComponentAspects = EntityComponent.ASPECT_TYPE.createAspects();
+    final Aspects entityComponentAspects = EntityComponent.ASPECT_GROUP.createAspects();
     Type eventType;
     
     EntityActivationEvent() {

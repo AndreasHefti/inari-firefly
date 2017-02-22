@@ -1,6 +1,5 @@
 package com.inari.firefly.graphics;
 
-import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.system.RenderEvent;

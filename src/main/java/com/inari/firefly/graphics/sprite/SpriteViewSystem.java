@@ -9,11 +9,12 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
+import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.BaseRenderer;
+import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.SpriteRenderable;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
@@ -25,9 +26,14 @@ public final class SpriteViewSystem
         FFSystem, 
         EntityActivationListener {
     
-    private static final SystemComponentKey<SpriteRenderer> SPRITE_RENDERER_TYPE_KEY = SystemComponentKey.create( SpriteRenderer.class );
     public static final FFSystemTypeKey<SpriteViewSystem> SYSTEM_KEY = FFSystemTypeKey.create( SpriteViewSystem.class );
+    public static final Aspects MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
+        ETransform.TYPE_KEY, 
+        ESprite.TYPE_KEY 
+    );
     
+    private static final SystemComponentKey<SpriteRenderer> SPRITE_RENDERER_TYPE_KEY = SystemComponentKey.create( SpriteRenderer.class );
+
     private EntitySystem entitySystem;
     private final DynArray<DynArray<DynArray<IndexedTypeSet>>> spritesPerViewAndLayer;
     private SpriteRenderer spriteRenderer;
@@ -66,7 +72,7 @@ public final class SpriteViewSystem
     
     @Override
     public final boolean match( Aspects aspects ) {
-        return aspects.contains( ESprite.TYPE_KEY );
+        return aspects.include( MATCHING_ASPECTS );
     }
     
     public final void entityActivated( int entityId, final Aspects aspects ) {

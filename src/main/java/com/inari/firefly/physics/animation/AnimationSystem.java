@@ -17,7 +17,10 @@ package com.inari.firefly.physics.animation;
 
 import java.util.Iterator;
 
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.entity.EntityActivationEvent;
+import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
@@ -30,7 +33,8 @@ public final class AnimationSystem
     extends 
         ComponentSystem<AnimationSystem>
     implements
-        UpdateEventListener {
+        UpdateEventListener,
+        EntityActivationListener {
     
     public static final FFSystemTypeKey<AnimationSystem> SYSTEM_KEY = FFSystemTypeKey.create( AnimationSystem.class );
     
@@ -39,13 +43,12 @@ public final class AnimationSystem
         AnimationResolver.TYPE_KEY
     };
 
-    private final DynArray<Animation> animations;
-    private final DynArray<AnimationResolver> animationResolver;
+    final DynArray<Animation> animations;
+    final DynArray<AnimationMapping> activeMappings = new DynArray<AnimationMapping>( 100, 100 );
 
     AnimationSystem() {
         super( SYSTEM_KEY );
         animations = new DynArray<Animation>();
-        animationResolver = new DynArray<AnimationResolver>();
     }
     
     @Override
@@ -54,6 +57,7 @@ public final class AnimationSystem
         
         context.registerListener( UpdateEvent.TYPE_KEY, this );
         context.registerListener( AnimationSystemEvent.TYPE_KEY, this );
+        context.registerListener( EntityActivationEvent.TYPE_KEY, this );
     }
     
     @Override
@@ -62,6 +66,44 @@ public final class AnimationSystem
         
         context.disposeListener( UpdateEvent.TYPE_KEY, this );
         context.disposeListener( AnimationSystemEvent.TYPE_KEY, this );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
+    }
+    
+    @Override
+    public final boolean match( Aspects aspects ) {
+        return aspects.contains( EAnimation.TYPE_KEY );
+    }
+
+    @Override
+    public final void entityActivated( int entityId, Aspects aspects ) {
+        DynArray<AnimationMapping> animationMappings = context.getEntityComponent( entityId, EAnimation.TYPE_KEY ).getAnimationMappings();
+        for ( int i = 0; i < animationMappings.capacity(); i++ ) {
+            final AnimationMapping animationMapping = animationMappings.get( i );
+            if ( animationMapping == null ) {
+                continue;
+            }
+            
+            animationMapping.entityId = entityId;
+            if ( animationMapping.animationId < 0 ) {
+                animationMapping.animationId = getAnimationId( animationMapping.animationName );
+            }
+            
+            activeMappings.add( animationMapping );
+        }
+    }
+
+    @Override
+    public final void entityDeactivated( int entityId, Aspects aspects ) {
+        for ( int i = 0; i < activeMappings.capacity(); i++ ) {
+            AnimationMapping animationMapping = activeMappings.get( i );
+            if ( animationMapping == null ) {
+                continue;
+            }
+            
+            if ( animationMapping.entityId == entityId ) {
+                activeMappings.remove( i );
+            }
+        }
     }
     
     public final void clear() {
@@ -125,6 +167,7 @@ public final class AnimationSystem
             if ( animation != null ) {
                 if ( animation.active ) {
                     animation.systemUpdate();
+                    applyValueAttribute( animation );
                     continue;
                 }
                 
@@ -136,12 +179,26 @@ public final class AnimationSystem
                 
                 if ( animation.startTime > 0 && event.timer.getTime() >= animation.startTime ) {
                     animation.activate();
+                    applyValueAttribute( animation );
                     continue;
                 }
             }
         }
     }
     
+    private void applyValueAttribute( Animation animation ) {
+        for ( int i = 0; i < activeMappings.capacity(); i++ ) {
+            AnimationMapping animationMapping = activeMappings.get( i );
+            if ( animationMapping == null ) {
+                continue;
+            }
+            animationMapping
+                .adapterKey
+                .getAdapterInstance()
+                .apply( animationMapping.entityId, animation, context );
+        }
+    }
+
     public final Animation getAnimation( int animationId ) {
         if ( animationId < 0 ) {
             return null;
@@ -160,15 +217,7 @@ public final class AnimationSystem
         
         return subType.cast( animations.get( animationId ) );
     }
-    
-    public final <T extends AnimationResolver> T getAnimationResolverAs( int animationResolverId, Class<T> subType ) {
-        if ( !animationResolver.contains( animationResolverId ) ) {
-            return null;
-        }
-        
-        return subType.cast( animationResolver.get( animationResolverId ) );
-    }
-    
+
     public final int getAnimationId( String animationName ) {
         for ( int i = 0; i < animations.capacity(); i++ ) {
             if ( !animations.contains( i ) ) {
@@ -190,33 +239,6 @@ public final class AnimationSystem
             return null;
         }
         return type.cast( animation );
-    }
-    
-    public final AnimationResolver getAnimationResolver( int id ) {
-        if ( !animationResolver.contains( id ) ) {
-            return null;
-        }
-        
-        return animationResolver.get( id );
-    }
-
-    public final int getAnimationResolverId( String name ) {
-        for ( AnimationResolver resolver : animationResolver ) {
-            if ( name.equals( resolver.getName() ) ) {
-                return resolver.index();
-            }
-        }
-        
-        return -1;
-    }
-
-    public final void deleteAnimationResolver( int id ) {
-        if ( !animationResolver.contains( id ) ) {
-            return;
-        }
-        
-        AnimationResolver resolver = animationResolver.remove( id );
-        resolver.dispose();
     }
 
     public final float getValue( int animationId, int componentId, float currentValue ) {
@@ -254,27 +276,12 @@ public final class AnimationSystem
         
         disposeSystemComponent( animations.remove( animationId ) );
     }
-    
-    public final int getAnimationId( int animationResolverId, int defaultValue ) {
-        if ( animationResolverId < 0 || !animationResolver.contains( animationResolverId ) ) {
-            return defaultValue;
-        }
-        
-        return animationResolver.get( animationResolverId ).getAnimationId();
-    }
-    
+
     public final SystemComponentBuilder getAnimationBuilder( Class<? extends Animation> componentType ) {
         if ( componentType == null ) {
             throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Animation.TYPE_KEY.name() );
         }
         return new AnimationBuilder( componentType );
-    }
-    
-    public final SystemComponentBuilder getAnimationResolverBuilder( Class<? extends AnimationResolver> componentType ) {
-        if ( componentType == null ) {
-            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + AnimationResolver.TYPE_KEY.name() );
-        }
-        return new AnimationResolverBuilder( componentType );
     }
     
     @Override
@@ -286,8 +293,7 @@ public final class AnimationSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter[] {
-            new AnimationBuilderAdapter(),
-            new AnimationResolverBuilderAdapter()
+            new AnimationBuilderAdapter()
         };
     };
     
@@ -314,27 +320,6 @@ public final class AnimationSystem
             
             return animation.index();
         }
-    }
-    
-    private final class AnimationResolverBuilder extends SystemComponentBuilder {
-        
-        private AnimationResolverBuilder( Class<? extends AnimationResolver> componentType ) {
-            super( context, componentType );
-        }
-        
-        @Override
-        public final SystemComponentKey<AnimationResolver> systemComponentKey() {
-            return AnimationResolver.TYPE_KEY;
-        }
-
-        @Override
-        public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            AnimationResolver resolver = createSystemComponent( componentId, componentType, context );
-            animationResolver.set( resolver.index(), resolver );
-            
-            return resolver.index();
-        }
-        
     }
 
     private final class AnimationBuilderAdapter extends SystemBuilderAdapter<Animation> {
@@ -370,39 +355,4 @@ public final class AnimationSystem
             return getAnimationBuilder( componentType );
         }
     }
-    
-    private final class AnimationResolverBuilderAdapter extends SystemBuilderAdapter<AnimationResolver> {
-        private AnimationResolverBuilderAdapter() {
-            super( AnimationSystem.this, AnimationResolver.TYPE_KEY );
-        }
-        @Override
-        public final AnimationResolver get( int id ) {
-            return getAnimationResolver( id );
-        }
-        @Override
-        public final void delete( int id ) {
-            deleteAnimationResolver( id );
-        }
-        @Override
-        public final Iterator<AnimationResolver> getAll() {
-            return animationResolver.iterator();
-        }
-        @Override
-        public final int getId( String name ) {
-            return getAnimationResolverId( name );
-        }
-        @Override
-        public final void activate( int id ) {
-            throw new UnsupportedOperationException( "Action is not activable" );
-        }
-        @Override
-        public final void deactivate( int id ) {
-            throw new UnsupportedOperationException( "Action is not activable" );
-        }
-        @Override
-        public final SystemComponentBuilder createComponentBuilder( Class<? extends AnimationResolver> componentType ) {
-            return getAnimationResolverBuilder( componentType );
-        }
-    }
-
 }

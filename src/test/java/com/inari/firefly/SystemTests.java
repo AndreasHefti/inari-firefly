@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.sprite.SpriteAsset;

@@ -32,6 +32,5 @@ public class TestAnimation extends FloatAnimation {
     @Override
     public void update() {
         // TODO Auto-generated method stub
-        
     }
 }

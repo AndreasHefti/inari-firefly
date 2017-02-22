@@ -45,10 +45,11 @@ public abstract class Animation extends SystemComponent {
      * 
      *  Use this if there is a concrete time where to start an Animation without use of AnimationEvent.
      */
-    public static final AttributeKey<Long> START_TIME = new AttributeKey<Long>( "startTime", Long.class, Animation.class );
+    public static final AttributeKey<Long> START_TIME = AttributeKey.createLong( "startTime", Animation.class );
     /** The AttributeKey for the looping attributes that indicates whether the Animation is looping or not */
-    public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Animation.class );
+    public static final AttributeKey<Boolean> LOOPING = AttributeKey.createBoolean( "looping", Animation.class );
     
+
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         START_TIME,
         LOOPING,

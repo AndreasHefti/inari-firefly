@@ -25,7 +25,7 @@ import com.inari.firefly.component.ComponentId;
 
 public abstract class EntityComponent implements Component, IndexedType {
     
-    public final static AspectGroup ASPECT_TYPE = new AspectGroup( "EntityComponentTypeKey" );
+    public final static AspectGroup ASPECT_GROUP = new AspectGroup( "EntityComponentTypeKey" );
     
     public final ComponentId componentId;
     
@@ -62,7 +62,7 @@ public abstract class EntityComponent implements Component, IndexedType {
         
         @Override
         public final AspectGroup aspectGroup() {
-            return ASPECT_TYPE;
+            return ASPECT_GROUP;
         }
         
         @SuppressWarnings( "unchecked" )
