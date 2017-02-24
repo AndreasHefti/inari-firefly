@@ -12,10 +12,11 @@ public final class ConditionalSelection extends BehaviorNode {
     
     public static final AttributeKey<DynArray<Mapping>> NODE_MAPPING = AttributeKey.createDynArray( "subNodeMapping", ConditionalSelection.class );
     
-    private final DynArray<Mapping> subNodeMapping = new DynArray<Mapping>();
+    private final DynArray<Mapping> subNodeMapping;
 
     protected ConditionalSelection( int index ) {
         super( index );
+        subNodeMapping = DynArray.create( Mapping.class, 10, 10 );
     }
 
     @Override

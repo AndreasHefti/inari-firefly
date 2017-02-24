@@ -22,7 +22,7 @@ public class EAnimation extends EntityComponent {
     
     public EAnimation() {
         super( TYPE_KEY );
-        animationMapping = new DynArray<AnimationMapping>( 10, 10 );
+        animationMapping = DynArray.create( AnimationMapping.class, 10, 5 );
     }
 
     @Override

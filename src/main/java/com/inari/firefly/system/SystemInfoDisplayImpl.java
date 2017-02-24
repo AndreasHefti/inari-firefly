@@ -20,7 +20,7 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
     private final FFGraphics graphics;
     
     boolean active = false;
-    final DynArray<SystemInfo> infos = new DynArray<SystemInfo>();
+    final DynArray<SystemInfo> infos = DynArray.create( SystemInfo.class, 10, 10 );
     final StringBuffer textbuffer = new StringBuffer();
     
     private int width = 0;
@@ -141,7 +141,7 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
     private final SystemInfoDisplayImpl.InfoDisplayBackground infoDisplayBackground =  new InfoDisplayBackground();
     private static final class InfoDisplayBackground implements ShapeData {
 
-        public final DynArray<RGBColor> colors = new DynArray<RGBColor>();
+        public final DynArray<RGBColor> colors = DynArray.create( RGBColor.class, 4, 1 ); 
         public final float[] rectVertices = new float[] { 0, 0, 0, 0 };
         
         InfoDisplayBackground() { colors.add( new RGBColor( 0.8f, 0.8f, 0.8f, 0.5f ) ); }

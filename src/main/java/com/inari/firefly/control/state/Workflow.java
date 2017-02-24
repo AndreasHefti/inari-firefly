@@ -53,7 +53,7 @@ public final class Workflow extends SystemComponent {
         states = null;
         stateChanges = null;
         currentStateName = null;
-        stateChangesOfCurrentState = new DynArray<StateChange>( 10, 1 );
+        stateChangesOfCurrentState = DynArray.create( StateChange.class, 10, 1 );
     }
     
     @Override

@@ -87,8 +87,8 @@ public final class FFContext {
     
     private final Map<TypedKey<?>, Object> properties =  new LinkedHashMap<TypedKey<?>, Object>();
     
-    private final DynArray<FFSystem> systems = new DynArray<FFSystem>();
-    private final DynArray<SystemBuilderAdapter<?>> systemBuilderAdapter = new DynArray<SystemBuilderAdapter<?>>();
+    private final DynArray<FFSystem> systems = DynArray.create( FFSystem.class, 50, 10 );
+    private final DynArray<SystemBuilderAdapter<?>> systemBuilderAdapter = DynArray.createTyped( SystemBuilderAdapter.class, 20, 10 ); 
     
     private final IEventDispatcher eventDispatcher;
     

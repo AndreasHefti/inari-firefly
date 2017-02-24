@@ -21,7 +21,7 @@ public final class ContactConstraint  {
     
     private final Aspects contactTypes = CollisionSystem.CONTACT_ASPECT_GROUP.createAspects();
     private final BitMask intersectionMask = new BitMask( 0, 0 );
-    private final DynArray<Contact> contacts = new DynArray<Contact>();
+    private final DynArray<Contact> contacts = DynArray.create( Contact.class, 20, 10 );
     
     public ContactConstraint( String name, Rectangle contactScanBounds ) {
         this.name = name;

@@ -47,7 +47,7 @@ public final class AudioSystem
 
     AudioSystem() {
         super( SYSTEM_KEY );
-        sounds = new DynArray<Sound>();
+        sounds = DynArray.create( Sound.class, 20, 10 );
     }
     
     @Override

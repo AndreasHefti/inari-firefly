@@ -37,7 +37,7 @@ public class EShape extends EntityComponent implements ShapeData {
     
     private Type shapeType;
     private float[] vertices;
-    private final DynArray<RGBColor> colors = new DynArray<RGBColor>();
+    private final DynArray<RGBColor> colors = DynArray.create( RGBColor.class, 4, 1 );
     private int segments;
     private boolean fill;
     private BlendMode blendMode;

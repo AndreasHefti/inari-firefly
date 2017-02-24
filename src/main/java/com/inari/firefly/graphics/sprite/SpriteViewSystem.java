@@ -40,7 +40,7 @@ public final class SpriteViewSystem
     
     
     SpriteViewSystem() {
-        spritesPerViewAndLayer = new DynArray<DynArray<DynArray<IndexedTypeSet>>>();
+        spritesPerViewAndLayer = DynArray.createTyped( DynArray.class, 20, 10 );
     }
     
     @Override
@@ -95,7 +95,7 @@ public final class SpriteViewSystem
         if ( spritesPerViewAndLayer.contains( viewId ) ) { 
             spritePerLayer = spritesPerViewAndLayer.get( viewId );
         } else if ( createNew ) {
-            spritePerLayer = new DynArray<DynArray<IndexedTypeSet>>();
+            spritePerLayer = DynArray.createTyped( DynArray.class, 20, 10 );
             spritesPerViewAndLayer.set( viewId, spritePerLayer );
         }
         
@@ -107,7 +107,7 @@ public final class SpriteViewSystem
         if ( spritePerLayer.contains( layerId ) ) { 
             spritesOfLayer = spritePerLayer.get( layerId );
         } else if ( createNew ) {
-            spritesOfLayer = new DynArray<IndexedTypeSet>();
+            spritesOfLayer = DynArray.create( IndexedTypeSet.class, 100, 100 );
             spritePerLayer.set( layerId, spritesOfLayer );
         }
         

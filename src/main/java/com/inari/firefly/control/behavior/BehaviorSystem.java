@@ -30,8 +30,8 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
     
     BehaviorSystem() {
         super( SYSTEM_KEY );
-        actions = new DynArray<Action>();
-        behaviorNodes = new DynArray<BehaviorNode>();
+        actions = DynArray.create( Action.class, 20, 10 );
+        behaviorNodes = DynArray.create( BehaviorNode.class, 20, 10 );
         entityIds = new IntBag( 50, -1 );
     }
     

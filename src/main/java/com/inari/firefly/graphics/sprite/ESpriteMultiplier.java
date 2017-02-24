@@ -23,7 +23,7 @@ public final class ESpriteMultiplier extends EntityComponent {
     
     public ESpriteMultiplier() {
         super( TYPE_KEY );
-        positions = new DynArray<PositionF>( 10, 10 );
+        positions = DynArray.create( PositionF.class, 20, 10 );
     }
 
     @Override

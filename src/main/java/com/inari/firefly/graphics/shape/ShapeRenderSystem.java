@@ -30,7 +30,7 @@ public final class ShapeRenderSystem
     
     
     ShapeRenderSystem() {
-        shapesPerViewAndLayer = new DynArray<DynArray<IntBag>>();
+        shapesPerViewAndLayer = DynArray.createTyped( DynArray.class, 20, 10 );
     }
     
     @Override
@@ -82,7 +82,7 @@ public final class ShapeRenderSystem
         if ( shapesPerViewAndLayer.contains( viewId ) ) { 
             shapePerLayer = shapesPerViewAndLayer.get( viewId );
         } else if ( createNew ) {
-            shapePerLayer = new DynArray<IntBag>();
+            shapePerLayer = DynArray.create( IntBag.class, 20, 10 );
             shapesPerViewAndLayer.set( viewId, shapePerLayer );
         }
         

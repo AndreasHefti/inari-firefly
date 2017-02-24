@@ -43,7 +43,7 @@ public final class ControllerSystem
 
     ControllerSystem() {
         super( SYSTEM_KEY );
-        controller = new DynArray<Controller>();
+        controller = DynArray.create( Controller.class, 20, 10 );
     }
     
     @Override

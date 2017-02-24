@@ -42,7 +42,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     
     AssetSystem() {
         super( SYSTEM_KEY );
-        assets = new DynArray<Asset>();
+        assets = DynArray.create( Asset.class );
         nameMapping = new HashMap<String, Asset>();
     }
 

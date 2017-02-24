@@ -128,7 +128,7 @@ public class EEntity extends EntityComponent {
     }
     
     private DynArray<Aspect> getAspectsAsDynArray() {
-        DynArray<Aspect> result = new DynArray<Aspect>();
+        DynArray<Aspect> result = DynArray.create( Aspect.class, 20, 10 );
         for ( Aspect aspect : aspects ) {
             result.add( aspect );
         }

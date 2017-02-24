@@ -25,8 +25,8 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.utils.Condition;
 import com.inari.firefly.system.component.SystemComponentBuilder;
+import com.inari.firefly.system.utils.Condition;
 
 public class StateSystem
     extends
@@ -45,7 +45,7 @@ public class StateSystem
 
     public StateSystem() {
         super( SYSTEM_KEY );
-        workflows = new DynArray<Workflow>( Indexer.getIndexedObjectSize( Workflow.class ) );
+        workflows = DynArray.create( Workflow.class, Indexer.getIndexedObjectSize( Workflow.class ), 10 ); 
     }
     
     @Override

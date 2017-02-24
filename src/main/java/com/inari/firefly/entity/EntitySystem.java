@@ -60,7 +60,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         super( SYSTEM_KEY );
         activeEntities = new BitSet( INIT_SIZE );
         inactiveEntities = new BitSet( INIT_SIZE );
-        components = new DynArray<IndexedTypeSet>( INIT_SIZE );
+        components = DynArray.create( IndexedTypeSet.class, INIT_SIZE, 100 );
     }
     
     @Override

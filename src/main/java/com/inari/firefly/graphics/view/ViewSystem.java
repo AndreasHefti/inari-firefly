@@ -49,10 +49,10 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
 
     ViewSystem() {
         super( SYSTEM_KEY );
-        views = new DynArray<View>( INITAL_SIZE );
-        oderedLayersOfView = new DynArray<List<Layer>>( INITAL_SIZE );
+        views = DynArray.create( View.class, 5, 5 ); 
+        oderedLayersOfView = DynArray.createTyped( List.class, 10, 5 );
         orderedViewports = new ArrayList<View>( INITAL_SIZE );
-        activeOrderedViewports = new DynArray<View>( INITAL_SIZE, 1 );
+        activeOrderedViewports = DynArray.create( View.class, INITAL_SIZE, 1 ); 
     }
     
     @Override

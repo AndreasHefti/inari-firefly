@@ -44,11 +44,12 @@ public final class AnimationSystem
     };
 
     final DynArray<Animation> animations;
-    final DynArray<AnimationMapping> activeMappings = new DynArray<AnimationMapping>( 100, 100 );
+    final DynArray<AnimationMapping> activeMappings;
 
     AnimationSystem() {
         super( SYSTEM_KEY );
-        animations = new DynArray<Animation>();
+        animations = DynArray.create( Animation.class, 20, 10 );
+        activeMappings = DynArray.create( AnimationMapping.class, 100, 100 );
     }
     
     @Override

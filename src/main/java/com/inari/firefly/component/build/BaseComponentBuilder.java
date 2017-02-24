@@ -85,11 +85,12 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return this;
     }
     
+    @SuppressWarnings( "unchecked" )
     @Override
     public final <T> ComponentBuilder set( AttributeKey<DynArray<T>> key, T value, int index ) {
         DynArray<T> array;
         if ( ! attributes.contains( key ) ) {
-            array = new DynArray<T>();
+            array = DynArray.create( (Class<T>) value.getClass() ); 
         } else {
             array = attributes.getValue( key );
         }
@@ -110,11 +111,12 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return this;
     }
 
+    @SuppressWarnings( "unchecked" )
     @Override
     public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value ) {
         DynArray<T> list;
         if ( ! attributes.contains( key ) ) {
-            list = new DynArray<T>( 10, 10 );
+            list = DynArray.create( (Class<T>) value.getClass(), 10, 10 );
             attributes.put( key, list );
         } else {
             list = attributes.getValue( key );
@@ -124,11 +126,23 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return this;
     }
     
+    @SuppressWarnings( "unchecked" )
     @Override
     public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values ) {
         DynArray<T> list;
-        if ( ! attributes.contains( key ) ) {
-            list = new DynArray<T>( 10, 10 );
+        if ( !attributes.contains( key ) ) {
+            T value = null ;
+            for ( int i = 0; i < values.length; i++ ) {
+                value = values[ i ];
+                if ( value != null ) {
+                    break;
+                }
+            }
+            if ( value == null ) {
+                return this;
+            }
+            
+            list = DynArray.create( (Class<T>) value.getClass(), 10, 10 );
             attributes.put( key, list );
         } else {
             list = attributes.getValue( key );
@@ -142,20 +156,7 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     
     @Override
     public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<T> values ) {
-        DynArray<T> list;
-        if ( ! attributes.contains( key ) ) {
-            list = new DynArray<T>( 10, 10 );
-            attributes.put( key, list );
-        } else {
-            list = attributes.getValue( key );
-        }
-        
-        for ( int i = 0; i < values.capacity(); i++ ) {
-            if ( values.contains( i ) ) {
-                list.add( values.get( i ) );
-            }
-        }
-        return this;
+        return add( key, values.getArray() );
     }
 
     @Override

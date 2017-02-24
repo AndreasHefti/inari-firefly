@@ -36,7 +36,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
     
     TaskSystem() {
         super( SYSTEM_KEY );
-        tasks = new DynArray<Task>();
+        tasks = DynArray.create( Task.class, 20, 10 );
     }
 
     @Override

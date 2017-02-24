@@ -23,7 +23,7 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
     
     PrototypeSystem() {
         super( SYSTEM_KEY );
-        prototypes = new DynArray<Prototype>();
+        prototypes = DynArray.create( Prototype.class, 20, 10 );
     }
 
     @Override

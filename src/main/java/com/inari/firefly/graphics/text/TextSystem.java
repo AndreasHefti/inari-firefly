@@ -36,8 +36,8 @@ public class TextSystem
     
     TextSystem() {
         super( SYSTEM_KEY );
-        renderer = new DynArray<TextRenderer>();
-        textPerViewAndLayer = new DynArray<DynArray<DynArray<IndexedTypeSet>>>();
+        renderer = DynArray.create( TextRenderer.class, 10, 10 );
+        textPerViewAndLayer = DynArray.createTyped( DynArray.class, 10, 10 );
     }
     
     @Override
@@ -134,7 +134,7 @@ public class TextSystem
         if ( textPerViewAndLayer.contains( viewId ) ) { 
             textPerLayer = textPerViewAndLayer.get( viewId );
         } else if ( createNew ) {
-            textPerLayer = new DynArray<DynArray<IndexedTypeSet>>();
+            textPerLayer = DynArray.createTyped( DynArray.class, 10, 10 );
             textPerViewAndLayer.set( viewId, textPerLayer );
         }
         
@@ -146,7 +146,7 @@ public class TextSystem
         if ( textPerLayer.contains( layerId ) ) { 
             textsOfLayer = textPerLayer.get( layerId );
         } else if ( createNew ) {
-            textsOfLayer = new DynArray<IndexedTypeSet>();
+            textsOfLayer = DynArray.create( IndexedTypeSet.class, 40, 10 );
             textPerLayer.set( layerId, textsOfLayer );
         }
         

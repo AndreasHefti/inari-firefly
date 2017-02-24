@@ -30,7 +30,7 @@ public final class EntityProvider implements FFSystem  {
 
     EntityProvider() {
         disposedComponentSets = new ArrayDeque<IndexedTypeSet>();
-        disposedComponents = new DynArray<ArrayDeque<EntityComponent>>();
+        disposedComponents = DynArray.createTyped( ArrayDeque.class, 20, 10 );
     }
     
     @Override

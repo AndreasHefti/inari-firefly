@@ -41,9 +41,9 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     public void init( FFContext context ) throws FFInitException {
         super.init( context );
         
-        prefabs = new DynArray<EntityPrefab>();
-        prefabComponents = new DynArray<IndexedTypeSet>();
-        components = new DynArray<ArrayDeque<IndexedTypeSet>>();
+        prefabs = DynArray.create( EntityPrefab.class, 20, 10 );
+        prefabComponents = DynArray.create( IndexedTypeSet.class, 20, 10 ); 
+        components = DynArray.createTyped( ArrayDeque.class, 20, 10 );
         
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         entityProvider = context.getSystem( EntityProvider.SYSTEM_KEY );

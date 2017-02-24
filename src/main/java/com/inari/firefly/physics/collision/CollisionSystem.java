@@ -59,9 +59,9 @@ public final class CollisionSystem
 
     CollisionSystem() {
         super( SYSTEM_KEY );
-        quadTrees = new DynArray<CollisionQuadTree>();
-        quadTreesPerViewAndLayer = new DynArray<DynArray<CollisionQuadTree>>();
-        collisionResolvers = new DynArray<CollisionResolver>();
+        quadTrees = DynArray.create( CollisionQuadTree.class, 10, 10 ); 
+        quadTreesPerViewAndLayer = DynArray.createTyped( DynArray.class, 10, 10 );
+        collisionResolvers = DynArray.create( CollisionResolver.class, 20, 10 );
     }
     
     @Override
@@ -468,7 +468,7 @@ public final class CollisionSystem
             }
             
             if ( !quadTreesPerViewAndLayer.contains( viewId ) ) {
-                quadTreesPerViewAndLayer.set( viewId, new DynArray<CollisionQuadTree>() );
+                quadTreesPerViewAndLayer.set( viewId, DynArray.create( CollisionQuadTree.class, 20, 10 ) );
             }
             
             quadTrees.set( quadTree.index(), quadTree );

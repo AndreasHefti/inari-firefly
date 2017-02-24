@@ -59,11 +59,13 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     private int shaderId;
     private boolean multiPosition;
     private final Position gridPosition = new Position();
-    private final DynArray<Position> gridPositions = new DynArray<Position>( 10, 50 );
+    private final DynArray<Position> gridPositions;
 
     public ETile() {
         super( TYPE_KEY );
+        gridPositions = DynArray.create( Position.class, 100, 20 );
         resetAttributes();
+        
     }
 
     @Override

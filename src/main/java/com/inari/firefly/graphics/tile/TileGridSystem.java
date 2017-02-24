@@ -56,9 +56,9 @@ public final class TileGridSystem
     
     public TileGridSystem() {
         super( SYSTEM_KEY );
-        renderer = new DynArray<TileGridRenderer>();
-        tileGrids = new DynArray<TileGrid>();
-        tileGridOfViewsPerLayer = new DynArray<DynArray<TileGrid>>();
+        renderer = DynArray.create( TileGridRenderer.class, 5, 5 );
+        tileGrids = DynArray.create( TileGrid.class, 20, 10 );
+        tileGridOfViewsPerLayer = DynArray.createTyped( DynArray.class, 10, 10 );
     }
     
     @Override
@@ -321,7 +321,7 @@ public final class TileGridSystem
             }
             
             if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
-                tileGridOfViewsPerLayer.set( viewId, new DynArray<TileGrid>() );
+                tileGridOfViewsPerLayer.set( viewId, DynArray.create( TileGrid.class, 20, 10 ) );
             }
 
             tileGrids.set( tileGrid.index(), tileGrid );

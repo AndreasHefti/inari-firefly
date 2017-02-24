@@ -18,7 +18,7 @@ import com.inari.firefly.system.external.TransformData;
 
 public class FFGraphicsMock implements FFGraphics {
     
-    private final DynArray<String> loadedAssets = new DynArray<String>();
+    private final DynArray<String> loadedAssets = DynArray.create( String.class, 20, 10 );
     private final Collection<String> views = new ArrayList<String>();
     
     private final Collection<String> log = new ArrayList<String>();

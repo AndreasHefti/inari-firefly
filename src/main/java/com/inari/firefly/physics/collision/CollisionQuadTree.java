@@ -56,7 +56,7 @@ public final class CollisionQuadTree extends SystemComponent {
         this.maxLevel = 10;
         this.rootNode = null;
         
-        matching = new DynArray<IntIterator>( maxLevel );
+        matching = DynArray.create( IntIterator.class, maxLevel, 10 );
         matchingIndex = 0;
     }
 
