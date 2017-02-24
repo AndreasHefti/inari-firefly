@@ -114,9 +114,14 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     @SuppressWarnings( "unchecked" )
     @Override
     public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value ) {
+        return add( key, value, (Class<T>) value.getClass() );
+    }
+    
+    @Override
+    public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value, Class<T> type ) {
         DynArray<T> list;
         if ( ! attributes.contains( key ) ) {
-            list = DynArray.create( (Class<T>) value.getClass(), 10, 10 );
+            list = DynArray.create( type, 10, 10 );
             attributes.put( key, list );
         } else {
             list = attributes.getValue( key );
