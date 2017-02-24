@@ -40,6 +40,7 @@ public interface ComponentBuilder {
     <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value );
     <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value, Class<T> type );
     <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values );
+    <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values, Class<T> type );
     <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<T> values );
     ComponentBuilder add( Attribute<?>... attributes );
     
