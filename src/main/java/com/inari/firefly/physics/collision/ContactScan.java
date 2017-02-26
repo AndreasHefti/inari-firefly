@@ -9,8 +9,7 @@ public final class ContactScan implements Iterable<ContactConstraint> {
 
     private final HashMap<String, ContactConstraint> constraints = new HashMap<String, ContactConstraint>();
     
-    ContactScan() {
-    }
+    ContactScan() {}
 
     public final void update( float x, float y, float vx, float vy ) {
         for ( ContactConstraint constraint : constraints.values() ) {
@@ -55,6 +54,10 @@ public final class ContactScan implements Iterable<ContactConstraint> {
     
     public final ContactConstraint getContactContstraint( String name ) {
         return constraints.get( name );
+    }
+    
+    public final void clear() {
+        constraints.clear();
     }
 
     @Override

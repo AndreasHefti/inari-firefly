@@ -248,6 +248,10 @@ public final class TileGrid extends SystemComponent {
 
         return get( x, y );
     }
+    
+    public final void set( int entityId, Position position ) {
+        set( entityId, position.x, position.y );
+    }
 
     public final void set( int entityId, int xpos, int ypos ) {
         if ( spherical ) {
@@ -265,6 +269,10 @@ public final class TileGrid extends SystemComponent {
         int old = grid[ ypos ][ xpos ];
         grid[ ypos ][ xpos ] = NULL_VALUE;
         return old;
+    }
+    
+    public final void resetIfMatch( int entityId, Position position ) {
+        resetIfMatch( entityId, position.x, position.y );
     }
     
     public final void resetIfMatch( int entityId, int xpos, int ypos ) {

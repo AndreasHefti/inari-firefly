@@ -21,12 +21,21 @@ import java.util.Set;
 
 import com.inari.commons.geom.Position;
 import com.inari.commons.graphics.RGBColor;
+import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.SpriteRenderable;
+import com.inari.firefly.physics.animation.AttributeAnimationAdapter.AttributeAnimationAdapterKey;
+import com.inari.firefly.physics.animation.EntityFloatAnimationAdapter;
+import com.inari.firefly.physics.animation.EntityIntAnimationAdapter;
+import com.inari.firefly.physics.animation.EntityValueAnimationAdapter;
+import com.inari.firefly.physics.animation.FloatAnimation;
+import com.inari.firefly.physics.animation.IntAnimation;
+import com.inari.firefly.physics.animation.ValueAnimation;
+import com.inari.firefly.system.FFContext;
 
 public final class ETile extends EntityComponent implements SpriteRenderable {
     
@@ -38,18 +47,12 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     public static final AttributeKey<BlendMode> BLEND_MODE = AttributeKey.create( "blendMode", BlendMode.class, ETile.class );
     public static final AttributeKey<String> SHADER_ASSET_NAME = AttributeKey.createString( "shaderAssetName", ETile.class );
     public static final AttributeKey<Integer> SHADER_ID = AttributeKey.createInt( "shaderId", ETile.class );
-    public static final AttributeKey<Boolean> MULTI_POSITION = AttributeKey.createBoolean( "multiPosition", ETile.class );
-    public static final AttributeKey<Integer> GRID_X_POSITION = AttributeKey.createInt( "gridXPosition", ETile.class );
-    public static final AttributeKey<Integer> GRID_Y_POSITION = AttributeKey.createInt( "gridYPosition", ETile.class );
     public static final AttributeKey<DynArray<Position>> GRID_POSITIONS = AttributeKey.createDynArray( "gridPositions", ETile.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         SPRITE_ID,
         TINT_COLOR,
         BLEND_MODE,
         SHADER_ID,
-        MULTI_POSITION,
-        GRID_X_POSITION,
-        GRID_Y_POSITION,
         GRID_POSITIONS,
     };
     
@@ -57,8 +60,6 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     private final RGBColor tintColor = new RGBColor();
     private BlendMode blendMode;
     private int shaderId;
-    private boolean multiPosition;
-    private final Position gridPosition = new Position();
     private final DynArray<Position> gridPositions;
 
     public ETile() {
@@ -74,10 +75,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         setTintColor( new RGBColor( 1, 1, 1, 1 ) );
         blendMode = BlendMode.NONE;
         shaderId = -1;
-        setGridXPos( 0 );
-        setGridYPos( 0 );
         gridPositions.clear();
-        multiPosition = false;
     }
     
     @Override
@@ -124,37 +122,6 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         this.shaderId = shaderId;
     }
 
-    public final boolean isMultiPosition() {
-        return multiPosition;
-    }
-
-    public final void setMultiPosition( boolean multiPosition ) {
-        this.multiPosition = multiPosition;
-        if ( !multiPosition ) {
-            gridPositions.clear();
-        }
-    }
-
-    public final int getGridXPos() {
-        return gridPosition.x;
-    }
-    
-    public final void setGridXPos( int pos ) {
-        gridPosition.x = pos;
-    }
-    
-    final Position getGridPosition() {
-        return gridPosition;
-    }
-    
-    public final int getGridYPos() {
-        return gridPosition.y;
-    }
-    
-    public final void setGridYPos( int pos ) {
-        gridPosition.y = pos;
-    }
-
     public final DynArray<Position> getGridPositions() {
         return gridPositions;
     }
@@ -170,9 +137,6 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
         shaderId = attributes.getAssetInstanceId( SHADER_ASSET_NAME, SHADER_ID, shaderId );
-        multiPosition = attributes.getValue( MULTI_POSITION, multiPosition );
-        gridPosition.x = attributes.getValue( GRID_X_POSITION, gridPosition.x );
-        gridPosition.y = attributes.getValue( GRID_Y_POSITION, gridPosition.y );
         
         gridPositions.clear();
         if ( attributes.contains( GRID_POSITIONS ) ) {
@@ -186,12 +150,79 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
         attributes.put( BLEND_MODE, blendMode );
         attributes.put( SHADER_ID, shaderId );
-        attributes.put( MULTI_POSITION, multiPosition );
-        if ( multiPosition ) {
-            attributes.put( GRID_POSITIONS, gridPositions );
-        } else {
-            attributes.put( GRID_X_POSITION, gridPosition.x );
-            attributes.put( GRID_Y_POSITION, gridPosition.y );
+        attributes.put( GRID_POSITIONS, gridPositions );
+    }
+    
+    public interface AnimationAdapter {
+        AttributeAnimationAdapterKey<TileSpriteIdAnimationAdapter> SPRITE_ID = TileSpriteIdAnimationAdapter.TYPE_KEY;
+        AttributeAnimationAdapterKey<TintColorRedAnimationAdapter> TINT_COLOR_RED = TintColorRedAnimationAdapter.TYPE_KEY;
+        AttributeAnimationAdapterKey<TintColorGreenAnimationAdapter> TINT_COLOR_GREEN = TintColorGreenAnimationAdapter.TYPE_KEY;
+        AttributeAnimationAdapterKey<TintColorBlueAnimationAdapter> TINT_COLOR_BLUE = TintColorBlueAnimationAdapter.TYPE_KEY;
+        AttributeAnimationAdapterKey<TintColorAlphaAnimationAdapter> TINT_COLOR_ALPHA = TintColorAlphaAnimationAdapter.TYPE_KEY;
+        AttributeAnimationAdapterKey<TintColorAnimationAdapter> TINT_COLOR = TintColorAnimationAdapter.TYPE_KEY;
+    }
+    
+    private static final class TileSpriteIdAnimationAdapter implements EntityIntAnimationAdapter {
+        public static final AttributeAnimationAdapterKey<TileSpriteIdAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TileSpriteIdAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, IntAnimation animation, FFContext context ) {
+            final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
+            tile.setSpriteId( animation.getValue( entityId, tile.getSpriteId() ) );
+        }
+    }
+    
+    private static final class TintColorRedAnimationAdapter implements EntityFloatAnimationAdapter {
+        public static final AttributeAnimationAdapterKey<TintColorRedAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorRedAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
+            final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
+            final RGBColor tintColor = tile.getTintColor();
+            tintColor.r = animation.getValue( entityId, tintColor.r );
+        }
+    }
+    
+    private static final class TintColorGreenAnimationAdapter implements EntityFloatAnimationAdapter {
+        public static final AttributeAnimationAdapterKey<TintColorGreenAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorGreenAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
+            final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
+            final RGBColor tintColor = tile.getTintColor();
+            tintColor.g = animation.getValue( entityId, tintColor.g );
+        }
+    }
+    
+    private static final class TintColorBlueAnimationAdapter implements EntityFloatAnimationAdapter {
+        public static final AttributeAnimationAdapterKey<TintColorBlueAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorBlueAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
+            final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
+            final RGBColor tintColor = tile.getTintColor();
+            tintColor.b = animation.getValue( entityId, tintColor.b );
+        }
+    }
+    
+    private static final class TintColorAlphaAnimationAdapter implements EntityFloatAnimationAdapter {
+        public static final AttributeAnimationAdapterKey<TintColorAlphaAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorAlphaAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
+            final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
+            final RGBColor tintColor = tile.getTintColor();
+            tintColor.a = animation.getValue( entityId, tintColor.a );
+        }
+    }
+    
+    private static final class TintColorAnimationAdapter implements EntityValueAnimationAdapter<RGBColor> {
+        public static final AttributeAnimationAdapterKey<TintColorAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorAnimationAdapter() );
+        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
+        @Override
+        public final void apply( int entityId, ValueAnimation<RGBColor> animation, FFContext context ) {
+            final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
+            tile.setTintColor( animation.getValue( entityId, tile.getTintColor() ) );
         }
     }
 

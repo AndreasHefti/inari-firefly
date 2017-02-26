@@ -110,30 +110,32 @@ public final class TileGridSystem
     }
     
     public final void entityActivated( int entityId, final Aspects aspects ) {
-        ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
-        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
-        TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
-        if ( tile.isMultiPosition() ) {
-            for ( Position gridPosition : tile.getGridPositions() ) {
-                tileGrid.set( entityId, gridPosition.x, gridPosition.y );
+        final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
+        final ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
+        final TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
+        final DynArray<Position> gridPositions = tile.getGridPositions();
+        
+        for ( int i = 0; i < gridPositions.capacity(); i++ ) {
+            if ( !gridPositions.contains( i ) ) {
+                continue;
             }
-        } else {
-            Position gridPosition = tile.getGridPosition();
-            tileGrid.set( entityId, gridPosition.x, gridPosition.y );
+
+            tileGrid.set( entityId, gridPositions.get( i ) );
         }
     }
     
     public final void entityDeactivated( int entityId, final Aspects aspects ) {
-        ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
-        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
-        TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
-        if ( tile.isMultiPosition() ) {
-            for ( Position gridPosition : tile.getGridPositions() ) {
-                tileGrid.resetIfMatch( entityId, gridPosition.x, gridPosition.y );
+        final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
+        final ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
+        final TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
+        final DynArray<Position> gridPositions = tile.getGridPositions();
+        
+        for ( int i = 0; i < gridPositions.capacity(); i++ ) {
+            if ( !gridPositions.contains( i ) ) {
+                continue;
             }
-        } else {
-            Position gridPosition = tile.getGridPosition();
-            tileGrid.resetIfMatch( entityId, gridPosition.x, gridPosition.y );
+            
+            tileGrid.resetIfMatch( entityId, gridPositions.get( i ) );
         }
     }
     

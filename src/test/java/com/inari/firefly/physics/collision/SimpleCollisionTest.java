@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.inari.commons.geom.Position;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.FFTest;
@@ -124,8 +125,7 @@ public class SimpleCollisionTest extends FFTest {
         .activateAndNext()
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.LAYER_ID, 0 )
-            .set( ETile.GRID_X_POSITION, 2 )
-            .set( ETile.GRID_Y_POSITION, 1 )
+            .add( ETile.GRID_POSITIONS, new Position( 2, 1) )
             .set( ECollision.COLLISION_BOUNDS, new Rectangle( 0, 0, 16, 16 ) )
         .activate();
         
