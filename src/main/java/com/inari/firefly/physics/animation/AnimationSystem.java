@@ -180,19 +180,19 @@ public final class AnimationSystem
                 
                 if ( animation.startTime > 0 && event.timer.getTime() >= animation.startTime ) {
                     animation.activate();
-                    applyValueAttribute( animation );
                     continue;
                 }
             }
         }
     }
     
-    private void applyValueAttribute( Animation animation ) {
+    private void applyValueAttribute( final Animation animation ) {
         for ( int i = 0; i < activeMappings.capacity(); i++ ) {
             AnimationMapping animationMapping = activeMappings.get( i );
-            if ( animationMapping == null ) {
+            if ( animationMapping == null || animation.index() != animationMapping.animationId ) {
                 continue;
             }
+            
             animationMapping
                 .adapterKey
                 .getAdapterInstance()
