@@ -20,6 +20,7 @@ public final class ContactConstraint  {
     private boolean filtering = false;
     
     private final Aspects contactTypes = CollisionSystem.CONTACT_ASPECT_GROUP.createAspects();
+    private final Aspects materialTypes = CollisionSystem.MATERIAL_ASPECT_GROUP.createAspects();
     private final BitMask intersectionMask = new BitMask( 0, 0 );
     private final DynArray<Contact> contacts = DynArray.create( Contact.class, 20, 10 );
     
@@ -90,6 +91,10 @@ public final class ContactConstraint  {
         return contactTypes.contains( contact );
     }
     
+    public final boolean hasMaterialContact( Aspect material ) {
+        return materialTypes.contains( material );
+    }
+    
     public final DynArray<Contact> allContacts() {
         return contacts;
     }
@@ -120,6 +125,7 @@ public final class ContactConstraint  {
         }
         contacts.clear();
         contactTypes.clear();
+        materialTypes.clear();
         intersectionMask.clearMask();
     }
     
@@ -157,9 +163,11 @@ public final class ContactConstraint  {
             this.intersectionMask.setRegion( intersectionBounds, true );
         }
         
-        final Aspect contactType = contact.contactType();
-        if ( contactType != null ) {
-            contactTypes.set( contactType );
+        if ( contact.contactType != null ) {
+            contactTypes.set( contact.contactType );
+        }
+        if ( contact.materialType != null ) {
+            materialTypes.set( contact.materialType );
         }
         
         contacts.add( contact );
