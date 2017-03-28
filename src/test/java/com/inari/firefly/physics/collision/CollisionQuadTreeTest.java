@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.IntIterator;
 import com.inari.firefly.FFTest;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.EntitySystem;
@@ -30,7 +31,7 @@ public class CollisionQuadTreeTest extends FFTest {
             .set( CollisionQuadTree.MAX_LEVEL, 4 )
             .set( CollisionQuadTree.WORLD_AREA, new Rectangle( 0, 0, 100, 100 ) )
         .build( 1 );
-        CollisionQuadTree quadTree = ffContext.getSystemComponent( CollisionQuadTree.TYPE_KEY, 1 );
+        ContactPool quadTree = ffContext.getSystemComponent( ContactPool.TYPE_KEY, 1 );
 
         assertEquals( 
             "EntityCollisionQuadTree: maxEntities=4 maxLevel=4[\n" + 
@@ -82,6 +83,16 @@ public class CollisionQuadTreeTest extends FFTest {
             "]", 
             quadTree.toString() 
         );
+        
+        IntIterator intIterator = quadTree.get( new Rectangle( 50, 50, 10, 10 ) );
+        while ( intIterator.hasNext() ) {
+            System.out.println( intIterator.next() );
+        }
+        
+//        intIterator = quadTree.get( new Rectangle( 0, 0, 80, 80 ) );
+//        while ( intIterator.hasNext() ) {
+//            System.out.println( intIterator.next() );
+//        }
     }
     
     private String createEntity( int x, int y, EntitySystem entitySystem ) {

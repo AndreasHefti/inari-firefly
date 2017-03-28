@@ -34,7 +34,7 @@ public class SimpleCollisionTest extends FFTest {
         CollisionSystem collisionSystem = ffContext.getSystem( CollisionSystem.SYSTEM_KEY );
         UpdateEvent updateEvent = new UpdateEvent( timer );
         
-        collisionSystem.getCollisionQuadTreeBuilder()
+        collisionSystem.getContactPoolBuilder( CollisionQuadTree.class )
             .set( CollisionQuadTree.VIEW_ID, 0 )
             .set( CollisionQuadTree.LAYER_ID, 0 )
             .set( CollisionQuadTree.MAX_ENTRIES_OF_AREA, 10 )

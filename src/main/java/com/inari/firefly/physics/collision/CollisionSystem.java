@@ -47,8 +47,8 @@ public final class CollisionSystem
         CollisionResolver.TYPE_KEY
     };
     
-    private final DynArray<CollisionQuadTree> quadTrees;
-    private final DynArray<DynArray<CollisionQuadTree>> quadTreesPerViewAndLayer;
+    private final DynArray<ContactPool> contactPools;
+    private final DynArray<DynArray<ContactPool>> contactPoolsPerViewAndLayer;
     private final DynArray<CollisionResolver> collisionResolvers;
     
     private TileGridSystem tileGridSystem;
@@ -59,8 +59,8 @@ public final class CollisionSystem
 
     CollisionSystem() {
         super( SYSTEM_KEY );
-        quadTrees = DynArray.create( CollisionQuadTree.class, 10, 10 ); 
-        quadTreesPerViewAndLayer = DynArray.createTyped( DynArray.class, 10, 10 );
+        contactPools = DynArray.create( ContactPool.class, 10, 10 ); 
+        contactPoolsPerViewAndLayer = DynArray.createTyped( DynArray.class, 10, 10 );
         collisionResolvers = DynArray.create( CollisionResolver.class, 20, 10 );
     }
     
@@ -91,22 +91,22 @@ public final class CollisionSystem
     @Override
     public final void onViewEvent( ViewEvent event ) {
         if ( event.isOfType( Type.VIEW_DELETED ) ) {
-            quadTreesPerViewAndLayer.remove( event.getView().index() );
+            contactPoolsPerViewAndLayer.remove( event.getView().index() );
             return;
         }
     }
     
     public final void entityActivated( int entityId, final Aspects aspects ) {
-        CollisionQuadTree quadTree = getCollisionQuadTreeForEntity( entityId );
-        if ( quadTree != null ) {
-            quadTree.add( entityId );
+        final ContactPool pool = getContactPoolForEntity( entityId );
+        if ( pool != null ) {
+            pool.add( entityId );
         }
     }
 
     public final void entityDeactivated( int entityId, final Aspects aspects ) {
-        CollisionQuadTree quadTree = getCollisionQuadTreeForEntity( entityId );
-        if ( quadTree != null ) {
-            quadTree.remove( entityId );
+        final ContactPool pool = getContactPoolForEntity( entityId );
+        if ( pool != null ) {
+            pool.remove( entityId );
         }
     }
     
@@ -114,6 +114,7 @@ public final class CollisionSystem
     public final void onMoveEvent( final MoveEvent event ) {
         final IntBag movedEntityIds = event.movedEntityIds();
         final int nullValue = movedEntityIds.getNullValue();
+        
         for ( int i = 0; i < movedEntityIds.length(); i++ ) {
             final int entityId = movedEntityIds.get( i );
             if ( entityId == nullValue ) {
@@ -174,12 +175,12 @@ public final class CollisionSystem
 
     
     private void scanSpriteContacts( final int entityId, final int viewId, final int layerId, final ContactConstraint constraint ) {
-        final CollisionQuadTree quadTree = getCollisionQuadTree( viewId, layerId );
-        if ( quadTree == null ) {
+        final ContactPool pool = getContactPool( viewId, layerId );
+        if ( pool == null ) {
             return;
         }
         
-        IntIterator entityIterator = quadTree.get( constraint.worldBounds );
+        IntIterator entityIterator = pool.get( constraint.worldBounds );
         if ( entityIterator == null || !entityIterator.hasNext() ) {
             return;
         }
@@ -272,25 +273,45 @@ public final class CollisionSystem
         contact.dispose();
     }
     
-    public final CollisionQuadTree getCollisionQuadTree( int id ) {
-        return quadTrees.get( id );
+    public final ContactPool getContactPool( int id ) {
+        return contactPools.get( id );
     }
     
-    public final CollisionQuadTree getCollisionQuadTree( String name ) {
-        for ( CollisionQuadTree quadTree : quadTrees ) {
-            if ( name.equals( quadTree.getName() ) ) {
-                return quadTree;
+    public final ContactPool getContactPool( String name ) {
+        for ( int i = 0; i < contactPools.capacity(); i++ ) {
+            final ContactPool contactPool = contactPools.get( i );
+            if ( contactPool == null ) {
+                continue;
+            }
+            
+            if ( name.equals( contactPool.getName() ) ) {
+                return contactPool;
             }
         }
         return null;
     }
     
-    public final CollisionQuadTree getCollisionQuadTree( int viewId, int layerId ) {
-        if ( !quadTreesPerViewAndLayer.contains( viewId ) ) {
+    public final int getContactPoolId( String name ) {
+        for ( int i = 0; i < contactPools.capacity(); i++ ) {
+            final ContactPool contactPool = contactPools.get( i );
+            if ( contactPool == null ) {
+                continue;
+            }
+            
+            if ( name.equals( contactPool.getName() ) ) {
+                return contactPool.index();
+            }
+        }
+        
+        return -1;
+    }
+    
+    public final ContactPool getContactPool( int viewId, int layerId ) {
+        if ( !contactPoolsPerViewAndLayer.contains( viewId ) ) {
             return null;
         }
         
-        final DynArray<CollisionQuadTree> ofLayer = quadTreesPerViewAndLayer.get( viewId );
+        final DynArray<ContactPool> ofLayer = contactPoolsPerViewAndLayer.get( viewId );
         if ( !ofLayer.contains( layerId ) ) {
             return null;
         }
@@ -298,20 +319,20 @@ public final class CollisionSystem
         return ofLayer.get( layerId );
     }
     
-    public final CollisionQuadTree getCollisionQuadTreeForEntity( int entityId ) {
+    public final ContactPool getContactPoolForEntity( int entityId ) {
         final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
         int viewId = transform.getViewId();
         int layerId = transform.getLayerId();
-        if ( !quadTreesPerViewAndLayer.contains( viewId ) ) {
+        if ( !contactPoolsPerViewAndLayer.contains( viewId ) ) {
             return null;
         }
         
-        DynArray<CollisionQuadTree> quadTreesPerView = quadTreesPerViewAndLayer.get( viewId );
-        if ( !quadTreesPerView.contains( layerId ) ) {
+        DynArray<ContactPool> poolsPerView = contactPoolsPerViewAndLayer.get( viewId );
+        if ( !poolsPerView.contains( layerId ) ) {
             return null;
         }
         
-        CollisionQuadTree quadTree = quadTreesPerView.get( layerId );
+        ContactPool quadTree = poolsPerView.get( layerId );
         if ( quadTree == null ) {
             return null;
         }
@@ -319,36 +340,31 @@ public final class CollisionSystem
         return quadTree;
     }
     
-    public final int getCollisionQuadTreeId( String name ) {
-        for ( CollisionQuadTree quadTree : quadTrees ) {
-            if ( name.equals( quadTree.getName() ) ) {
-                return quadTree.index();
-            }
-        }
-        return -1;
-    }
     
-    public final void deleteCollisionQuadTree( int id ) {
-        CollisionQuadTree quadTree = getCollisionQuadTree( id );
-        if ( quadTree == null ) {
+    
+    public final void deleteContactPool( int id ) {
+        ContactPool pool = getContactPool( id );
+        if ( pool == null ) {
             return;
         }
-        disposeQuadTree( quadTrees.remove( quadTree.getLayerId() ) );
-        quadTreesPerViewAndLayer.get( quadTree.getViewId() ).remove( quadTree.getLayerId() );
+        
+        disposeContactPool( contactPools.remove( pool.index() ) );
+        contactPoolsPerViewAndLayer.get( pool.getViewId() ).remove( pool.getLayerId() );
     }
     
-    public final void deleteCollisionQuadTree( String name ) {
-        CollisionQuadTree quadTree = getCollisionQuadTree( name );
-        if ( quadTree == null ) {
+    public final void deleteContactPool( String name ) {
+        ContactPool pool = getContactPool( name );
+        if ( pool == null ) {
             return;
         }
-        disposeQuadTree( quadTrees.remove( quadTree.getLayerId() ) );
-        quadTreesPerViewAndLayer.get( quadTree.getViewId() ).remove( quadTree.getLayerId() );
+        
+        disposeContactPool( contactPools.remove( pool.index() ) );
+        contactPoolsPerViewAndLayer.get( pool.getViewId() ).remove( pool.getLayerId() );
     }
     
-    private final void disposeQuadTree( CollisionQuadTree quadTree ) {
-        if ( quadTree != null ) {
-            quadTree.dispose();
+    private final void disposeContactPool( ContactPool contactPool ) {
+        if ( contactPool != null ) {
+            contactPool.dispose();
         }
     }
     
@@ -408,13 +424,13 @@ public final class CollisionSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new CollisionQuadTreeBuilderAdapter(),
+            new ContactPoolBuilderAdapter(),
             new CollisionResolverBuilderAdapter()
         };
     }
     
-    public final SystemComponentBuilder getCollisionQuadTreeBuilder() {
-        return new CollisionQuadTreeBuilder();
+    public final SystemComponentBuilder getContactPoolBuilder( Class<? extends ContactPool> componentType ) {
+        return new ContactPoolBuilder( componentType );
     }
 
     public final SystemComponentBuilder getCollisionResolverBuilder( Class<? extends CollisionResolver> componentType ) {
@@ -426,34 +442,34 @@ public final class CollisionSystem
 
     @Override
     public final void clear() {
-        for ( CollisionQuadTree quadTree : quadTrees ) {
-            disposeQuadTree( quadTree );
+        for ( ContactPool pool : contactPools ) {
+            disposeContactPool( pool );
         }
         for ( CollisionResolver cr : collisionResolvers ) {
             disposeCollisionConstraint( cr );
         }
         
-        quadTrees.clear();
-        quadTreesPerViewAndLayer.clear();
+        contactPools.clear();
+        contactPoolsPerViewAndLayer.clear();
         collisionResolvers.clear();
     }
 
-    private final class CollisionQuadTreeBuilder extends SystemComponentBuilder {
+    private final class ContactPoolBuilder extends SystemComponentBuilder {
         
-        private CollisionQuadTreeBuilder() {
-            super( context );
+        private ContactPoolBuilder( Class<? extends ContactPool> componentType ) {
+            super( context, componentType );
         }
         
         @Override
-        public final SystemComponentKey<CollisionQuadTree> systemComponentKey() {
-            return CollisionQuadTree.TYPE_KEY;
+        public final SystemComponentKey<ContactPool> systemComponentKey() {
+            return ContactPool.TYPE_KEY;
         }
 
         public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            CollisionQuadTree quadTree = createSystemComponent( componentId, componentType, context );
+            ContactPool pool = createSystemComponent( componentId, componentType, context );
             
-            int viewId = quadTree.getViewId();
-            int layerId = quadTree.getLayerId();
+            int viewId = pool.getViewId();
+            int layerId = pool.getLayerId();
             
             if ( viewId < 0 ) {
                 throw new FFInitException( "ViewId is mandatory for CollisionQuadTree" );
@@ -463,20 +479,16 @@ public final class CollisionSystem
                 throw new FFInitException( "LayerId is mandatory for CollisionQuadTree" );
             }
             
-            if ( quadTree.getWorldArea() == null ) {
-                throw new FFInitException( "WorldArea is mandatory for CollisionQuadTree" );
+            if ( !contactPoolsPerViewAndLayer.contains( viewId ) ) {
+                contactPoolsPerViewAndLayer.set( viewId, DynArray.create( ContactPool.class, 20, 10 ) );
             }
             
-            if ( !quadTreesPerViewAndLayer.contains( viewId ) ) {
-                quadTreesPerViewAndLayer.set( viewId, DynArray.create( CollisionQuadTree.class, 20, 10 ) );
-            }
-            
-            quadTrees.set( quadTree.index(), quadTree );
-            quadTreesPerViewAndLayer
+            contactPools.set( pool.index(), pool );
+            contactPoolsPerViewAndLayer
                 .get( viewId )
-                .set( layerId, quadTree );
+                .set( layerId, pool );
             
-            return quadTree.index();
+            return pool.index();
         }
     }
     
@@ -498,25 +510,25 @@ public final class CollisionSystem
         }
     }
 
-    private final class CollisionQuadTreeBuilderAdapter extends SystemBuilderAdapter<CollisionQuadTree> {
-        private CollisionQuadTreeBuilderAdapter() {
-            super( CollisionSystem.this, CollisionQuadTree.TYPE_KEY );
+    private final class ContactPoolBuilderAdapter extends SystemBuilderAdapter<ContactPool> {
+        private ContactPoolBuilderAdapter() {
+            super( CollisionSystem.this, ContactPool.TYPE_KEY );
         }
         @Override
-        public final CollisionQuadTree get( int id ) {
-            return getCollisionQuadTree( id );
+        public final ContactPool get( int id ) {
+            return getContactPool( id );
         }
         @Override
-        public final Iterator<CollisionQuadTree> getAll() {
-            return quadTrees.iterator();
+        public final Iterator<ContactPool> getAll() {
+            return contactPools.iterator();
         }
         @Override
         public final void delete( int id ) {
-            deleteCollisionQuadTree( id );
+            deleteContactPool( id );
         }
         @Override
         public final int getId( String name ) {
-            return getCollisionQuadTreeId( name );
+            return getContactPoolId( name );
         }
         @Override
         public final void activate( int id ) {
@@ -527,8 +539,8 @@ public final class CollisionSystem
             throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
         @Override
-        public final SystemComponentBuilder createComponentBuilder( Class<? extends CollisionQuadTree> componentType ) {
-            return new CollisionQuadTreeBuilder();
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends ContactPool> componentType ) {
+            return new ContactPoolBuilder( componentType );
         }
 
     }

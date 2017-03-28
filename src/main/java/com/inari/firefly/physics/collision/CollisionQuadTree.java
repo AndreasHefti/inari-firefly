@@ -4,40 +4,26 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
-import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
-import com.inari.firefly.graphics.view.Layer;
-import com.inari.firefly.graphics.view.View;
-import com.inari.firefly.system.component.SystemComponent;
 
-public final class CollisionQuadTree extends SystemComponent {
+public final class CollisionQuadTree extends ContactPool {
     
-    public static final SystemComponentKey<CollisionQuadTree> TYPE_KEY = SystemComponentKey.create( CollisionQuadTree.class );
-    
-    public static final AttributeKey<String> VIEW_NAME = new AttributeKey<String>( "viewName", String.class, CollisionQuadTree.class );
-    public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, CollisionQuadTree.class );
-    public static final AttributeKey<String> LAYER_NAME = new AttributeKey<String>( "layerName", String.class, CollisionQuadTree.class );
-    public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, CollisionQuadTree.class );
     public static final AttributeKey<Rectangle> WORLD_AREA = new AttributeKey<Rectangle>( "world_area", Rectangle.class, CollisionQuadTree.class );
     public static final AttributeKey<Integer> MAX_ENTRIES_OF_AREA = new AttributeKey<Integer>( "maxEntities", Integer.class, CollisionQuadTree.class );
     public static final AttributeKey<Integer> MAX_LEVEL = new AttributeKey<Integer>( "maxLevel", Integer.class, CollisionQuadTree.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
-        LAYER_ID,
         WORLD_AREA,
         MAX_ENTRIES_OF_AREA,
         MAX_LEVEL
     };
 
-    private int viewId;
-    private int layerId;
     private int maxEntities;
     private int maxLevel;
     private Node rootNode;
@@ -46,8 +32,6 @@ public final class CollisionQuadTree extends SystemComponent {
     private final DynArray<IntIterator> matching;
     private final MatchingIterator matchingIterator = new MatchingIterator(); 
     private final Rectangle tmpBounds = new Rectangle();
-    
-    private EntitySystem entitySystem;
 
     CollisionQuadTree( int id ) {
         super( id );
@@ -58,34 +42,6 @@ public final class CollisionQuadTree extends SystemComponent {
         
         matching = DynArray.create( IntIterator.class, maxLevel, 10 );
         matchingIndex = 0;
-    }
-
-    @Override
-    public final void init() throws FFInitException {
-        super.init();
-        
-        this.entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-    }
-
-    @Override
-    public final IIndexedTypeKey indexedTypeKey() {
-        return TYPE_KEY;
-    };
-
-    public final int getViewId() {
-        return viewId;
-    }
-
-    public final void setViewId( int viewId ) {
-        this.viewId = viewId;
-    }
-
-    public final int getLayerId() {
-        return layerId;
-    }
-
-    public final void setLayerId( int layerId ) {
-        this.layerId = layerId;
     }
 
     public final int getMaxEntities() {
@@ -129,8 +85,6 @@ public final class CollisionQuadTree extends SystemComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        viewId = attributes.getIdForName( VIEW_NAME, VIEW_ID, View.TYPE_KEY, viewId );
-        layerId = attributes.getIdForName( LAYER_NAME, LAYER_ID, Layer.TYPE_KEY, layerId );
         maxEntities = attributes.getValue( MAX_ENTRIES_OF_AREA, maxEntities );
         maxLevel = attributes.getValue( MAX_LEVEL, maxLevel );
         
@@ -143,13 +97,12 @@ public final class CollisionQuadTree extends SystemComponent {
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         
-        attributes.put( VIEW_ID, viewId );
-        attributes.put( LAYER_ID, layerId );
         attributes.put( MAX_ENTRIES_OF_AREA, maxEntities );
         attributes.put( MAX_LEVEL, maxLevel );
         attributes.put( WORLD_AREA, rootNode.area );
     } 
 
+    @Override
     public final void add( int entityId ) {
         rootNode.add( 
             entityId, 
@@ -157,13 +110,26 @@ public final class CollisionQuadTree extends SystemComponent {
         );
     }
 
+    @Override
     public final void remove( int entityId ) {
         rootNode.remove( entityId );
     }
     
+    @Override
+    void update( int entityId ) {
+        remove( entityId );
+        add( entityId );
+    }
+    
+    @Override
     public final IntIterator get( Rectangle scanBounds ) {
         matching.clear();
         matchingIndex = 0;
+        
+        if ( !GeomUtils.intersect( rootNode.area, scanBounds ) ) {
+            return matchingIterator;
+        }
+        
         rootNode.get( scanBounds );
         if ( matching.contains( 0 ) ) {
             matchingIndex = 0;
@@ -213,12 +179,21 @@ public final class CollisionQuadTree extends SystemComponent {
         
         final void get( Rectangle bounds ) {
             Node node = getMatchingNode( bounds );
-            if ( node != null && nodes[ 0 ] != null ) {
+            if ( node != null ) {
                 node.get( bounds );
-            }
-          
-            matching.set( matchingIndex, entities.iterator() );
-            matchingIndex++;
+            } else {
+                if ( nodes[ 0 ] == null ) {
+                    matching.set( matchingIndex, entities.iterator() );
+                    matchingIndex++;
+                } else {
+                    for ( int i = 0; i < nodes.length; i++ ) {
+                        if ( GeomUtils.intersect( bounds, nodes[ i ].area ) ) {
+                            matching.set( matchingIndex, nodes[ i ].entities.iterator() );
+                            matchingIndex++;
+                        }
+                    }
+                }
+            } 
         }
         
         final void add( int entityId, Rectangle bounds ) {
@@ -290,7 +265,9 @@ public final class CollisionQuadTree extends SystemComponent {
             nodes[ 3 ] = new Node( nextLevel, new Rectangle( area.x, area.y + qHeight, qWidth, qHeight ) );
         }
 
-        final void toString( StringBuilder builder ) {
+        @Override
+        public final String toString() {
+            StringBuilder builder = new StringBuilder();
             for ( int i = -1; i < level; i++ ) {
                 builder.append( "  " );
             }
@@ -304,10 +281,11 @@ public final class CollisionQuadTree extends SystemComponent {
 
             if ( nodes[ 0 ] != null ) {
                 for ( int i = 0; i < nodes.length; i++ ) {
-                    builder.append( "\n" );
-                    nodes[ i ].toString( builder );
+                    builder.append( "\n" ).append( nodes[ i ] );
                 }
             }
+            
+            return builder.toString();
         }
     }
     
@@ -316,7 +294,7 @@ public final class CollisionQuadTree extends SystemComponent {
         StringBuilder builder = new StringBuilder();
         builder.append( "EntityCollisionQuadTree: maxEntities=" ).append( maxEntities );
         builder.append( " maxLevel=" ).append( maxLevel ).append( "[\n" );
-        rootNode.toString( builder );
+        builder.append( rootNode );
         builder.append( "\n]" );
         return builder.toString();
     }
@@ -327,7 +305,7 @@ public final class CollisionQuadTree extends SystemComponent {
 
         @Override
         public final boolean hasNext() {
-            return currentIterator != null && ( currentIterator.hasNext() || matchingIndex >= 0 );
+            return currentIterator != null && ( currentIterator.hasNext() || matchingIndex < 0 );
         }
         @Override
         public final int next() {
