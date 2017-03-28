@@ -96,5 +96,7 @@ public abstract class ContactPool extends SystemComponent{
     abstract void update( int entityId );
     
     abstract IntIterator get( Rectangle region );
+    
+    abstract void clear();
 
 }

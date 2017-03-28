@@ -141,6 +141,13 @@ public final class CollisionQuadTree extends ContactPool {
         return matchingIterator;
     }
     
+    @Override
+    public void clear() {
+        matching.clear();
+        matchingIndex = 0;
+        rootNode = new Node( 0, rootNode.area );
+    }
+    
     private final Rectangle getCollisionBounds( int entityId ) {
         ECollision collision = entitySystem.getComponent( entityId, ECollision.TYPE_KEY );
         ETransform tranform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );

@@ -119,8 +119,6 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         
         context.notify( EntityActivationEvent.create( entityId, Type.ENTITY_ACTIVATED, aspect ) );
     }
-
-    
     
     public final void deactivateEntity( int entityId ) {
         if ( entityId < 0 ) {
@@ -303,55 +301,6 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     }
     
     // ---- Utilities --------------------------------------------------------
-
-//    public final class ComponentIterator<C extends EntityComponent> implements Iterator<C> {
-//        
-//        private final int componentIndex;
-//        private final boolean onlyActive;
-//        private int currentEntityIndex = -1;
-//        private int nextEntityIndex = -1;
-//        
-//        ComponentIterator( int componentIndex, boolean onlyActive ) {
-//            this.componentIndex = componentIndex;
-//            this.onlyActive = onlyActive;
-//            findNext();
-//        }
-//        
-//        private final void findNext() {
-//            while ( nextEntityIndex < components.capacity() ) {
-//                nextEntityIndex++;
-//                if ( onlyActive && !activeEntities.get( nextEntityIndex ) ) {
-//                    continue;
-//                }
-//                if ( components.contains( nextEntityIndex ) && components.get( nextEntityIndex ).contains( componentIndex ) ) {
-//                    return;
-//                }
-//            }
-//            nextEntityIndex = -1;
-//        }
-//
-//        @Override
-//        public final boolean hasNext() {
-//            return nextEntityIndex >= 0 ;
-//        }
-//        
-//        public final int entityId() {
-//            return currentEntityIndex;
-//        }
-//
-//        @Override
-//        public final C next() {
-//            C component = components.get( nextEntityIndex ).get( componentIndex );
-//            currentEntityIndex = nextEntityIndex;
-//            findNext();
-//            return component;
-//        }
-//
-//        @Override
-//        public final void remove() {
-//            delete( currentEntityIndex );
-//        }
-//    }
     
     private interface EntityIteratorCondition {
         
