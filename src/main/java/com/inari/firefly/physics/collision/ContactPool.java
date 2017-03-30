@@ -11,8 +11,8 @@ import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.entity.EntitySystem.Entity;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.view.Layer;
@@ -53,7 +53,7 @@ public abstract class ContactPool extends SystemComponent {
         LAYER_ID,
     };
     
-    private final static Aspects MATCHER = Entity.ASPECT_GROUP.createAspects( ETransform.TYPE_KEY, ECollision.TYPE_KEY );
+    private final static Aspects MATCHER = EntityComponent.ASPECT_GROUP.createAspects( ETransform.TYPE_KEY, ECollision.TYPE_KEY );
     
     protected int viewId;
     protected int layerId;
