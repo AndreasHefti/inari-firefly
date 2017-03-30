@@ -15,10 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.system.component;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.indexed.BaseIndexedObject;
 import com.inari.commons.lang.indexed.IndexedObject;
@@ -37,9 +36,7 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
     public static final AspectGroup ASPECT_GROUP = new AspectGroup( "SystemComponent" );
 
     public static final AttributeKey<String> NAME = new AttributeKey<String>( "name", String.class, SystemComponent.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
-        NAME
-    };
+    private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>imutableSet( NAME );
 
     protected FFContext context;
     private ComponentId componentId;
@@ -81,7 +78,7 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
 
     @Override
     public Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return ATTRIBUTE_KEYS;
     }
 
     @Override

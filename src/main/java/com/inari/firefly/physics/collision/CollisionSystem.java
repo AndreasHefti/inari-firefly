@@ -98,7 +98,7 @@ public final class CollisionSystem
     
     public final void entityActivated( int entityId, final Aspects aspects ) {
         final ContactPool pool = getContactPoolForEntity( entityId );
-        if ( pool != null ) {
+        if ( pool != null && !context.getEntityComponentAspects( entityId ).contains( ETile.TYPE_KEY ) ) {
             pool.add( entityId );
         }
     }

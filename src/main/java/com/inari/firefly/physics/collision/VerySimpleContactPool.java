@@ -4,10 +4,15 @@ import java.util.ArrayDeque;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
-import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.IntBag;
-import com.inari.firefly.graphics.tile.ETile;
 
+/** This is a very simple ContactPool implementation that just collect the id's of all Entities of View and Layer.
+ *  And gives them all back for iteration on get.
+ *  
+ *  Use this if you just have a view Entities that can collide (having a ECollision component) either if they are static 
+ *  or none static Entities.
+ *
+ */
 public final class VerySimpleContactPool extends ContactPool {
     
     private final IntBag entities = new IntBag( 50, -1 );
@@ -24,11 +29,6 @@ public final class VerySimpleContactPool extends ContactPool {
 
     @Override
     public final void add( int entityId ) {
-        final Aspects aspects = context.getEntityComponentAspects( entityId );
-        if ( aspects.contains( ETile.TYPE_KEY ) ) {
-            return;
-        }
-        
         if ( !entities.contains( entityId ) ) {
             entities.add( entityId );
         }
@@ -39,11 +39,13 @@ public final class VerySimpleContactPool extends ContactPool {
         entities.remove( entityId );
     }
 
+    /** This does nothing for this implementation of ContactPool */
     @Override
     public final void update( int entityId ) {
         // not needed here
     }
 
+    /** Get an IntIterator of all registered entity id's */
     @Override
     public final IntIterator get( Rectangle region ) {
         if ( iteratorPool.isEmpty() ) {
