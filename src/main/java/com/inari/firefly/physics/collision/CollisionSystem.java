@@ -122,7 +122,7 @@ public final class CollisionSystem
             }
             
             final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
-            final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
+//            final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
             final ContactScan contactScan = collision.getContactScan();
             final int collisionResolverId = collision.getCollisionResolverId();
             
@@ -138,10 +138,10 @@ public final class CollisionSystem
             }
             
             // update the contact pool if there is one for the moved entity
-            ContactPool contactPool = getContactPool( transform.getViewId(), transform.getLayerId() );
-            if ( contactPool != null ) {
-                contactPool.update( entityId );
-            }
+//            ContactPool contactPool = getContactPool( transform.getViewId(), transform.getLayerId() );
+//            if ( contactPool != null ) {
+//                contactPool.update( entityId );
+//            }
         }
     }
     
