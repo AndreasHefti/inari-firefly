@@ -1,8 +1,10 @@
 package com.inari.firefly.physics.collision;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import com.inari.commons.GeomUtils;
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
@@ -41,11 +43,10 @@ public final class CollisionSystem
     public static final FFSystemTypeKey<CollisionSystem> SYSTEM_KEY = FFSystemTypeKey.create( CollisionSystem.class );
     public static final AspectGroup MATERIAL_ASPECT_GROUP = new AspectGroup( "MATERIAL_ASPECT_GROUP" );
     public static final AspectGroup CONTACT_ASPECT_GROUP = new AspectGroup( "CONTACT_ASPECT_GROUP" );
-
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
         CollisionQuadTree.TYPE_KEY,
         CollisionResolver.TYPE_KEY
-    };
+    );
     
     private final DynArray<ContactPool> contactPools;
     private final DynArray<DynArray<ContactPool>> contactPoolsPerViewAndLayer;
@@ -422,18 +423,16 @@ public final class CollisionSystem
         }
     }
 
-
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             new ContactPoolBuilderAdapter(),
             new CollisionResolverBuilderAdapter()
-        };
+        );
     }
     
     public final SystemComponentBuilder getContactPoolBuilder( Class<? extends ContactPool> componentType ) {

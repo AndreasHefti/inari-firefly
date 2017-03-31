@@ -2,7 +2,9 @@ package com.inari.firefly.entity.prefab;
 
 import java.util.ArrayDeque;
 import java.util.Iterator;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
@@ -19,10 +21,9 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     
     public static final FFSystemTypeKey<EntityPrefabSystem> SYSTEM_KEY = FFSystemTypeKey.create( EntityPrefabSystem.class );
-    
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
         EntityPrefab.TYPE_KEY
-    };
+    );
 
     private DynArray<EntityPrefab> prefabs;
     private DynArray<IndexedTypeSet> prefabComponents;
@@ -222,18 +223,17 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     public final SystemComponentBuilder getEntityPrefabBuilder() {
         return new EntityPrefabBuilder();
     }
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             new EntityPrefabBuilderAdapter()
-        };
+        );
     }
-
     
     private final class EntityPrefabBuilder extends SystemComponentBuilder {
         

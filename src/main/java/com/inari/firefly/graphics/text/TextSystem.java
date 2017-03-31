@@ -1,7 +1,9 @@
 package com.inari.firefly.graphics.text;
 
 import java.util.Iterator;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
@@ -25,9 +27,9 @@ public class TextSystem
     
     public static final String DEFAULT_TEXT_RENDERER_NAME = "DEFAULT_TEXT_RENDERER";
     public static final FFSystemTypeKey<TextSystem> SYSTEM_KEY = FFSystemTypeKey.create( TextSystem.class );
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
-        TextRenderer.TYPE_KEY,
-    };
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
+        TextRenderer.TYPE_KEY
+    );
 
     private EntitySystem entitySystem;
 
@@ -153,18 +155,16 @@ public class TextSystem
         return textsOfLayer;
     }
 
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
-            new TextRendererBuilderAdapter(),
-        };
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            new TextRendererBuilderAdapter()
+        );
     }
-    
     
     private final class TextRendererBuilder extends SystemComponentBuilder {
         

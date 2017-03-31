@@ -16,7 +16,9 @@
 package com.inari.firefly.control.state;
 
 import java.util.Iterator;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.system.FFContext;
@@ -35,10 +37,9 @@ public class StateSystem
         UpdateEventListener {
     
     public static final FFSystemTypeKey<StateSystem> SYSTEM_KEY = FFSystemTypeKey.create( StateSystem.class );
-    
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
-        Workflow.TYPE_KEY,
-    };
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
+        Workflow.TYPE_KEY
+    );
 
     private final DynArray<Workflow> workflows;
 
@@ -194,16 +195,15 @@ public class StateSystem
         return new WorkflowBuilder();
     }
 
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
-                new WorkflowBuilderAdapter(),
-            };
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            new WorkflowBuilderAdapter()
+        );
     }
 
     private final class WorkflowBuilderAdapter extends SystemBuilderAdapter<Workflow> {

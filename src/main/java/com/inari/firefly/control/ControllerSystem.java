@@ -16,7 +16,9 @@
 package com.inari.firefly.control;
 
 import java.util.Iterator;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.StringUtils;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.system.FFContext;
@@ -34,10 +36,9 @@ public final class ControllerSystem
         UpdateEventListener {
     
     public static final FFSystemTypeKey<ControllerSystem> SYSTEM_KEY = FFSystemTypeKey.create( ControllerSystem.class );
-    
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
        Controller.TYPE_KEY
-    };
+    );
 
     private final DynArray<Controller> controller;
 
@@ -151,18 +152,17 @@ public final class ControllerSystem
         return new ControllerBuilder( componentType );
     }
 
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             new ControllerBuilderAdapter()
-        };
+        );
     }
-
+    
     private final class ControllerBuilder extends SystemComponentBuilder {
         
         private ControllerBuilder( Class<? extends Controller> componentType ) {

@@ -16,7 +16,9 @@
 package com.inari.firefly.physics.animation;
 
 import java.util.Iterator;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.entity.EntityActivationEvent;
@@ -37,11 +39,10 @@ public final class AnimationSystem
         EntityActivationListener {
     
     public static final FFSystemTypeKey<AnimationSystem> SYSTEM_KEY = FFSystemTypeKey.create( AnimationSystem.class );
-    
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
         Animation.TYPE_KEY,
         AnimationResolver.TYPE_KEY
-    };
+    );
 
     final DynArray<Animation> animations;
     final DynArray<AnimationMapping> activeMappings;
@@ -285,19 +286,16 @@ public final class AnimationSystem
         return new AnimationBuilder( componentType );
     }
     
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
-    
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter[] {
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             new AnimationBuilderAdapter()
-        };
-    };
-    
+        );
+    }
 
     private final class AnimationBuilder extends SystemComponentBuilder {
         

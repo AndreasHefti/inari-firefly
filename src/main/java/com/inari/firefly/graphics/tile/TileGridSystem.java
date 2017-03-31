@@ -16,7 +16,9 @@
 package com.inari.firefly.graphics.tile;
 
 import java.util.Iterator;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Position;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
@@ -43,10 +45,10 @@ public final class TileGridSystem
         EntityActivationListener {
     
     public static final FFSystemTypeKey<TileGridSystem> SYSTEM_KEY = FFSystemTypeKey.create( TileGridSystem.class ); 
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
         TileGrid.TYPE_KEY,
         TileGridRenderer.TYPE_KEY
-    };
+    );
 
     private EntitySystem entitySystem;
     
@@ -277,17 +279,16 @@ public final class TileGridSystem
         return new TileGridBuilder();
     }
     
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             new TileGridBuilderAdapter(),
             new TileGridRendererBuilderAdapter()
-        };
+        );
     }
 
     @Override

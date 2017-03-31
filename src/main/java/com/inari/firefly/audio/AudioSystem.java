@@ -16,7 +16,9 @@
 package com.inari.firefly.audio;
 
 import java.util.Iterator;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.StringUtils;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.AssetSystem;
@@ -34,10 +36,9 @@ public final class AudioSystem
         ComponentSystem<AudioSystem> {
     
     public static final FFSystemTypeKey<AudioSystem> SYSTEM_KEY = FFSystemTypeKey.create( AudioSystem.class );
-    
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
         Sound.TYPE_KEY
-    };
+    );
 
     private AssetSystem assetSystem;
     private ControllerSystem controllerSystem;
@@ -177,16 +178,15 @@ public final class AudioSystem
         return new SoundBuilder();
     }
     
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             new SoundBuilderAdapter()
-        };
+        );
     }
 
     private final class SoundBuilder extends SystemComponentBuilder {

@@ -18,7 +18,9 @@ package com.inari.firefly.asset;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
@@ -32,10 +34,9 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 public class AssetSystem extends ComponentSystem<AssetSystem> {
     
     public static final FFSystemTypeKey<AssetSystem> SYSTEM_KEY = FFSystemTypeKey.create( AssetSystem.class );
-
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
         Asset.TYPE_KEY
-    };
+    );
 
     private final DynArray<Asset> assets;
     private final Map<String, Asset> nameMapping;
@@ -206,15 +207,15 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
 
     @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             new AssetBuilderAdapter()
-        };
+        );
     }
 
     private IntBag disposeAsset( Asset asset ) {

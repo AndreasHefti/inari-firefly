@@ -15,6 +15,8 @@
  ******************************************************************************/ 
 package com.inari.firefly.system.component;
 
+import java.util.Set;
+
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.system.FFContext;
@@ -64,9 +66,9 @@ public abstract class ComponentSystem<T extends ComponentSystem<T>> implements F
         component.dispose();
     }
 
-    public abstract SystemComponentKey<?>[] supportedComponentTypes();
+    public abstract Set<SystemComponentKey<?>> supportedComponentTypes();
    
-    public abstract SystemBuilderAdapter<?>[] getSupportedBuilderAdapter();
+    public abstract Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter();
     
     public abstract void clear();
 

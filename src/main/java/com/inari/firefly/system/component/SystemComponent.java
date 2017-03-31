@@ -35,8 +35,8 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
     
     public static final AspectGroup ASPECT_GROUP = new AspectGroup( "SystemComponent" );
 
-    public static final AttributeKey<String> NAME = new AttributeKey<String>( "name", String.class, SystemComponent.class );
-    private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>imutableSet( NAME );
+    public static final AttributeKey<String> NAME = AttributeKey.createString( "name", SystemComponent.class );
+    private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet( NAME );
 
     protected FFContext context;
     private ComponentId componentId;

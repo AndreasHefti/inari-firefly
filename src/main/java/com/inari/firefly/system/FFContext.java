@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.inari.commons.event.AspectedEvent;
@@ -546,10 +547,10 @@ public final class FFContext {
     }
     
     private final void initComponentSystem( ComponentSystem<?> system ) {
-        SystemBuilderAdapter<?>[] supportedBuilderAdapter = system.getSupportedBuilderAdapter();
+        Set<SystemBuilderAdapter<?>> supportedBuilderAdapter = system.getSupportedBuilderAdapter();
         if ( supportedBuilderAdapter != null ) {
-            for ( int i = 0; i < supportedBuilderAdapter.length; i++ ) {
-                systemBuilderAdapter.set( supportedBuilderAdapter[ i ].componentTypeKey().index(), supportedBuilderAdapter[ i ] );
+            for ( SystemBuilderAdapter<?> builderAdapter : supportedBuilderAdapter ) {
+                systemBuilderAdapter.set( builderAdapter.componentTypeKey().index(), builderAdapter );
             }
         }
     }

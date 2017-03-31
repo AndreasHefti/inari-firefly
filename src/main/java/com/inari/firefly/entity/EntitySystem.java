@@ -17,7 +17,9 @@ package com.inari.firefly.entity;
 
 import java.util.BitSet;
 import java.util.Iterator;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedType;
@@ -43,10 +45,9 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 public final class EntitySystem extends ComponentSystem<EntitySystem> {
     
     public static final FFSystemTypeKey<EntitySystem> SYSTEM_KEY = FFSystemTypeKey.create( EntitySystem.class );
-
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
         Entity.ENTITY_TYPE_KEY
-    };
+    );
 
     private static final int INIT_SIZE = 1000;
 
@@ -92,6 +93,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         if ( entityId < 0 ) {
             return false;
         }
+        
         return activeEntities.get( entityId );
     }
 
@@ -99,6 +101,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         if ( entityId < 0 ) {
             return false;
         }
+        
         return !activeEntities.get( entityId ) && inactiveEntities.get( entityId );
     }
     
@@ -106,6 +109,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         if ( entityId < 0 ) {
             return;
         }
+        
         if ( activeEntities.get( entityId ) || !inactiveEntities.get( entityId ) ) {
             return;
         }
@@ -124,6 +128,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         if ( entityId < 0 ) {
             return;
         }
+        
         if ( !activeEntities.get( entityId ) ) {
             return;
         }
@@ -193,6 +198,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         for ( int i = activeEntities.nextSetBit( 0 ); i >= 0; i = activeEntities.nextSetBit( i+1 ) ) {
             deleteSilently( i );
         }
+        
         for ( int i = inactiveEntities.nextSetBit( 0 ); i >= 0; i = inactiveEntities.nextSetBit( i+1 ) ) {
             deleteSilently( i );
         }
@@ -262,9 +268,15 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     
     // ---- ComponentSystem implementation --------------------------------------
     
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    @Override
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            new EntityBuilderHelper()
+        );
     }
     
     private void entityToAttribute( Attributes attributes, int entityId ) {
@@ -291,13 +303,6 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
                 }
             }
         }
-    }
-
-    @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
-            new EntityBuilderHelper()
-        };
     }
     
     // ---- Utilities --------------------------------------------------------

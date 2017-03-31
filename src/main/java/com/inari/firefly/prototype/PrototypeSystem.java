@@ -1,7 +1,9 @@
 package com.inari.firefly.prototype;
 
 import java.util.Iterator;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -14,10 +16,9 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
     
     public static final FFSystemTypeKey<PrototypeSystem> SYSTEM_KEY = FFSystemTypeKey.create( PrototypeSystem.class );
-    
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
-        Prototype.TYPE_KEY,
-    };
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
+        Prototype.TYPE_KEY
+    );
 
     private final DynArray<Prototype> prototypes;
     
@@ -104,16 +105,15 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
         return new PrototypeBuilder( componentType );
     }
 
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             new PrototypeBuilderAdapter()
-        };
+        );
     }
 
     private final class PrototypeBuilder extends SystemComponentBuilder {

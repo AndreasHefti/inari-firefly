@@ -20,7 +20,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.build.ComponentCreationException;
@@ -33,11 +35,10 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 public final class ViewSystem extends ComponentSystem<ViewSystem> {
 
     public static final FFSystemTypeKey<ViewSystem> SYSTEM_KEY = FFSystemTypeKey.create( ViewSystem.class );
-    
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
         View.TYPE_KEY,
         Layer.TYPE_KEY
-    };
+    );
 
     public static final int BASE_VIEW_ID = 0;
     private static final int INITAL_SIZE = 10;
@@ -364,17 +365,16 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         return new LayerBuilder();
     }
 
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             new ViewBuilderAdapter(),
             new LayerBuilderAdapter()
-        };
+        );
     }
     
     private void reorder() {

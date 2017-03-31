@@ -16,7 +16,9 @@
 package com.inari.firefly.control.task;
 
 import java.util.Iterator;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
@@ -27,10 +29,9 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 public final class TaskSystem extends ComponentSystem<TaskSystem> {
     
     public static final FFSystemTypeKey<TaskSystem> SYSTEM_KEY = FFSystemTypeKey.create( TaskSystem.class );
-    
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
-        Task.TYPE_KEY,
-    };
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
+        Task.TYPE_KEY
+    );
 
     private final DynArray<Task> tasks;
     
@@ -118,16 +119,15 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         return new TaskBuilder( componentType );
     }
 
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter<?>[] {
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             new TaskBuilderAdapter()
-        };
+        );
     }
 
     private final class TaskBuilder extends SystemComponentBuilder {

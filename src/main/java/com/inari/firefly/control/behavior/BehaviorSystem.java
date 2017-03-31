@@ -1,7 +1,9 @@
 package com.inari.firefly.control.behavior;
 
 import java.util.Iterator;
+import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
@@ -19,10 +21,9 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implements UpdateEventListener, EntityActivationListener {
     
     public static final FFSystemTypeKey<BehaviorSystem> SYSTEM_KEY = FFSystemTypeKey.create( BehaviorSystem.class );
-    
-    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
         Action.TYPE_KEY
-    };
+    );
 
     private final DynArray<BehaviorNode> behaviorNodes;
     private final DynArray<Action> actions;
@@ -149,17 +150,16 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
         return new ActionBuilder( componentType );
     }
 
-    @Override
-    public final SystemComponentKey<?>[] supportedComponentTypes() {
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
-        return new SystemBuilderAdapter[] {
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             new ActionBuilderAdapter()
-        };
-    };
+        );
+    }
 
     private final class ActionBuilder extends SystemComponentBuilder {
         
