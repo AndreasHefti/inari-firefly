@@ -154,14 +154,14 @@ public abstract class ContactPool extends SystemComponent {
      * 
      * @param entityId Entity id to remove/unregister from the pool
      */
-    abstract void remove( int entityId );
+    public abstract void remove( int entityId );
     
     /** This is usually called by CollisionSystem in an entity move event and must update the entity in the pool 
      *  if the entity id has some orientation related store attributes within the specified ContactPool implementation.
      *  
      * @param entityId the Entity id of an entity that has just moved and changed its position in the world
      */
-    abstract void update( int entityId );
+    public abstract void update( int entityId );
     
     /** Use this to get an IntIterator of all entity id's that most possibly has a collision within the given region.
      *  The efficiency of this depends on an specified implementation and can be different for different needs.
@@ -169,9 +169,9 @@ public abstract class ContactPool extends SystemComponent {
      * @param region The contact or collision region to check collision entity collisions against.
      * @return IntIterator of all entity id's that most possibly has a collision within the given region
      */
-    abstract IntIterator get( Rectangle region );
+    public abstract IntIterator get( Rectangle region );
     
     /** Use this to clear all entity id's form a specified pool instance */
-    abstract void clear();
+    public abstract void clear();
 
 }

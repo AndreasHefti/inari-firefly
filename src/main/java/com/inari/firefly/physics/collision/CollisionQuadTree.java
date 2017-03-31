@@ -116,7 +116,7 @@ public final class CollisionQuadTree extends ContactPool {
     }
     
     @Override
-    void update( int entityId ) {
+    public void update( int entityId ) {
         remove( entityId );
         add( entityId );
     }
