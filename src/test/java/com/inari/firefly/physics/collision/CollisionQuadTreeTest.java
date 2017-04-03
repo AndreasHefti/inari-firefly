@@ -88,11 +88,6 @@ public class CollisionQuadTreeTest extends FFTest {
         while ( intIterator.hasNext() ) {
             System.out.println( intIterator.next() );
         }
-        
-//        intIterator = quadTree.get( new Rectangle( 0, 0, 80, 80 ) );
-//        while ( intIterator.hasNext() ) {
-//            System.out.println( intIterator.next() );
-//        }
     }
     
     private String createEntity( int x, int y, EntitySystem entitySystem ) {

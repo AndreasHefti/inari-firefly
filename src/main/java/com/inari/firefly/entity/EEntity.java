@@ -1,9 +1,8 @@
 package com.inari.firefly.entity;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
@@ -22,11 +21,11 @@ public class EEntity extends EntityComponent {
     public static final AttributeKey<DynArray<String>> CONTROLLER_NAMES = AttributeKey.createDynArray( "controllerNames", EEntity.class );
     public static final AttributeKey<IntBag> CONTROLLER_IDS = AttributeKey.createIntBag( "controllerIds", EEntity.class );
     public static final AttributeKey<DynArray<Aspect>> ASPECTS = AttributeKey.createDynArray( "aspects", EEntity.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         ENTITY_NAME,
         CONTROLLER_IDS,
         ASPECTS
-    };
+    );
     
     private String entityName;
     private final IntBag controllerIds;
@@ -104,7 +103,7 @@ public class EEntity extends EntityComponent {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return ATTRIBUTE_KEYS;
     }
 
     @Override

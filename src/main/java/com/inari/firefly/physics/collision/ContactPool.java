@@ -1,9 +1,8 @@
 package com.inari.firefly.physics.collision;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspects;
@@ -48,10 +47,10 @@ public abstract class ContactPool extends SystemComponent {
     /** The AtrributeKey to set/get the Layer id attribute value */
     public static final AttributeKey<Integer> LAYER_ID = AttributeKey.createInt( "layerId", ContactPool.class );
     /** A list of all attributes natively supported by this Component or abstract Component */
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         VIEW_ID,
-        LAYER_ID,
-    };
+        LAYER_ID
+    );
     
     private final static Aspects MATCHER = EntityComponent.ASPECT_GROUP.createAspects( ETransform.TYPE_KEY, ECollision.TYPE_KEY );
     
@@ -94,9 +93,7 @@ public abstract class ContactPool extends SystemComponent {
     
     @Override
     public Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
     
     @Override

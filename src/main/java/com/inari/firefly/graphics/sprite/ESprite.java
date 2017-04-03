@@ -15,10 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.graphics.sprite;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -26,13 +25,13 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.SpriteRenderable;
+import com.inari.firefly.physics.animation.AttributeAnimationAdapter.AttributeAnimationAdapterKey;
+import com.inari.firefly.physics.animation.EntityFloatAnimationAdapter;
 import com.inari.firefly.physics.animation.EntityIntAnimationAdapter;
 import com.inari.firefly.physics.animation.EntityValueAnimationAdapter;
 import com.inari.firefly.physics.animation.FloatAnimation;
 import com.inari.firefly.physics.animation.IntAnimation;
 import com.inari.firefly.physics.animation.ValueAnimation;
-import com.inari.firefly.physics.animation.AttributeAnimationAdapter.AttributeAnimationAdapterKey;
-import com.inari.firefly.physics.animation.EntityFloatAnimationAdapter;
 import com.inari.firefly.system.FFContext;
 
 public final class ESprite extends EntityComponent implements SpriteRenderable {
@@ -43,16 +42,16 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     public static final AttributeKey<Integer> SPRITE_ID = AttributeKey.createInt( "spriteId", ESprite.class );
     public static final AttributeKey<Integer> ORDERING = AttributeKey.createInt( "ordering", ESprite.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = AttributeKey.createColor( "tintColor", ESprite.class );
-    public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ESprite.class );
+    public static final AttributeKey<BlendMode> BLEND_MODE = AttributeKey.createBlendMode( "blendMode", ESprite.class );
     public static final AttributeKey<String> SHADER_ASSET_NAME = AttributeKey.createString( "shaderAssetName", ESprite.class );
     public static final AttributeKey<Integer> SHADER_ID = AttributeKey.createInt( "shaderId", ESprite.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         SPRITE_ID,
         ORDERING,
         TINT_COLOR,
         BLEND_MODE,
         SHADER_ID
-    };
+    );
 
     private int spriteId;
     private int ordering;
@@ -125,7 +124,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return ATTRIBUTE_KEYS;
     }
 
     @Override

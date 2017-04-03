@@ -1,8 +1,8 @@
 package com.inari.firefly.physics.animation.easing;
 
-import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Easing;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -10,10 +10,10 @@ import com.inari.firefly.physics.animation.FloatAnimation;
 
 public final class EasingAnimation extends FloatAnimation {
     
-    public static final AttributeKey<EasingData> EASING_DATA = new AttributeKey<EasingData>( "easingData", EasingData.class, EasingAnimation.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    public static final AttributeKey<EasingData> EASING_DATA = AttributeKey.createEasingData( "easingData", EasingAnimation.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         EASING_DATA
-    };
+    );
     
     private EasingData easingData;
     private boolean inverse;
@@ -81,9 +81,7 @@ public final class EasingAnimation extends FloatAnimation {
     
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

@@ -15,9 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.physics.animation;
 
-import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -48,12 +48,10 @@ public abstract class Animation extends SystemComponent {
     public static final AttributeKey<Long> START_TIME = AttributeKey.createLong( "startTime", Animation.class );
     /** The AttributeKey for the looping attributes that indicates whether the Animation is looping or not */
     public static final AttributeKey<Boolean> LOOPING = AttributeKey.createBoolean( "looping", Animation.class );
-    
-
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         START_TIME,
-        LOOPING,
-    };
+        LOOPING
+    );
     
     protected long startTime;
     protected boolean looping;
@@ -143,9 +141,7 @@ public abstract class Animation extends SystemComponent {
 
     @Override
     public Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

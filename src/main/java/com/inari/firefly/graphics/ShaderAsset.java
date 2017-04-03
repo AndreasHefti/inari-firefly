@@ -1,9 +1,8 @@
 package com.inari.firefly.graphics;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -12,16 +11,16 @@ import com.inari.firefly.system.utils.Disposable;
 
 public final class ShaderAsset extends Asset {
 
-    public static final AttributeKey<String> VERTEX_SHADER_RESOURCE_NAME = new AttributeKey<String>( "vertexShaderResourceName", String.class, ShaderAsset.class );
-    public static final AttributeKey<String> VERTEX_SHADER_PROGRAM = new AttributeKey<String>( "vertexShaderProgram", String.class, ShaderAsset.class );
-    public static final AttributeKey<String> FRAGMENT_SHADER_RESOURCE_NAME = new AttributeKey<String>( "fragmentShaderResourceName", String.class, ShaderAsset.class );
-    public static final AttributeKey<String> FRAGMENT_SHADER_PROGRAM = new AttributeKey<String>( "fragmentShaderProgram", String.class, ShaderAsset.class );
-    private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] {
+    public static final AttributeKey<String> VERTEX_SHADER_RESOURCE_NAME = AttributeKey.createString( "vertexShaderResourceName", ShaderAsset.class );
+    public static final AttributeKey<String> VERTEX_SHADER_PROGRAM = AttributeKey.createString( "vertexShaderProgram", ShaderAsset.class );
+    public static final AttributeKey<String> FRAGMENT_SHADER_RESOURCE_NAME = AttributeKey.createString( "fragmentShaderResourceName", ShaderAsset.class );
+    public static final AttributeKey<String> FRAGMENT_SHADER_PROGRAM = AttributeKey.createString( "fragmentShaderProgram", ShaderAsset.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         VERTEX_SHADER_RESOURCE_NAME,
         VERTEX_SHADER_PROGRAM,
         FRAGMENT_SHADER_RESOURCE_NAME,
         FRAGMENT_SHADER_PROGRAM
-    } ) );
+    );
 
     private String vertexShaderResourceName;
     private String vertexShaderProgram;
@@ -82,9 +81,7 @@ public final class ShaderAsset extends Asset {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( ATTRIBUTE_KEYS );
-        return super.attributeKeys( attributeKeys );
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

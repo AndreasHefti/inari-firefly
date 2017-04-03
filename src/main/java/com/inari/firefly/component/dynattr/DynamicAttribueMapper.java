@@ -27,7 +27,7 @@ public abstract class DynamicAttribueMapper {
     private static final Map<Class<? extends DynamicAttributedComponent>, Set<AttributeKey<?>>> mapping = new HashMap<Class<? extends DynamicAttributedComponent>, Set<AttributeKey<?>>>();
 
     public static <T> void addDynamicAttribute( String name, Class<T> valueType, Class<? extends DynamicAttributedComponent> componentType ) {
-        AttributeKey<T> dynAttributeKey = new AttributeKey<T>( name, valueType, componentType );
+        AttributeKey<T> dynAttributeKey = AttributeKey.create( name, valueType, componentType );
         addDynamicAttribute( dynAttributeKey );
     }
 
@@ -48,7 +48,7 @@ public abstract class DynamicAttribueMapper {
     private static Set<AttributeKey<?>> getOrCreateDynAttributeSetForType( Class<? extends DynamicAttributedComponent> componentType ) {
         Set<AttributeKey<?>> set = mapping.get( componentType );
         if ( set == null ) {
-            set = new HashSet<AttributeKey<?>>();
+            set = new HashSet<>();
             mapping.put( componentType, set );
         }
         return set;

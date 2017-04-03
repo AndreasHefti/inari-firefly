@@ -15,10 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.graphics;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -26,9 +25,9 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.view.Layer;
 import com.inari.firefly.graphics.view.View;
+import com.inari.firefly.physics.animation.AttributeAnimationAdapter.AttributeAnimationAdapterKey;
 import com.inari.firefly.physics.animation.EntityFloatAnimationAdapter;
 import com.inari.firefly.physics.animation.FloatAnimation;
-import com.inari.firefly.physics.animation.AttributeAnimationAdapter.AttributeAnimationAdapterKey;
 import com.inari.firefly.system.FFContext;
 
 public final class ETransform extends EntityComponent {
@@ -49,7 +48,7 @@ public final class ETransform extends EntityComponent {
     public static final AttributeKey<Float> SCALE_Y = AttributeKey.createFloat( "scaley", ETransform.class );
     public static final AttributeKey<Float> ROTATION = AttributeKey.createFloat( "rotation", ETransform.class );
     public static final AttributeKey<Integer> PARENT_ID = AttributeKey.createInt( "parentId", ETransform.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet( 
         VIEW_ID,
         LAYER_ID, 
         POSITION_X,
@@ -60,7 +59,7 @@ public final class ETransform extends EntityComponent {
         SCALE_Y,
         ROTATION,
         PARENT_ID
-    };
+    );
 
     private int viewId, layerId;
     private final PositionF position;
@@ -177,7 +176,7 @@ public final class ETransform extends EntityComponent {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return ATTRIBUTE_KEYS;
     }
 
     @Override

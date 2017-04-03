@@ -1,9 +1,8 @@
 package com.inari.firefly.graphics.shape;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -16,16 +15,15 @@ public class EShape extends EntityComponent implements ShapeData {
 
     public static final EntityComponentTypeKey<EShape> TYPE_KEY = EntityComponentTypeKey.create( EShape.class );
 
-    public static final AttributeKey<Type> SHAPE_TYPE = new AttributeKey<Type>( "shapeType", Type.class, EShape.class );
-    public static final AttributeKey<float[]> VERTICES = new AttributeKey<float[]>( "vertices", float[].class, EShape.class );
+    public static final AttributeKey<Type> SHAPE_TYPE = AttributeKey.create( "shapeType", Type.class, EShape.class );
+    public static final AttributeKey<float[]> VERTICES = AttributeKey.create( "vertices", float[].class, EShape.class );
     public static final AttributeKey<DynArray<RGBColor>> COLORS = AttributeKey.createDynArray( "colors", EShape.class );
-    public static final AttributeKey<Integer> SEGMENTS = new AttributeKey<Integer>( "segments", Integer.class, EShape.class );
-    public static final AttributeKey<Boolean> FILL = new AttributeKey<Boolean>( "fill", Boolean.class, EShape.class );
-    public static final AttributeKey<String> SHADER_ASSET_NAME = new AttributeKey<String>( "shaderAssetName", String.class, EShape.class );
-    public static final AttributeKey<Integer> SHADER_ID = new AttributeKey<Integer>( "shaderId", Integer.class, EShape.class );
-    public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, EShape.class );
-
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final AttributeKey<Integer> SEGMENTS = AttributeKey.createInt( "segments", EShape.class );
+    public static final AttributeKey<Boolean> FILL = AttributeKey.createBoolean( "fill", EShape.class );
+    public static final AttributeKey<String> SHADER_ASSET_NAME = AttributeKey.createString( "shaderAssetName", EShape.class );
+    public static final AttributeKey<Integer> SHADER_ID = AttributeKey.createInt( "shaderId", EShape.class );
+    public static final AttributeKey<BlendMode> BLEND_MODE = AttributeKey.createBlendMode( "blendMode", EShape.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         SHAPE_TYPE,
         VERTICES,
         COLORS,
@@ -33,7 +31,7 @@ public class EShape extends EntityComponent implements ShapeData {
         FILL,
         BLEND_MODE,
         SHADER_ID
-    };
+    );
     
     private Type shapeType;
     private float[] vertices;
@@ -113,7 +111,7 @@ public class EShape extends EntityComponent implements ShapeData {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return ATTRIBUTE_KEYS;
     }
 
     @Override

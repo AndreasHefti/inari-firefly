@@ -15,9 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.control.state;
 
-import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -31,14 +31,14 @@ public final class Workflow extends SystemComponent {
     
     public static final SystemComponentKey<Workflow> TYPE_KEY = SystemComponentKey.create( Workflow.class );
     
-    public static final AttributeKey<String> START_STATE_NAME = new AttributeKey<String>( "startStateName", String.class, Workflow.class );
+    public static final AttributeKey<String> START_STATE_NAME = AttributeKey.createString( "startStateName", Workflow.class );
     public static final AttributeKey<DynArray<String>> STATES = AttributeKey.createDynArray( "states", Workflow.class );
     public static final AttributeKey<DynArray<StateChange>> STATE_CHANGES = AttributeKey.createDynArray( "stateChanges", Workflow.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         START_STATE_NAME,
         STATES,
         STATE_CHANGES
-    };
+    );
     
     private String startStateName;
     private DynArray<String> states;
@@ -171,9 +171,7 @@ public final class Workflow extends SystemComponent {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

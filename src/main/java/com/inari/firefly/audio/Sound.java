@@ -15,9 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.audio;
 
-import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -29,24 +29,24 @@ public final class Sound extends SystemComponent {
     
     public static final SystemComponentKey<Sound> TYPE_KEY = SystemComponentKey.create( Sound.class );
     
-    public static final AttributeKey<String> SOUND_ASSET_NAME = new AttributeKey<String>( "soundAssetName", String.class, Sound.class );
-    public static final AttributeKey<Integer> SOUND_ASSET_ID = new AttributeKey<Integer>( "soundAssetId", Integer.class, Sound.class );
-    public static final AttributeKey<Boolean> LOOPING = new AttributeKey<Boolean>( "looping", Boolean.class, Sound.class );
-    public static final AttributeKey<Float> VOLUME = new AttributeKey<Float>( "volume", Float.class, Sound.class );
-    public static final AttributeKey<Float> PITCH = new AttributeKey<Float>( "pitch", Float.class, Sound.class );
-    public static final AttributeKey<Float> PAN = new AttributeKey<Float>( "pan", Float.class, Sound.class );
-    public static final AttributeKey<Integer> CHANNEL = new AttributeKey<Integer>( "channel", Integer.class, Sound.class );
-    public static final AttributeKey<String> CONTROLLER_NAME = new AttributeKey<String>( "controllerName", String.class, Sound.class );
-    public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, Sound.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    public static final AttributeKey<String> SOUND_ASSET_NAME = AttributeKey.createString( "soundAssetName", Sound.class );
+    public static final AttributeKey<Integer> SOUND_ASSET_ID = AttributeKey.createInt( "soundAssetId", Sound.class );
+    public static final AttributeKey<Boolean> LOOPING = AttributeKey.createBoolean( "looping", Sound.class );
+    public static final AttributeKey<Float> VOLUME = AttributeKey.createFloat( "volume", Sound.class );
+    public static final AttributeKey<Float> PITCH = AttributeKey.createFloat( "pitch", Sound.class );
+    public static final AttributeKey<Float> PAN = AttributeKey.createFloat( "pan", Sound.class );
+    public static final AttributeKey<Integer> CHANNEL = AttributeKey.createInt( "channel", Sound.class );
+    public static final AttributeKey<String> CONTROLLER_NAME = AttributeKey.createString( "controllerName", Sound.class );
+    public static final AttributeKey<Integer> CONTROLLER_ID = AttributeKey.createInt( "controllerId", Sound.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet( 
         SOUND_ASSET_ID,
         LOOPING,
         VOLUME,
         PITCH,
         PAN,
         CHANNEL,
-        CONTROLLER_ID,
-    };
+        CONTROLLER_ID
+    );
     
     private int soundAssetId;
     private boolean looping;
@@ -149,9 +149,7 @@ public final class Sound extends SystemComponent {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

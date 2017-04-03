@@ -1,9 +1,8 @@
 package com.inari.firefly.graphics.sprite;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -15,9 +14,9 @@ public final class ESpriteMultiplier extends EntityComponent {
     public static final EntityComponentTypeKey<ESpriteMultiplier> TYPE_KEY = EntityComponentTypeKey.create( ESpriteMultiplier.class );
     
     public static final AttributeKey<DynArray<PositionF>> MULTI_POSITIONS = AttributeKey.createDynArray( "positions", ESpriteMultiplier.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         MULTI_POSITIONS
-    };
+    );
     
     private final DynArray<PositionF> positions;
     
@@ -37,7 +36,7 @@ public final class ESpriteMultiplier extends EntityComponent {
     
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return ATTRIBUTE_KEYS;
     }
     
     @Override

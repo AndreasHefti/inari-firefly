@@ -1,10 +1,9 @@
 package com.inari.firefly.physics.collision;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.GeomUtils;
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.DynArray;
@@ -15,14 +14,14 @@ import com.inari.firefly.graphics.ETransform;
 
 public final class CollisionQuadTree extends ContactPool {
     
-    public static final AttributeKey<Rectangle> WORLD_AREA = new AttributeKey<Rectangle>( "world_area", Rectangle.class, CollisionQuadTree.class );
-    public static final AttributeKey<Integer> MAX_ENTRIES_OF_AREA = new AttributeKey<Integer>( "maxEntities", Integer.class, CollisionQuadTree.class );
-    public static final AttributeKey<Integer> MAX_LEVEL = new AttributeKey<Integer>( "maxLevel", Integer.class, CollisionQuadTree.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final AttributeKey<Rectangle> WORLD_AREA = AttributeKey.createRectangle( "world_area", CollisionQuadTree.class );
+    public static final AttributeKey<Integer> MAX_ENTRIES_OF_AREA = AttributeKey.createInt( "maxEntities", CollisionQuadTree.class );
+    public static final AttributeKey<Integer> MAX_LEVEL = AttributeKey.createInt( "maxLevel", CollisionQuadTree.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         WORLD_AREA,
         MAX_ENTRIES_OF_AREA,
         MAX_LEVEL
-    };
+    );
 
     private int maxEntities;
     private int maxLevel;
@@ -76,9 +75,7 @@ public final class CollisionQuadTree extends ContactPool {
     
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
     
     @Override

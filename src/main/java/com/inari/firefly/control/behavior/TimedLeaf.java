@@ -2,6 +2,7 @@ package com.inari.firefly.control.behavior;
 
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.control.behavior.Action.ActionState;
@@ -10,7 +11,11 @@ import com.inari.firefly.system.FFContext;
 public final class TimedLeaf extends BehaviorNode {
     
     public static final AttributeKey<Integer> ACTION_ID = AttributeKey.createInt( "actionId", TimedLeaf.class );
-    public static final AttributeKey<Long> DURATION = AttributeKey.createLong( "actionId", TimedLeaf.class );
+    public static final AttributeKey<Long> DURATION = AttributeKey.createLong( "duration", TimedLeaf.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
+        ACTION_ID,
+        DURATION
+    );
     
     private int actionId;
     private long duration;
@@ -39,10 +44,7 @@ public final class TimedLeaf extends BehaviorNode {
     
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.add( ACTION_ID );
-        attributeKeys.add( DURATION );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

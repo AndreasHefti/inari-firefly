@@ -15,10 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.graphics.tile;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Position;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
@@ -48,13 +47,13 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     public static final AttributeKey<String> SHADER_ASSET_NAME = AttributeKey.createString( "shaderAssetName", ETile.class );
     public static final AttributeKey<Integer> SHADER_ID = AttributeKey.createInt( "shaderId", ETile.class );
     public static final AttributeKey<DynArray<Position>> GRID_POSITIONS = AttributeKey.createDynArray( "gridPositions", ETile.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         SPRITE_ID,
         TINT_COLOR,
         BLEND_MODE,
         SHADER_ID,
-        GRID_POSITIONS,
-    };
+        GRID_POSITIONS
+    );
     
     private int spriteId;
     private final RGBColor tintColor = new RGBColor();
@@ -128,7 +127,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return ATTRIBUTE_KEYS;
     }
 
     @Override

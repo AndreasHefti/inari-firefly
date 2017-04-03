@@ -16,10 +16,10 @@
 package com.inari.firefly.graphics.tile;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.GeomUtils;
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
@@ -36,20 +36,20 @@ public final class TileGrid extends SystemComponent {
     
     public static final SystemComponentKey<TileGrid> TYPE_KEY = SystemComponentKey.create( TileGrid.class );
     
-    public static final AttributeKey<String> RENDERER_NAME = new AttributeKey<String>( "rendererName", String.class, TileGrid.class );
-    public static final AttributeKey<Integer> RENDERER_ID = new AttributeKey<Integer>( "rendererId", Integer.class, TileGrid.class );
-    public static final AttributeKey<String> VIEW_NAME = new AttributeKey<String>( "viewName", String.class, TileGrid.class );
-    public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, TileGrid.class );
-    public static final AttributeKey<String> LAYER_NAME = new AttributeKey<String>( "layerName", String.class, TileGrid.class );
-    public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, TileGrid.class );
-    public static final AttributeKey<Integer> WIDTH = new AttributeKey<Integer>( "width", Integer.class, TileGrid.class );
-    public static final AttributeKey<Integer> HEIGHT = new AttributeKey<Integer>( "height", Integer.class, TileGrid.class );
-    public static final AttributeKey<Integer> CELL_WIDTH = new AttributeKey<Integer>( "cellWidth", Integer.class, TileGrid.class );
-    public static final AttributeKey<Integer> CELL_HEIGHT = new AttributeKey<Integer>( "cellHeight", Integer.class, TileGrid.class );
-    public static final AttributeKey<Float> WORLD_XPOS = new AttributeKey<Float>( "worldXPos", Float.class, TileGrid.class );
-    public static final AttributeKey<Float> WORLD_YPOS = new AttributeKey<Float>( "worldYPos", Float.class, TileGrid.class );
-    public static final AttributeKey<Boolean> SPHERICAL = new AttributeKey<Boolean>( "spherical", Boolean.class, TileGrid.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    public static final AttributeKey<String> RENDERER_NAME = AttributeKey.createString( "rendererName", TileGrid.class );
+    public static final AttributeKey<Integer> RENDERER_ID = AttributeKey.createInt( "rendererId", TileGrid.class );
+    public static final AttributeKey<String> VIEW_NAME = AttributeKey.createString( "viewName", TileGrid.class );
+    public static final AttributeKey<Integer> VIEW_ID = AttributeKey.createInt( "viewId", TileGrid.class );
+    public static final AttributeKey<String> LAYER_NAME = AttributeKey.createString( "layerName", TileGrid.class );
+    public static final AttributeKey<Integer> LAYER_ID = AttributeKey.createInt( "layerId", TileGrid.class );
+    public static final AttributeKey<Integer> WIDTH = AttributeKey.createInt( "width", TileGrid.class );
+    public static final AttributeKey<Integer> HEIGHT = AttributeKey.createInt( "height", TileGrid.class );
+    public static final AttributeKey<Integer> CELL_WIDTH = AttributeKey.createInt( "cellWidth", TileGrid.class );
+    public static final AttributeKey<Integer> CELL_HEIGHT = AttributeKey.createInt( "cellHeight", TileGrid.class );
+    public static final AttributeKey<Float> WORLD_XPOS = AttributeKey.createFloat( "worldXPos", TileGrid.class );
+    public static final AttributeKey<Float> WORLD_YPOS = AttributeKey.createFloat( "worldYPos", TileGrid.class );
+    public static final AttributeKey<Boolean> SPHERICAL = AttributeKey.createBoolean( "spherical", TileGrid.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         RENDERER_ID,
         VIEW_ID,
         LAYER_ID,
@@ -60,7 +60,7 @@ public final class TileGrid extends SystemComponent {
         WORLD_XPOS,
         WORLD_YPOS,
         SPHERICAL
-    };
+    );
     
     public final static int NULL_VALUE = -1;
 
@@ -184,9 +184,7 @@ public final class TileGrid extends SystemComponent {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

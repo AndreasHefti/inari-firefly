@@ -1,9 +1,8 @@
 package com.inari.firefly.physics.collision;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
@@ -16,21 +15,21 @@ public final class ECollision extends EntityComponent {
     
     public static final EntityComponentTypeKey<ECollision> TYPE_KEY = EntityComponentTypeKey.create( ECollision.class );
     
-    public static final AttributeKey<Rectangle> COLLISION_BOUNDS = new AttributeKey<Rectangle>( "collisionBounds", Rectangle.class, ECollision.class );
-    public static final AttributeKey<BitMask> COLLISION_MASK = new AttributeKey<BitMask>( "collisionMask", BitMask.class, ECollision.class );
-    public static final AttributeKey<String> COLLISION_RESOLVER_NAME = new AttributeKey<String>( "collisionResolverName", String.class, ECollision.class );
-    public static final AttributeKey<Integer> COLLISION_RESOLVER_ID = new AttributeKey<Integer>( "collisionResolverId", Integer.class, ECollision.class );
-    public static final AttributeKey<Aspect> MATERIAL_TYPE = new AttributeKey<Aspect>( "materialType", Aspect.class, ECollision.class );
-    public static final AttributeKey<Aspect> CONTACT_TYPE = new AttributeKey<Aspect>( "contactType", Aspect.class, ECollision.class );
+    public static final AttributeKey<Rectangle> COLLISION_BOUNDS = AttributeKey.createRectangle( "collisionBounds", ECollision.class );
+    public static final AttributeKey<BitMask> COLLISION_MASK = AttributeKey.create( "collisionMask", BitMask.class, ECollision.class );
+    public static final AttributeKey<String> COLLISION_RESOLVER_NAME = AttributeKey.createString( "collisionResolverName", ECollision.class );
+    public static final AttributeKey<Integer> COLLISION_RESOLVER_ID = AttributeKey.createInt( "collisionResolverId", ECollision.class );
+    public static final AttributeKey<Aspect> MATERIAL_TYPE = AttributeKey.createAspect( "materialType", ECollision.class );
+    public static final AttributeKey<Aspect> CONTACT_TYPE = AttributeKey.createAspect( "contactType", ECollision.class );
     public static final AttributeKey<DynArray<ContactConstraint>> CONTACT_CONSTRAINTS = AttributeKey.createDynArray( "contactConstraints", ECollision.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         COLLISION_BOUNDS,
         COLLISION_MASK,
         COLLISION_RESOLVER_ID,
         MATERIAL_TYPE,
         CONTACT_TYPE,
         CONTACT_CONSTRAINTS
-    };
+    );
     
     private final Rectangle collisionBounds;
     private BitMask collisionMask;
@@ -113,7 +112,7 @@ public final class ECollision extends EntityComponent {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return ATTRIBUTE_KEYS;
     }
 
     @Override

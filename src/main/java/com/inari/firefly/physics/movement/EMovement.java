@@ -15,10 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.physics.movement;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Vector2f;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -30,16 +29,16 @@ public final class EMovement extends EntityComponent {
     
     public static final EntityComponentTypeKey<EMovement> TYPE_KEY = EntityComponentTypeKey.create( EMovement.class );
     
-    public static final AttributeKey<Boolean> ACTIVE = new AttributeKey<Boolean>( "active", Boolean.class, EMovement.class );
-    public static final AttributeKey<Float> VELOCITY_X = new AttributeKey<Float>( "dx", Float.class, EMovement.class );
-    public static final AttributeKey<Float> VELOCITY_Y = new AttributeKey<Float>( "dy", Float.class, EMovement.class );
-    public static final AttributeKey<Float> UPDATE_RESOLUTION = new AttributeKey<Float>( "updateResolution", Float.class, EMovement.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final AttributeKey<Boolean> ACTIVE = AttributeKey.createBoolean( "active", EMovement.class );
+    public static final AttributeKey<Float> VELOCITY_X = AttributeKey.createFloat( "dx", EMovement.class );
+    public static final AttributeKey<Float> VELOCITY_Y = AttributeKey.createFloat( "dy", EMovement.class );
+    public static final AttributeKey<Float> UPDATE_RESOLUTION = AttributeKey.createFloat( "updateResolution", EMovement.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         ACTIVE,
         VELOCITY_X,
         VELOCITY_Y,
         UPDATE_RESOLUTION
-    };
+    );
     
     boolean active;
     final Vector2f velocity = new Vector2f( 0, 0 );
@@ -121,7 +120,7 @@ public final class EMovement extends EntityComponent {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return ATTRIBUTE_KEYS;
     }
 
     @Override

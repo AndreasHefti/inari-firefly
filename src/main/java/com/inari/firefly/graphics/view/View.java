@@ -15,9 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.graphics.view;
 
-import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
@@ -33,16 +33,16 @@ public class View extends SystemComponent {
     
     public static final SystemComponentKey<View> TYPE_KEY = SystemComponentKey.create( View.class );
     
-    public static final AttributeKey<Rectangle> BOUNDS = new AttributeKey<Rectangle>( "bounds", Rectangle.class, View.class );
-    public static final AttributeKey<PositionF> WORLD_POSITION = new AttributeKey<PositionF>( "worldPosition", PositionF.class, View.class );
-    public static final AttributeKey<RGBColor> CLEAR_COLOR = new AttributeKey<RGBColor>( "clearColor", RGBColor.class, View.class );
-    public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, ESprite.class );
-    public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, ESprite.class );
-    public static final AttributeKey<Boolean> LAYERING_ENABLED = new AttributeKey<Boolean>( "layeringEnabled", Boolean.class, View.class );
-    public static final AttributeKey<Float> ZOOM = new AttributeKey<Float>( "zoom", Float.class, View.class );
-    public static final AttributeKey<String> CONTROLLER_NAME = new AttributeKey<String>( "controllerName", String.class, View.class );
-    public static final AttributeKey<Integer> CONTROLLER_ID = new AttributeKey<Integer>( "controllerId", Integer.class, View.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    public static final AttributeKey<Rectangle> BOUNDS = AttributeKey.createRectangle( "bounds", View.class );
+    public static final AttributeKey<PositionF> WORLD_POSITION = AttributeKey.createPositionF( "worldPosition", View.class );
+    public static final AttributeKey<RGBColor> CLEAR_COLOR = AttributeKey.createColor( "clearColor", View.class );
+    public static final AttributeKey<RGBColor> TINT_COLOR = AttributeKey.createColor( "tintColor", ESprite.class );
+    public static final AttributeKey<BlendMode> BLEND_MODE = AttributeKey.createBlendMode( "blendMode", ESprite.class );
+    public static final AttributeKey<Boolean> LAYERING_ENABLED = AttributeKey.createBoolean( "layeringEnabled", View.class );
+    public static final AttributeKey<Float> ZOOM = AttributeKey.createFloat( "zoom", View.class );
+    public static final AttributeKey<String> CONTROLLER_NAME = AttributeKey.createString( "controllerName", View.class );
+    public static final AttributeKey<Integer> CONTROLLER_ID = AttributeKey.createInt( "controllerId", View.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         BOUNDS,
         WORLD_POSITION,
         CLEAR_COLOR,
@@ -51,7 +51,7 @@ public class View extends SystemComponent {
         LAYERING_ENABLED,
         ZOOM,
         CONTROLLER_ID
-    };
+    );
     
     int order;
     boolean active = false;
@@ -174,9 +174,7 @@ public class View extends SystemComponent {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

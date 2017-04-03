@@ -15,10 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.graphics;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -29,11 +28,10 @@ import com.inari.firefly.system.utils.Disposable;
 
 public final class TextureAsset extends Asset implements TextureData {
     
-    public static final AttributeKey<String> RESOURCE_NAME = new AttributeKey<String>( "resourceName", String.class, TextureAsset.class );
-    
-    private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
-        RESOURCE_NAME,
-    } ) );
+    public static final AttributeKey<String> RESOURCE_NAME = AttributeKey.createString( "resourceName", TextureAsset.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
+        RESOURCE_NAME
+    );
     
     private String resourceName;
     
@@ -86,9 +84,7 @@ public final class TextureAsset extends Asset implements TextureData {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( ATTRIBUTE_KEYS );
-        return super.attributeKeys( attributeKeys );
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
     
     @Override

@@ -13,8 +13,6 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
     protected FFGraphics graphics;
     protected EntitySystem entitySystem;
 
-    //protected final TransformDataCollector transformCollector = new TransformDataCollector();
-
     protected BaseRenderer( int id ) {
         super( id );
     }

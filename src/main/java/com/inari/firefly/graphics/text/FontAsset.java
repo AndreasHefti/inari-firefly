@@ -1,8 +1,8 @@
 package com.inari.firefly.graphics.text;
 
-import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.IntBag;
@@ -17,14 +17,14 @@ import com.inari.firefly.system.utils.Disposable;
 
 public final class FontAsset extends Asset implements TextureData {
     
-    public static final AttributeKey<String> TEXTURE_RESOURCE_NAME = new AttributeKey<String>( "fontTextureId", String.class, FontAsset.class );
-    public static final AttributeKey<char[][]> CHAR_TEXTURE_MAP = new AttributeKey<char[][]>( "charTextureMap", char[][].class, FontAsset.class );
-    public static final AttributeKey<Integer> CHAR_WIDTH = new AttributeKey<Integer>( "charWidth", Integer.class, FontAsset.class );
-    public static final AttributeKey<Integer> CHAR_HEIGHT = new AttributeKey<Integer>( "charHeight", Integer.class, FontAsset.class );
-    public static final AttributeKey<Integer> CHAR_SPACE = new AttributeKey<Integer>( "charSpace", Integer.class, FontAsset.class );
-    public static final AttributeKey<Integer> LINE_SPACE = new AttributeKey<Integer>( "lineSpace", Integer.class, FontAsset.class );
-    public static final AttributeKey<Integer> DEFAULT_CHAR = new AttributeKey<Integer>( "defaultChar", Integer.class, FontAsset.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final AttributeKey<String> TEXTURE_RESOURCE_NAME = AttributeKey.createString( "fontTextureId", FontAsset.class );
+    public static final AttributeKey<char[][]> CHAR_TEXTURE_MAP = AttributeKey.create( "charTextureMap", char[][].class, FontAsset.class );
+    public static final AttributeKey<Integer> CHAR_WIDTH = AttributeKey.createInt( "charWidth", FontAsset.class );
+    public static final AttributeKey<Integer> CHAR_HEIGHT = AttributeKey.createInt( "charHeight", FontAsset.class );
+    public static final AttributeKey<Integer> CHAR_SPACE = AttributeKey.createInt( "charSpace", FontAsset.class );
+    public static final AttributeKey<Integer> LINE_SPACE = AttributeKey.createInt( "lineSpace", FontAsset.class );
+    public static final AttributeKey<Integer> DEFAULT_CHAR = AttributeKey.createInt( "defaultChar", FontAsset.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         TEXTURE_RESOURCE_NAME,
         CHAR_TEXTURE_MAP,
         CHAR_WIDTH,
@@ -32,7 +32,7 @@ public final class FontAsset extends Asset implements TextureData {
         CHAR_HEIGHT,
         LINE_SPACE,
         DEFAULT_CHAR
-    };
+    );
 
     private String textureResourceName;
     private int textureWidth;
@@ -154,9 +154,7 @@ public final class FontAsset extends Asset implements TextureData {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

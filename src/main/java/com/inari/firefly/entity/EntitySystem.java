@@ -527,7 +527,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     public final static class Entity extends SystemComponent implements IndexedType {
         
         public static final SystemComponentKey<Entity> ENTITY_TYPE_KEY = SystemComponentKey.create( Entity.class );
-        static final AttributeKey<String> ACTIVE_ENTITY_IDS = new AttributeKey<String>( "ACTIVE_ENTITY_IDS", String.class, Entity.class );
+        static final AttributeKey<String> ACTIVE_ENTITY_IDS = AttributeKey.createString( "ACTIVE_ENTITY_IDS", Entity.class );
         static final ComponentId ACTIVE_ENTITIES_IDS_KEY = new ComponentId( ENTITY_TYPE_KEY, -1 );
         
         Entity() {

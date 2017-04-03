@@ -2,6 +2,7 @@ package com.inari.firefly.control.behavior;
 
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -11,6 +12,9 @@ import com.inari.firefly.system.FFContext;
 public final class ConditionalSelection extends BehaviorNode {
     
     public static final AttributeKey<DynArray<Mapping>> NODE_MAPPING = AttributeKey.createDynArray( "subNodeMapping", ConditionalSelection.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
+        NODE_MAPPING
+    );
     
     private final DynArray<Mapping> subNodeMapping;
 
@@ -47,9 +51,7 @@ public final class ConditionalSelection extends BehaviorNode {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.add( NODE_MAPPING );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

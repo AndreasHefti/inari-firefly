@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -98,7 +97,12 @@ public abstract class Asset extends SystemComponent implements Loadable, Disposa
     }
     
     protected Set<AttributeKey<?>> attributeKeys( Set<AttributeKey<?>> attributeKeys ) {
-        return Collections.unmodifiableSet( dynamicAttributeMap.attributeKeys( this, new HashSet<AttributeKey<?>>( attributeKeys ) ) );
+        return Collections.unmodifiableSet( 
+            dynamicAttributeMap.attributeKeys( 
+                this, 
+                new HashSet<AttributeKey<?>>( attributeKeys ) 
+            ) 
+        );
     }
 
     protected IntBag dependsOn() {

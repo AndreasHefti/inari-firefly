@@ -1,9 +1,8 @@
 package com.inari.firefly.graphics.text;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -15,23 +14,23 @@ public class EText extends EntityComponent {
     
     public static final EntityComponentTypeKey<EText> TYPE_KEY = EntityComponentTypeKey.create( EText.class );
     
-    public static final AttributeKey<String> RENDERER_NAME = new AttributeKey<String>( "rendererName", String.class, EText.class );
-    public static final AttributeKey<Integer> RENDERER_ID = new AttributeKey<Integer>( "rendererId", Integer.class, EText.class );
-    public static final AttributeKey<String> FONT_ASSET_NAME = new AttributeKey<String>( "fontAssetName", String.class, EText.class );
-    public static final AttributeKey<Integer> FONT_ASSET_ID = new AttributeKey<Integer>( "fontAssetId", Integer.class, EText.class );
-    public static final AttributeKey<String> TEXT = new AttributeKey<String>( "text", String.class, EText.class );
-    public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, EText.class );
-    public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, EText.class );
-    public static final AttributeKey<String> SHADER_ASSET_NAME = new AttributeKey<String>( "shaderAssetName", String.class, EText.class );
-    public static final AttributeKey<Integer> SHADER_ID = new AttributeKey<Integer>( "shaderId", Integer.class, EText.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    public static final AttributeKey<String> RENDERER_NAME = AttributeKey.createString( "rendererName", EText.class );
+    public static final AttributeKey<Integer> RENDERER_ID = AttributeKey.createInt( "rendererId", EText.class );
+    public static final AttributeKey<String> FONT_ASSET_NAME = AttributeKey.createString( "fontAssetName", EText.class );
+    public static final AttributeKey<Integer> FONT_ASSET_ID = AttributeKey.createInt( "fontAssetId", EText.class );
+    public static final AttributeKey<String> TEXT = AttributeKey.createString( "text", EText.class );
+    public static final AttributeKey<RGBColor> TINT_COLOR = AttributeKey.createColor( "tintColor", EText.class );
+    public static final AttributeKey<BlendMode> BLEND_MODE = AttributeKey.createBlendMode( "blendMode", EText.class );
+    public static final AttributeKey<String> SHADER_ASSET_NAME = AttributeKey.createString( "shaderAssetName", EText.class );
+    public static final AttributeKey<Integer> SHADER_ID = AttributeKey.createInt( "shaderId", EText.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         RENDERER_ID,
         FONT_ASSET_ID,
         TEXT,
         TINT_COLOR,
         BLEND_MODE,
         SHADER_ID
-    };
+    );
     
     private int rendererId;
     private int fontAssetId;
@@ -120,7 +119,7 @@ public class EText extends EntityComponent {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return ATTRIBUTE_KEYS;
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.inari.firefly.physics.collision;
 
-import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -12,12 +12,12 @@ public abstract class CollisionResolver extends SystemComponent {
     
     public static final SystemComponentKey<CollisionResolver> TYPE_KEY = SystemComponentKey.create( CollisionResolver.class );
     
-    public static final AttributeKey<Boolean> SEPARATE_AXIS = new AttributeKey<Boolean>( "separateAxis", Boolean.class, CollisionResolver.class );
-    public static final AttributeKey<Boolean> Y_AXIS_FIRST = new AttributeKey<Boolean>( "yAxisFirst", Boolean.class, CollisionResolver.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    public static final AttributeKey<Boolean> SEPARATE_AXIS = AttributeKey.createBoolean( "separateAxis", CollisionResolver.class );
+    public static final AttributeKey<Boolean> Y_AXIS_FIRST = AttributeKey.createBoolean( "yAxisFirst", CollisionResolver.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         SEPARATE_AXIS,
         Y_AXIS_FIRST
-    };
+    );
     
     protected boolean separateAxis = true;
     protected boolean yAxisFirst = false;
@@ -49,9 +49,7 @@ public abstract class CollisionResolver extends SystemComponent {
     
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

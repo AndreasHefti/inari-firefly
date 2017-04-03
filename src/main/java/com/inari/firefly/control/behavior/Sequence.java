@@ -2,6 +2,7 @@ package com.inari.firefly.control.behavior;
 
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -12,6 +13,9 @@ public final class Sequence extends BehaviorNode {
     
     public static final AttributeKey<IntBag> NODE_IDS = AttributeKey.createIntBag( "nodeIds", Sequence.class );
     public static final AttributeKey<DynArray<String>> NODE_NAMES = AttributeKey.createDynArray( "nodeNames", Sequence.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
+        NODE_IDS
+    );
     
     private final IntBag nodeIds = new IntBag( 10, -1 );
 
@@ -48,9 +52,7 @@ public final class Sequence extends BehaviorNode {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.add( NODE_IDS );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.inari.firefly.physics.animation.easing;
 
-import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -10,16 +10,16 @@ import com.inari.firefly.physics.animation.ValueAnimation;
 
 public final class ColorEasingAnimation extends ValueAnimation<RGBColor> {
 
-    public static final AttributeKey<EasingData> EASING_DATA_RED = new AttributeKey<EasingData>( "easingDataRed", EasingData.class, EasingAnimation.class );
-    public static final AttributeKey<EasingData> EASING_DATA_GREEN = new AttributeKey<EasingData>( "easingDataGreen", EasingData.class, EasingAnimation.class );
-    public static final AttributeKey<EasingData> EASING_DATA_BLUE = new AttributeKey<EasingData>( "easingDataBlue", EasingData.class, EasingAnimation.class );
-    public static final AttributeKey<EasingData> EASING_DATA_ALPHA = new AttributeKey<EasingData>( "easingDataAlpha", EasingData.class, EasingAnimation.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    public static final AttributeKey<EasingData> EASING_DATA_RED = AttributeKey.createEasingData( "easingDataRed", EasingAnimation.class );
+    public static final AttributeKey<EasingData> EASING_DATA_GREEN = AttributeKey.createEasingData( "easingDataGreen", EasingAnimation.class );
+    public static final AttributeKey<EasingData> EASING_DATA_BLUE = AttributeKey.createEasingData( "easingDataBlue", EasingAnimation.class );
+    public static final AttributeKey<EasingData> EASING_DATA_ALPHA = AttributeKey.createEasingData( "easingDataAlpha", EasingAnimation.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         EASING_DATA_RED,
         EASING_DATA_GREEN,
         EASING_DATA_BLUE,
         EASING_DATA_ALPHA
-    };
+    );
     
     private EasingData easingDataRed;
     private EasingData easingDataGreen;
@@ -81,9 +81,7 @@ public final class ColorEasingAnimation extends ValueAnimation<RGBColor> {
     
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

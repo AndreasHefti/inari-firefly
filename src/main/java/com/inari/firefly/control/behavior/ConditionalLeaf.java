@@ -2,6 +2,7 @@ package com.inari.firefly.control.behavior;
 
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.control.behavior.Action.ActionState;
@@ -10,7 +11,11 @@ import com.inari.firefly.system.FFContext;
 public class ConditionalLeaf extends BehaviorNode {
     
     public static final AttributeKey<Integer> ACTION_ID = AttributeKey.createInt( "actionId", ConditionalLeaf.class );
-    public static final AttributeKey<BCondition> RUN_CONDITION = new AttributeKey<BCondition>( "runCondition", BCondition.class, ConditionalLeaf.class );
+    public static final AttributeKey<BCondition> RUN_CONDITION = AttributeKey.create( "runCondition", BCondition.class, ConditionalLeaf.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet( 
+        ACTION_ID,
+        RUN_CONDITION
+    );
     
     private int actionId;
     private BCondition runCondition;
@@ -33,10 +38,7 @@ public class ConditionalLeaf extends BehaviorNode {
     
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.add( ACTION_ID );
-        attributeKeys.add( RUN_CONDITION );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

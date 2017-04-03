@@ -15,10 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.graphics.sprite;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.asset.Asset;
@@ -31,17 +30,17 @@ import com.inari.firefly.system.utils.Disposable;
 
 public final class SpriteAsset extends Asset implements SpriteData {
     
-    public static final AttributeKey<String> TEXTURE_ASSET_NAME = new AttributeKey<String>( "textureAssetName", String.class, SpriteAsset.class );
-    public static final AttributeKey<Integer> TEXTURE_ASSET_ID = new AttributeKey<Integer>( "textureAssetId", Integer.class, SpriteAsset.class );
-    public static final AttributeKey<Rectangle> TEXTURE_REGION  = new AttributeKey<Rectangle>( "textureRegion", Rectangle.class, SpriteAsset.class );
-    public static final AttributeKey<Boolean> HORIZONTAL_FLIP = new AttributeKey<Boolean>( "horizontalFlip", Boolean.class, ESprite.class );
-    public static final AttributeKey<Boolean> VERTICAL_FLIP = new AttributeKey<Boolean>( "verticalFlip", Boolean.class, ESprite.class );
-    private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
+    public static final AttributeKey<String> TEXTURE_ASSET_NAME = AttributeKey.createString( "textureAssetName", SpriteAsset.class );
+    public static final AttributeKey<Integer> TEXTURE_ASSET_ID = AttributeKey.createInt( "textureAssetId", SpriteAsset.class );
+    public static final AttributeKey<Rectangle> TEXTURE_REGION  = AttributeKey.createRectangle( "textureRegion", SpriteAsset.class );
+    public static final AttributeKey<Boolean> HORIZONTAL_FLIP = AttributeKey.createBoolean( "horizontalFlip", ESprite.class );
+    public static final AttributeKey<Boolean> VERTICAL_FLIP = AttributeKey.createBoolean( "verticalFlip", ESprite.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         TEXTURE_ASSET_ID,
         TEXTURE_REGION,
         HORIZONTAL_FLIP,
         VERTICAL_FLIP
-    } ) );
+    );
     
     private int textureAssetId;
     private final Rectangle textureRegion;
@@ -115,9 +114,7 @@ public final class SpriteAsset extends Asset implements SpriteData {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( ATTRIBUTE_KEYS );
-        return super.attributeKeys( attributeKeys );
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

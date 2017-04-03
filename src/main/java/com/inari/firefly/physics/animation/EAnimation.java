@@ -1,9 +1,8 @@
 package com.inari.firefly.physics.animation;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -14,9 +13,9 @@ public class EAnimation extends EntityComponent {
     public static final EntityComponentTypeKey<EAnimation> TYPE_KEY = EntityComponentTypeKey.create( EAnimation.class );
     
     public static final AttributeKey<DynArray<AnimationMapping>> ANIMATION_MAPPING = AttributeKey.createDynArray( "animationMapping", EAnimation.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         ANIMATION_MAPPING
-    };
+    );
     
     private final DynArray<AnimationMapping> animationMapping;
     
@@ -36,7 +35,7 @@ public class EAnimation extends EntityComponent {
     
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        return new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return ATTRIBUTE_KEYS;
     }
     
     @Override

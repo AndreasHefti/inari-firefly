@@ -15,10 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.audio;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -27,12 +26,12 @@ import com.inari.firefly.system.utils.Disposable;
 
 public class SoundAsset extends Asset {
     
-    public static final AttributeKey<String> RESOURCE_NAME = new AttributeKey<String>( "resourceName", String.class, SoundAsset.class );
-    public static final AttributeKey<Boolean> STREAMING = new AttributeKey<Boolean>( "streaming", Boolean.class, SoundAsset.class );
-    private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
+    public static final AttributeKey<String> RESOURCE_NAME = AttributeKey.createString( "resourceName", SoundAsset.class );
+    public static final AttributeKey<Boolean> STREAMING = AttributeKey.createBoolean( "streaming", SoundAsset.class );
+    private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         RESOURCE_NAME,
         STREAMING
-    } ) );
+    );
     
     private String resourceName;
     private boolean streaming;
@@ -71,9 +70,7 @@ public class SoundAsset extends Asset {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( ATTRIBUTE_KEYS );
-        return super.attributeKeys( attributeKeys );
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
     
     @Override

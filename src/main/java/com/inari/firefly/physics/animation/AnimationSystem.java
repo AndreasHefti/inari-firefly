@@ -40,8 +40,7 @@ public final class AnimationSystem
     
     public static final FFSystemTypeKey<AnimationSystem> SYSTEM_KEY = FFSystemTypeKey.create( AnimationSystem.class );
     private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
-        Animation.TYPE_KEY,
-        AnimationResolver.TYPE_KEY
+        Animation.TYPE_KEY
     );
 
     final DynArray<Animation> animations;

@@ -15,9 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.graphics.view;
 
-import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -30,11 +30,11 @@ public final class Layer extends SystemComponent {
     
     public static final String DEFAULT_LAYER_NAME = "LAYER_";
     
-    public static final AttributeKey<String> VIEW_NAME = new AttributeKey<String>( "viewName", String.class, Layer.class );
-    public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, Layer.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final AttributeKey<String> VIEW_NAME = AttributeKey.createString( "viewName", Layer.class );
+    public static final AttributeKey<Integer> VIEW_ID = AttributeKey.createInt( "viewId", Layer.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         VIEW_ID
-    };
+    );
 
     private int viewId;
     
@@ -59,9 +59,7 @@ public final class Layer extends SystemComponent {
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

@@ -17,6 +17,7 @@ package com.inari.firefly.control;
 
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -27,7 +28,10 @@ import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 public abstract class Controller extends SystemComponent {
     
     public static final SystemComponentKey<Controller> TYPE_KEY = SystemComponentKey.create( Controller.class );
-    public static final AttributeKey<Float> UPDATE_RESOLUTION = new AttributeKey<Float>( "updateResolution", Float.class, Controller.class );
+    public static final AttributeKey<Float> UPDATE_RESOLUTION = AttributeKey.createFloat( "updateResolution", Controller.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet( 
+        UPDATE_RESOLUTION
+    );
 
     private float updateResolution;
     
@@ -74,9 +78,7 @@ public abstract class Controller extends SystemComponent {
     
     @Override
     public Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.add( UPDATE_RESOLUTION );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override

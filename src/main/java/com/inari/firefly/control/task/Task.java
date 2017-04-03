@@ -15,9 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.control.task;
 
-import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -33,10 +33,10 @@ public abstract class Task extends SystemComponent {
 
     public static final AttributeKey<Boolean> REMOVE_AFTER_RUN = AttributeKey.createBoolean( "removeAfterRun", Task.class );
     public static final AttributeKey<DynArray<Trigger>> TRIGGER = AttributeKey.createDynArray( "trigger", Task.class );
-    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         REMOVE_AFTER_RUN,
         TRIGGER
-    };
+    );
     
     public static final Triggerer TASK_TRIGGERER = new Triggerer() {
         @Override
@@ -91,9 +91,7 @@ public abstract class Task extends SystemComponent {
 
     @Override
     public Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
-        return attributeKeys;
+        return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
 
     @Override
