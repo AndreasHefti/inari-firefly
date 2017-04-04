@@ -36,7 +36,11 @@ public final class ConditionalSelection extends BehaviorNode {
         
         behavior.removeNodeMapping( index );
         // find next action
-        for ( Mapping mapping : subNodeMapping ) {
+        for ( int i = 0; i < subNodeMapping.capacity(); i++ ) {
+            Mapping mapping = subNodeMapping.get( i );
+            if ( mapping == null ) {
+                continue;
+            }
             if ( mapping.condition.check( entityId, behavior, context ) == ActionState.RUNNING ) {
                 final BehaviorNode subNode = context.getSystemComponent( BehaviorNode.TYPE_KEY, mapping.nodeMapping );
                 subNode.nextAction( entityId, behavior, context );

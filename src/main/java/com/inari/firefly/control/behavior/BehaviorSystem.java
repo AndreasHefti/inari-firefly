@@ -22,7 +22,8 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
     
     public static final FFSystemTypeKey<BehaviorSystem> SYSTEM_KEY = FFSystemTypeKey.create( BehaviorSystem.class );
     private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
-        Action.TYPE_KEY
+        Action.TYPE_KEY,
+        BehaviorNode.TYPE_KEY
     );
 
     private final DynArray<BehaviorNode> behaviorNodes;

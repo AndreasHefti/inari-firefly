@@ -36,7 +36,7 @@ public abstract class Asset extends SystemComponent implements Loadable, Disposa
     
     protected boolean loaded = false;
     
-    private DynamicAttributeMap dynamicAttributeMap = new DynamicAttributeMap();
+    private DynamicAttributeMap dynamicAttributeMap = null;
     
     protected Asset( int assetIntId ) {
         super( assetIntId );
@@ -70,11 +70,21 @@ public abstract class Asset extends SystemComponent implements Loadable, Disposa
     
     @Override
     public final <A> void setDynamicAttribute( AttributeKey<A> key, A value ) {
-        dynamicAttributeMap.setDynamicAttribute( key, value, componentType() );
+        if ( dynamicAttributeMap == null && hasDynamicAttributes() ) {
+            dynamicAttributeMap = new DynamicAttributeMap();
+        }
+        
+        if ( dynamicAttributeMap != null ) {
+            dynamicAttributeMap.setDynamicAttribute( key, value, componentType() );
+        }
     }
     
     @Override
     public final <A> A getDynamicAttribute( AttributeKey<A> key ) {
+        if ( dynamicAttributeMap == null ) {
+            return null;
+        }
+        
         return dynamicAttributeMap.getDynamicAttribute( key );
     }
 
@@ -82,7 +92,7 @@ public abstract class Asset extends SystemComponent implements Loadable, Disposa
     public void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        if ( hasDynamicAttributes() ) {
+        if ( dynamicAttributeMap != null ) {
             dynamicAttributeMap.fromAttributeMap( attributes, this );
         }
     }
@@ -91,12 +101,16 @@ public abstract class Asset extends SystemComponent implements Loadable, Disposa
     public void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         
-        if ( hasDynamicAttributes() ) {
+        if ( dynamicAttributeMap != null ) {
             dynamicAttributeMap.toAttributeMap( attributes, this );
         }
     }
     
     protected Set<AttributeKey<?>> attributeKeys( Set<AttributeKey<?>> attributeKeys ) {
+        if ( dynamicAttributeMap == null ) {
+            return Collections.unmodifiableSet( attributeKeys );
+        } 
+        
         return Collections.unmodifiableSet( 
             dynamicAttributeMap.attributeKeys( 
                 this, 
