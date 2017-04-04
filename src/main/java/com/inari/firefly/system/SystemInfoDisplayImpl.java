@@ -10,7 +10,6 @@ import com.inari.firefly.graphics.text.FontAsset;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewSystem;
 import com.inari.firefly.system.external.FFGraphics;
-import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.ShapeData;
 import com.inari.firefly.system.info.SystemInfo;
 import com.inari.firefly.system.info.SystemInfoDisplay;
@@ -30,12 +29,10 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
     FontAsset defaultFontAsset = null;
     
     private View baseView = null;
-    private final FFTimer.UpdateScheduler updateScheduler;
 
     SystemInfoDisplayImpl( FFContext context ) {
         this.context = context;
         graphics = context.getGraphics();
-        updateScheduler = context.getTimer().createUpdateScheduler( 20 );
     }
 
     @Override
@@ -83,10 +80,6 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
     
     @Override
     public final void postRendering( FFContext context ) {
-        if ( !updateScheduler.needsUpdate() ) {
-            return;
-        }
-        
         graphics.startRendering( baseView, false );
         renderSystemInfoDisplay();
         graphics.endRendering( baseView );
@@ -161,7 +154,7 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
         @Override public final DynArray<RGBColor> getColors() { return colors; }
         @Override public final BlendMode getBlendMode() { return BlendMode.NORMAL_ALPHA; }
         @Override public final boolean isFill() { return true; }
-        @Override public int getShaderId() { return -1; }
+        @Override public final int getShaderId() { return -1; }
         
     }
 
