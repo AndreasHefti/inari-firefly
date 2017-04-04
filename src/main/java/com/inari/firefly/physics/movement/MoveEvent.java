@@ -16,7 +16,6 @@
 package com.inari.firefly.physics.movement;
 
 import com.inari.commons.event.Event;
-import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.IntBag;
 
 public final class MoveEvent extends Event<MoveEventListener> {
@@ -35,10 +34,6 @@ public final class MoveEvent extends Event<MoveEventListener> {
     
     public final IntBag movedEntityIds() {
         return entityIds;
-    }
-    
-    public final IntIterator movedEntityIdsIterator() {
-        return entityIds.iterator();
     }
 
     @Override

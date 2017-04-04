@@ -292,9 +292,13 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     
     private void notifyEntityController( int entityId, boolean activated ) {
         final ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
-        final IntIterator controllerIds = getComponent( entityId, EEntity.TYPE_KEY ).getControllerIds().iterator();
-        while ( controllerIds.hasNext() ) {
-            EntityController entityController = controllerSystem.getControllerAs( controllerIds.next(), EntityController.class );
+        IntBag controllerIds = getComponent( entityId, EEntity.TYPE_KEY ).getControllerIds();
+        for ( int i = 0; i < controllerIds.length(); i++ ) {
+            if ( controllerIds.isEmpty( i ) ) {
+                continue;
+            }
+            
+            EntityController entityController = controllerSystem.getControllerAs( controllerIds.get( i ), EntityController.class );
             if ( entityController != null ) {
                 if ( activated ) {
                     entityController.entityActivated( entityId );
@@ -483,9 +487,11 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             String activeEntityIdsString = attributeMap.getValue( Entity.ACTIVE_ENTITY_IDS );
             IntBag activeEntityIds = new IntBag();
             activeEntityIds.fromConfigString( activeEntityIdsString );
-            IntIterator iterator = activeEntityIds.iterator();
-            while ( iterator.hasNext() ) {
-                activateEntity( iterator.next() );
+            for ( int i = 0; i < activeEntityIds.length(); i++ ) {
+                if ( activeEntityIds.isEmpty( i ) ) {
+                    continue;
+                }
+                activateEntity( activeEntityIds.get( i ) );
             }
         }
 

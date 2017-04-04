@@ -167,11 +167,14 @@ public final class EntityProvider implements FFSystem  {
         }
         
         final IntBag controllerIds = attributes.getValue( EEntity.CONTROLLER_IDS );
-        final IntIterator iterator = controllerIds.iterator();
         final ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         
-        while ( iterator.hasNext() ) {
-            EntityController controller = controllerSystem.getControllerAs( iterator.next(), EntityController.class );
+        for ( int i = 0; i < controllerIds.length(); i++ ) {
+            if ( controllerIds.isEmpty( i ) ) {
+                continue;
+            }
+            
+            EntityController controller = controllerSystem.getControllerAs( controllerIds.get( i ), EntityController.class );
             controller.initEntity( attributes );
         }
     }

@@ -44,6 +44,7 @@ public final class SpriteAsset extends Asset implements SpriteData {
     
     private int textureAssetId;
     private final Rectangle textureRegion;
+    private final IntBag dependsOn = new IntBag( 1, -1 );
     
     private int textureId = -1;
     private int spriteId = -1;
@@ -62,6 +63,8 @@ public final class SpriteAsset extends Asset implements SpriteData {
 
     public final void setTextureAssetId( int textureAssetId ) {
         this.textureAssetId = textureAssetId;
+        dependsOn.clear();
+        dependsOn.set( 0, textureAssetId );
     }
 
     @Override
@@ -75,9 +78,7 @@ public final class SpriteAsset extends Asset implements SpriteData {
 
     @Override
     protected final IntBag dependsOn() {
-        IntBag result = new IntBag( 1, -1 );
-        result.add( textureAssetId );
-        return result;
+        return dependsOn;
     }
     
     public final int getTextureId() {
@@ -122,7 +123,7 @@ public final class SpriteAsset extends Asset implements SpriteData {
         checkNotAlreadyLoaded();
         super.fromAttributes( attributes );
         
-        textureAssetId = attributes.getIdForName( TEXTURE_ASSET_NAME, TEXTURE_ASSET_ID, Asset.TYPE_KEY, textureAssetId );
+        setTextureAssetId( attributes.getIdForName( TEXTURE_ASSET_NAME, TEXTURE_ASSET_ID, Asset.TYPE_KEY, textureAssetId ) );
         Rectangle textureRegion = attributes.getValue( TEXTURE_REGION );
         if ( textureRegion != null ) {
             setTextureRegion( textureRegion );

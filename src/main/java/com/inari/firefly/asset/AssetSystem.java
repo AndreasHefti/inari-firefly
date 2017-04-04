@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.inari.commons.JavaUtils;
-import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
@@ -40,6 +39,8 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
 
     private final DynArray<Asset> assets;
     private final Map<String, Asset> nameMapping;
+    
+    private final IntBag toDisposeFirst = new IntBag( 1, -1 );
     
     AssetSystem() {
         super( SYSTEM_KEY );
@@ -219,11 +220,13 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
 
     private IntBag disposeAsset( Asset asset ) {
-        IntBag toDisposeFirst = findeAssetsToDisposeFirst( asset.index() );
+        findeAssetsToDisposeFirst( asset.index() );
         if ( !toDisposeFirst.isEmpty() ) {
-            IntIterator iterator = toDisposeFirst.iterator();
-            while ( iterator.hasNext() ) {
-                Asset toDispose = getAsset( iterator.next() );
+            for ( int i = 0; i < toDisposeFirst.length(); i++ ) {
+                if ( toDisposeFirst.isEmpty( i ) ) {
+                    continue;
+                }
+                Asset toDispose = getAsset( toDisposeFirst.get( i ) );
                 if ( toDispose.loaded ) {
                     dispose( toDispose );
                 }
@@ -234,31 +237,35 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         return toDisposeFirst;
     }
     
-    private IntBag findeAssetsToDisposeFirst( int assetId ) {
-        IntBag result = new IntBag( 1, -1 );
+    private void findeAssetsToDisposeFirst( int assetId ) {
+        toDisposeFirst.clear();
         for ( Asset asset : assets ) {
             IntBag disposeFirst = asset.dependsOn();
             if ( disposeFirst != null ) {
-                IntIterator iterator = disposeFirst.iterator();
-                while ( iterator.hasNext() ) {
-                    int next = iterator.next();
+                for ( int i = 0; i < disposeFirst.length(); i++ ) {
+                    if ( disposeFirst.isEmpty( i ) ) {
+                        continue;
+                    }
+                    int next = disposeFirst.get( i );
                     if ( next == assetId ) {
-                        result.add( next );
+                        toDisposeFirst.add( next );
                         break;
                     }
                 }
             }
         }
-        return result;
     }
     
     private void deleteAsset( Asset asset ) {
         if ( asset.loaded ) {
             IntBag alsoDisposedAssets = disposeAsset( asset );
             if ( alsoDisposedAssets != null ) {
-                IntIterator iterator = alsoDisposedAssets.iterator();
-                while ( iterator.hasNext() ) {
-                    delete( iterator.next() );
+                for ( int i = 0; i < alsoDisposedAssets.length(); i++ ) {
+                    if ( alsoDisposedAssets.isEmpty( i ) ) {
+                        continue;
+                    }
+
+                    delete( alsoDisposedAssets.get( i ) );
                 }
             }
         }
@@ -287,9 +294,12 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     private void loadAsset( Asset asset ) {
         IntBag loadFirst = asset.dependsOn();
         if ( loadFirst != null ) {
-            IntIterator iterator = loadFirst.iterator();
-            while ( iterator.hasNext() ) {
-                Asset assetToLoadFirst = getAsset( iterator.next() );
+            for ( int i = 0; i < loadFirst.length(); i++ ) {
+                if ( loadFirst.isEmpty( i ) ) {
+                    continue;
+                }
+
+                Asset assetToLoadFirst = getAsset( loadFirst.get( i ) );
                 if ( !assetToLoadFirst.loaded ) {
                     load( assetToLoadFirst );
                 }
