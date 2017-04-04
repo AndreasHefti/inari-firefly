@@ -1,24 +1,38 @@
 package com.inari.firefly.physics.collision;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
+import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
+import com.inari.commons.lang.list.DynArray;
 
-public final class ContactScan implements Iterable<ContactConstraint> {
+public final class ContactScan {
 
-    private final HashMap<String, ContactConstraint> constraints = new HashMap<String, ContactConstraint>();
+    private final HashMap<String, ContactConstraint> constraintsNameMapping = new HashMap<String, ContactConstraint>();
+    private final Rectangle unionArea = new Rectangle();
+    
+    final DynArray<ContactConstraint> constraints = DynArray.create( ContactConstraint.class );
     
     ContactScan() {}
 
     public final void update( float x, float y, float vx, float vy ) {
-        for ( ContactConstraint constraint : constraints.values() ) {
+        for ( int i = 0; i < constraints.capacity(); i++ ) {
+            ContactConstraint constraint = constraints.get( i );
+            if ( constraint == null ) {
+                continue;
+            }
+            
             constraint.update( x, y, vx, vy );
         }
     }
 
     public final boolean hasAnyContact() {
-        for ( ContactConstraint constraint : this ) {
+        for ( int i = 0; i < constraints.capacity(); i++ ) {
+            ContactConstraint constraint = constraints.get( i );
+            if ( constraint == null ) {
+                continue;
+            }
+            
             if ( constraint.hasAnyContact() ) {
                 return true;
             }
@@ -28,7 +42,12 @@ public final class ContactScan implements Iterable<ContactConstraint> {
     }
 
     public final boolean hasContact( Aspect contact ) {
-        for ( ContactConstraint constraint : this ) {
+        for ( int i = 0; i < constraints.capacity(); i++ ) {
+            ContactConstraint constraint = constraints.get( i );
+            if ( constraint == null ) {
+                continue;
+            }
+            
             if ( constraint.hasContact( contact ) ) {
                 return true;
             }
@@ -38,25 +57,27 @@ public final class ContactScan implements Iterable<ContactConstraint> {
     }
 
     public final void clearContacts() {
-         for ( ContactConstraint constraint : constraints.values() ) {
-             constraint.clear();
+         for ( int i = 0; i < constraints.capacity(); i++ ) {
+            ContactConstraint constraint = constraints.get( i );
+            if ( constraint == null ) {
+                continue;
+            }
+            
+            constraint.clear();
          }
     }
     
     public final void addContactContstraint( ContactConstraint constraint ) {
-        constraints.put( constraint.name(), constraint );
-    }
-    
-    @Override
-    public final Iterator<ContactConstraint> iterator() {
-        return constraints.values().iterator();
+        constraintsNameMapping.put( constraint.name(), constraint );
+        constraints.add( constraint );
     }
     
     public final ContactConstraint getContactContstraint( String name ) {
-        return constraints.get( name );
+        return constraintsNameMapping.get( name );
     }
     
     public final void clear() {
+        constraintsNameMapping.clear();
         constraints.clear();
     }
 

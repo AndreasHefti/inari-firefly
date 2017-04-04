@@ -170,7 +170,12 @@ public final class CollisionSystem
         );
         
         final int viewId = transform.getViewId();
-        for ( ContactConstraint constraint : contactScan ) {
+        for ( int i = 0; i < contactScan.constraints.capacity(); i++ ) {
+            ContactConstraint constraint = contactScan.constraints.get( i );
+            if ( constraint == null ) {
+                continue;
+            }
+            
             int layerId = constraint.layerId;
             if ( layerId < 0 ) {
                 layerId = transform.getLayerId();
