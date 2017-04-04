@@ -2,6 +2,7 @@ package com.inari.firefly.physics.collision;
 
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.BitMask;
+import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.Aspects;
@@ -65,9 +66,21 @@ public final class ContactConstraint  {
         materialTypeFilter.clear();
         filtering = false;
     }
+    
+    public final boolean hasContact( Position p ) {
+        return intersectionMask.getBit( p.x, p.y );
+    }
+    
+    public final boolean hasContact( Position p1, Position p2 ) {
+        return intersectionMask.getBit( p1.x, p1.y ) || intersectionMask.getBit( p2.x, p2.y );
+    }
 
     public final boolean hasContact( int x, int y ) {
         return intersectionMask.getBit( x, y );
+    }
+    
+    public final boolean hasContact( final Aspect material, Position p ) {
+        return hasContact( material, p.x, p.y );
     }
     
     public final boolean hasContact( final Aspect material, int x, int y ) {
