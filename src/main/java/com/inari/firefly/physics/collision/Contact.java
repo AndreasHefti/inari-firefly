@@ -2,6 +2,7 @@ package com.inari.firefly.physics.collision;
 
 import java.util.ArrayDeque;
 
+import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.Disposable;
@@ -40,6 +41,18 @@ public class Contact implements Disposable {
     
     public final Aspect materialType() {
         return materialType;
+    }
+    
+    public final boolean hasContact( int x, int y ) {
+        if ( GeomUtils.contains( intersectionBounds, x, y ) ) {
+            if ( !intersectionMask.isEmpty() ) {
+                return intersectionMask.getBit( x, y );
+            }
+            
+            return true;
+        }
+        
+        return false;
     }
 
     @Override

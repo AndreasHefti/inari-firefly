@@ -2,7 +2,6 @@ package com.inari.firefly.physics.collision;
 
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.BitMask;
-import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.Aspects;
@@ -66,13 +65,28 @@ public final class ContactConstraint  {
         materialTypeFilter.clear();
         filtering = false;
     }
-    
-    public final boolean hasContact( final Position pos ) {
-        return intersectionMask.getBit( pos.x, pos.y );
-    }
-    
+
     public final boolean hasContact( int x, int y ) {
         return intersectionMask.getBit( x, y );
+    }
+    
+    public final boolean hasContact( final Aspect material, int x, int y ) {
+        if ( !materialTypes.contains( material ) ) {
+            return false;
+        }
+        
+        for ( int i = 0; i < contacts.capacity(); i++ ) {
+            Contact contact = contacts.get( i );
+            if ( contact == null || contact.materialType.index() != material.index() ) {
+                continue;
+            }
+            
+            if ( contact.hasContact( x, y ) ) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public final BitMask getIntersectionMask() {
@@ -83,15 +97,19 @@ public final class ContactConstraint  {
         return !contacts.isEmpty();
     }
     
-    public final boolean hasAnyContacts( Aspects contact ) {
+    public final boolean hasAnyContacts( final Aspects contact ) {
         return contactTypes.intersects( contact );
     }
     
-    public final boolean hasContact( Aspect contact ) {
+    public final boolean hasContact( final Aspect contact ) {
         return contactTypes.contains( contact );
     }
     
-    public final boolean hasMaterialContact( Aspect material ) {
+    public final boolean hasAnyMaterialContact( final Aspects materials ) {
+        return materialTypes.intersects( materials );
+    }
+    
+    public final boolean hasMaterialContact( final Aspect material ) {
         return materialTypes.contains( material );
     }
     
@@ -99,7 +117,7 @@ public final class ContactConstraint  {
         return contacts;
     }
 
-    public final Contact getFirstContact( Aspect contactType ) {
+    public final Contact getFirstContact( final Aspect contactType ) {
         for ( int i = 0; i < contacts.capacity(); i++ ) {
             Contact contact = contacts.get( i );
             if ( contact == null ) {
