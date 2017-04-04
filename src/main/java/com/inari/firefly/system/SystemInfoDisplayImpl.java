@@ -10,6 +10,7 @@ import com.inari.firefly.graphics.text.FontAsset;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewSystem;
 import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.ShapeData;
 import com.inari.firefly.system.info.SystemInfo;
 import com.inari.firefly.system.info.SystemInfoDisplay;
@@ -22,15 +23,19 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
     boolean active = false;
     final DynArray<SystemInfo> infos = DynArray.create( SystemInfo.class, 10, 10 );
     final StringBuffer textbuffer = new StringBuffer();
-    
+
     private int width = 0;
     private int horizontalStep;
     private int verticalStep;
     FontAsset defaultFontAsset = null;
+    
+    private View baseView = null;
+    private final FFTimer.UpdateScheduler updateScheduler;
 
     SystemInfoDisplayImpl( FFContext context ) {
         this.context = context;
         graphics = context.getGraphics();
+        updateScheduler = context.getTimer().createUpdateScheduler( 20 );
     }
 
     @Override
@@ -56,8 +61,10 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
         
         if ( active ) {
             context.registerListener( PostRenderEvent.TYPE_KEY, this );
+            baseView = context.getSystemComponent( View.TYPE_KEY, ViewSystem.BASE_VIEW_ID );
         } else {
             context.disposeListener( PostRenderEvent.TYPE_KEY, this );
+            baseView = null;
         }
         
         return this;
@@ -76,7 +83,10 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
     
     @Override
     public final void postRendering( FFContext context ) {
-        View baseView = context.getSystemComponent( View.TYPE_KEY, ViewSystem.BASE_VIEW_ID );
+        if ( !updateScheduler.needsUpdate() ) {
+            return;
+        }
+        
         graphics.startRendering( baseView, false );
         renderSystemInfoDisplay();
         graphics.endRendering( baseView );
