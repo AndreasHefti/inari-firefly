@@ -2,15 +2,12 @@ package com.inari.firefly.physics.collision;
 
 import java.util.HashMap;
 
-import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.list.DynArray;
 
 public final class ContactScan {
 
     private final HashMap<String, ContactConstraint> constraintsNameMapping = new HashMap<String, ContactConstraint>();
-    private final Rectangle unionArea = new Rectangle();
-    
     final DynArray<ContactConstraint> constraints = DynArray.create( ContactConstraint.class );
     
     ContactScan() {}
