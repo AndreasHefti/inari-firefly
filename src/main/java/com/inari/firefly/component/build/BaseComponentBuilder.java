@@ -134,7 +134,7 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
             list = attributes.getValue( key );
         }
         
-        list.add( value );
+        list.add( (T) value );
         return this;
     }
     
@@ -164,7 +164,7 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         }
         
         for ( int i = 0; i < values.length; i++ ) {
-            list.add( values[ i ] );
+            list.add( (T) values[ i ] );
         }
         return this;
     }
