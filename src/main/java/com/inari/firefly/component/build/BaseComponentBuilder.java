@@ -118,10 +118,10 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
             return this;
         }
         
-        return add( key, value, (Class<T>) value.getClass() );
+        return createAndAdd( key, value, (Class<T>) key.getClass() );
     }
     
-    private <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, V value, Class<T> type ) {
+    private <T, V extends T> ComponentBuilder createAndAdd( AttributeKey<DynArray<T>> key, V value, Class<T> type ) {
         if ( value == null ) {
             return this;
         }
