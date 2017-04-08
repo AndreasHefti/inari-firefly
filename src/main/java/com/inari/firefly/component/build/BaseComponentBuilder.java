@@ -147,10 +147,10 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
             return this;
         }
         
-        return add( key, values, (Class<T>) key.getClass() );
+        return createAndAdd( key, values, (Class<T>) key.getClass() );
     }
     
-    private <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values, Class<T> type ) {
+    private <T> ComponentBuilder createAndAdd( AttributeKey<DynArray<T>> key, T[] values, Class<T> type ) {
         if ( values == null ) {
             return this;
         }
@@ -172,7 +172,7 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     @SuppressWarnings( "unchecked" )
     @Override
     public final <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<V> values ) {
-        return add( key, values.getArray(), (Class<T>) key.typedValueType() );
+        return createAndAdd( key, values.getArray(), (Class<T>) key.typedValueType() );
     }
 
     @Override
