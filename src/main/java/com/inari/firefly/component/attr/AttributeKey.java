@@ -99,6 +99,13 @@ public final class AttributeKey<T> {
         return valueType;
     }
 
+    /** Use this to get the type of a typed value type.
+     * @return the type of a typed value type or null if not set
+     */
+    public final Class<?> typedValueType() {
+        return typedValueType;
+    }
+
     /** Use this to get the component type class of this attribute
      * @return the component type class of this attribute
      */
@@ -215,15 +222,16 @@ public final class AttributeKey<T> {
     public static final AttributeKey<Aspect> createAspect( String name, Class<? extends Component> componentType ) {
         return new AttributeKey<>( name, Aspect.class, componentType );
     }
-    
+
     /** Utility to create an AttributeKey with DynArray value type, specified name and componentType.
      * @param name the name of the AttributeKey
      * @param componentType the componentType of the AttributeKey
+     * @param arrayValueType the type of value that itself has a type E.g. AttributeKey<DynArray<T>>: typedValueType is the type of T
      * @return an AttributeKey with Integer value type, specified name and componentType
      */
     @SuppressWarnings( { "unchecked" } ) 
-    public static final <S> AttributeKey<DynArray<S>> createDynArray( String name, Class<? extends Component> componentType ) {
-        AttributeKey<?> result = new AttributeKey<>( name, DynArray.class, componentType );
+    public static final <S> AttributeKey<DynArray<S>> createDynArray( String name, Class<? extends Component> componentType, Class<S> arrayValueType ) {
+        AttributeKey<?> result = new AttributeKey<>( name, DynArray.class, componentType, arrayValueType );
         return (AttributeKey<DynArray<S>>) result;
     }
 

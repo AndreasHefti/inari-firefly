@@ -11,7 +11,7 @@ import com.inari.firefly.system.FFContext;
 
 public final class ConditionalSelection extends BehaviorNode {
     
-    public static final AttributeKey<DynArray<Mapping>> NODE_MAPPING = AttributeKey.createDynArray( "subNodeMapping", ConditionalSelection.class );
+    public static final AttributeKey<DynArray<Mapping>> NODE_MAPPING = AttributeKey.createDynArray( "subNodeMapping", ConditionalSelection.class, Mapping.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         NODE_MAPPING
     );

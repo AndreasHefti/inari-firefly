@@ -32,7 +32,7 @@ public abstract class Task extends SystemComponent {
     public static final SystemComponentKey<Task> TYPE_KEY = SystemComponentKey.create( Task.class );
 
     public static final AttributeKey<Boolean> REMOVE_AFTER_RUN = AttributeKey.createBoolean( "removeAfterRun", Task.class );
-    public static final AttributeKey<DynArray<Trigger>> TRIGGER = AttributeKey.createDynArray( "trigger", Task.class );
+    public static final AttributeKey<DynArray<Trigger>> TRIGGER = AttributeKey.createDynArray( "trigger", Task.class, Trigger.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         REMOVE_AFTER_RUN,
         TRIGGER

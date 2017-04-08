@@ -12,7 +12,7 @@ import com.inari.firefly.system.FFContext;
 public final class RandomSelection extends BehaviorNode {
     
     public static final AttributeKey<IntBag> NODE_IDS = AttributeKey.createIntBag( "nodeIds", RandomSelection.class );
-    public static final AttributeKey<DynArray<String>> NODE_NAMES = AttributeKey.createDynArray( "nodeNames", RandomSelection.class );
+    public static final AttributeKey<DynArray<String>> NODE_NAMES = AttributeKey.createDynArray( "nodeNames", RandomSelection.class, String.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         NODE_IDS
     );

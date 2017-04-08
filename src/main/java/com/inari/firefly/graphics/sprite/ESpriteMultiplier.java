@@ -13,7 +13,7 @@ public final class ESpriteMultiplier extends EntityComponent {
     
     public static final EntityComponentTypeKey<ESpriteMultiplier> TYPE_KEY = EntityComponentTypeKey.create( ESpriteMultiplier.class );
     
-    public static final AttributeKey<DynArray<PositionF>> MULTI_POSITIONS = AttributeKey.createDynArray( "positions", ESpriteMultiplier.class );
+    public static final AttributeKey<DynArray<PositionF>> MULTI_POSITIONS = AttributeKey.createDynArray( "positions", ESpriteMultiplier.class, PositionF.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         MULTI_POSITIONS
     );

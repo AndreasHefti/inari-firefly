@@ -87,10 +87,10 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     
     @SuppressWarnings( "unchecked" )
     @Override
-    public final <T> ComponentBuilder set( AttributeKey<DynArray<T>> key, T value, int index ) {
+    public final <T, V extends T> ComponentBuilder set( AttributeKey<DynArray<T>> key, V value, int index ) {
         DynArray<T> array;
         if ( ! attributes.contains( key ) ) {
-            array = DynArray.create( (Class<T>) value.getClass() ); 
+            array = DynArray.create( (Class<T>) key.typedValueType() ); 
         } else {
             array = attributes.getValue( key );
         }
@@ -113,7 +113,7 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
 
     @SuppressWarnings( "unchecked" )
     @Override
-    public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value ) {
+    public final <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, V value ) {
         if ( value == null ) {
             return this;
         }
@@ -121,8 +121,7 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return add( key, value, (Class<T>) value.getClass() );
     }
     
-    @Override
-    public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value, Class<T> type ) {
+    private <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, V value, Class<T> type ) {
         if ( value == null ) {
             return this;
         }
@@ -143,7 +142,7 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     
     @SuppressWarnings( "unchecked" )
     @Override
-    public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values ) {
+    public final <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, V[] values ) {
         if ( values == null ) {
             return this;
         }
@@ -151,8 +150,7 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return add( key, values, (Class<T>) key.getClass() );
     }
     
-    @Override
-    public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values, Class<T> type ) {
+    private <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values, Class<T> type ) {
         if ( values == null ) {
             return this;
         }
@@ -171,9 +169,10 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return this;
     }
     
+    @SuppressWarnings( "unchecked" )
     @Override
-    public final <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<T> values ) {
-        return add( key, values.getArray(), values.getTypeClass() );
+    public final <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<V> values ) {
+        return add( key, values.getArray(), (Class<T>) key.typedValueType() );
     }
 
     @Override

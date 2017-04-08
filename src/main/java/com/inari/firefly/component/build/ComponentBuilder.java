@@ -34,14 +34,11 @@ public interface ComponentBuilder {
     ComponentBuilder set( AttributeKey<Long> key, long value );
     ComponentBuilder set( AttributeKey<Double> key, double value );
     <T> ComponentBuilder set( AttributeKey<T> key, T value );
-    <T> ComponentBuilder set( AttributeKey<DynArray<T>> key, T value, int index );
-    
     ComponentBuilder add( AttributeKey<IntBag> key, int value );
-    <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value );
-    <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T value, Class<T> type );
-    <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values );
-    <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, T[] values, Class<T> type );
-    <T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<T> values );
+    <T, V extends T> ComponentBuilder set( AttributeKey<DynArray<T>> key, V value, int index );
+    <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, V value );
+    <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, V[] values );
+    <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<V> values );
     ComponentBuilder add( Attribute<?>... attributes );
     
     int build();

@@ -18,9 +18,9 @@ public class EEntity extends EntityComponent {
     public static final AspectGroup ENTITY_ASPECT_GROUP = new AspectGroup( "ENTITY_ASPECT_GROUP" );
     
     public static final AttributeKey<String> ENTITY_NAME = AttributeKey.createString( "entityName", EEntity.class );
-    public static final AttributeKey<DynArray<String>> CONTROLLER_NAMES = AttributeKey.createDynArray( "controllerNames", EEntity.class );
+    public static final AttributeKey<DynArray<String>> CONTROLLER_NAMES = AttributeKey.createDynArray( "controllerNames", EEntity.class , String.class);
     public static final AttributeKey<IntBag> CONTROLLER_IDS = AttributeKey.createIntBag( "controllerIds", EEntity.class );
-    public static final AttributeKey<DynArray<Aspect>> ASPECTS = AttributeKey.createDynArray( "aspects", EEntity.class );
+    public static final AttributeKey<DynArray<Aspect>> ASPECTS = AttributeKey.createDynArray( "aspects", EEntity.class, Aspect.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         ENTITY_NAME,
         CONTROLLER_IDS,

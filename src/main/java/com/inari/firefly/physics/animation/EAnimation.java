@@ -12,7 +12,7 @@ public class EAnimation extends EntityComponent {
     
     public static final EntityComponentTypeKey<EAnimation> TYPE_KEY = EntityComponentTypeKey.create( EAnimation.class );
     
-    public static final AttributeKey<DynArray<AnimationMapping>> ANIMATION_MAPPING = AttributeKey.createDynArray( "animationMapping", EAnimation.class );
+    public static final AttributeKey<DynArray<AnimationMapping>> ANIMATION_MAPPING = AttributeKey.createDynArray( "animationMapping", EAnimation.class, AnimationMapping.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         ANIMATION_MAPPING
     );

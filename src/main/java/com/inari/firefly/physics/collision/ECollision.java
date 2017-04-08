@@ -21,7 +21,7 @@ public final class ECollision extends EntityComponent {
     public static final AttributeKey<Integer> COLLISION_RESOLVER_ID = AttributeKey.createInt( "collisionResolverId", ECollision.class );
     public static final AttributeKey<Aspect> MATERIAL_TYPE = AttributeKey.createAspect( "materialType", ECollision.class );
     public static final AttributeKey<Aspect> CONTACT_TYPE = AttributeKey.createAspect( "contactType", ECollision.class );
-    public static final AttributeKey<DynArray<ContactConstraint>> CONTACT_CONSTRAINTS = AttributeKey.createDynArray( "contactConstraints", ECollision.class );
+    public static final AttributeKey<DynArray<ContactConstraint>> CONTACT_CONSTRAINTS = AttributeKey.createDynArray( "contactConstraints", ECollision.class, ContactConstraint.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         COLLISION_BOUNDS,
         COLLISION_MASK,

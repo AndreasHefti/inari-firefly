@@ -32,8 +32,8 @@ public final class Workflow extends SystemComponent {
     public static final SystemComponentKey<Workflow> TYPE_KEY = SystemComponentKey.create( Workflow.class );
     
     public static final AttributeKey<String> START_STATE_NAME = AttributeKey.createString( "startStateName", Workflow.class );
-    public static final AttributeKey<DynArray<String>> STATES = AttributeKey.createDynArray( "states", Workflow.class );
-    public static final AttributeKey<DynArray<StateChange>> STATE_CHANGES = AttributeKey.createDynArray( "stateChanges", Workflow.class );
+    public static final AttributeKey<DynArray<String>> STATES = AttributeKey.createDynArray( "states", Workflow.class, String.class );
+    public static final AttributeKey<DynArray<StateChange>> STATE_CHANGES = AttributeKey.createDynArray( "stateChanges", Workflow.class, StateChange.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         START_STATE_NAME,
         STATES,

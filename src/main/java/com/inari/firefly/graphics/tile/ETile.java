@@ -46,7 +46,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     public static final AttributeKey<BlendMode> BLEND_MODE = AttributeKey.create( "blendMode", BlendMode.class, ETile.class );
     public static final AttributeKey<String> SHADER_ASSET_NAME = AttributeKey.createString( "shaderAssetName", ETile.class );
     public static final AttributeKey<Integer> SHADER_ID = AttributeKey.createInt( "shaderId", ETile.class );
-    public static final AttributeKey<DynArray<Position>> GRID_POSITIONS = AttributeKey.createDynArray( "gridPositions", ETile.class );
+    public static final AttributeKey<DynArray<Position>> GRID_POSITIONS = AttributeKey.createDynArray( "gridPositions", ETile.class, Position.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         SPRITE_ID,
         TINT_COLOR,

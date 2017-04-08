@@ -17,7 +17,7 @@ public class EShape extends EntityComponent implements ShapeData {
 
     public static final AttributeKey<Type> SHAPE_TYPE = AttributeKey.create( "shapeType", Type.class, EShape.class );
     public static final AttributeKey<float[]> VERTICES = AttributeKey.create( "vertices", float[].class, EShape.class );
-    public static final AttributeKey<DynArray<RGBColor>> COLORS = AttributeKey.createDynArray( "colors", EShape.class );
+    public static final AttributeKey<DynArray<RGBColor>> COLORS = AttributeKey.createDynArray( "colors", EShape.class, RGBColor.class );
     public static final AttributeKey<Integer> SEGMENTS = AttributeKey.createInt( "segments", EShape.class );
     public static final AttributeKey<Boolean> FILL = AttributeKey.createBoolean( "fill", EShape.class );
     public static final AttributeKey<String> SHADER_ASSET_NAME = AttributeKey.createString( "shaderAssetName", EShape.class );
