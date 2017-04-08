@@ -42,6 +42,7 @@ public final class AttributeKey<T> {
     final String name;
     final Class<? extends Component> componentType;
     final Class<T> valueType;
+    final Class<?> typedValueType;
     
     private final int hashCode;
     
@@ -52,10 +53,30 @@ public final class AttributeKey<T> {
      * @param componentType the component type of the attribute.
      */
     public AttributeKey( String name, Class<T> valueType, Class<? extends Component> componentType ) {
-        super();
         this.name = name;
         this.componentType = componentType;
         this.valueType = valueType;
+        typedValueType = null;
+        
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( ( componentType == null ) ? 0 : componentType.hashCode() );
+        result = prime * result + ( ( name == null ) ? 0 : name.hashCode() );
+        hashCode = result;
+    }
+    
+    /** Use this to create a new AttributeKey with specified name, valueType and component type.
+     * 
+     * @param name the name of the attribute
+     * @param valueType the value type of the attribute
+     * @param componentType the component type of the attribute.
+     * @param typedValueType the type of value that itself has a type E.g. AttributeKey<DynArray<T>>: typedValueType is the type of T
+     */
+    public AttributeKey( String name, Class<T> valueType, Class<? extends Component> componentType, Class<?> typedValueType ) {
+        this.name = name;
+        this.componentType = componentType;
+        this.valueType = valueType;
+        this.typedValueType = typedValueType;
         
         final int prime = 31;
         int result = 1;

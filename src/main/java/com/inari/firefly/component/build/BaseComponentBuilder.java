@@ -148,19 +148,7 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
             return this;
         }
         
-        T value = null ;
-        for ( int i = 0; i < values.length; i++ ) {
-            value = values[ i ];
-            if ( value != null ) {
-                break;
-            }
-        }
-        
-        if ( value == null ) {
-            return this;
-        }
-        
-        return add( key, values, (Class<T>) value.getClass() );
+        return add( key, values, (Class<T>) key.getClass() );
     }
     
     @Override
