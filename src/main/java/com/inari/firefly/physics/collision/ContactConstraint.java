@@ -79,10 +79,56 @@ public final class ContactConstraint  {
         return intersectionMask.getBit( x, y );
     }
     
+    public final boolean hasContactType( final Aspect contactType, Position p ) {
+        return hasContactType( contactType, p.x, p.y );
+    }
+    
+    public final boolean hasContactType( final Aspect contactType, int x, int y ) {
+        if ( !contactTypes.contains( contactType ) ) {
+            return false;
+        }
+        
+        for ( int i = 0; i < contacts.capacity(); i++ ) {
+            Contact contact = contacts.get( i );
+            if ( contact == null || contact.contactType.index() != contactType.index() ) {
+                continue;
+            }
+            
+            if ( contact.hasContact( x, y ) ) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public final boolean hasContactTypeExclusive( final Aspect contactType, Position p ) {
+        return hasContactTypeExclusive( contactType, p.x, p.y );
+    }
+    
+    public final boolean hasContactTypeExclusive( final Aspect contactType, int x, int y ) {
+        if ( contactTypes.contains( contactType ) ) {
+            return false;
+        }
+        
+        for ( int i = 0; i < contacts.capacity(); i++ ) {
+            Contact contact = contacts.get( i );
+            if ( contact == null || contact.contactType.index() == contactType.index() ) {
+                continue;
+            }
+            
+            if ( contact.hasContact( x, y ) ) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     public final boolean hasContact( final Aspect material, Position p ) {
         return hasContact( material, p.x, p.y );
     }
-    
+
     public final boolean hasContact( final Aspect material, int x, int y ) {
         if ( !materialTypes.contains( material ) ) {
             return false;
@@ -91,6 +137,29 @@ public final class ContactConstraint  {
         for ( int i = 0; i < contacts.capacity(); i++ ) {
             Contact contact = contacts.get( i );
             if ( contact == null || contact.materialType.index() != material.index() ) {
+                continue;
+            }
+            
+            if ( contact.hasContact( x, y ) ) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public final boolean hasContactExclusive( final Aspect material, Position p ) {
+        return hasContactExclusive( material, p.x, p.y );
+    }
+
+    public final boolean hasContactExclusive( final Aspect material, int x, int y ) {
+        if ( materialTypes.contains( material ) ) {
+            return false;
+        }
+        
+        for ( int i = 0; i < contacts.capacity(); i++ ) {
+            Contact contact = contacts.get( i );
+            if ( contact == null || contact.materialType.index() == material.index() ) {
                 continue;
             }
             
