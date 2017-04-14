@@ -46,7 +46,7 @@ public class Contact implements Disposable {
     public final boolean hasContact( int x, int y ) {
         if ( GeomUtils.contains( intersectionBounds, x, y ) ) {
             if ( !intersectionMask.isEmpty() ) {
-                return intersectionMask.getBit( x, y );
+                return intersectionMask.getBit( x - intersectionBounds.x, y - intersectionBounds.y );
             }
             
             return true;
