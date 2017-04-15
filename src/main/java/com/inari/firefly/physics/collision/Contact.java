@@ -43,6 +43,10 @@ public class Contact implements Disposable {
         return materialType;
     }
     
+    public final boolean intersects( int x, int y ) {
+        return GeomUtils.contains( intersectionBounds, x, y );
+    }
+    
     public final boolean hasContact( int x, int y ) {
         if ( GeomUtils.contains( intersectionBounds, x, y ) ) {
             if ( !intersectionMask.isEmpty() ) {

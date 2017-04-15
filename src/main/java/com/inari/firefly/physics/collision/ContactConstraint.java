@@ -198,6 +198,21 @@ public final class ContactConstraint  {
     public final DynArray<Contact> allContacts() {
         return contacts;
     }
+    
+    public final Contact get( int x, int y ) {
+        for ( int i = 0; i < contacts.capacity(); i++ ) {
+            Contact contact = contacts.get( i );
+            if ( contact == null ) {
+                continue;
+            }
+            
+            if ( contact.intersects( x, y ) ) {
+                return contact;
+            }
+        }
+        
+        return null;
+    }
 
     public final Contact getFirstContact( final Aspect contactType ) {
         for ( int i = 0; i < contacts.capacity(); i++ ) {
