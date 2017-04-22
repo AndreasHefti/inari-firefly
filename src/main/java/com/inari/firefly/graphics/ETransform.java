@@ -120,6 +120,11 @@ public final class ETransform extends EntityComponent {
     public final void setYpos( float ypos ) {
         position.y = ypos;
     }
+    
+    public final void setPosition( float xpos, float ypos ) {
+        position.x = xpos;
+        position.y = ypos;
+    }
 
     public final float getPivotx() {
         return pivotPosition.x;
@@ -135,6 +140,11 @@ public final class ETransform extends EntityComponent {
 
     public final void setPivoty( float pivoty ) {
         pivotPosition.y = pivoty;
+    }
+    
+    public final void setPivot( float x, float y ) {
+        pivotPosition.x = x;
+        pivotPosition.y = y;
     }
 
     public final void move( final float dx, final float dy ) {
@@ -156,6 +166,11 @@ public final class ETransform extends EntityComponent {
 
     public final void setScaley( float scaley ) {
         this.scaley = scaley;
+    }
+    
+    public final void setScale( float x, float y ) {
+        scalex = x;
+        scaley = y;
     }
 
     public final float getRotation() {

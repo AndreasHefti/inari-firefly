@@ -118,7 +118,7 @@ public final class CollisionSystem
         
         for ( int i = 0; i < movedEntityIds.length(); i++ ) {
             final int entityId = movedEntityIds.get( i );
-            if ( entityId == nullValue ) {
+            if ( entityId == nullValue || !context.getEntityComponentAspects( entityId ).contains( ECollision.TYPE_KEY ) ) {
                 continue;
             }
             
