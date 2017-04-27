@@ -99,6 +99,7 @@ public abstract class FireFlyApp {
     public final void update() {
         updateEvent.timer.tick();
         context.notify( updateEvent );
+        updateEvent.timer.updateSchedulers();
     }
     
     public final void render() {

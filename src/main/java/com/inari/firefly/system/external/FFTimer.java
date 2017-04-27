@@ -27,6 +27,12 @@ public abstract class FFTimer {
     public final long getTimeElapsed() {
         return timeElapsed;
     }
+    
+    public final void updateSchedulers() {
+        for ( UpdateScheduler scheduler : updateSchedulers.values() ) {
+            scheduler.update();
+        }
+    }
 
     public abstract void tick();
     
@@ -59,6 +65,7 @@ public abstract class FFTimer {
         private final long delayMillis;
         private long lastUpdate = -1;
         private long tick = 0;
+        private boolean needsUpdate;
         
         private UpdateScheduler( float resolution ) {
             this.resolution = resolution;
@@ -72,20 +79,19 @@ public abstract class FFTimer {
         public final long getTick() {
             return tick;
         }
-
-        public final boolean needsUpdate() {
-            if ( lastUpdate < 0 ) {
-                lastUpdate = lastUpdateTime;
-                return true;
-            }
-            
+        
+        final void update() {
             if ( lastUpdateTime - lastUpdate >= delayMillis ) {
                 lastUpdate = lastUpdateTime;
                 tick++;
-                return true;
+                needsUpdate = true;
+            } else if ( needsUpdate ) {
+                needsUpdate = false;
             }
-            
-            return false;
+        }
+
+        public final boolean needsUpdate() {
+            return needsUpdate;
         }
         
         public final void reset() {
