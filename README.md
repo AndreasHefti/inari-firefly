@@ -17,7 +17,7 @@ At this time there are three Firefly projects on gitHub.
   If someone wants just get a complete and running firefly API to start coding a game, this is the starting point
   Get and install the firefly API with libGDX implementation is straightforward. Following the instructions here.
 
-Introduction
+**Introduction**
 
 Firefly is a top level 2D game engine framework for Java focusing on intuitive API build on stringent architecture and design.
 What makes it different to other java gaming frameworks is its focus on build and manage components and game objects within a component-
