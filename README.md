@@ -2,6 +2,21 @@
 
 [![Build Status](https://travis-ci.org/Inari-Soft/inari-firefly.svg?branch=master)](https://travis-ci.org/Inari-Soft/inari-firefly)
 
+**NOTE:**
+
+At this time there are three Firefly projects on gitHub. 
+
+- [The firefly-core project](https://github.com/Inari-Soft/inari-firefly) (this project) offers the core API with the entity-system and entity-components and some other useful systems and components for core features like asset-management, view and viewports, audio, animation, text, simple collision management and a few others.   
+  The core API also defines the lower-level interfaces but has no implementations for this interfaces. Therefore the firefly-core API is independent from low-level API and can be implemented for different API's like [lwjgl](https://github.com/LWJGL/lwjgl) or [libGDX](https://github.com/libgdx/libgdx)   
+  If someone is interested in implementing the firefly API for a particular low level API, this is a good start point.
+
+- [The firefly-lib project](https://github.com/Inari-Soft/inari-firefly-lib) depends on the firefly-core project and offers some additional systems and components that are not part of the firefly-core API. 
+  Therefore the firefly-lib project will change mach more then the firefly-core project which remain more stable.
+
+- [The firefly-libGDX project](https://github.com/Inari-Soft/inari-firefly-libGDX) is the only low-level implementation at this time. As the names says, the firefly-core API is implemented on top of the [libGDX](https://github.com/libgdx/libgdx) API. And also the the firefly-lib project is included.   
+  If someone wants just get a complete and running firefly API to start coding a game, this is the starting point
+  Get and install the firefly API with libGDX implementation is straightforward. Following the instructions here.
+
 Introduction
 
 Firefly is a top level 2D game engine framework for Java focusing on intuitive API build on stringent architecture and design.
@@ -54,19 +69,6 @@ Code example:
   to index instances (objects) of a specified type. All Components, Entities and Systems are indexed by type and mostly, if needed also by instance
   to guarantee fast access.
   
-  **NOTE:**
-
-At this time there are three Firefly projects on gitHub. 
-
-- [The firefly-core project](https://github.com/Inari-Soft/inari-firefly) offers the core API with the entity-system and entity-components and some other useful systems and components for core features like asset-management, view and viewports, audio, animation, text, simple collision management and a few others.   
-  The core API also defines the lower-level interfaces but has no implementations for this interfaces. Therefore the firefly-core API is independent from low-level API and can be implemented for different API's like [lwjgl](https://github.com/LWJGL/lwjgl) or [libGDX](https://github.com/libgdx/libgdx)   
-  If someone is interested in implementing the firefly API for a particular low level API, this is a good start point.
-
-- [The firefly-lib project](https://github.com/Inari-Soft/inari-firefly-lib) depends on the firefly-core project and offers some additional systems and components that are not part of the firefly-core API. 
-  Therefore the firefly-lib project will change mach more then the firefly-core project which remain more stable.
-
-- [The firefly-libGDX project](https://github.com/Inari-Soft/inari-firefly-libGDX) is the only low-level implementation at this time. As the names says, the firefly-core API is implemented on top of the [libGDX](https://github.com/libgdx/libgdx) API. And also the the firefly-lib project is included.   
-  If someone wants just get a complete and running firefly API to start coding a game, this is the starting point
-  Get and install the firefly API with libGDX implementation is straightforward. Following the instructions here.
+  
 
 
