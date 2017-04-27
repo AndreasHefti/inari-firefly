@@ -3,17 +3,21 @@ package com.inari.firefly.system.external;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.inari.commons.lang.list.DynArray;
+
 public abstract class FFTimer {
     
     protected long lastUpdateTime, time, timeElapsed;
     
     private final Map<Float, UpdateScheduler> updateSchedulers;
+    private final DynArray<UpdateScheduler> schedulers;
     
     protected FFTimer() {
         lastUpdateTime = 0;
         time = 0;
         timeElapsed = 0;
         updateSchedulers = new HashMap<Float, UpdateScheduler>();
+        schedulers = DynArray.create( UpdateScheduler.class, 20 );
     }
 
     public final long getLastUpdateTime() {
@@ -29,8 +33,13 @@ public abstract class FFTimer {
     }
     
     public final void updateSchedulers() {
-        for ( UpdateScheduler scheduler : updateSchedulers.values() ) {
-            scheduler.update();
+        for ( int i = 0; i < schedulers.capacity(); i++ ) {
+            UpdateScheduler updateScheduler = schedulers.get( i );
+            if ( updateScheduler == null ) {
+                continue;
+            } 
+            
+            updateScheduler.update();
         }
     }
 
@@ -41,6 +50,7 @@ public abstract class FFTimer {
         if ( updateScheduler == null ) {
             updateScheduler = new UpdateScheduler( resolution );
             updateSchedulers.put( resolution, updateScheduler );
+            schedulers.add( updateScheduler );
         }
         
         return updateScheduler;
