@@ -1,6 +1,6 @@
 # Firefly
 
-[![Build Status](https://travis-ci.org/Inari-Soft/inari-firefly.svg?branch=master)](https://travis-ci.org/Inari-Soft/inari-firefly)
+[![Build Status](https://travis-ci.org/Inari-Soft/inari-firefly.svg?branch=master)](https://travis-ci.org/Inari-Soft/inari-firefly) -- Dependend Projects; commons: [![Build Status](https://travis-ci.org/Inari-Soft/inari-firefly.svg?branch=master)](https://travis-ci.org/Inari-Soft/inari-commons)
 
 **Introduction**
 
