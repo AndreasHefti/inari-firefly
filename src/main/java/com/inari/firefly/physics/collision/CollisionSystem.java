@@ -123,8 +123,12 @@ public final class CollisionSystem
             }
             
             final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
-            final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
             final ContactScan contactScan = collision.getContactScan();
+            if ( contactScan == null ) {
+                continue;
+            }
+            
+            final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
             final int collisionResolverId = collision.getCollisionResolverId();
             
             scanContacts( entityId, collision );

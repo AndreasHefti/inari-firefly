@@ -42,7 +42,6 @@ public final class ECollision extends EntityComponent {
     ECollision() {
         super( TYPE_KEY );
         collisionBounds = new Rectangle();
-        contactScan = new ContactScan();
         resetAttributes();
     }
     
@@ -52,7 +51,7 @@ public final class ECollision extends EntityComponent {
         collisionResolverId = -1;
         contactType = null;
         materialType = null;
-        contactScan = new ContactScan();
+        contactScan = null;
     }
 
     public final Rectangle getCollisionBounds() {
@@ -107,6 +106,9 @@ public final class ECollision extends EntityComponent {
     }
     
     public final void addContactConstraint( ContactConstraint constraint ) {
+        if ( contactScan == null ) {
+            contactScan = new ContactScan();
+        }
         contactScan.addContactContstraint( constraint );
     }
 
