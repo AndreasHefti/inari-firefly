@@ -17,6 +17,10 @@ target/*
 .settings/*
 .project
 
+# Intellij
+*.iml
+.idea/*
+
 # Mac
 .DS_Store
 /target/
