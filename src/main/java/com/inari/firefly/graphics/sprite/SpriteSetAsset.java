@@ -134,7 +134,7 @@ public class SpriteSetAsset extends Asset {
         public final Rectangle textureRegion;
         public final boolean flipHorizontal, flipVertical;
         
-        int instanceId = -1;
+        public int instanceId = -1;
         
         public Sprite( int x, int y, int width, int height ) {
             this.textureRegion = new Rectangle( x, y, width, height );
