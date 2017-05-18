@@ -30,6 +30,15 @@ import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.utils.Disposable;
 import com.inari.firefly.system.utils.Loadable;
 
+/** The base for all Asset implementation.
+ * 
+ *  An Asset is a definition for a resource that can be loaded and disposed within the Asset instance. 
+ *  On load an Asset gets an instance-id that can be used in Components or Entities to refer to an Asset resource instance to use.
+ *  
+ *  
+ * @author andreashefti
+ *
+ */
 public abstract class Asset extends SystemComponent implements Loadable, Disposable, DynamicAttributedComponent {
     
     public static final SystemComponentKey<Asset> TYPE_KEY = SystemComponentKey.create( Asset.class );
