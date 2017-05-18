@@ -147,6 +147,10 @@ public class SpriteSetAsset extends Asset {
             this.flipHorizontal = flipHorizontal;
             this.flipVertical = flipVertical;
         }
+        
+        public final int getInstanceId() {
+            return instanceId;
+        }
     }
     
     private final class SpriteDataContainer implements SpriteData {
