@@ -18,6 +18,7 @@ package com.inari.firefly.graphics;
 import java.util.Set;
 
 import com.inari.commons.JavaUtils;
+import com.inari.commons.lang.functional.IntFunction;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -29,11 +30,17 @@ import com.inari.firefly.system.utils.Disposable;
 public final class TextureAsset extends Asset implements TextureData {
     
     public static final AttributeKey<String> RESOURCE_NAME = AttributeKey.createString( "resourceName", TextureAsset.class );
+    public static final AttributeKey<Boolean> MIP_MAP = AttributeKey.createBoolean( "mipmap", TextureAsset.class );
+    public static final AttributeKey<IntFunction> COLOR_CONVERTER = new AttributeKey<IntFunction>( "colorConverter", IntFunction.class, TextureAsset.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
-        RESOURCE_NAME
+        RESOURCE_NAME,
+        MIP_MAP,
+        COLOR_CONVERTER
     );
     
     private String resourceName;
+    private boolean mipmap;
+    private IntFunction colorConverter;
     
     private int width;
     private int height;
@@ -61,7 +68,23 @@ public final class TextureAsset extends Asset implements TextureData {
         checkNotAlreadyLoaded();
         this.resourceName = resourceName;
     }
-    
+
+    public final boolean isMipmap() {
+        return mipmap;
+    }
+
+    public final void setMipmap( boolean mipmap ) {
+        this.mipmap = mipmap;
+    }
+
+    public final IntFunction getColorConverter() {
+        return colorConverter;
+    }
+
+    public final void setColorConverter( IntFunction colorConverter ) {
+        this.colorConverter = colorConverter;
+    }
+
     public final int getTextureWidth() {
         return width;
     }
@@ -91,12 +114,16 @@ public final class TextureAsset extends Asset implements TextureData {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         resourceName = attributes.getValue( RESOURCE_NAME, resourceName );
+        mipmap = attributes.getValue( MIP_MAP, mipmap );
+        colorConverter = attributes.getValue( COLOR_CONVERTER, colorConverter );
     }
     
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         attributes.put( RESOURCE_NAME, resourceName );
+        attributes.put( MIP_MAP, mipmap );
+        attributes.put( COLOR_CONVERTER, colorConverter );
     }
 
     @Override

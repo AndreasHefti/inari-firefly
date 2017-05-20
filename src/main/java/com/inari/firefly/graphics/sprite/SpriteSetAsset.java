@@ -169,11 +169,6 @@ public class SpriteSetAsset extends Asset {
         }
 
         @Override
-        public final <A> A getDynamicAttribute( AttributeKey<A> key ) {
-            return null;
-        }
-
-        @Override
         public final boolean isHorizontalFlip() {
             return spriteData.flipHorizontal;
         }

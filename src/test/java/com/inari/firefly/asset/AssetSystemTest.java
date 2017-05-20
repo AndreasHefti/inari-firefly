@@ -5,13 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.Test;
 
 import com.inari.firefly.FFTest;
-import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.system.FFContext;
@@ -224,11 +220,6 @@ public class AssetSystemTest extends FFTest {
         } 
 
         @Override
-        public Set<AttributeKey<?>> attributeKeys() {
-            return super.attributeKeys( new HashSet<AttributeKey<?>>() );
-        }
-
-        @Override
         public void fromAttributes( AttributeMap attributes ) {
             super.fromAttributes( attributes );
         }
@@ -261,11 +252,6 @@ public class AssetSystemTest extends FFTest {
         TestAsset2( int assetId ) {
             super( assetId );
         } 
-
-        @Override
-        public Set<AttributeKey<?>> attributeKeys() {
-            return super.attributeKeys( new HashSet<AttributeKey<?>>() );
-        }
 
         @Override
         public void fromAttributes( AttributeMap attributes ) {
