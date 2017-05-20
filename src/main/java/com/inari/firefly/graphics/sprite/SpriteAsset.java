@@ -19,7 +19,6 @@ import java.util.Set;
 
 import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -42,9 +41,7 @@ public final class SpriteAsset extends Asset implements SpriteData {
         VERTICAL_FLIP
     );
     
-    private int textureAssetId;
     private final Rectangle textureRegion;
-    private final IntBag dependsOn = new IntBag( 1, -1 );
     
     private int textureId = -1;
     private int spriteId = -1;
@@ -58,13 +55,11 @@ public final class SpriteAsset extends Asset implements SpriteData {
     }
 
     public final int getTextureAssetId() {
-        return textureAssetId;
+        return dependsOn;
     }
 
     public final void setTextureAssetId( int textureAssetId ) {
-        this.textureAssetId = textureAssetId;
-        dependsOn.clear();
-        dependsOn.set( 0, textureAssetId );
+        dependsOn = textureAssetId;
     }
 
     @Override
@@ -74,11 +69,6 @@ public final class SpriteAsset extends Asset implements SpriteData {
     
     public final int getSpriteId() {
         return spriteId;
-    }
-
-    @Override
-    protected final IntBag dependsOn() {
-        return dependsOn;
     }
     
     public final int getTextureId() {
@@ -123,7 +113,7 @@ public final class SpriteAsset extends Asset implements SpriteData {
         checkNotAlreadyLoaded();
         super.fromAttributes( attributes );
         
-        setTextureAssetId( attributes.getIdForName( TEXTURE_ASSET_NAME, TEXTURE_ASSET_ID, Asset.TYPE_KEY, textureAssetId ) );
+        setTextureAssetId( attributes.getIdForName( TEXTURE_ASSET_NAME, TEXTURE_ASSET_ID, Asset.TYPE_KEY, dependsOn ) );
         Rectangle textureRegion = attributes.getValue( TEXTURE_REGION );
         if ( textureRegion != null ) {
             setTextureRegion( textureRegion );
@@ -136,7 +126,7 @@ public final class SpriteAsset extends Asset implements SpriteData {
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        attributes.put( TEXTURE_ASSET_ID, textureAssetId );
+        attributes.put( TEXTURE_ASSET_ID, dependsOn );
         attributes.put( TEXTURE_REGION, new Rectangle( textureRegion ) );
         attributes.put( HORIZONTAL_FLIP, horizontalFlip );
         attributes.put( VERTICAL_FLIP, verticalFlip );
@@ -148,7 +138,7 @@ public final class SpriteAsset extends Asset implements SpriteData {
             return this;
         }
         
-        textureId = context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetInstanceId( textureAssetId );
+        textureId = context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetInstanceId( dependsOn );
         spriteId = context.getGraphics().createSprite( this );
         
         return this;

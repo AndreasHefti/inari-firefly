@@ -16,7 +16,6 @@
 package com.inari.firefly.asset;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
-import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.utils.Disposable;
 import com.inari.firefly.system.utils.Loadable;
@@ -31,7 +30,8 @@ import com.inari.firefly.system.utils.Loadable;
  *  into the GPU and propagate the texture id form GPU within the instanceId of the TextureAsset. 
  *  A call on dispose deletes the texture form GPU and frees the memory and sets the instanceId if the Asset back to undefined (negative integer).
  *  
- *  This is in general a SystemComponent and can be built by using the SystemComponent builder within FFContext
+ *  This is in general a SystemComponent and works with AssetSystem.
+ *  An Asset can be built by using the SystemComponent builder within FFContext ( or AssetSystem )
  *  by using the specified TYPE_KEY and also specify an concrete implementation class.
  *  
  *  <code>
@@ -58,6 +58,7 @@ public abstract class Asset extends SystemComponent implements Loadable, Disposa
     public static final SystemComponentKey<Asset> TYPE_KEY = SystemComponentKey.create( Asset.class );
     
     protected boolean loaded = false;
+    protected int dependsOn = -1;
     
     /** This should not be called directly. Instead the ComponentBuilder should be used. 
      *  See class documentation for example.
@@ -98,12 +99,29 @@ public abstract class Asset extends SystemComponent implements Loadable, Disposa
     public final boolean isLoaded() {
         return loaded;
     }
-    
 
-    protected IntBag dependsOn() {
-        return null;
+    /** Indicates if this Asset depends on an other asset. Gives the id of the Asset this depends on or 
+     *  negative integer if this depends on no other Asset.
+     *  
+     *  If this Asset depends on another asset:
+     *  1. The other asset has to be loaded first.
+     *  2. This Asset has to be disposed or deleted first if the other Asset gets disposed or deleted.
+     *  The Asset system will take care of that.
+     *  
+     * @return positive integer that is the id of the Asset this depends on. Or negative integer if there is no dependency
+     */
+    public final int dependsOn() {
+        return dependsOn;
     }
-    
+
+    /** Used to set dependsOn from implemeting Classes. */
+    protected final void dependsOn( int dependsOn ) {
+        this.dependsOn = dependsOn;
+    }
+
+    /** Use this to check and stop if the Asset is not already loaded.
+     *  @throws IllegalStateException if the Asset is not loaded.
+     */
     protected void checkNotAlreadyLoaded() {
         if ( loaded ) {
             throw new IllegalStateException( "Asset: " + componentId() + " is already loaded and can not be modified" );

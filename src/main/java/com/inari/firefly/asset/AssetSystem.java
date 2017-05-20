@@ -240,17 +240,10 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     private void findeAssetsToDisposeFirst( int assetId ) {
         toDisposeFirst.clear();
         for ( Asset asset : assets ) {
-            IntBag disposeFirst = asset.dependsOn();
-            if ( disposeFirst != null ) {
-                for ( int i = 0; i < disposeFirst.length(); i++ ) {
-                    if ( disposeFirst.isEmpty( i ) ) {
-                        continue;
-                    }
-                    int next = disposeFirst.get( i );
-                    if ( next == assetId ) {
-                        toDisposeFirst.add( next );
-                        break;
-                    }
+            if ( asset.dependsOn >= 0 ) {
+                if ( asset.dependsOn == assetId ) {
+                    toDisposeFirst.add( asset.dependsOn );
+                    break;
                 }
             }
         }
@@ -292,17 +285,11 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
 
     private void loadAsset( Asset asset ) {
-        IntBag loadFirst = asset.dependsOn();
-        if ( loadFirst != null ) {
-            for ( int i = 0; i < loadFirst.length(); i++ ) {
-                if ( loadFirst.isEmpty( i ) ) {
-                    continue;
-                }
-
-                Asset assetToLoadFirst = getAsset( loadFirst.get( i ) );
-                if ( !assetToLoadFirst.loaded ) {
-                    load( assetToLoadFirst );
-                }
+        int loadFirst = asset.dependsOn();
+        if ( loadFirst >= 0 ) {
+            Asset assetToLoadFirst = getAsset( loadFirst );
+            if ( !assetToLoadFirst.loaded ) {
+                loadAsset( assetToLoadFirst );
             }
         }
         

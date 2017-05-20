@@ -5,7 +5,6 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
@@ -26,23 +25,18 @@ public class SpriteSetAsset extends Asset {
     
     private final SpriteDataContainer spriteDataContainer = new SpriteDataContainer();
     
-    private int textureAssetId;
     private final DynArray<Sprite> spriteData = DynArray.create( Sprite.class, 30 ) ;
-    
-    private final IntBag dependsOn = new IntBag( 1, -1 );
 
     protected SpriteSetAsset( int assetIntId ) {
         super( assetIntId );
     }
     
     public final int getTextureAssetId() {
-        return textureAssetId;
+        return dependsOn;
     }
 
     public final void setTextureAssetId( int textureAssetId ) {
-        this.textureAssetId = textureAssetId;
-        dependsOn.clear();
-        dependsOn.set( 0, textureAssetId );
+        dependsOn = textureAssetId;
     }
     
     public final int getInstanceId( Sprite sprite ) {
@@ -59,11 +53,6 @@ public class SpriteSetAsset extends Asset {
     }
     
     @Override
-    protected final IntBag dependsOn() {
-        return dependsOn;
-    }
-    
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return JavaUtils.unmodifiableSet( super.attributeKeys(), ATTRIBUTE_KEYS );
     }
@@ -73,7 +62,7 @@ public class SpriteSetAsset extends Asset {
         checkNotAlreadyLoaded();
         super.fromAttributes( attributes );
         
-        setTextureAssetId( attributes.getIdForName( TEXTURE_ASSET_NAME, TEXTURE_ASSET_ID, Asset.TYPE_KEY, textureAssetId ) );
+        setTextureAssetId( attributes.getIdForName( TEXTURE_ASSET_NAME, TEXTURE_ASSET_ID, Asset.TYPE_KEY, dependsOn ) );
         spriteData.clear();
         if ( attributes.contains( SPRITE_DATA ) ) {
             spriteData.addAll( attributes.getValue( SPRITE_DATA ) );
@@ -83,7 +72,7 @@ public class SpriteSetAsset extends Asset {
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        attributes.put( TEXTURE_ASSET_ID, textureAssetId );
+        attributes.put( TEXTURE_ASSET_ID, dependsOn );
         DynArray<Sprite> _spriteData = DynArray.create( Sprite.class, spriteData.capacity() );
         _spriteData.addAll( spriteData );
         attributes.put( SPRITE_DATA, _spriteData );
@@ -95,7 +84,7 @@ public class SpriteSetAsset extends Asset {
             return this;
         }
         
-        spriteDataContainer.textureId = context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetInstanceId( textureAssetId );
+        spriteDataContainer.textureId = context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetInstanceId( dependsOn );
         for ( int i = 0; i < spriteData.capacity(); i++ ) {
             Sprite sprite = spriteData.get( i );
             if ( sprite == null ) {
