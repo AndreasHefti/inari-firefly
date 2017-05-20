@@ -15,11 +15,15 @@
  ******************************************************************************/ 
 package com.inari.firefly.asset;
 
+import java.util.ArrayDeque;
+
 import com.inari.commons.event.Event;
 
 public final class AssetEvent extends Event<AssetEventListener> {
     
     public static final EventTypeKey TYPE_KEY = createTypeKey( AssetEvent.class );
+    
+    private static final ArrayDeque<AssetEvent> POOL = new ArrayDeque<AssetEvent>( 2 );
     
     public static enum Type {
         ASSET_CREATED,
@@ -28,18 +32,44 @@ public final class AssetEvent extends Event<AssetEventListener> {
         ASSET_DELETED
     }
     
-    public final Asset asset;
-    public final Type eventType;
+    Asset asset;
+    Type eventType;
 
-    public AssetEvent( Asset asset, Type eventType ) {
+    AssetEvent() {
         super( TYPE_KEY );
-        this.asset = asset;
-        this.eventType = eventType;
+        restore();
     }
 
     @Override
     protected final void notify( AssetEventListener listener ) {
         listener.onAssetEvent( this );
+    }
+
+    public final Asset getAsset() {
+        return asset;
+    }
+
+    @Override
+    protected final void restore() {
+        asset = null;
+        eventType = null;
+        
+        POOL.addLast( this );
+    }
+    
+    static final AssetEvent create( final Type eventType, final Asset asset ) {
+        final AssetEvent result;
+        if ( POOL.isEmpty() ) {
+            result = new AssetEvent();
+            POOL.addLast( result );
+        } else {
+            result = POOL.removeLast();
+        }
+        
+        result.eventType = eventType;
+        result.asset = asset;
+        
+        return result;
     }
 
     @Override

@@ -274,13 +274,13 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         
         nameMapping.remove( deleted.getName() );
         
-        context.notify( new AssetEvent( deleted, AssetEvent.Type.ASSET_DELETED ) );
+        context.notify( AssetEvent.create( AssetEvent.Type.ASSET_DELETED, deleted ) );
         deleted.dispose();
     }
 
     private void dispose( Asset asset ) {
         asset.dispose( context );
-        context.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_DISPOSED ) );
+        context.notify( AssetEvent.create( AssetEvent.Type.ASSET_DISPOSED, asset ) );
         asset.loaded = false;
     }
 
@@ -298,7 +298,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     
     private void load( Asset asset ) {
         asset.load( context );
-        context.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_LOADED ) );
+        context.notify( AssetEvent.create( AssetEvent.Type.ASSET_LOADED, asset ) );
         asset.loaded = true;
     }
 
@@ -328,7 +328,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
                 name = asset.getName();
             }
             nameMapping.put( name, asset );
-            context.notify( new AssetEvent( asset, AssetEvent.Type.ASSET_CREATED ) );
+            context.notify( AssetEvent.create( AssetEvent.Type.ASSET_CREATED, asset ) );
             
             if ( activate ) {
                 load( asset );
