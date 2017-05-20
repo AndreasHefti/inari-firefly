@@ -5,10 +5,12 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
+import com.inari.commons.lang.functional.IntFunction;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.SpriteData;
@@ -17,7 +19,9 @@ import com.inari.firefly.system.utils.Disposable;
 
 public final class FontAsset extends Asset implements TextureData {
     
-    public static final AttributeKey<String> TEXTURE_RESOURCE_NAME = AttributeKey.createString( "fontTextureId", FontAsset.class );
+    public static final AttributeKey<String> TEXTURE_RESOURCE_NAME = AttributeKey.createString( "textureResourceName", FontAsset.class );
+    public static final AttributeKey<Boolean> MIP_MAP = AttributeKey.createBoolean( "mipmap", FontAsset.class );
+    public static final AttributeKey<IntFunction> COLOR_CONVERTER = new AttributeKey<IntFunction>( "colorConverter", IntFunction.class, TextureAsset.class );
     public static final AttributeKey<char[][]> CHAR_TEXTURE_MAP = AttributeKey.create( "charTextureMap", char[][].class, FontAsset.class );
     public static final AttributeKey<Integer> CHAR_WIDTH = AttributeKey.createInt( "charWidth", FontAsset.class );
     public static final AttributeKey<Integer> CHAR_HEIGHT = AttributeKey.createInt( "charHeight", FontAsset.class );
@@ -26,6 +30,8 @@ public final class FontAsset extends Asset implements TextureData {
     public static final AttributeKey<Integer> DEFAULT_CHAR = AttributeKey.createInt( "defaultChar", FontAsset.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         TEXTURE_RESOURCE_NAME,
+        MIP_MAP,
+        COLOR_CONVERTER,
         CHAR_TEXTURE_MAP,
         CHAR_WIDTH,
         CHAR_HEIGHT,
@@ -35,6 +41,8 @@ public final class FontAsset extends Asset implements TextureData {
     );
 
     private String textureResourceName;
+    private boolean mipmap;
+    private IntFunction colorConverter;
     private int textureWidth;
     private int textureHeight;
     
@@ -57,6 +65,8 @@ public final class FontAsset extends Asset implements TextureData {
         charSpace = 0;
         lineSpace = 0;
         defaultChar = -1;
+        mipmap = true;
+        colorConverter = null;
     }
 
     @Override
@@ -84,6 +94,22 @@ public final class FontAsset extends Asset implements TextureData {
     
     public final void setTextureResourceName( String textureResourceName ) {
         this.textureResourceName = textureResourceName;
+    }
+    
+    public final boolean isMipmap() {
+        return mipmap;
+    }
+
+    public final void setMipmap( boolean mipmap ) {
+        this.mipmap = mipmap;
+    }
+
+    public final IntFunction getColorConverter() {
+        return colorConverter;
+    }
+
+    public final void setColorConverter( IntFunction colorConverter ) {
+        this.colorConverter = colorConverter;
     }
 
     public final int getTextureWidth() {
@@ -168,6 +194,8 @@ public final class FontAsset extends Asset implements TextureData {
         charSpace = attributes.getValue( CHAR_SPACE, charSpace );
         lineSpace = attributes.getValue( LINE_SPACE, lineSpace );
         defaultChar = attributes.getValue( DEFAULT_CHAR, defaultChar );
+        mipmap = attributes.getValue( MIP_MAP, mipmap );
+        colorConverter = attributes.getValue( COLOR_CONVERTER, colorConverter );
     }
 
     @Override
@@ -181,6 +209,8 @@ public final class FontAsset extends Asset implements TextureData {
         attributes.put( CHAR_SPACE, charSpace );
         attributes.put( LINE_SPACE, lineSpace );
         attributes.put( DEFAULT_CHAR, defaultChar );
+        attributes.put( MIP_MAP, mipmap );
+        attributes.put( COLOR_CONVERTER, colorConverter );
     }
 
     @Override
