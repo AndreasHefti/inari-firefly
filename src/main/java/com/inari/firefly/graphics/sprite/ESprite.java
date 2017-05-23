@@ -72,6 +72,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         setTintColor( new RGBColor( 1, 1, 1, 1 ) );
         blendMode = BlendMode.NONE;
         shaderId = -1;
+        ordering = -1;
     }
 
     @Override
