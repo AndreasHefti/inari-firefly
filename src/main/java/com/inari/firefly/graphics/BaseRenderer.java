@@ -8,6 +8,7 @@ import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.TransformData;
 
+@Deprecated
 public abstract class BaseRenderer extends SystemComponent implements RenderEventListener {
 
     protected FFGraphics graphics;

@@ -118,7 +118,7 @@ public interface FFGraphics extends FFContextInitiable, ViewEventListener {
      * @param renderableSprite the sprite DAO
      * @param tranform {@link TransformData} DAO containing all transform data to render the sprite like: position-offset, scale, pivot, rotation
      */
-    void renderSprite( SpriteRenderable renderableSprite, TransformData tranform );
+    void renderSprite( SpriteRenderable renderableSprite, TransformData transform );
     
     /** This is called form the firefly API to render a shape. See {@link ShapeData} for more information about the data structure of shapes.
      * 

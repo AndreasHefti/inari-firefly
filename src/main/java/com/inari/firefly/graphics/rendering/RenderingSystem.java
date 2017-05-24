@@ -19,6 +19,8 @@ public final class RenderingSystem
     implements RenderEventListener, EntityActivationListener {
     
     public static final RenderingChain DEFAULT_RENDERING_CHAIN = new RenderingChain()
+        .addElement( MultiPositionSpriteRenderer.CHAIN_KEY )
+        .addElement( SimpleSpriteRenderer.CHAIN_KEY )
         .addElement( DefaultShapeRenderer.CHAIN_KEY )
         .build();
     
@@ -126,11 +128,21 @@ public final class RenderingSystem
     public final void dispose( FFContext context ) {
         context.disposeListener( RenderEvent.TYPE_KEY, this );
         context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
+        
+        for ( int i = 0; i < renderingChain.elements.capacity(); i++ ) {
+            RenderingChain.Element element = renderingChain.elements.get( i );
+            if ( element == null || element.renderer == null ) {
+                continue;
+            }
+            
+            element.renderer = null;
+        }
     }
 
     @Override
     public final void clear() {
-        
+        dispose( context );
+        renderingChain = null;
     }
     
     @Override

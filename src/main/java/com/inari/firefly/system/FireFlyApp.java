@@ -29,7 +29,7 @@ import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.control.task.TaskSystem;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.prefab.EntityPrefabSystem;
-import com.inari.firefly.graphics.sprite.SpriteViewSystem;
+import com.inari.firefly.graphics.rendering.RenderingSystem;
 import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.graphics.view.Layer;
 import com.inari.firefly.graphics.view.View;
@@ -75,7 +75,7 @@ public abstract class FireFlyApp {
         context.loadSystem( AnimationSystem.SYSTEM_KEY );
         context.loadSystem( AudioSystem.SYSTEM_KEY );
         context.loadSystem( TileGridSystem.SYSTEM_KEY );
-        context.loadSystem( SpriteViewSystem.SYSTEM_KEY );
+        context.loadSystem( RenderingSystem.SYSTEM_KEY );
         context.loadSystem( TaskSystem.SYSTEM_KEY );
         
         updateEvent = new UpdateEvent( timer );
