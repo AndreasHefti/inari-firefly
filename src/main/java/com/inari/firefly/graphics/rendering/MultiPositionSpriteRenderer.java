@@ -10,7 +10,7 @@ import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.sprite.ESpriteMultiplier;
 import com.inari.firefly.system.RenderEvent;
 
-public final class MultiPositionSpriteRenderer extends BaseSpriteRenderer {
+public final class MultiPositionSpriteRenderer extends Renderer {
     
     public static final RenderingChain.Key CHAIN_KEY = new RenderingChain.Key( "MultiPositionSpriteRenderer", MultiPositionSpriteRenderer.class );
     public static final Aspects MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
@@ -21,21 +21,12 @@ public final class MultiPositionSpriteRenderer extends BaseSpriteRenderer {
 
     protected MultiPositionSpriteRenderer( int index ) {
         super( index );
+        setName( CHAIN_KEY.name );
     }
 
     @Override
     public final boolean match( Aspects aspects ) {
         return aspects.include( MATCHING_ASPECTS );
-    }
-
-    @Override
-    protected final boolean internalAccespt( int entityId, Aspects aspects ) {
-        return true;
-    }
-
-    @Override
-    protected final boolean internalDispose( int entityId, Aspects aspects ) {
-        return true;
     }
 
     @Override
@@ -62,8 +53,8 @@ public final class MultiPositionSpriteRenderer extends BaseSpriteRenderer {
                     continue;
                 }
                 
-                exactTransformCollector.set( transform, pos.x, pos.y );
-                graphics.renderSprite( sprite, exactTransformCollector );
+                transformCollector.set( transform, pos.x, pos.y );
+                graphics.renderSprite( sprite, transformCollector );
             }
         }
     }

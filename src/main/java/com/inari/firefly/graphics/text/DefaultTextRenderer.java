@@ -34,10 +34,10 @@ public final class DefaultTextRenderer extends TextRenderer {
             }
             
             EText text = components.get( EText.TYPE_KEY );
-            int rendererId = text.getRendererId();
-            if ( rendererId >= 0 && rendererId != index() ) {
-                continue;
-            }
+//            int rendererId = text.getRendererId();
+//            if ( rendererId >= 0 && rendererId != index() ) {
+//                continue;
+//            }
             
             ETransform transform = components.get( ETransform.TYPE_KEY );
             FontAsset font = assetSystem.getAssetAs( text.getFontAssetId(), FontAsset.class );

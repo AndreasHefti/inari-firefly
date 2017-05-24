@@ -2,19 +2,37 @@ package com.inari.firefly.graphics.rendering;
 
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
+import com.inari.commons.lang.indexed.IndexedTypeSet;
+import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.FFInitException;
+import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.TransformData;
 
 public abstract class Renderer extends SystemComponent {
 
     public static final SystemComponentKey<Renderer> TYPE_KEY = SystemComponentKey.create( Renderer.class );
     
-    protected final TransformDataCollector exactTransformCollector = new ExactTransformDataCollector();
-    protected final TransformDataCollector diskreteTransformCollector = new DiskreteTransformDataCollector();
+    protected final TransformDataCollector transformCollector = new ExactTransformDataCollector();
+    
+    protected EntitySystem entitySystem;
+    protected FFGraphics graphics;
+    protected final DynArray<DynArray<DynArray<IndexedTypeSet>>> spritesPerViewAndLayer;
     
     protected Renderer( int index ) {
         super( index );
+        spritesPerViewAndLayer = DynArray.createTyped( DynArray.class, 20, 10 );
+    }
+    
+    @Override
+    protected void init() throws FFInitException {
+        super.init();
+        
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        graphics = context.getGraphics();
     }
     
     @Override
@@ -22,11 +40,64 @@ public abstract class Renderer extends SystemComponent {
         return TYPE_KEY;
     }
     
+    public final boolean accept( int entityId, Aspects aspects ) {
+        final IndexedTypeSet components = entitySystem.getComponents( entityId );
+        if ( accept( entityId, aspects, components ) ) {
+            final ETransform transform = components.get( ETransform.TYPE_KEY );
+            final DynArray<IndexedTypeSet> renderablesOfView = getSprites( transform.getViewId(), transform.getLayerId(), true );
+            renderablesOfView.add( components );
+            accepted( entityId, aspects, renderablesOfView );
+            return true;
+        } 
+        
+        return false;
+    }
+    
+    public final void dispose( int entityId, Aspects aspects ) {
+        final IndexedTypeSet components = entitySystem.getComponents( entityId );
+        if ( accept( entityId, aspects, components ) ) {
+            final ETransform transform = components.get( ETransform.TYPE_KEY );
+            final DynArray<IndexedTypeSet> renderablesOfView = getSprites( transform.getViewId(), transform.getLayerId(), false );
+            if ( renderablesOfView != null ) {
+                renderablesOfView.remove( components );
+            }
+        }
+    }
+    
+    protected void accepted( int entityId, final Aspects aspects, final DynArray<IndexedTypeSet> renderablesOfView ) {
+        // NOOP
+    }
+    
+    protected boolean accept( int entityId, Aspects aspects, IndexedTypeSet components ) {
+        return true;
+    }
+    
+    protected final DynArray<IndexedTypeSet> getSprites( int viewId, int layerId, boolean createNew ) {
+        DynArray<DynArray<IndexedTypeSet>> spritePerLayer = null;
+        if ( spritesPerViewAndLayer.contains( viewId ) ) { 
+            spritePerLayer = spritesPerViewAndLayer.get( viewId );
+        } else if ( createNew ) {
+            spritePerLayer = DynArray.createTyped( DynArray.class, 20, 10 );
+            spritesPerViewAndLayer.set( viewId, spritePerLayer );
+        }
+        
+        if ( spritePerLayer == null ) {
+            return null;
+        }
+        
+        DynArray<IndexedTypeSet> spritesOfLayer = null;
+        if ( spritePerLayer.contains( layerId ) ) { 
+            spritesOfLayer = spritePerLayer.get( layerId );
+        } else if ( createNew ) {
+            spritesOfLayer = DynArray.create( IndexedTypeSet.class, 100, 100 );
+            spritePerLayer.set( layerId, spritesOfLayer );
+        }
+        
+        return spritesOfLayer;
+    }
+    
     public abstract boolean match( final Aspects aspects );
     
-    public abstract boolean accept( int entityId, final Aspects aspects );
-    
-    public abstract void dispose( int entityId, final Aspects aspects );
     
     public abstract void render( RenderEvent event );
     

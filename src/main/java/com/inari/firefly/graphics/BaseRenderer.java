@@ -39,31 +39,31 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
     }
     
     protected final void render( final SpriteRenderable sprite, final int parentId, final TransformDataCollector transformCollector ) {
-        if ( parentId >= 0 ) {
-            collectTransformData( parentId, transformCollector );
-        }
+//        if ( parentId >= 0 ) {
+//            collectTransformData( parentId, transformCollector );
+//        }
         
         graphics.renderSprite( sprite, transformCollector );
     }
     
     protected final void render( final EShape shape, final int parentId, final TransformDataCollector transformCollector ) {
-        if ( parentId >= 0 ) {
-            collectTransformData( parentId, transformCollector );
-        }
+//        if ( parentId >= 0 ) {
+//            collectTransformData( parentId, transformCollector );
+//        }
         
         graphics.renderShape( shape,transformCollector );
     }
     
-    private void collectTransformData( final int parentId, final TransformDataCollector transformCollector ) {
-        ETransform parentTransform = entitySystem.getComponent( parentId, ETransform.TYPE_KEY );
-        if ( parentTransform != null ) {
-            transformCollector.add( parentTransform );
-            if ( parentTransform.getParentId() >= 0 ) {
-                collectTransformData( parentTransform.getParentId(), transformCollector );
-            }
-        }
-        
-    }
+//    private void collectTransformData( final int parentId, final TransformDataCollector transformCollector ) {
+//        ETransform parentTransform = entitySystem.getComponent( parentId, ETransform.TYPE_KEY );
+//        if ( parentTransform != null ) {
+//            transformCollector.add( parentTransform );
+//            if ( parentTransform.getParentId() >= 0 ) {
+//                collectTransformData( parentTransform.getParentId(), transformCollector );
+//            }
+//        }
+//        
+//    }
     
     public interface TransformDataCollector extends TransformData {
         void set( TransformData transform );

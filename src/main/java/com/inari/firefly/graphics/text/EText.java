@@ -9,13 +9,13 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.BlendMode;
+import com.inari.firefly.graphics.rendering.RenderingChain;
 
 public class EText extends EntityComponent {
     
     public static final EntityComponentTypeKey<EText> TYPE_KEY = EntityComponentTypeKey.create( EText.class );
     
-    public static final AttributeKey<String> RENDERER_NAME = AttributeKey.createString( "rendererName", EText.class );
-    public static final AttributeKey<Integer> RENDERER_ID = AttributeKey.createInt( "rendererId", EText.class );
+    public static final AttributeKey<RenderingChain.Key> RENDERER_KEY = new AttributeKey<>( "rendererKey", RenderingChain.Key.class, EText.class );
     public static final AttributeKey<String> FONT_ASSET_NAME = AttributeKey.createString( "fontAssetName", EText.class );
     public static final AttributeKey<Integer> FONT_ASSET_ID = AttributeKey.createInt( "fontAssetId", EText.class );
     public static final AttributeKey<String> TEXT = AttributeKey.createString( "text", EText.class );
@@ -24,7 +24,7 @@ public class EText extends EntityComponent {
     public static final AttributeKey<String> SHADER_ASSET_NAME = AttributeKey.createString( "shaderAssetName", EText.class );
     public static final AttributeKey<Integer> SHADER_ID = AttributeKey.createInt( "shaderId", EText.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
-        RENDERER_ID,
+        RENDERER_KEY,
         FONT_ASSET_ID,
         TEXT,
         TINT_COLOR,
@@ -32,7 +32,7 @@ public class EText extends EntityComponent {
         SHADER_ID
     );
     
-    private int rendererId;
+    private RenderingChain.Key rendererKey;
     private int fontAssetId;
     private StringBuffer textBuffer;
     private final RGBColor tintColor = new RGBColor();
@@ -46,7 +46,7 @@ public class EText extends EntityComponent {
 
     @Override
     public final void resetAttributes() {
-        rendererId = -1;
+        rendererKey = null;
         fontAssetId = -1;
         textBuffer = new StringBuffer();
         setTintColor( new RGBColor( 1f, 1f, 1f, 1f ) );
@@ -54,12 +54,12 @@ public class EText extends EntityComponent {
         shaderId = -1;
     }
 
-    public final int getRendererId() {
-        return rendererId;
+    public final RenderingChain.Key getRendererKey() {
+        return rendererKey;
     }
 
-    public final void setRendererId( int rendererId ) {
-        this.rendererId = rendererId;
+    public final void setRendererKey( RenderingChain.Key rendererKey ) {
+        this.rendererKey = rendererKey;
     }
 
     public final int getFontAssetId() {
@@ -124,7 +124,7 @@ public class EText extends EntityComponent {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        rendererId = attributes.getIdForName( RENDERER_NAME, RENDERER_ID, TextRenderer.TYPE_KEY, rendererId );
+        rendererKey = attributes.getValue( RENDERER_KEY, rendererKey );
         fontAssetId = attributes.getIdForName( FONT_ASSET_NAME, FONT_ASSET_ID, Asset.TYPE_KEY, fontAssetId );
         if ( attributes.contains( TEXT ) ) {
             setText( attributes.getValue( TEXT ) );
@@ -136,7 +136,7 @@ public class EText extends EntityComponent {
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
-        attributes.put( RENDERER_ID, rendererId );
+        attributes.put( RENDERER_KEY, rendererKey );
         attributes.put( FONT_ASSET_ID, fontAssetId );
         attributes.put( TEXT, textBuffer.toString() );
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );

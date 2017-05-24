@@ -48,7 +48,6 @@ public final class ETransform extends EntityComponent implements TransformData {
     public static final AttributeKey<Float> SCALE_X = AttributeKey.createFloat( "scalex", ETransform.class );
     public static final AttributeKey<Float> SCALE_Y = AttributeKey.createFloat( "scaley", ETransform.class );
     public static final AttributeKey<Float> ROTATION = AttributeKey.createFloat( "rotation", ETransform.class );
-    public static final AttributeKey<Integer> PARENT_ID = AttributeKey.createInt( "parentId", ETransform.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet( 
         VIEW_ID,
         LAYER_ID, 
@@ -58,8 +57,7 @@ public final class ETransform extends EntityComponent implements TransformData {
         PIVOT_POSITION_Y,
         SCALE_X,
         SCALE_Y,
-        ROTATION,
-        PARENT_ID
+        ROTATION
     );
 
     private int viewId, layerId;
@@ -67,7 +65,6 @@ public final class ETransform extends EntityComponent implements TransformData {
     private final PositionF pivotPosition;
     private float scalex, scaley;
     private float rotation;
-    private int parentId;
     
     ETransform() {
         super( TYPE_KEY );
@@ -87,7 +84,6 @@ public final class ETransform extends EntityComponent implements TransformData {
         scalex = 1;
         scaley = 1;
         rotation = 0;
-        parentId = -1;
     }
     
     public final int getViewId() {
@@ -202,14 +198,6 @@ public final class ETransform extends EntityComponent implements TransformData {
         return scalex != 1.0 || scaley != 1.0;
     }
 
-    public final int getParentId() {
-        return parentId;
-    }
-
-    public final void setParentId( int parentId ) {
-        this.parentId = parentId;
-    }
-
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
@@ -239,7 +227,6 @@ public final class ETransform extends EntityComponent implements TransformData {
         scaley = attributes.getValue( SCALE_Y, scaley );
         
         rotation = attributes.getValue( ROTATION, rotation );
-        parentId = attributes.getValue( PARENT_ID, parentId );
     }
 
     @Override
@@ -253,7 +240,6 @@ public final class ETransform extends EntityComponent implements TransformData {
         attributes.put( SCALE_X, scalex );
         attributes.put( SCALE_Y, scalex );
         attributes.put( ROTATION, rotation );
-        attributes.put( PARENT_ID, parentId );
     }
     
     

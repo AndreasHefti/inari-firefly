@@ -1,27 +1,21 @@
 package com.inari.firefly.graphics.rendering;
 
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.system.RenderEvent;
-import com.inari.firefly.system.external.FFGraphics;
 
 public final class DefaultShapeRenderer extends Renderer {
     
     public static final RenderingChain.Key CHAIN_KEY = new RenderingChain.Key( "DefaultShapeRenderer", DefaultShapeRenderer.class );
-    
-    private final DynArray<DynArray<IntBag>> shapesPerViewAndLayer;
-    private EntitySystem entitySystem;
-    private FFGraphics graphics;
 
     protected DefaultShapeRenderer( int index ) {
         super( index );
         super.setName( CHAIN_KEY.name );
-        shapesPerViewAndLayer = DynArray.createTyped( DynArray.class, 20, 10 );
     }
 
     @Override
@@ -36,62 +30,25 @@ public final class DefaultShapeRenderer extends Renderer {
     }
 
     @Override
-    public final boolean accept( int entityId, Aspects aspects ) {
-        final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
-        final IntBag renderablesOfView = getShapeIds( transform.getViewId(), transform.getLayerId(), true );
-        renderablesOfView.add( entityId );
-        return true;
-    }
-
-    @Override
-    public final void dispose( int entityId, Aspects aspects ) {
-        final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
-        final IntBag renderablesOfView = getShapeIds( transform.getViewId(), transform.getLayerId(), false );
-        renderablesOfView.remove( entityId );
-    }
-
-    @Override
     public final void render( RenderEvent event ) {
-        IntBag shapeIds = getShapeIds( event.getViewId(), event.getLayerId(), false );
-        if ( shapeIds == null || shapeIds.isEmpty() ) {
+        final DynArray<IndexedTypeSet> spritesToRender = getSprites( event.getViewId(), event.getLayerId(), false );
+        if ( spritesToRender == null ) {
             return;
         }
         
-        final int nullValue = shapeIds.getNullValue();
-        for ( int i = 0; i < shapeIds.length(); i++ ) {
-            int entityId = shapeIds.get( i );
-            if ( nullValue == entityId ) {
+        for ( int i = 0; i < spritesToRender.capacity(); i++ ) {
+            final IndexedTypeSet components = spritesToRender.get( i );
+            if ( components == null ) {
                 continue;
             }
-            
-            EShape shape = entitySystem.getComponent( entityId, EShape.TYPE_KEY );
-            ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
-            graphics.renderShape( shape, transform );
+
+            graphics.renderShape( 
+                components.<EShape>get( EShape.TYPE_KEY ), 
+                components.<ETransform>get( ETransform.TYPE_KEY ) 
+            );
         }
     }
     
-    private final IntBag getShapeIds( int viewId, int layerId, boolean createNew ) {
-        DynArray<IntBag> shapePerLayer = null;
-        if ( shapesPerViewAndLayer.contains( viewId ) ) { 
-            shapePerLayer = shapesPerViewAndLayer.get( viewId );
-        } else if ( createNew ) {
-            shapePerLayer = DynArray.create( IntBag.class, 20, 10 );
-            shapesPerViewAndLayer.set( viewId, shapePerLayer );
-        }
-        
-        if ( shapePerLayer == null ) {
-            return null;
-        }
-        
-        IntBag shapesOfLayer = null;
-        if ( shapePerLayer.contains( layerId ) ) { 
-            shapesOfLayer = shapePerLayer.get( layerId );
-        } else if ( createNew ) {
-            shapesOfLayer = new IntBag();
-            shapePerLayer.set( layerId, shapesOfLayer );
-        }
-        
-        return shapesOfLayer;
-    }
+    
 
 }

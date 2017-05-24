@@ -35,7 +35,7 @@ public final class NormalFullTileGridRenderer extends TileGridRenderer {
             transformCollector.xpos += tileGridIterator.getWorldXPos();
             transformCollector.ypos += tileGridIterator.getWorldYPos();
             
-            render( tile, transform.getParentId(), transformCollector );
+            render( tile, transformCollector );
         }
     }
 
