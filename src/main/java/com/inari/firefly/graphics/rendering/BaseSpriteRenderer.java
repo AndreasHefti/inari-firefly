@@ -48,7 +48,9 @@ public abstract class BaseSpriteRenderer extends Renderer {
             final IndexedTypeSet components = entitySystem.getComponents( entityId );
             final ETransform transform = components.get( ETransform.TYPE_KEY );
             final DynArray<IndexedTypeSet> renderablesOfView = getSprites( transform.getViewId(), transform.getLayerId(), false );
-            renderablesOfView.remove( components );
+            if ( renderablesOfView != null ) {
+                renderablesOfView.remove( components );
+            }
         }
     }
     
