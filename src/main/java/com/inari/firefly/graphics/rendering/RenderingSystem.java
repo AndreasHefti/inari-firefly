@@ -30,8 +30,8 @@ public final class RenderingSystem
     private RenderingChain renderingChain;
     
 
-    RenderingSystem( FFSystemTypeKey<RenderingSystem> systemKey ) {
-        super( systemKey );
+    RenderingSystem() {
+        super( SYSTEM_KEY );
     }
 
     @Override
