@@ -336,6 +336,7 @@ public final class TileGridSystem
         }
     }
     
+    @Deprecated // will soon be replaced by RenderingSystem
     private final class TileGridRendererBuilder extends SystemComponentBuilder {
         
         private TileGridRendererBuilder( Class<? extends TileGridRenderer> componentType ) {
@@ -389,6 +390,7 @@ public final class TileGridSystem
         }
     }
     
+    @Deprecated // will soon be replaced by RenderingSystem
     private final class TileGridRendererBuilderAdapter extends SystemBuilderAdapter<TileGridRenderer> {
         private TileGridRendererBuilderAdapter() {
             super( TileGridSystem.this, TileGridRenderer.TYPE_KEY );

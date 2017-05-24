@@ -92,7 +92,6 @@ public class EntitySystemTest extends FFTest {
             + "rotation:Float:ETransform=0.0, "
             + "parentId:Integer:ETransform=-1, "
             + "spriteId:Integer:ESprite=555, "
-            + "ordering:Integer:ESprite=0, "
             + "tintColor:RGBColor:ESprite=[r=1.0,g=1.0,b=1.0,a=1.0], "
             + "blendMode:BlendMode:ESprite=NONE, "
             + "shaderId:Integer:ESprite=-1", 

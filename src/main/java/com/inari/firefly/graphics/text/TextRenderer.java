@@ -7,6 +7,7 @@ import com.inari.firefly.graphics.BaseRenderer;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.SpriteRenderable;
 
+@Deprecated // will soon be replaced by RenderingSystem
 public abstract class TextRenderer extends BaseRenderer {
     
     public static final SystemComponentKey<TextRenderer> TYPE_KEY = SystemComponentKey.create( TextRenderer.class );
@@ -42,7 +43,6 @@ public abstract class TextRenderer extends BaseRenderer {
         @Override public final int getSpriteId() { return spriteId; }
         @Override public final RGBColor getTintColor() { return tintColor; }
         @Override public final BlendMode getBlendMode() { return blendMode; }
-        @Override public final int getOrdering() { return 0; }
         @Override public final int getShaderId() { return shaderId; }
     }
 

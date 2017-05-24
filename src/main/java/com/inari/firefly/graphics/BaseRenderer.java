@@ -65,9 +65,9 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
     }
     
     public interface TransformDataCollector extends TransformData {
-        void set( ETransform transform );
-        void set( ETransform transform, float xoffset, float yoffset );
-        void add( ETransform transform );
+        void set( TransformData transform );
+        void set( TransformData transform, float xoffset, float yoffset );
+        void add( TransformData transform );
     }
 
     protected final class ExactTransformDataCollector implements TransformDataCollector {
@@ -80,31 +80,31 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
         public ExactTransformDataCollector() {}
         
         @Override
-        public final void set( final ETransform transform, float xoffset, float yoffset ) {
+        public final void set( final TransformData transform, float xoffset, float yoffset ) {
             set( transform );
             xpos += xoffset;
             ypos += yoffset;
         }
         
         @Override
-        public final void set( final ETransform transform ) {
-            xpos = transform.getXpos();
-            ypos = transform.getYpos();
-            pivotx = transform.getPivotx();
-            pivoty = transform.getPivoty();
-            scalex = transform.getScalex();
-            scaley = transform.getScaley();
+        public final void set( final TransformData transform ) {
+            xpos = transform.getXOffset();
+            ypos = transform.getYOffset();
+            pivotx = transform.getPivotX();
+            pivoty = transform.getPivotY();
+            scalex = transform.getScaleX();
+            scaley = transform.getScaleY();
             rotation = transform.getRotation();
         }
         
         @Override
-        public final void add( final ETransform transform ) {
-            xpos += transform.getXpos();
-            ypos += transform.getYpos();
-            pivotx += transform.getPivotx();
-            pivoty += transform.getPivoty();
-            scalex += transform.getScalex();
-            scaley += transform.getScaley();
+        public final void add( final TransformData transform ) {
+            xpos += transform.getXOffset();
+            ypos += transform.getYOffset();
+            pivotx += transform.getPivotX();
+            pivoty += transform.getPivotY();
+            scalex += transform.getScaleX();
+            scaley += transform.getScaleY();
             rotation += transform.getRotation();
         }
 
@@ -165,35 +165,35 @@ public abstract class BaseRenderer extends SystemComponent implements RenderEven
         public DiskreteTransformDataCollector() {}
         
         @Override
-        public final void set( ETransform transform, float xoffset, float yoffset ) {
-            xpos = (float) Math.floor( transform.getXpos() + xoffset );
-            ypos = (float) Math.floor( transform.getYpos() + yoffset );
-            pivotx = (float) Math.floor( transform.getPivotx() );
-            pivoty = (float) Math.floor( transform.getPivoty() );
-            scalex = transform.getScalex();
-            scaley = transform.getScaley();
+        public final void set( TransformData transform, float xoffset, float yoffset ) {
+            xpos = (float) Math.floor( transform.getXOffset() + xoffset );
+            ypos = (float) Math.floor( transform.getYOffset() + yoffset );
+            pivotx = (float) Math.floor( transform.getPivotX() );
+            pivoty = (float) Math.floor( transform.getPivotY() );
+            scalex = transform.getScaleX();
+            scaley = transform.getScaleY();
             rotation = transform.getRotation();
         }
         
         @Override
-        public final void set( final ETransform transform ) {
-            xpos = (float) Math.floor( transform.getXpos() );
-            ypos = (float) Math.floor( transform.getYpos() );
-            pivotx = (float) Math.floor( transform.getPivotx() );
-            pivoty = (float) Math.floor( transform.getPivoty() );
-            scalex = transform.getScalex();
-            scaley = transform.getScaley();
+        public final void set( final TransformData transform ) {
+            xpos = (float) Math.floor( transform.getXOffset() );
+            ypos = (float) Math.floor( transform.getYOffset() );
+            pivotx = (float) Math.floor( transform.getPivotX() );
+            pivoty = (float) Math.floor( transform.getPivotY() );
+            scalex = transform.getScaleX();
+            scaley = transform.getScaleY();
             rotation = transform.getRotation();
         }
         
         @Override
-        public final void add( final ETransform transform ) {
-            xpos += (float) Math.floor( transform.getXpos() );
-            ypos += (float) Math.floor( transform.getYpos() );
-            pivotx += (float) Math.floor( transform.getPivotx() );
-            pivoty += (float) Math.floor( transform.getPivoty() );
-            scalex += transform.getScalex();
-            scaley += transform.getScaley();
+        public final void add( final TransformData transform ) {
+            xpos += (float) Math.floor( transform.getXOffset() );
+            ypos += (float) Math.floor( transform.getYOffset() );
+            pivotx += (float) Math.floor( transform.getPivotX() );
+            pivoty += (float) Math.floor( transform.getPivotY() );
+            scalex += transform.getScaleX();
+            scaley += transform.getScaleY();
             rotation += transform.getRotation();
         }
 

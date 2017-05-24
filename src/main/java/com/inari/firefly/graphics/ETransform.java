@@ -29,8 +29,9 @@ import com.inari.firefly.physics.animation.AttributeAnimationAdapter.AttributeAn
 import com.inari.firefly.physics.animation.EntityFloatAnimationAdapter;
 import com.inari.firefly.physics.animation.FloatAnimation;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.external.TransformData;
 
-public final class ETransform extends EntityComponent {
+public final class ETransform extends EntityComponent implements TransformData {
     
     public static final EntityComponentTypeKey<ETransform> TYPE_KEY = EntityComponentTypeKey.create( ETransform.class );
 
@@ -126,19 +127,19 @@ public final class ETransform extends EntityComponent {
         position.y = ypos;
     }
 
-    public final float getPivotx() {
+    public final float getPivotX() {
         return pivotPosition.x;
     }
 
-    public final void setPivotx( float pivotx ) {
+    public final void setPivotX( float pivotx ) {
         pivotPosition.x = pivotx;
     }
 
-    public final float getPivoty() {
+    public final float getPivotY() {
         return pivotPosition.y;
     }
 
-    public final void setPivoty( float pivoty ) {
+    public final void setPivotY( float pivoty ) {
         pivotPosition.y = pivoty;
     }
     
@@ -152,19 +153,19 @@ public final class ETransform extends EntityComponent {
         position.y += dy;
     }
 
-    public final float getScalex() {
+    public final float getScaleX() {
         return scalex;
     }
 
-    public final void setScalex( float scalex ) {
+    public final void setScaleX( float scalex ) {
         this.scalex = scalex;
     }
 
-    public final float getScaley() {
+    public final float getScaleY() {
         return scaley;
     }
 
-    public final void setScaley( float scaley ) {
+    public final void setScaleY( float scaley ) {
         this.scaley = scaley;
     }
     
@@ -179,6 +180,26 @@ public final class ETransform extends EntityComponent {
 
     public final void setRotation( float rotation ) {
         this.rotation = rotation;
+    }
+    
+    @Override
+    public final float getXOffset() {
+        return position.x;
+    }
+
+    @Override
+    public final float getYOffset() {
+        return position.y;
+    }
+
+    @Override
+    public final boolean hasRotation() {
+        return rotation != 0.0;
+    }
+
+    @Override
+    public final boolean hasScale() {
+        return scalex != 1.0 || scaley != 1.0;
     }
 
     public final int getParentId() {
@@ -272,7 +293,7 @@ public final class ETransform extends EntityComponent {
         @Override
         public final void apply( int entityId, final FloatAnimation animation, final FFContext context ) {
             final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
-            transform.setPivotx( animation.getValue( entityId, transform.getPivotx() ) );
+            transform.setPivotX( animation.getValue( entityId, transform.getPivotX() ) );
         }
     }
     
@@ -282,7 +303,7 @@ public final class ETransform extends EntityComponent {
         @Override
         public final void apply( int entityId, final FloatAnimation animation, final FFContext context ) {
             final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
-            transform.setPivoty( animation.getValue( entityId, transform.getPivoty() ) );
+            transform.setPivotY( animation.getValue( entityId, transform.getPivotY() ) );
         }
     }
     
@@ -292,7 +313,7 @@ public final class ETransform extends EntityComponent {
         @Override
         public final void apply( int entityId, final FloatAnimation animation, final FFContext context ) {
             final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
-            transform.setScalex( animation.getValue( entityId, transform.getScalex() ) );
+            transform.setScaleX( animation.getValue( entityId, transform.getScaleX() ) );
         }
     }
     
@@ -302,7 +323,7 @@ public final class ETransform extends EntityComponent {
         @Override
         public final void apply( int entityId, final FloatAnimation animation, final FFContext context ) {
             final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
-            transform.setScaley( animation.getValue( entityId, transform.getScaley() ) );
+            transform.setScaleY( animation.getValue( entityId, transform.getScaleY() ) );
         }
     }
     
@@ -315,5 +336,4 @@ public final class ETransform extends EntityComponent {
             transform.setRotation( animation.getValue( entityId, transform.getRotation() ) );
         }
     }
-
 }

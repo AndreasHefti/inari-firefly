@@ -137,7 +137,6 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
         @Override public final int getSpriteId() { return spriteId; }
         @Override public final RGBColor getTintColor() { return tintColor; }
         @Override public final BlendMode getBlendMode() { return BlendMode.NORMAL_ALPHA; }
-        @Override public final int getOrdering() { return 0; }
         @Override public final int getShaderId() { return -1; }
     }
     

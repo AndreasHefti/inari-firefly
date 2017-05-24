@@ -1,7 +1,5 @@
 package com.inari.firefly.graphics.sprite;
 
-import java.util.Comparator;
-
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
@@ -15,12 +13,12 @@ import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.BaseRenderer;
 import com.inari.firefly.graphics.ETransform;
-import com.inari.firefly.graphics.SpriteRenderable;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
+@Deprecated // will soon be replaced by RenderingSystem
 public final class SpriteViewSystem 
     implements 
         FFSystem, 
@@ -80,7 +78,7 @@ public final class SpriteViewSystem
         final ETransform transform = components.get( ETransform.TYPE_KEY );
         final DynArray<IndexedTypeSet> renderablesOfView = getSprites( transform.getViewId(), transform.getLayerId(), true );
         renderablesOfView.add( components );
-        renderablesOfView.sort( RENDERABLE_COMPARATOR );
+        //renderablesOfView.sort( RENDERABLE_COMPARATOR );
     }
     
     public final void entityDeactivated( int entityId, final Aspects aspects ) {
@@ -114,30 +112,30 @@ public final class SpriteViewSystem
         return spritesOfLayer;
     }
 
-    private final Comparator<IndexedTypeSet> RENDERABLE_COMPARATOR = new Comparator<IndexedTypeSet>() {
-        
-        @Override
-        public final int compare( IndexedTypeSet its1, IndexedTypeSet its2 ) {
-            if ( its1 == null && its2 == null ) {
-                return 0;
-            }
-            if ( its1 == null ) {
-                return 1;
-            }
-            if ( its2 == null ) {
-                return -1;
-            }
-            SpriteRenderable sr1 = its1.get( ESprite.TYPE_KEY );
-            SpriteRenderable sr2 = its2.get( ESprite.TYPE_KEY );
-            int o1 = sr1.getOrdering();
-            int o2 = sr2.getOrdering();
-            if ( o1 == o2 ) {
-                return 0;
-            }
-            
-            return ( o1 < o2 )? 1 : -1;
-        }
-    };
+//    private final Comparator<IndexedTypeSet> RENDERABLE_COMPARATOR = new Comparator<IndexedTypeSet>() {
+//        
+//        @Override
+//        public final int compare( IndexedTypeSet its1, IndexedTypeSet its2 ) {
+//            if ( its1 == null && its2 == null ) {
+//                return 0;
+//            }
+//            if ( its1 == null ) {
+//                return 1;
+//            }
+//            if ( its2 == null ) {
+//                return -1;
+//            }
+//            SpriteRenderable sr1 = its1.get( ESprite.TYPE_KEY );
+//            SpriteRenderable sr2 = its2.get( ESprite.TYPE_KEY );
+//            int o1 = sr1.getOrdering();
+//            int o2 = sr2.getOrdering();
+//            if ( o1 == o2 ) {
+//                return 0;
+//            }
+//            
+//            return ( o1 < o2 )? 1 : -1;
+//        }
+//    };
     
     final class SpriteRenderer extends BaseRenderer { 
         

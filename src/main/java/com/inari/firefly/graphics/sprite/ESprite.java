@@ -40,21 +40,18 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
 
     public static final AttributeKey<String> SPRITE_ASSET_NAME = AttributeKey.createString( "spriteAssetName", ESprite.class );
     public static final AttributeKey<Integer> SPRITE_ID = AttributeKey.createInt( "spriteId", ESprite.class );
-    public static final AttributeKey<Integer> ORDERING = AttributeKey.createInt( "ordering", ESprite.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = AttributeKey.createColor( "tintColor", ESprite.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = AttributeKey.createBlendMode( "blendMode", ESprite.class );
     public static final AttributeKey<String> SHADER_ASSET_NAME = AttributeKey.createString( "shaderAssetName", ESprite.class );
     public static final AttributeKey<Integer> SHADER_ID = AttributeKey.createInt( "shaderId", ESprite.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         SPRITE_ID,
-        ORDERING,
         TINT_COLOR,
         BLEND_MODE,
         SHADER_ID
     );
 
     private int spriteId;
-    private int ordering;
     private final RGBColor tintColor;
     private BlendMode blendMode;
     private int shaderId;
@@ -72,7 +69,6 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         setTintColor( new RGBColor( 1, 1, 1, 1 ) );
         blendMode = BlendMode.NONE;
         shaderId = -1;
-        ordering = -1;
     }
 
     @Override
@@ -82,15 +78,6 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
 
     public final void setSpriteId( int spriteId ) {
         this.spriteId = spriteId;
-    }
-    
-    @Override
-    public final int getOrdering() {
-        return ordering;
-    }
-
-    public final void setOrdering( int ordering ) {
-        this.ordering = ordering;
     }
 
     @Override
@@ -131,7 +118,6 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
         spriteId = attributes.getAssetInstanceId( SPRITE_ASSET_NAME, SPRITE_ID, spriteId );
-        ordering = attributes.getValue( ORDERING, ordering );
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
         shaderId = attributes.getAssetInstanceId( SHADER_ASSET_NAME, SHADER_ID, shaderId );
@@ -140,7 +126,6 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( SPRITE_ID, spriteId );
-        attributes.put( ORDERING, ordering );
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
         attributes.put( BLEND_MODE, blendMode );
         attributes.put( SHADER_ID, shaderId );

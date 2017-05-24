@@ -19,6 +19,7 @@ import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
+@Deprecated // will soon be replaced by RenderingSystem
 public class TextSystem
     extends 
         ComponentSystem<TextSystem>

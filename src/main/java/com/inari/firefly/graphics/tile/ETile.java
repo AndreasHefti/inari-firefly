@@ -85,11 +85,6 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     public final void setSpriteId( int spriteId ) {
         this.spriteId = spriteId;
     }
-    
-    @Override
-    public final int getOrdering() {
-        return 0;
-    }
 
     @Override
     public final RGBColor getTintColor() {

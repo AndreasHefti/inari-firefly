@@ -4,6 +4,7 @@ import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.RenderEvent;
 
+@Deprecated // will soon be replaced by RenderingSystem
 public final class NormalFullTileGridRenderer extends TileGridRenderer {
     
     public static final String NAME = "NormalFullTileGridRenderer";

@@ -16,6 +16,7 @@ import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
+@Deprecated // will soon be replaced by RenderingSystem
 public final class ShapeRenderSystem
     implements 
         FFSystem, 

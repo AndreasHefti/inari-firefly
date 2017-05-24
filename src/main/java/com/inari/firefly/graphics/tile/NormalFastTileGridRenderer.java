@@ -3,6 +3,7 @@ package com.inari.firefly.graphics.tile;
 import com.inari.firefly.graphics.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.system.RenderEvent;
 
+@Deprecated // will soon be replaced by RenderingSystem
 public class NormalFastTileGridRenderer extends TileGridRenderer {
     
     public static final String NAME = "NormalFastTileGridRenderer";
