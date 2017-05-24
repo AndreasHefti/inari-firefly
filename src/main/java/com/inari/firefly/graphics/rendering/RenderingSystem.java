@@ -1,6 +1,5 @@
 package com.inari.firefly.graphics.rendering;
 
-import java.util.List;
 import java.util.Set;
 
 import com.inari.commons.lang.aspect.Aspects;
@@ -16,6 +15,15 @@ import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 public final class RenderingSystem 
     extends ComponentSystem<RenderingSystem> 
     implements RenderEventListener, EntityActivationListener {
+
+    public static final String[] DEFAULT_RRENDERER_ORDER = new String[] {
+        "DefaultShapeRenderer",
+        "GroupedSpriteRenderer",
+        "MultiplePositionSpriteRenderer",
+        "SimpleSpriteRenderer",
+        "FastTileRenderer",
+        "DefaultTextRenderer"
+    };
     
     public static final FFSystemTypeKey<RenderingSystem> SYSTEM_KEY = FFSystemTypeKey.create( RenderingSystem.class );
     
@@ -82,7 +90,7 @@ public final class RenderingSystem
         }
     }
     
-    public final void reorder( final List<String> rendererNames ) {
+    public final void reorder( final String[] rendererNames ) {
         DynArray<Renderer> _renderer = DynArray.create( Renderer.class, renderer.size() );
         ordering.clear();
         for ( String name : rendererNames ) {
