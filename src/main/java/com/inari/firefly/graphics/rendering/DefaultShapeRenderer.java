@@ -12,13 +12,15 @@ import com.inari.firefly.system.external.FFGraphics;
 
 public final class DefaultShapeRenderer extends Renderer {
     
+    public static final RenderingChain.Key CHAIN_KEY = new RenderingChain.Key( "DefaultShapeRenderer", DefaultShapeRenderer.class );
+    
     private final DynArray<DynArray<IntBag>> shapesPerViewAndLayer;
     private EntitySystem entitySystem;
     private FFGraphics graphics;
 
     protected DefaultShapeRenderer( int index ) {
         super( index );
-        super.setName( "DefaultShapeRenderer" );
+        super.setName( CHAIN_KEY.name );
         shapesPerViewAndLayer = DynArray.createTyped( DynArray.class, 20, 10 );
     }
 
