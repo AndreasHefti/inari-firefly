@@ -31,7 +31,7 @@ public final class MultiPositionSpriteRenderer extends Renderer {
 
     @Override
     public final void render( RenderEvent event ) {
-        final DynArray<IndexedTypeSet> spritesToRender = getSprites( event.getViewId(), event.getLayerId(), false );
+        final DynArray<IndexedTypeSet> spritesToRender = getEntites( event.getViewId(), event.getLayerId(), false );
         if ( spritesToRender == null ) {
             return;
         }

@@ -44,7 +44,7 @@ public abstract class Renderer extends SystemComponent {
         final IndexedTypeSet components = entitySystem.getComponents( entityId );
         if ( accept( entityId, aspects, components ) ) {
             final ETransform transform = components.get( ETransform.TYPE_KEY );
-            final DynArray<IndexedTypeSet> renderablesOfView = getSprites( transform.getViewId(), transform.getLayerId(), true );
+            final DynArray<IndexedTypeSet> renderablesOfView = getEntites( transform.getViewId(), transform.getLayerId(), true );
             renderablesOfView.add( components );
             accepted( entityId, aspects, renderablesOfView );
             return true;
@@ -57,7 +57,7 @@ public abstract class Renderer extends SystemComponent {
         final IndexedTypeSet components = entitySystem.getComponents( entityId );
         if ( accept( entityId, aspects, components ) ) {
             final ETransform transform = components.get( ETransform.TYPE_KEY );
-            final DynArray<IndexedTypeSet> renderablesOfView = getSprites( transform.getViewId(), transform.getLayerId(), false );
+            final DynArray<IndexedTypeSet> renderablesOfView = getEntites( transform.getViewId(), transform.getLayerId(), false );
             if ( renderablesOfView != null ) {
                 renderablesOfView.remove( components );
             }
@@ -72,7 +72,7 @@ public abstract class Renderer extends SystemComponent {
         return true;
     }
     
-    protected final DynArray<IndexedTypeSet> getSprites( int viewId, int layerId, boolean createNew ) {
+    protected final DynArray<IndexedTypeSet> getEntites( int viewId, int layerId, boolean createNew ) {
         DynArray<DynArray<IndexedTypeSet>> spritePerLayer = null;
         if ( spritesPerViewAndLayer.contains( viewId ) ) { 
             spritePerLayer = spritesPerViewAndLayer.get( viewId );
@@ -108,7 +108,7 @@ public abstract class Renderer extends SystemComponent {
         void add( TransformData transform );
     }
     
-    private final class ExactTransformDataCollector implements TransformDataCollector {
+    protected final class ExactTransformDataCollector implements TransformDataCollector {
 
         public float xpos, ypos;
         public float pivotx, pivoty;
@@ -193,7 +193,7 @@ public abstract class Renderer extends SystemComponent {
 
     }
     
-    private final class DiskreteTransformDataCollector implements TransformDataCollector {
+    protected final class DiskreteTransformDataCollector implements TransformDataCollector {
         
         public float xpos, ypos;
         public float pivotx, pivoty;

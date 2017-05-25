@@ -21,7 +21,8 @@ public final class RenderingSystem
     public static final RenderingChain DEFAULT_RENDERING_CHAIN = new RenderingChain()
         .addElement( MultiPositionSpriteRenderer.CHAIN_KEY )
         .addElement( SimpleSpriteRenderer.CHAIN_KEY )
-        .addElement( DefaultShapeRenderer.CHAIN_KEY )
+        .addElement( SimpleShapeRenderer.CHAIN_KEY )
+        .addElement( SimpleTextRenderer.CHAIN_KEY )
         .build();
     
     public static final FFSystemTypeKey<RenderingSystem> SYSTEM_KEY = FFSystemTypeKey.create( RenderingSystem.class );

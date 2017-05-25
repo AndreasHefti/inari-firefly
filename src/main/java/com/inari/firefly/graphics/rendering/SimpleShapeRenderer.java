@@ -9,11 +9,11 @@ import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.shape.EShape;
 import com.inari.firefly.system.RenderEvent;
 
-public final class DefaultShapeRenderer extends Renderer {
+public final class SimpleShapeRenderer extends Renderer {
     
-    public static final RenderingChain.Key CHAIN_KEY = new RenderingChain.Key( "DefaultShapeRenderer", DefaultShapeRenderer.class );
+    public static final RenderingChain.Key CHAIN_KEY = new RenderingChain.Key( "SimpleShapeRenderer", SimpleShapeRenderer.class );
 
-    protected DefaultShapeRenderer( int index ) {
+    protected SimpleShapeRenderer( int index ) {
         super( index );
         super.setName( CHAIN_KEY.name );
     }
@@ -31,7 +31,7 @@ public final class DefaultShapeRenderer extends Renderer {
 
     @Override
     public final void render( RenderEvent event ) {
-        final DynArray<IndexedTypeSet> spritesToRender = getSprites( event.getViewId(), event.getLayerId(), false );
+        final DynArray<IndexedTypeSet> spritesToRender = getEntites( event.getViewId(), event.getLayerId(), false );
         if ( spritesToRender == null ) {
             return;
         }
