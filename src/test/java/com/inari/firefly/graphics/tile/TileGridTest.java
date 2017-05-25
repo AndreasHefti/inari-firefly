@@ -59,7 +59,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
             "name:String=null, " +
-            "rendererId:Integer=-1, " +
             "viewId:Integer=0, " +
             "layerId:Integer=0, " +
             "width:Integer=0, " +
@@ -76,7 +75,6 @@ public class TileGridTest extends FFTest {
         grid2.toAttributes( attrs );
         assertEquals(
             "name:String=null, " +
-            "rendererId:Integer=-1, " +
             "viewId:Integer=123, " +
             "layerId:Integer=1, " +
             "width:Integer=10, " +
@@ -106,7 +104,6 @@ public class TileGridTest extends FFTest {
         grid3.toAttributes( attrs );
         assertEquals(
             "name:String=null, " +
-            "rendererId:Integer=-1, " +
             "viewId:Integer=123, " +
             "layerId:Integer=1, " +
             "width:Integer=10, " +
@@ -144,7 +141,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
             "name:String=null, "
-            + "rendererId:Integer=-1, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
@@ -171,7 +167,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
             "name:String=null, "
-            + "rendererId:Integer=-1, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
@@ -198,7 +193,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
             "name:String=null, "
-            + "rendererId:Integer=-1, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
@@ -225,7 +219,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
             "name:String=null, "
-            + "rendererId:Integer=-1, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
@@ -277,7 +270,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
                 "name:String=null, "
-                + "rendererId:Integer=-1, "
                 + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
                 + "width:Integer=3, "
@@ -302,7 +294,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
                 "name:String=null, "
-                + "rendererId:Integer=-1, "
                 + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
                 + "width:Integer=3, "
@@ -327,7 +318,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
                 "name:String=null, "
-                + "rendererId:Integer=-1, "
                 + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
                 + "width:Integer=3, "
@@ -352,7 +342,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
                 "name:String=null, "
-                + "rendererId:Integer=-1, "
                 + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
                 + "width:Integer=3, "
@@ -377,7 +366,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
                 "name:String=null, "
-                + "rendererId:Integer=-1, "
                 + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
                 + "width:Integer=3, "
@@ -413,7 +401,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
             "name:String=null, "
-            + "rendererId:Integer=-1, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
@@ -438,7 +425,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
             "name:String=null, "
-            + "rendererId:Integer=-1, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=5, "
@@ -463,7 +449,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
                 "name:String=null, "
-            + "rendererId:Integer=-1, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=5, "
@@ -491,7 +476,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
                 "name:String=null, "
-            + "rendererId:Integer=-1, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=5, "
@@ -519,7 +503,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
                 "name:String=null, "
-            + "rendererId:Integer=-1, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "
@@ -555,7 +538,6 @@ public class TileGridTest extends FFTest {
         grid1.toAttributes( attrs );
         assertEquals(
                 "name:String=null, "
-            + "rendererId:Integer=-1, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
             + "width:Integer=3, "

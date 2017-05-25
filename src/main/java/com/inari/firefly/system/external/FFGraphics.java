@@ -18,7 +18,7 @@ package com.inari.firefly.system.external;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.graphics.ShaderAsset;
-import com.inari.firefly.graphics.SpriteRenderable;
+import com.inari.firefly.graphics.rendering.SpriteRenderable;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewEventListener;
 import com.inari.firefly.system.utils.FFContextInitiable;

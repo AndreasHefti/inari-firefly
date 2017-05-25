@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayDeque;
 import java.util.Set;
 
-import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;

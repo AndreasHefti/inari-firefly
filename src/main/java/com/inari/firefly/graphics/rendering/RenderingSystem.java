@@ -19,6 +19,7 @@ public final class RenderingSystem
     implements RenderEventListener, EntityActivationListener {
     
     public static final RenderingChain DEFAULT_RENDERING_CHAIN = new RenderingChain()
+        .addElement( SimpleTileGridRenderer.CHAIN_KEY )
         .addElement( MultiPositionSpriteRenderer.CHAIN_KEY )
         .addElement( SimpleSpriteRenderer.CHAIN_KEY )
         .addElement( SimpleShapeRenderer.CHAIN_KEY )

@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.graphics;
+package com.inari.firefly.graphics.rendering;
 
 import com.inari.commons.graphics.RGBColor;
+import com.inari.firefly.graphics.BlendMode;
 
 public interface SpriteRenderable {
     

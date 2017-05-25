@@ -8,7 +8,6 @@ import com.inari.firefly.asset.Asset;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ETransform;
-import com.inari.firefly.graphics.SpriteRenderable;
 import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.graphics.text.FontAsset;
 import com.inari.firefly.system.RenderEvent;

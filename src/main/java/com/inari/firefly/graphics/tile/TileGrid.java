@@ -37,7 +37,6 @@ public final class TileGrid extends SystemComponent {
     public static final SystemComponentKey<TileGrid> TYPE_KEY = SystemComponentKey.create( TileGrid.class );
     
     public static final AttributeKey<String> RENDERER_NAME = AttributeKey.createString( "rendererName", TileGrid.class );
-    public static final AttributeKey<Integer> RENDERER_ID = AttributeKey.createInt( "rendererId", TileGrid.class );
     public static final AttributeKey<String> VIEW_NAME = AttributeKey.createString( "viewName", TileGrid.class );
     public static final AttributeKey<Integer> VIEW_ID = AttributeKey.createInt( "viewId", TileGrid.class );
     public static final AttributeKey<String> LAYER_NAME = AttributeKey.createString( "layerName", TileGrid.class );
@@ -50,7 +49,6 @@ public final class TileGrid extends SystemComponent {
     public static final AttributeKey<Float> WORLD_YPOS = AttributeKey.createFloat( "worldYPos", TileGrid.class );
     public static final AttributeKey<Boolean> SPHERICAL = AttributeKey.createBoolean( "spherical", TileGrid.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
-        RENDERER_ID,
         VIEW_ID,
         LAYER_ID,
         WIDTH,
@@ -64,7 +62,6 @@ public final class TileGrid extends SystemComponent {
     
     public final static int NULL_VALUE = -1;
 
-    private int rendererId;
     private int viewId;
     private int layerId;
     
@@ -82,7 +79,6 @@ public final class TileGrid extends SystemComponent {
 
     protected TileGrid( int id ) {
         super( id );
-        rendererId = -1;
         viewId = 0;
         layerId = 0;
         width = 0;
@@ -98,14 +94,6 @@ public final class TileGrid extends SystemComponent {
     @Override
     public final IndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;
-    }
-
-    public final int getRendererId() {
-        return rendererId;
-    }
-
-    public final void setRendererId( int rendererId ) {
-        this.rendererId = rendererId;
     }
 
     public final int getViewId() {
@@ -191,7 +179,6 @@ public final class TileGrid extends SystemComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        rendererId = attributes.getIdForName( RENDERER_NAME, RENDERER_ID, TileGridRenderer.TYPE_KEY, rendererId );
         viewId = attributes.getIdForName( VIEW_NAME, VIEW_ID, View.TYPE_KEY, viewId );
         layerId = attributes.getIdForName( LAYER_NAME, LAYER_ID, Layer.TYPE_KEY, layerId );
         width = attributes.getValue( WIDTH, width );
@@ -207,8 +194,7 @@ public final class TileGrid extends SystemComponent {
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        
-        attributes.put( RENDERER_ID, rendererId );
+
         attributes.put( VIEW_ID, viewId );
         attributes.put( LAYER_ID, layerId );
         attributes.put( WIDTH, width );

@@ -106,6 +106,7 @@ public abstract class Renderer extends SystemComponent {
         void set( TransformData transform );
         void set( TransformData transform, float xoffset, float yoffset );
         void add( TransformData transform );
+        void addOffset( float x, float y );
     }
     
     protected final class ExactTransformDataCollector implements TransformDataCollector {
@@ -144,6 +145,12 @@ public abstract class Renderer extends SystemComponent {
             scalex += transform.getScaleX();
             scaley += transform.getScaleY();
             rotation += transform.getRotation();
+        }
+        
+        @Override
+        public final void addOffset( float x, float y ) {
+            xpos += x;
+            ypos += y;
         }
 
         @Override
@@ -233,6 +240,12 @@ public abstract class Renderer extends SystemComponent {
             scalex += transform.getScaleX();
             scaley += transform.getScaleY();
             rotation += transform.getRotation();
+        }
+        
+        @Override
+        public final void addOffset( float x, float y ) {
+            xpos += (float) Math.floor( x );
+            ypos += (float) Math.floor( y );
         }
 
         @Override

@@ -5,7 +5,7 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.graphics.BlendMode;
-import com.inari.firefly.graphics.SpriteRenderable;
+import com.inari.firefly.graphics.rendering.SpriteRenderable;
 import com.inari.firefly.graphics.text.FontAsset;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewSystem;

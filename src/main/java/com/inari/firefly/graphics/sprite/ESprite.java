@@ -24,7 +24,7 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.BlendMode;
-import com.inari.firefly.graphics.SpriteRenderable;
+import com.inari.firefly.graphics.rendering.SpriteRenderable;
 import com.inari.firefly.physics.animation.AttributeAnimationAdapter.AttributeAnimationAdapterKey;
 import com.inari.firefly.physics.animation.EntityFloatAnimationAdapter;
 import com.inari.firefly.physics.animation.EntityIntAnimationAdapter;
