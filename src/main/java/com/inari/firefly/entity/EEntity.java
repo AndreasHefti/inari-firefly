@@ -20,7 +20,7 @@ public class EEntity extends EntityComponent {
     public static final AttributeKey<String> ENTITY_NAME = AttributeKey.createString( "entityName", EEntity.class );
     public static final AttributeKey<DynArray<String>> CONTROLLER_NAMES = AttributeKey.createDynArray( "controllerNames", EEntity.class , String.class);
     public static final AttributeKey<IntBag> CONTROLLER_IDS = AttributeKey.createIntBag( "controllerIds", EEntity.class );
-    public static final AttributeKey<DynArray<Aspect>> ASPECTS = AttributeKey.createDynArray( "aspects", EEntity.class, Aspect.class );
+    public static final AttributeKey<Aspects> ASPECTS = AttributeKey.createAspects( "aspects", EEntity.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         ENTITY_NAME,
         CONTROLLER_IDS,
@@ -111,11 +111,8 @@ public class EEntity extends EntityComponent {
         entityName = attributes.getValue( ENTITY_NAME, entityName );
         setControllerIds( attributes.getIdsForNames( CONTROLLER_NAMES, CONTROLLER_IDS, Controller.TYPE_KEY, controllerIds ) );
         if ( attributes.contains( ASPECTS ) ) {
-            DynArray<Aspect> aspects = attributes.getValue( ASPECTS );
             this.aspects.clear();
-            for ( Aspect aspect : aspects ) {
-                setAspect( aspect );
-            }
+            this.aspects.set( attributes.getValue( ASPECTS ) );
         }
     }
 
@@ -123,15 +120,7 @@ public class EEntity extends EntityComponent {
     public void toAttributes( AttributeMap attributes ) {
         attributes.put( ENTITY_NAME, entityName );
         attributes.put( CONTROLLER_IDS, controllerIds );
-        attributes.put( ASPECTS, getAspectsAsDynArray() );
-    }
-    
-    private DynArray<Aspect> getAspectsAsDynArray() {
-        DynArray<Aspect> result = DynArray.create( Aspect.class, 20, 10 );
-        for ( Aspect aspect : aspects ) {
-            result.add( aspect );
-        }
-        return result;
+        attributes.put( ASPECTS, aspects );
     }
 
 }
