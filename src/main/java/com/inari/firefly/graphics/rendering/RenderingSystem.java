@@ -22,6 +22,7 @@ public final class RenderingSystem
         .addElement( SimpleTileGridRenderer.CHAIN_KEY )
         .addElement( MultiPositionSpriteRenderer.CHAIN_KEY )
         .addElement( SimpleSpriteRenderer.CHAIN_KEY )
+        .addElement( SpriteParticleRenderer.CHAIN_KEY )
         .addElement( SimpleShapeRenderer.CHAIN_KEY )
         .addElement( SimpleTextRenderer.CHAIN_KEY )
         .build();

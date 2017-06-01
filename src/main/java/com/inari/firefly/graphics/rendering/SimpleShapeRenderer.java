@@ -11,7 +11,7 @@ import com.inari.firefly.system.RenderEvent;
 
 public final class SimpleShapeRenderer extends Renderer {
     
-    public static final RenderingChain.Key CHAIN_KEY = new RenderingChain.Key( "SimpleShapeRenderer", SimpleShapeRenderer.class );
+    public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "SimpleShapeRenderer", SimpleShapeRenderer.class );
 
     protected SimpleShapeRenderer( int index ) {
         super( index );

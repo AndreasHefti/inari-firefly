@@ -12,7 +12,7 @@ import com.inari.firefly.system.RenderEvent;
 
 public final class FullTileGridRenderer extends Renderer {
     
-    public static final RenderingChain.Key CHAIN_KEY = new RenderingChain.Key( "FullTileGridRenderer", FullTileGridRenderer.class );
+    public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "FullTileGridRenderer", FullTileGridRenderer.class );
     public static final Aspects MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
         ETransform.TYPE_KEY, 
         ETile.TYPE_KEY 

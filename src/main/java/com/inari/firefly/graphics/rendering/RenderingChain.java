@@ -11,15 +11,15 @@ import com.inari.firefly.component.attr.AttributeMap;
 public final class RenderingChain {
 
     private boolean modifiable = true;
-    final Set<Key> keySet = new HashSet<Key>();
+    final Set<RendererKey> keySet = new HashSet<RendererKey>();
     final DynArray<Element> elements = DynArray.create( Element.class, 20 );
     
-    public RenderingChain addElement( Key key ) {
+    public RenderingChain addElement( RendererKey key ) {
         addElement( key, null );
         return this;
     }
     
-    public RenderingChain addElement( Key key, AttributeMap attributes ) {
+    public RenderingChain addElement( RendererKey key, AttributeMap attributes ) {
         if ( !modifiable ) {
             throw new FFInitException( "Unmodifiable RenderingChain" );
         }
@@ -37,7 +37,7 @@ public final class RenderingChain {
         return this;
     }
     
-    public Set<Key> getChainKeys() {
+    public Set<RendererKey> getChainKeys() {
         return Collections.unmodifiableSet( keySet );
     }
 
@@ -45,10 +45,10 @@ public final class RenderingChain {
         
         Renderer renderer;
         
-        public final Key key;
+        public final RendererKey key;
         public final AttributeMap attributes;
         
-        Element( Key key, AttributeMap attributes ) {
+        Element( RendererKey key, AttributeMap attributes ) {
             super();
             this.key = key;
             this.attributes = attributes;
@@ -80,11 +80,11 @@ public final class RenderingChain {
         }
     }
     
-    public final static class Key {
+    public final static class RendererKey {
         public final String name;
         public final Class<? extends Renderer> rendererType;
         
-        public Key( String name, Class<? extends Renderer> rendererType ) {
+        public RendererKey( String name, Class<? extends Renderer> rendererType ) {
             super();
             this.name = name;
             this.rendererType = rendererType;
@@ -118,7 +118,7 @@ public final class RenderingChain {
                 return false;
             if ( getClass() != obj.getClass() )
                 return false;
-            Key other = (Key) obj;
+            RendererKey other = (RendererKey) obj;
             if ( name == null ) {
                 if ( other.name != null )
                     return false;

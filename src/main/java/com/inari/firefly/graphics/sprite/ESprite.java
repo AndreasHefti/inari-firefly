@@ -57,7 +57,7 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
     private int shaderId;
     
     
-    public ESprite() {
+    ESprite() {
         super( TYPE_KEY );
         tintColor = new RGBColor();
         resetAttributes();

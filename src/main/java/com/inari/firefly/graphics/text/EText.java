@@ -9,13 +9,13 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.BlendMode;
-import com.inari.firefly.graphics.rendering.RenderingChain;
+import com.inari.firefly.graphics.rendering.RenderingChain.RendererKey;
 
 public class EText extends EntityComponent {
     
     public static final EntityComponentTypeKey<EText> TYPE_KEY = EntityComponentTypeKey.create( EText.class );
     
-    public static final AttributeKey<RenderingChain.Key> RENDERER_KEY = new AttributeKey<>( "rendererKey", RenderingChain.Key.class, EText.class );
+    public static final AttributeKey<RendererKey> RENDERER_KEY = new AttributeKey<>( "rendererKey", RendererKey.class, EText.class );
     public static final AttributeKey<String> FONT_ASSET_NAME = AttributeKey.createString( "fontAssetName", EText.class );
     public static final AttributeKey<Integer> FONT_ASSET_ID = AttributeKey.createInt( "fontAssetId", EText.class );
     public static final AttributeKey<String> TEXT = AttributeKey.createString( "text", EText.class );
@@ -32,7 +32,7 @@ public class EText extends EntityComponent {
         SHADER_ID
     );
     
-    private RenderingChain.Key rendererKey;
+    private RendererKey rendererKey;
     private int fontAssetId;
     private StringBuffer textBuffer;
     private final RGBColor tintColor = new RGBColor();
@@ -54,11 +54,11 @@ public class EText extends EntityComponent {
         shaderId = -1;
     }
 
-    public final RenderingChain.Key getRendererKey() {
+    public final RendererKey getRendererKey() {
         return rendererKey;
     }
 
-    public final void setRendererKey( RenderingChain.Key rendererKey ) {
+    public final void setRendererKey( RendererKey rendererKey ) {
         this.rendererKey = rendererKey;
     }
 

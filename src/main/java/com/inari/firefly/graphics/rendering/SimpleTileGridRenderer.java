@@ -6,13 +6,13 @@ import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
-import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.graphics.tile.TileGrid.TileGridIterator;
+import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.system.RenderEvent;
 
 public final class SimpleTileGridRenderer extends Renderer {
     
-    public static final RenderingChain.Key CHAIN_KEY = new RenderingChain.Key( "SimpleTileGridRenderer", SimpleTileGridRenderer.class );
+    public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "SimpleTileGridRenderer", SimpleTileGridRenderer.class );
     public static final Aspects MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
         ETransform.TYPE_KEY, 
         ETile.TYPE_KEY 
@@ -43,7 +43,7 @@ public final class SimpleTileGridRenderer extends Renderer {
         
         TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
         if ( tileGrid == null ) {
-          return;
+            return;
         }
         
         TileGridIterator tileGridIterator = tileGrid.getTileGridIterator( event.getClip() );

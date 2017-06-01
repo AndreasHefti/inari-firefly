@@ -14,7 +14,7 @@ import com.inari.firefly.system.RenderEvent;
 
 public final class SimpleTextRenderer extends Renderer {
     
-    public static final RenderingChain.Key CHAIN_KEY = new RenderingChain.Key( "SimpleTextRenderer", SimpleTextRenderer.class );
+    public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "SimpleTextRenderer", SimpleTextRenderer.class );
     public static final Aspects MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
         ETransform.TYPE_KEY, 
         EText.TYPE_KEY 

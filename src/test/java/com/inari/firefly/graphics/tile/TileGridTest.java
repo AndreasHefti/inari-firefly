@@ -61,6 +61,7 @@ public class TileGridTest extends FFTest {
             "name:String=null, " +
             "viewId:Integer=0, " +
             "layerId:Integer=0, " +
+            "rendererKey:RendererKey=null, " +
             "width:Integer=0, " +
             "height:Integer=0, " +
             "cellWidth:Integer=0, " +
@@ -77,6 +78,7 @@ public class TileGridTest extends FFTest {
             "name:String=null, " +
             "viewId:Integer=123, " +
             "layerId:Integer=1, " +
+            "rendererKey:RendererKey=null, " +
             "width:Integer=10, " +
             "height:Integer=10, " +
             "cellWidth:Integer=0, " +
@@ -106,6 +108,7 @@ public class TileGridTest extends FFTest {
             "name:String=null, " +
             "viewId:Integer=123, " +
             "layerId:Integer=1, " +
+            "rendererKey:RendererKey=null, " +
             "width:Integer=10, " +
             "height:Integer=10, " +
             "cellWidth:Integer=0, " +
@@ -143,6 +146,7 @@ public class TileGridTest extends FFTest {
             "name:String=null, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
+            + "rendererKey:RendererKey=null, "
             + "width:Integer=3, "
             + "height:Integer=3, "
             + "cellWidth:Integer=0, "
@@ -169,6 +173,7 @@ public class TileGridTest extends FFTest {
             "name:String=null, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
+            + "rendererKey:RendererKey=null, "
             + "width:Integer=3, "
             + "height:Integer=3, "
             + "cellWidth:Integer=0, "
@@ -195,6 +200,7 @@ public class TileGridTest extends FFTest {
             "name:String=null, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
+            + "rendererKey:RendererKey=null, "
             + "width:Integer=3, "
             + "height:Integer=3, "
             + "cellWidth:Integer=0, "
@@ -221,6 +227,7 @@ public class TileGridTest extends FFTest {
             "name:String=null, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
+            + "rendererKey:RendererKey=null, "
             + "width:Integer=3, "
             + "height:Integer=3, "
             + "cellWidth:Integer=0, "
@@ -272,6 +279,7 @@ public class TileGridTest extends FFTest {
                 "name:String=null, "
                 + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
+                + "rendererKey:RendererKey=null, "
                 + "width:Integer=3, "
                 + "height:Integer=3, "
                 + "cellWidth:Integer=0, "
@@ -296,6 +304,7 @@ public class TileGridTest extends FFTest {
                 "name:String=null, "
                 + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
+                + "rendererKey:RendererKey=null, "
                 + "width:Integer=3, "
                 + "height:Integer=3, "
                 + "cellWidth:Integer=0, "
@@ -320,6 +329,7 @@ public class TileGridTest extends FFTest {
                 "name:String=null, "
                 + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
+                + "rendererKey:RendererKey=null, "
                 + "width:Integer=3, "
                 + "height:Integer=3, "
                 + "cellWidth:Integer=0, "
@@ -344,6 +354,7 @@ public class TileGridTest extends FFTest {
                 "name:String=null, "
                 + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
+                + "rendererKey:RendererKey=null, "
                 + "width:Integer=3, "
                 + "height:Integer=3, "
                 + "cellWidth:Integer=0, "
@@ -368,6 +379,7 @@ public class TileGridTest extends FFTest {
                 "name:String=null, "
                 + "viewId:Integer=1, "
                 + "layerId:Integer=1, "
+                + "rendererKey:RendererKey=null, "
                 + "width:Integer=3, "
                 + "height:Integer=3, "
                 + "cellWidth:Integer=0, "
@@ -403,6 +415,7 @@ public class TileGridTest extends FFTest {
             "name:String=null, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
+            + "rendererKey:RendererKey=null, "
             + "width:Integer=3, "
             + "height:Integer=3, "
             + "cellWidth:Integer=0, "
@@ -427,6 +440,7 @@ public class TileGridTest extends FFTest {
             "name:String=null, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
+            + "rendererKey:RendererKey=null, "
             + "width:Integer=5, "
             + "height:Integer=3, "
             + "cellWidth:Integer=0, "
@@ -451,6 +465,7 @@ public class TileGridTest extends FFTest {
                 "name:String=null, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
+            + "rendererKey:RendererKey=null, "
             + "width:Integer=5, "
             + "height:Integer=5, "
             + "cellWidth:Integer=0, "
@@ -478,6 +493,7 @@ public class TileGridTest extends FFTest {
                 "name:String=null, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
+            + "rendererKey:RendererKey=null, "
             + "width:Integer=5, "
             + "height:Integer=5, "
             + "cellWidth:Integer=0, "
@@ -505,6 +521,7 @@ public class TileGridTest extends FFTest {
                 "name:String=null, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
+            + "rendererKey:RendererKey=null, "
             + "width:Integer=3, "
             + "height:Integer=3, "
             + "cellWidth:Integer=0, "
@@ -540,6 +557,7 @@ public class TileGridTest extends FFTest {
                 "name:String=null, "
             + "viewId:Integer=1, "
             + "layerId:Integer=1, "
+            + "rendererKey:RendererKey=null, "
             + "width:Integer=3, "
             + "height:Integer=3, "
             + "cellWidth:Integer=0, "

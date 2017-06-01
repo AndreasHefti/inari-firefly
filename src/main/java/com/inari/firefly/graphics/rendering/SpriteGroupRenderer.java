@@ -13,7 +13,7 @@ import com.inari.firefly.system.RenderEvent;
 
 public final class SpriteGroupRenderer extends Renderer {
     
-    public static final RenderingChain.Key CHAIN_KEY = new RenderingChain.Key( "NestedSpriteRenderer", SpriteGroupRenderer.class );
+    public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "NestedSpriteRenderer", SpriteGroupRenderer.class );
     public static final Aspects MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
         ETransform.TYPE_KEY, 
         ESprite.TYPE_KEY,

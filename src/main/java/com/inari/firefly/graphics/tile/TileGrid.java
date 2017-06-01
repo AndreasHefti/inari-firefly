@@ -28,6 +28,7 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.graphics.rendering.RenderingChain.RendererKey;
 import com.inari.firefly.graphics.view.Layer;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.system.component.SystemComponent;
@@ -36,7 +37,7 @@ public final class TileGrid extends SystemComponent {
     
     public static final SystemComponentKey<TileGrid> TYPE_KEY = SystemComponentKey.create( TileGrid.class );
     
-    public static final AttributeKey<String> RENDERER_NAME = AttributeKey.createString( "rendererName", TileGrid.class );
+    public static final AttributeKey<RendererKey> RENDERER_KEY = new AttributeKey<>( "rendererKey", RendererKey.class, TileGrid.class );
     public static final AttributeKey<String> VIEW_NAME = AttributeKey.createString( "viewName", TileGrid.class );
     public static final AttributeKey<Integer> VIEW_ID = AttributeKey.createInt( "viewId", TileGrid.class );
     public static final AttributeKey<String> LAYER_NAME = AttributeKey.createString( "layerName", TileGrid.class );
@@ -49,6 +50,7 @@ public final class TileGrid extends SystemComponent {
     public static final AttributeKey<Float> WORLD_YPOS = AttributeKey.createFloat( "worldYPos", TileGrid.class );
     public static final AttributeKey<Boolean> SPHERICAL = AttributeKey.createBoolean( "spherical", TileGrid.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
+        RENDERER_KEY,
         VIEW_ID,
         LAYER_ID,
         WIDTH,
@@ -64,6 +66,7 @@ public final class TileGrid extends SystemComponent {
 
     private int viewId;
     private int layerId;
+    private RendererKey rendererKey;
     
     private int width;
     private int height;
@@ -88,6 +91,7 @@ public final class TileGrid extends SystemComponent {
         worldXPos = 0;
         worldYPos = 0;
         spherical = false;
+        rendererKey = null;
         createGrid();
     }
     
@@ -110,6 +114,18 @@ public final class TileGrid extends SystemComponent {
 
     public final void setLayerId( int layerId ) {
         this.layerId = layerId;
+    }
+
+    public final RendererKey getRendererKey() {
+        return rendererKey;
+    }
+
+    public final void setRendererKey( RendererKey rendererKey ) {
+        this.rendererKey = rendererKey;
+    }
+    
+    public final boolean rendererMatch( RendererKey chainKey ) {
+        return rendererKey == chainKey ;
     }
 
     public final int getWidth() {
@@ -181,6 +197,7 @@ public final class TileGrid extends SystemComponent {
         
         viewId = attributes.getIdForName( VIEW_NAME, VIEW_ID, View.TYPE_KEY, viewId );
         layerId = attributes.getIdForName( LAYER_NAME, LAYER_ID, Layer.TYPE_KEY, layerId );
+        rendererKey = attributes.getValue( RENDERER_KEY, rendererKey );
         width = attributes.getValue( WIDTH, width );
         height = attributes.getValue( HEIGHT, height );
         cellWidth = attributes.getValue( CELL_WIDTH, cellWidth );
@@ -197,6 +214,7 @@ public final class TileGrid extends SystemComponent {
 
         attributes.put( VIEW_ID, viewId );
         attributes.put( LAYER_ID, layerId );
+        attributes.put( RENDERER_KEY, rendererKey );
         attributes.put( WIDTH, width );
         attributes.put( HEIGHT, height );
         attributes.put( CELL_WIDTH, cellWidth );
@@ -457,5 +475,8 @@ public final class TileGrid extends SystemComponent {
             return instance;
         }
     }
+
+
+    
 
 }
