@@ -13,6 +13,7 @@ public final class SpriteParticleRenderer extends Renderer {
     
     public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "SpriteParticleRenderer", SimpleSpriteRenderer.class );
     public static final Aspects MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
+        ETransform.TYPE_KEY,
         EParticle.TYPE_KEY 
     );
 
@@ -40,27 +41,16 @@ public final class SpriteParticleRenderer extends Renderer {
             }
 
             final DynArray<Particle> particle = components.<EParticle>get( EParticle.TYPE_KEY ).getParticle();
-            if ( components.contains( ETransform.TYPE_KEY.index() ) ) {
-                final ETransform transform = components.get( ETransform.TYPE_KEY );
-                for ( int ip = 0; ip < particle.capacity(); ip++ ) {
-                    final Particle p = particle.get( ip );
-                    if ( p == null ) {
-                        continue;
-                    }
-                    
-                    transformCollector.set( transform );
-                    transformCollector.add( p );
-                    graphics.renderSprite( p, transformCollector );
+            final ETransform transform = components.get( ETransform.TYPE_KEY );
+            for ( int ip = 0; ip < particle.capacity(); ip++ ) {
+                final Particle p = particle.get( ip );
+                if ( p == null ) {
+                    continue;
                 }
-            } else {
-                for ( int ip = 0; ip < particle.capacity(); ip++ ) {
-                    final Particle p = particle.get( ip );
-                    if ( p == null ) {
-                        continue;
-                    }
-                    
-                    graphics.renderSprite( p, p );
-                }
+                
+                transformCollector.set( transform );
+                transformCollector.add( p );
+                graphics.renderSprite( p, transformCollector );
             }
         }
     }
