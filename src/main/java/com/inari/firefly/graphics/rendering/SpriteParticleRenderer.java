@@ -11,7 +11,7 @@ import com.inari.firefly.system.RenderEvent;
 
 public final class SpriteParticleRenderer extends Renderer {
     
-    public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "SpriteParticleRenderer", SimpleSpriteRenderer.class );
+    public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "SpriteParticleRenderer", SpriteParticleRenderer.class );
     public static final Aspects MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
         ETransform.TYPE_KEY,
         EParticle.TYPE_KEY 
