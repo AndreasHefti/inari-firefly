@@ -101,7 +101,7 @@ public final class Particle implements SpriteRenderable, TransformData {
 
     @Override
     public final boolean hasScale() {
-        return data[ 1 ] != 1f || data[ 2 ] != 1f;
+        return data[ 2 ] != 1f || data[ 3 ] != 1f;
     }
 
 }
