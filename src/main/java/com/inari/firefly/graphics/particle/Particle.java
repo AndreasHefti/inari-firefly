@@ -10,9 +10,9 @@ import com.inari.firefly.system.external.TransformData;
 
 public final class Particle implements SpriteRenderable, TransformData {
     
-    public final int spriteId;
-    public final RGBColor tintColor;
-    public final BlendMode blendMode;
+    public int spriteId;
+    public RGBColor tintColor;
+    public BlendMode blendMode;
     
     /** data contains on index:
      *  0 = xpos
