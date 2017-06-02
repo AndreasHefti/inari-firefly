@@ -142,8 +142,8 @@ public abstract class Renderer extends SystemComponent {
             ypos += transform.getYOffset();
             pivotx += transform.getPivotX();
             pivoty += transform.getPivotY();
-            scalex += transform.getScaleX();
-            scaley += transform.getScaleY();
+            scalex *= transform.getScaleX();
+            scaley *= transform.getScaleY();
             rotation += transform.getRotation();
         }
         
@@ -237,8 +237,8 @@ public abstract class Renderer extends SystemComponent {
             ypos += (float) Math.floor( transform.getYOffset() );
             pivotx += (float) Math.floor( transform.getPivotX() );
             pivoty += (float) Math.floor( transform.getPivotY() );
-            scalex += transform.getScaleX();
-            scaley += transform.getScaleY();
+            scalex *= transform.getScaleX();
+            scaley *= transform.getScaleY();
             rotation += transform.getRotation();
         }
         
