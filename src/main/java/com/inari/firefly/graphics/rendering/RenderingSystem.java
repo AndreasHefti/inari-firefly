@@ -46,7 +46,7 @@ public final class RenderingSystem
         context.registerListener( RenderEvent.TYPE_KEY, this );
         context.registerListener( EntityActivationEvent.TYPE_KEY, this );
         
-        setRenderingChain( DEFAULT_RENDERING_CHAIN, true );
+        setRenderingChain( DEFAULT_RENDERING_CHAIN );
     }
 
     public final boolean isAllowMultipleAcceptance() {
@@ -108,18 +108,17 @@ public final class RenderingSystem
         }
     }
     
-    public final void setRenderingChain( RenderingChain renderingChain, boolean autoBuild ) {
+    public final void setRenderingChain( RenderingChain renderingChain ) {
         renderingChain.build();
         this.renderingChain = renderingChain;
-        if ( autoBuild ) {
-            for ( int i = 0; i < renderingChain.elements.capacity(); i++ ) {
-                RenderingChain.Element element = renderingChain.elements.get( i );
-                if ( element == null ) {
-                    continue;
-                }
-                
-                rendererBuilder.create( element );
+
+        for ( int i = 0; i < renderingChain.elements.capacity(); i++ ) {
+            RenderingChain.Element element = renderingChain.elements.get( i );
+            if ( element == null ) {
+                continue;
             }
+            
+            rendererBuilder.create( element );
         }
     }
 

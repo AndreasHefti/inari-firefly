@@ -1,9 +1,6 @@
 package com.inari.firefly.graphics.particle;
 
-import java.util.Arrays;
-
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.FFInitException;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.rendering.SpriteRenderable;
 import com.inari.firefly.system.external.TransformData;
@@ -24,19 +21,35 @@ public class Particle implements SpriteRenderable, TransformData {
      *  6 = rotation
      *  7 = xvelocity
      *  8 = yvelocity
-     *  9...x = individual controller defined
      */
     public final float[] data;
-
-    public Particle( int spriteId, RGBColor tintColor, BlendMode blendMode, float... data ) {
-        if ( data == null || data.length < 7) {
-            throw new FFInitException( "Invalid particle data: " + Arrays.toString( data ) );
-        }
-        
+    
+    public Particle( int spriteId, RGBColor tintColor, BlendMode blendMode, float x, float y ) {
         this.spriteId = spriteId;
         this.tintColor = tintColor;
         this.blendMode = blendMode;
-        this.data = data;
+        this.data = new float[] { x, y, 1f, 1f, 0f, 0f, 0f, 0f, 0f };
+    }
+    
+    public Particle( int spriteId, RGBColor tintColor, BlendMode blendMode, float x, float y, float sx, float sy ) {
+        this.spriteId = spriteId;
+        this.tintColor = tintColor;
+        this.blendMode = blendMode;
+        this.data = new float[] { x, y, sx, sy, 0f, 0f, 0f, 0f, 0f };
+    }
+    
+    public Particle( int spriteId, RGBColor tintColor, BlendMode blendMode, float x, float y, float sx, float sy, float px, float py, float r ) {
+        this.spriteId = spriteId;
+        this.tintColor = tintColor;
+        this.blendMode = blendMode;
+        this.data = new float[] { x, y, sx, sy, px, py, r, 0f, 0f };
+    }
+
+    public Particle( int spriteId, RGBColor tintColor, BlendMode blendMode, float x, float y, float sx, float sy, float px, float py, float r, float vx, float vy ) {
+        this.spriteId = spriteId;
+        this.tintColor = tintColor;
+        this.blendMode = blendMode;
+        this.data = new float[] { x, y, sx, sy, px, py, r, vx, vy };
     }
 
     @Override
@@ -102,6 +115,11 @@ public class Particle implements SpriteRenderable, TransformData {
     @Override
     public final boolean hasScale() {
         return data[ 2 ] != 1f || data[ 3 ] != 1f;
+    }
+    
+    public final void move() {
+        data[ 0 ] += data[ 7 ];
+        data[ 1 ] += data[ 9 ];
     }
 
 }
