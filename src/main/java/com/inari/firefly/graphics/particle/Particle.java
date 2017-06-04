@@ -8,7 +8,7 @@ import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.rendering.SpriteRenderable;
 import com.inari.firefly.system.external.TransformData;
 
-public final class Particle implements SpriteRenderable, TransformData {
+public class Particle implements SpriteRenderable, TransformData {
     
     public int spriteId;
     public RGBColor tintColor;
