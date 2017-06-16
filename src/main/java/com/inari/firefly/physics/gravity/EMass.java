@@ -29,7 +29,7 @@ public final class EMass extends EntityComponent {
     long fallingStartTime;
     
     protected EMass() {
-        super( TYPE_KEY );
+        super( TYPE_KEY ); 
     }
     
     @Override
