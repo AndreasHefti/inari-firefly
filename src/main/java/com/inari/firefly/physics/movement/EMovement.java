@@ -44,7 +44,7 @@ public final class EMovement extends EntityComponent {
     final Vector2f velocity = new Vector2f( 0, 0 );
     float updateResolution;
 
-    private UpdateScheduler updateScheduler = null;
+    UpdateScheduler updateScheduler = null;
 
     public EMovement() {
         super( TYPE_KEY );
@@ -102,7 +102,7 @@ public final class EMovement extends EntityComponent {
         this.updateResolution = updateResolution;
     }
     
-    public final boolean needsUpdate( final FFTimer timer ) {
+    final boolean needsUpdate( final FFTimer timer ) {
         if ( updateResolution <= 0 ) {
             return true;
         }
@@ -128,7 +128,7 @@ public final class EMovement extends EntityComponent {
         active = attributes.getValue( ACTIVE, active );
         velocity.dx = attributes.getValue( VELOCITY_X, velocity.dx );
         velocity.dy = attributes.getValue( VELOCITY_Y, velocity.dy );
-        updateResolution = attributes.getValue( UPDATE_RESOLUTION, updateResolution );
+        setUpdateResolution( attributes.getValue( UPDATE_RESOLUTION, updateResolution ) );
     }
 
     @Override
