@@ -5,7 +5,6 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.control.behavior.Action.ActionState;
 import com.inari.firefly.system.FFContext;
 
 public class ConditionalLeaf extends BehaviorNode {
@@ -26,13 +25,13 @@ public class ConditionalLeaf extends BehaviorNode {
 
     @Override
     final void nextAction( int entityId, final EBehavoir behavior, final FFContext context ) {
-        if ( behavior.actionState == ActionState.RUNNING ) {
+        if ( behavior.actionState == EBehavoir.ActionState.RUNNING ) {
             // run further, succeed or fail
             behavior.actionState = runCondition.check( entityId, behavior, context );
         } else {
             // start action
             behavior.runningActionId = actionId;
-            behavior.actionState = ActionState.RUNNING;
+            behavior.actionState = EBehavoir.ActionState.RUNNING;
         }
     }
     

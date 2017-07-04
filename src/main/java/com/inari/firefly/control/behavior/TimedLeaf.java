@@ -5,7 +5,7 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.control.behavior.Action.ActionState;
+import com.inari.firefly.control.behavior.EBehavoir.ActionState;
 import com.inari.firefly.system.FFContext;
 
 public final class TimedLeaf extends BehaviorNode {
@@ -28,16 +28,16 @@ public final class TimedLeaf extends BehaviorNode {
 
     @Override
     final void nextAction( int entityId, EBehavoir behavior, FFContext context ) {
-        if ( behavior.actionState == ActionState.RUNNING ) {
+        if ( behavior.actionState == EBehavoir.ActionState.RUNNING ) {
             if ( context.getTime() - runStartTime > duration ) {
                 behavior.runningActionId = -1;
-                behavior.actionState = ActionState.SUCCESS;
+                behavior.actionState = EBehavoir.ActionState.SUCCESS;
                 return;
             }
         } else {
             // start action
             behavior.runningActionId = actionId;
-            behavior.actionState = ActionState.RUNNING;
+            behavior.actionState = EBehavoir.ActionState.RUNNING;
             runStartTime = context.getTime();
         }
     }

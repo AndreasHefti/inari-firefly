@@ -23,18 +23,14 @@ import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.audio.AudioSystem;
 import com.inari.firefly.control.ControllerSystem;
-import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.control.task.TaskSystem;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.prefab.EntityPrefabSystem;
 import com.inari.firefly.graphics.rendering.RenderingSystem;
-import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.graphics.view.Layer;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewSystem;
-import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.system.external.FFAudio;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.FFInput;
@@ -68,13 +64,9 @@ public abstract class FireFlyApp {
         viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         
         context.loadSystem( AssetSystem.SYSTEM_KEY );
-        context.loadSystem( StateSystem.SYSTEM_KEY );
         context.loadSystem( EntitySystem.SYSTEM_KEY );
         context.loadSystem( EntityPrefabSystem.SYSTEM_KEY );
         context.loadSystem( ControllerSystem.SYSTEM_KEY );
-        context.loadSystem( AnimationSystem.SYSTEM_KEY );
-        context.loadSystem( AudioSystem.SYSTEM_KEY );
-        context.loadSystem( TileGridSystem.SYSTEM_KEY );
         context.loadSystem( RenderingSystem.SYSTEM_KEY );
         context.loadSystem( TaskSystem.SYSTEM_KEY );
         

@@ -22,7 +22,6 @@ import com.inari.commons.event.Event;
 public final class AssetEvent extends Event<AssetEventListener> {
     
     public static final EventTypeKey TYPE_KEY = createTypeKey( AssetEvent.class );
-    
     private static final ArrayDeque<AssetEvent> POOL = new ArrayDeque<AssetEvent>( 2 );
     
     public static enum Type {

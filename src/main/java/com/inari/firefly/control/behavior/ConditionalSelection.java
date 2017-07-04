@@ -6,7 +6,7 @@ import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.control.behavior.Action.ActionState;
+import com.inari.firefly.control.behavior.EBehavoir.ActionState;
 import com.inari.firefly.system.FFContext;
 
 public final class ConditionalSelection extends BehaviorNode {
@@ -41,7 +41,7 @@ public final class ConditionalSelection extends BehaviorNode {
             if ( mapping == null ) {
                 continue;
             }
-            if ( mapping.condition.check( entityId, behavior, context ) == ActionState.RUNNING ) {
+            if ( mapping.condition.check( entityId, behavior, context ) == EBehavoir.ActionState.RUNNING ) {
                 final BehaviorNode subNode = context.getSystemComponent( BehaviorNode.TYPE_KEY, mapping.nodeMapping );
                 subNode.nextAction( entityId, behavior, context );
                 if ( behavior.runningActionId >= 0 ) {

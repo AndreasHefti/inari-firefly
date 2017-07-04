@@ -7,11 +7,17 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.control.behavior.Action.ActionState;
+import com.inari.firefly.control.behavior.EBehavoir.ActionState;
 import com.inari.firefly.entity.EntityComponent;
 
 public final class EBehavoir extends EntityComponent {
     
+    public enum ActionState {
+        SUCCESS,
+        FAILURE,
+        RUNNING
+    }
+
     public static final EntityComponentTypeKey<EBehavoir> TYPE_KEY = EntityComponentTypeKey.create( EBehavoir.class );
     
     public static final AttributeKey<Integer> ROOT_NODE_ID = AttributeKey.createInt( "rootNodeId", EBehavoir.class );
@@ -24,7 +30,7 @@ public final class EBehavoir extends EntityComponent {
     
     private final Map<Integer, Integer> nodeMapping = new HashMap<Integer, Integer>();
     int runningActionId;
-    ActionState actionState;
+    EBehavoir.ActionState actionState;
 
     protected EBehavoir( EntityComponentTypeKey<?> indexedTypeKey ) {
         super( indexedTypeKey );
@@ -59,11 +65,11 @@ public final class EBehavoir extends EntityComponent {
         nodeMapping.clear();
     }
 
-    public final ActionState getActionState() {
+    public final EBehavoir.ActionState getActionState() {
         return actionState;
     }
 
-    final void setActionState( ActionState actionState ) {
+    final void setActionState( EBehavoir.ActionState actionState ) {
         this.actionState = actionState;
     }
 
@@ -85,7 +91,7 @@ public final class EBehavoir extends EntityComponent {
     @Override
     public final void resetAttributes() {
         rootNodeId = -1;
-        actionState = ActionState.SUCCESS;
+        actionState = EBehavoir.ActionState.SUCCESS;
         nodeMapping.clear();
         runningActionId = -1;
     }

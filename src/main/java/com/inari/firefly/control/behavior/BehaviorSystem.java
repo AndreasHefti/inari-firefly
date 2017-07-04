@@ -8,6 +8,8 @@ import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
+import com.inari.firefly.control.action.Action;
+import com.inari.firefly.control.action.EntityActionSystem;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.system.FFContext;
@@ -22,17 +24,16 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
     
     public static final FFSystemTypeKey<BehaviorSystem> SYSTEM_KEY = FFSystemTypeKey.create( BehaviorSystem.class );
     private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
-        Action.TYPE_KEY,
         BehaviorNode.TYPE_KEY
     );
 
     private final DynArray<BehaviorNode> behaviorNodes;
-    private final DynArray<Action> actions;
     private final IntBag entityIds;
+    
+    private EntityActionSystem actionSystem;
     
     BehaviorSystem() {
         super( SYSTEM_KEY );
-        actions = DynArray.create( Action.class, 20, 10 );
         behaviorNodes = DynArray.create( BehaviorNode.class, 20, 10 );
         entityIds = new IntBag( 50, -1 );
     }
@@ -40,6 +41,8 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
     @Override
     public final void init( final FFContext context ) throws FFInitException {
         super.init( context );
+        
+        actionSystem = context.getSystem( EntityActionSystem.SYSTEM_KEY );
         
         context.registerListener( UpdateEvent.TYPE_KEY, this );
         context.registerListener( EntityActivationEvent.TYPE_KEY, this );
@@ -60,71 +63,69 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
         entityIds.remove( entityId );
     }
     
-    
-    @Override
-    public final void dispose( final FFContext context ) {
-        context.disposeListener( UpdateEvent.TYPE_KEY, this );
-        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
-    }
-    
-    public final Action getAction( int actionId ) {
-        if ( !actions.contains( actionId ) ) {
-            return null;
+    public final BehaviorNode getBehaviorNode( String name ) {
+        int behaviorNodeId = getBehaviorNodeId( name );
+        if ( behaviorNodeId >= 0 ) {
+            return behaviorNodes.get( behaviorNodeId );
         }
         
-        return actions.get( actionId );
+        return null;
     }
     
-    public final <A extends Action> A getActionAs( int actionId, Class<A> subType ) {
-        Action action = getAction( actionId );
-        if ( action == null ) {
-            return null;
+    public final BehaviorNode getBehaviorNode( int nodeId ) {
+        if ( behaviorNodes.contains( nodeId ) ) {
+            return behaviorNodes.get( nodeId );
         }
         
-        return subType.cast( action );
+        return null;
     }
     
-    public final int getActionId( String actionName ) {
-        if ( actionName == null ) {
-            return -1;
-        }
-        
-        for ( Action action : actions ) {
-            if ( actionName.equals( action.getName() ) ) {
-                return action.index();
+    public final int getBehaviorNodeId( String name ) {
+        for( int i = 0; i < behaviorNodes.capacity(); i++ ) {
+            BehaviorNode behaviorNode = behaviorNodes.get( i );
+            if ( behaviorNode == null ) {
+                continue;
+            }
+            if ( name.equals( behaviorNode.getName() ) ) {
+                return behaviorNode.index();
             }
         }
         
         return -1;
     }
     
-    public final void deleteAction( int actionId ) {
-        disposeAction( actions.get( actionId ) );
+    @Override
+    public final void dispose( final FFContext context ) {
+        context.disposeListener( UpdateEvent.TYPE_KEY, this );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
+        
+        actionSystem = null;
     }
     
-    private void disposeAction( Action action ) {
-        if ( action == null ) {
+    public final void disposeBehaviorNode( BehaviorNode node ) {
+        if ( node == null ) {
             return;
         }
         
-        action.dispose();
+        node.dispose();
     }
     
+    public final void deleteBehaviorNode( int nodeId ) {
+        if ( behaviorNodes.contains( nodeId ) ) {
+            disposeBehaviorNode( behaviorNodes.remove( nodeId ) );
+        }
+    }
+    
+    @Override
     public final void clear() {
-        for ( Action action : actions ) {
-            disposeAction( action );
+        entityIds.clear();
+        for ( BehaviorNode node : behaviorNodes ) {
+            disposeBehaviorNode( node );
         }
         
-        actions.clear();
+        behaviorNodes.clear();
     }
-    
-    public final void performAction( int actionId, int entityId ) {
-        Action action = actions.get( actionId );
-        if ( action != null ) {
-            action.action( entityId );
-        }
-    }
-    
+
     @Override
     public final void update( UpdateEvent event ) {
         final int nullValue = entityIds.getNullValue();
@@ -139,16 +140,9 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
                 behaviorNodes.get( behavior.getRootNodeId() ).nextAction( entityId, behavior, context );
             }
             if ( behavior.runningActionId >= 0 ) {
-                actions.get( behavior.runningActionId ).action( entityId );
+                actionSystem.performAction( behavior.runningActionId, entityId );
             }
         }
-    }
-
-    public final SystemComponentBuilder getActionBuilder( Class<? extends Action> componentType ) {
-        if ( componentType == null ) {
-            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Action.TYPE_KEY.name() );
-        }
-        return new ActionBuilder( componentType );
     }
 
     public final Set<SystemComponentKey<?>> supportedComponentTypes() {
@@ -158,59 +152,66 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
     @Override
     public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
         return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            new ActionBuilderAdapter()
+            new BehaviorNodeBuilderAdapter()
         );
     }
-
-    private final class ActionBuilder extends SystemComponentBuilder {
+    
+    public final SystemComponentBuilder getBehaviorNodeBuilder( Class<? extends BehaviorNode> componentType ) {
+        if ( componentType == null ) {
+            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Action.TYPE_KEY.name() );
+        }
+        return new BehaviorNodeBuilder( componentType );
+    }
+    
+    private final class BehaviorNodeBuilder extends SystemComponentBuilder {
         
-        private ActionBuilder( Class<? extends Action> componentType ) {
+        private BehaviorNodeBuilder( Class<? extends BehaviorNode> componentType ) {
             super( context, componentType );
         }
         
         @Override
-        public final SystemComponentKey<Action> systemComponentKey() {
-            return Action.TYPE_KEY;
+        public final SystemComponentKey<BehaviorNode> systemComponentKey() {
+            return BehaviorNode.TYPE_KEY;
         }
 
         public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            Action result = createSystemComponent( componentId, componentType, context );
-            actions.set( result.index(), result );
+            BehaviorNode result = createSystemComponent( componentId, componentType, context );
+            behaviorNodes.set( result.index(), result );
             return result.index();
         }
     }
 
-    private final class ActionBuilderAdapter extends SystemBuilderAdapter<Action> {
-        private ActionBuilderAdapter() {
-            super( BehaviorSystem.this, Action.TYPE_KEY );
+    private final class BehaviorNodeBuilderAdapter extends SystemBuilderAdapter<BehaviorNode> {
+        private BehaviorNodeBuilderAdapter() {
+            super( BehaviorSystem.this, BehaviorNode.TYPE_KEY );
         }
         @Override
-        public final SystemComponentBuilder createComponentBuilder( Class<? extends Action> componentType ) {
-            return getActionBuilder( componentType );
+        public final SystemComponentBuilder createComponentBuilder( Class<? extends BehaviorNode> componentType ) {
+            return getBehaviorNodeBuilder( componentType );
         }
         @Override
-        public final Action get( int id ) {
-            return actions.get( id );
+        public final BehaviorNode get( int id ) {
+            return behaviorNodes.get( id );
         }
         @Override
         public void delete( int id ) {
-            deleteAction( id );
+            deleteBehaviorNode( id );
         }
         @Override
-        public final Iterator<Action> getAll() {
-            return actions.iterator();
+        public final Iterator<BehaviorNode> getAll() {
+            return behaviorNodes.iterator();
         }
         @Override
         public final int getId( String name ) {
-            return getActionId( name );
+            return getBehaviorNodeId( name );
         }
         @Override
         public final void activate( int id ) {
-            throw new UnsupportedOperationException( "Action is not activable" );
+            throw new UnsupportedOperationException( "BehaviorNode is not activable" );
         }
         @Override
         public final void deactivate( int id ) {
-            throw new UnsupportedOperationException( "Action is not activable" );
+            throw new UnsupportedOperationException( "BehaviorNode is not activable" );
         }
     }
 
