@@ -100,9 +100,11 @@ public final class GravitySystem implements FFSystem, UpdateEventListener, Entit
             }
 
             movement.setVelocityY( 
-                gravityFunction.calcVelocity( movement.getVelocityY(), 
-                mass.mass, 
-                currentTime - mass.fallingStartTime ) 
+                gravityFunction.calcVelocity( 
+                        movement.getVelocityY(), 
+                        mass.mass, 
+                        currentTime - mass.fallingStartTime 
+                ) 
             );
         }
     }

@@ -65,10 +65,7 @@ public final class CollisionSystem
         collisionResolvers = DynArray.create( CollisionResolver.class, 20, 10 );
     }
     
-    @Override
-    public final boolean match( Aspects aspects ) {
-        return aspects.contains( ECollision.TYPE_KEY ) && !aspects.contains( ETile.TYPE_KEY );
-    }
+    
     
     @Override
     public final void init( FFContext context ) {
@@ -97,9 +94,14 @@ public final class CollisionSystem
         }
     }
     
+    @Override
+    public final boolean match( Aspects aspects ) {
+        return aspects.contains( ECollision.TYPE_KEY ) && !aspects.contains( ETile.TYPE_KEY );
+    }
+    
     public final void entityActivated( int entityId, final Aspects aspects ) {
         final ContactPool pool = getContactPoolForEntity( entityId );
-        if ( pool != null && !context.getEntityComponentAspects( entityId ).contains( ETile.TYPE_KEY ) ) {
+        if ( pool != null ) {
             pool.add( entityId );
         }
     }
@@ -153,6 +155,37 @@ public final class CollisionSystem
     public final void updateContacts( int entityId ) {
         final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
         scanContacts( entityId, collision );
+    }
+    
+    public final void updateContacts( int entityId, final String constraintName ) {
+        final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+        ContactConstraint constraint = collision.getContactScan().getContactContstraint( constraintName );
+        if ( constraint == null ) {
+            return;
+        }
+
+        updateContacts( entityId, constraint );
+    }
+
+    public final void updateContacts( int entityId, ContactConstraint constraint ) {
+        final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
+        final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
+        final int viewId = transform.getViewId();
+        int layerId = constraint.layerId;
+        if ( layerId < 0 ) {
+            layerId = transform.getLayerId();
+        }
+        
+        constraint.clear();
+        constraint.update( 
+            transform.getXpos(),
+            transform.getYpos(),
+            movement.getVelocityX(),
+            movement.getVelocityY()
+        );
+        
+        scanTileContacts( entityId, viewId, layerId, constraint );
+        scanSpriteContacts( entityId, viewId, layerId, constraint );
     }
 
     private void scanContacts( int entityId, ECollision collision ) {
