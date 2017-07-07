@@ -239,6 +239,8 @@ public final class ContactConstraint  {
             contact.dispose();
         }
         contacts.clear();
+        contactTypes.clear();
+        materialTypes.clear();
         intersectionMask.clearMask();
     }
     
