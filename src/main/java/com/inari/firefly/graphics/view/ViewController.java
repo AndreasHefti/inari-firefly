@@ -26,7 +26,7 @@ public abstract class ViewController extends Controller implements ViewEventList
     }
 
     @Override
-    public final void onViewEvent( ViewEvent event ) {
+    public void onViewEvent( ViewEvent event ) {
         switch ( event.eventType ) {
             case VIEW_ACTIVATED: {
                 if ( event.view.controlledBy( index ) ) {
