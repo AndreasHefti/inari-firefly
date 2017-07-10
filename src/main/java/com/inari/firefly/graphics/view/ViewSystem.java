@@ -125,7 +125,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         View view = views.get( viewId );
         if ( view != null && !view.isActive() ) {
             view.active = true;
-            refreshAcriveViewports();
+            refreshActiveViewports();
             context.notify( ViewEvent.create( ViewEvent.Type.VIEW_ACTIVATED, view ) );
         }
     }
@@ -139,7 +139,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             view.active = false;
             for ( View _view : orderedViewports ) {
                 if ( _view.active ) {
-                    refreshAcriveViewports();
+                    refreshActiveViewports();
                     break;
                 }
             }
@@ -383,11 +383,11 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             viewport.order = order;
             order++;
         }
-        refreshAcriveViewports();
+        refreshActiveViewports();
     }
     
     
-    private void refreshAcriveViewports() {
+    private void refreshActiveViewports() {
         activeOrderedViewports.clear();
         for ( int i = 0; i < orderedViewports.size(); i++ ) {
             View view = orderedViewports.get( i );

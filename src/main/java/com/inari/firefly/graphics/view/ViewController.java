@@ -28,18 +28,18 @@ public abstract class ViewController extends Controller implements ViewEventList
     @Override
     public final void onViewEvent( ViewEvent event ) {
         switch ( event.eventType ) {
-        case VIEW_ACTIVATED: {
-            if ( event.view.controlledBy( index ) ) {
-                componentIds.add( event.view.index() );
+            case VIEW_ACTIVATED: {
+                if ( event.view.controlledBy( index ) ) {
+                    componentIds.add( event.view.index() );
+                }
+                break;
+            } 
+            case VIEW_DISPOSED: {
+                componentIds.remove( event.view.index() );
+                break;
             }
-            break;
-        } 
-        case VIEW_DISPOSED: {
-            componentIds.remove( event.view.index() );
-            break;
+            default: {}
         }
-        default: {}
-    }
     }
 
     @Override
