@@ -35,13 +35,14 @@ public abstract class Controller extends SystemComponent {
 
     private float updateResolution;
     
-    private boolean active = true;
+    private boolean active;
     private UpdateScheduler updateScheduler;
     protected final IntBag componentIds;
     
     
     protected Controller( int id ) {
         super( id );
+        active = false;
         componentIds = new IntBag( 10, -1 );
         updateResolution = -1;
         updateScheduler = null;
