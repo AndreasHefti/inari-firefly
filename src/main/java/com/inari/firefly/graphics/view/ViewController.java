@@ -19,7 +19,7 @@ public abstract class ViewController extends Controller implements ViewEventList
     }
 
     @Override
-    public final void dispose() {
+    public void dispose() {
         context.disposeListener( ViewEvent.TYPE_KEY, this );
         
         super.dispose();
