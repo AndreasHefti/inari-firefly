@@ -7,7 +7,6 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.control.behavior.EBehavoir.ActionState;
 import com.inari.firefly.entity.EntityComponent;
 
 public final class EBehavoir extends EntityComponent {

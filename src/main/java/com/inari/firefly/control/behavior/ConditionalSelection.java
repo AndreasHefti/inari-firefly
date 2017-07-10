@@ -6,7 +6,6 @@ import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.control.behavior.EBehavoir.ActionState;
 import com.inari.firefly.system.FFContext;
 
 public final class ConditionalSelection extends BehaviorNode {
