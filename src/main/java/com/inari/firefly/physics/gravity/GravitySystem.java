@@ -78,16 +78,14 @@ public final class GravitySystem implements FFSystem, UpdateEventListener, Entit
             if ( entityId < 0 ) {
                 continue;
             }
-            
-            final EEntity entity = context.getEntityComponent( entityId, EEntity.TYPE_KEY );
+
             final EMass mass = context.getEntityComponent( entityId, EMass.TYPE_KEY );
-            final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
-            
-            if ( mass.noGravityAspects != null && entity.getAspects().intersects( mass.noGravityAspects ) ) {
+            if ( !mass.active ) {
                 continue;
             }
             
-            if ( entity.hasAspect( mass.onGroundAspect ) ) {
+            final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
+            if ( mass.onGround ) {
                 if ( movement.getVelocityY() != 0f ) {
                     mass.fallingStartTime = -1;
                     movement.setVelocityY( 0f );

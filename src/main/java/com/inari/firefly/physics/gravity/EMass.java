@@ -3,8 +3,6 @@ package com.inari.firefly.physics.gravity;
 import java.util.Set;
 
 import com.inari.commons.JavaUtils;
-import com.inari.commons.lang.aspect.Aspect;
-import com.inari.commons.lang.aspect.Aspects;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -14,17 +12,17 @@ public final class EMass extends EntityComponent {
     public static final EntityComponentTypeKey<EMass> TYPE_KEY = EntityComponentTypeKey.create( EMass.class );
 
     public static final AttributeKey<Float> MASS = AttributeKey.createFloat( "mass", EMass.class );
-    public static final AttributeKey<Aspect> ON_GROUND_ASPECT = AttributeKey.createAspect( "onGroundAspect", EMass.class );
-    public static final AttributeKey<Aspects> NO_GRAVITY_ASPECTS = AttributeKey.createAspects ( "noGravityAspects", EMass.class );
+    public static final AttributeKey<Boolean> ON_GROUND = AttributeKey.createBoolean( "onGround", EMass.class );
+    public static final AttributeKey<Boolean> ACTIVE = AttributeKey.createBoolean( "noGravityAspects", EMass.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         MASS,
-        ON_GROUND_ASPECT,
-        NO_GRAVITY_ASPECTS
+        ON_GROUND,
+        ACTIVE
     );
     
     float mass;
-    Aspect onGroundAspect;
-    Aspects noGravityAspects;
+    boolean onGround;
+    boolean active;
     
     long fallingStartTime;
     
@@ -35,8 +33,8 @@ public final class EMass extends EntityComponent {
     @Override
     public final void resetAttributes() {
         mass = 0f;
-        onGroundAspect = null;
-        noGravityAspects = null;
+        onGround = false;
+        active = false;
     }
 
     public final float getMass() {
@@ -47,20 +45,20 @@ public final class EMass extends EntityComponent {
         this.mass = mass;
     }
 
-    public final Aspect getOnGroundAspect() {
-        return onGroundAspect;
+    public final boolean isOnGround() {
+        return onGround;
     }
 
-    public final void setOnGroundAspect( Aspect onGroundAspect ) {
-        this.onGroundAspect = onGroundAspect;
+    public final void setOnGroundAspect( boolean onGround ) {
+        this.onGround = onGround;
     }
 
-    public final Aspects getNoGravityAspects() {
-        return noGravityAspects;
+    public final boolean isActive() {
+        return active;
     }
 
-    public final void setNoGravityAspects( Aspects noGravityAspects ) {
-        this.noGravityAspects = noGravityAspects;
+    public final void setActive( boolean active ) {
+        this.active = active;
     }
 
     @Override
@@ -70,14 +68,14 @@ public final class EMass extends EntityComponent {
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
         mass = attributes.getValue( MASS, mass );
-        onGroundAspect = attributes.getValue( ON_GROUND_ASPECT, onGroundAspect );
-        noGravityAspects = attributes.getValue( NO_GRAVITY_ASPECTS, noGravityAspects );
+        onGround = attributes.getValue( ON_GROUND, onGround );
+        active = attributes.getValue( ACTIVE, active );
     }
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( MASS, mass );
-        attributes.put( ON_GROUND_ASPECT, onGroundAspect );
-        attributes.put( NO_GRAVITY_ASPECTS, noGravityAspects );
+        attributes.put( ON_GROUND, onGround );
+        attributes.put( ACTIVE, active );
     }
 
 }

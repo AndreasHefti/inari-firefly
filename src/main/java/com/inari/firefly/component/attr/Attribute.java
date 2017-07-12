@@ -38,7 +38,7 @@ public final class Attribute<T> {
     /** Use this to get the value of this Attribute.
      * @return the value of this Attribute
      */
-    public final Object getValue() {
+    public final T getValue() {
         return value;
     }
 }
