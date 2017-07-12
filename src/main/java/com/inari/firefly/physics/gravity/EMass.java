@@ -49,7 +49,7 @@ public final class EMass extends EntityComponent {
         return onGround;
     }
 
-    public final void setOnGroundAspect( boolean onGround ) {
+    public final void setOnGround( boolean onGround ) {
         this.onGround = onGround;
     }
 
