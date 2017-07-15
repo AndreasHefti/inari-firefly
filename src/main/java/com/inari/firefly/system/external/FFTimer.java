@@ -76,6 +76,7 @@ public abstract class FFTimer {
         private long lastUpdate = -1;
         private long tick = 0;
         private boolean needsUpdate;
+        private boolean updated;
         
         private UpdateScheduler( float resolution ) {
             this.resolution = resolution;
@@ -95,12 +96,16 @@ public abstract class FFTimer {
                 lastUpdate = lastUpdateTime;
                 tick++;
                 needsUpdate = true;
-            } else if ( needsUpdate ) {
+            } else if ( updated ) {
                 needsUpdate = false;
+                updated = false;
             }
         }
 
         public final boolean needsUpdate() {
+            if ( needsUpdate ) {
+                updated = true;
+            }
             return needsUpdate;
         }
         
