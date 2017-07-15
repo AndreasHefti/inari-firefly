@@ -437,6 +437,14 @@ public final class FFContext {
         entitySystem.activateEntity( entitySystem.getEntityId( name ) );
     }
     
+    public final boolean isEntityActive( int entityId ) {
+        return entitySystem.isActive( entityId );
+    }
+    
+    public final boolean isEntityActive( String name ) {
+        return entitySystem.isActive( entitySystem.getEntityId( name ) );
+    }
+    
     public final void deactivateEntity( int entityId ) {
         entitySystem.deactivateEntity( entityId );
     }
