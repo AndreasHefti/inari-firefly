@@ -88,13 +88,15 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
             if ( !movement.active || !movement.needsUpdate( event.timer ) ) {
                 continue;
             }
+            
+            final long timeElapsed = context.getTimeElapsed();
 
             if ( movement.velocity.dx != 0f || movement.velocity.dy != 0f ) {
-                integrator.step( context, movement, transform );
+                integrator.step( movement, transform, timeElapsed );
                 moveEvent.add( entityId );
             }
 
-            integrator.integrate( context, movement, transform );
+            integrator.integrate( movement, transform, timeElapsed );
         }
         
         context.notify( moveEvent );

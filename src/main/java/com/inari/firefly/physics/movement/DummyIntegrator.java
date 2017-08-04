@@ -1,7 +1,6 @@
 package com.inari.firefly.physics.movement;
 
 import com.inari.firefly.graphics.ETransform;
-import com.inari.firefly.system.FFContext;
 
 public final class DummyIntegrator implements Integrator {
     
@@ -16,7 +15,7 @@ public final class DummyIntegrator implements Integrator {
     }
 
     @Override
-    public final void integrate( FFContext context, EMovement movement, ETransform transform ) {
+    public final void integrate( final EMovement movement, final ETransform transform, final long deltaTime ) {
         if ( movement.onGround ) {
             if ( movement.getVelocityY() != 0f ) {
                 movement.setVelocityY( 0f );
@@ -28,8 +27,7 @@ public final class DummyIntegrator implements Integrator {
     }
 
     @Override
-    public final void step( FFContext context, EMovement movement, ETransform transform ) {
-        System.out.println( "deltaTime: " + context.getTimeElapsed() );
+    public final void step( final EMovement movement, final ETransform transform, final long deltaTime ) {
         transform.move( movement.getVelocityX(), movement.getVelocityY() );
     }
 
