@@ -70,7 +70,8 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
     }
 
     public final void setIntegrator( Integrator integrator ) {
-        if ( integrator != null ) {
+        if ( integrator == null ) {
+            this.integrator = new DummyIntegrator();
             return;
         }
         this.integrator = integrator;
