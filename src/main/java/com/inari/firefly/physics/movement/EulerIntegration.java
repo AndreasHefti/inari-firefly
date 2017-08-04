@@ -4,7 +4,7 @@ import com.inari.firefly.graphics.ETransform;
 
 public class EulerIntegration implements Integrator {
     
-    private float gravity = -9.8f;
+    private float gravity = 9.8f;
 
     public final float getGravity() {
         return gravity;
@@ -38,7 +38,7 @@ public class EulerIntegration implements Integrator {
 
     @Override
     public void step( final EMovement movement, final ETransform transform, final long deltaTime ) {
-        System.out.println( "deltaTime: " + deltaTime );
+        System.out.println( "deltaTime: " + deltaTime + " velx: " + movement.getVelocityX() + " vely: " + movement.getVelocityY()  );
         transform.move( 
             movement.getVelocityX() * deltaTime, 
             movement.getVelocityY() * deltaTime 
