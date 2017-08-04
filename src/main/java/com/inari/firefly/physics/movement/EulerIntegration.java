@@ -36,24 +36,23 @@ public final class EulerIntegration implements Integrator {
     public final void integrate( final EMovement movement, final ETransform transform, final float deltaTimeInSeconds ) {
         gravityIntegration( movement );
         
-        movement.setVelocityX( movement.getVelocityX() +  movement.getAccelerationX() * deltaTimeInSeconds );
-        movement.setVelocityY( movement.getVelocityY() +  movement.getAccelerationY() * deltaTimeInSeconds );
+        movement.setVelocityX( movement.getVelocityX() + movement.getAccelerationX() * deltaTimeInSeconds );
+        movement.setVelocityY( movement.getVelocityY() + movement.getAccelerationY() * deltaTimeInSeconds );
     }
 
     private void gravityIntegration( final EMovement movement ) {
-        if ( movement.getVelocityY() > maxGravityVelocity ) {
-            movement.setAccelerationY( 0f );
-            return;
-        }
+        
         
         if ( movement.onGround ) {
-            if ( movement.getVelocityY() != 0f ) {
-                movement.setVelocityY( 0f );
-            }
-            if ( movement.getAccelerationY() != 0f ) {
-                movement.setAccelerationY( 0f );
-            }
+            movement.setVelocityY( 0f );
+            movement.setAccelerationY( 0f );
         } else {
+            
+            if ( movement.getVelocityY() > maxGravityVelocity ) {
+                movement.setAccelerationY( 0f );
+                movement.setVelocityY( maxGravityVelocity );
+                return;
+            }
             movement.setAccelerationY( gravity * ( movement.mass * massFactor ) );
         }
     }
