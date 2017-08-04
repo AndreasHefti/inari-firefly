@@ -35,6 +35,7 @@ public final class EMovement extends EntityComponent {
     public static final AttributeKey<Float> ACCELERATION_X = AttributeKey.createFloat( "ax", EMovement.class );
     public static final AttributeKey<Float> ACCELERATION_Y = AttributeKey.createFloat( "ay", EMovement.class );
     public static final AttributeKey<Float> MASS = AttributeKey.createFloat( "mass", EMovement.class );
+    public static final AttributeKey<Boolean> ON_GROUND = AttributeKey.createBoolean( "onGround", EMovement.class );
     public static final AttributeKey<Float> UPDATE_RESOLUTION = AttributeKey.createFloat( "updateResolution", EMovement.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         ACTIVE,
@@ -43,6 +44,7 @@ public final class EMovement extends EntityComponent {
         ACCELERATION_X,
         ACCELERATION_Y,
         MASS,
+        ON_GROUND,
         UPDATE_RESOLUTION
     );
     
@@ -177,6 +179,7 @@ public final class EMovement extends EntityComponent {
         acceleration.dx = attributes.getValue( ACCELERATION_X, acceleration.dx );
         acceleration.dy = attributes.getValue( ACCELERATION_Y, acceleration.dy );
         mass = attributes.getValue( MASS, mass );
+        onGround = attributes.getValue( ON_GROUND, onGround );
         setUpdateResolution( attributes.getValue( UPDATE_RESOLUTION, updateResolution ) );
     }
 
@@ -187,6 +190,8 @@ public final class EMovement extends EntityComponent {
         attributes.put( VELOCITY_Y, velocity.dy );
         attributes.put( ACCELERATION_X, acceleration.dx );
         attributes.put( ACCELERATION_Y, acceleration.dy );
+        attributes.put( MASS, mass );
+        attributes.put( ON_GROUND, onGround );
         attributes.put( UPDATE_RESOLUTION, updateResolution );
     }
 
