@@ -4,7 +4,7 @@ import com.inari.firefly.graphics.ETransform;
 
 public class EulerIntegration implements Integrator {
     
-    private float gravity = 9.8f;
+    private float gravity = -9.8f;
 
     public final float getGravity() {
         return gravity;
