@@ -32,7 +32,7 @@ public class EulerIntegration implements Integrator {
                 movement.setAccelerationY( 0f );
             }
         } else {
-            movement.setAccelerationY( gravity * movement.mass / 100 );
+            movement.setAccelerationY( gravity * movement.mass );
         }
     }
 
