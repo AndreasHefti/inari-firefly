@@ -90,7 +90,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
                 continue;
             }
             
-            final long deltaTimeInSeconds = context.getTimeElapsed() / 1000;
+            final float deltaTimeInSeconds = context.getTimeElapsed() / 1000f;
 
             if ( movement.velocity.dx != 0f || movement.velocity.dy != 0f ) {
                 integrator.step( movement, transform, deltaTimeInSeconds );

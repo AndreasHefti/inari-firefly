@@ -15,7 +15,7 @@ public class EulerIntegration implements Integrator {
     }
 
     @Override
-    public void integrate( final EMovement movement, final ETransform transform, final long deltaTimeInSeconds ) {
+    public void integrate( final EMovement movement, final ETransform transform, final float deltaTimeInSeconds ) {
         gravityIntegration( movement );
         
         movement.setVelocityX( movement.getVelocityX() +  movement.getAccelerationX() * deltaTimeInSeconds );
@@ -37,7 +37,7 @@ public class EulerIntegration implements Integrator {
     }
 
     @Override
-    public void step( final EMovement movement, final ETransform transform, final long deltaTimeInSeconds ) {
+    public void step( final EMovement movement, final ETransform transform, final float deltaTimeInSeconds ) {
         System.out.println( "deltaTimeInSeconds: " + deltaTimeInSeconds + " velx: " + movement.getVelocityX() + " vely: " + movement.getVelocityY()  );
         transform.move( 
             movement.getVelocityX() * deltaTimeInSeconds, 
