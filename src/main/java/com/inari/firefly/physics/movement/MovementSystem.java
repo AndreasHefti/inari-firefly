@@ -17,7 +17,6 @@ package com.inari.firefly.physics.movement;
 
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
-import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.EntitySystem.EntityIterator;
@@ -36,6 +35,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
     private FFContext context;
     private EntitySystem entitySystem;
     private EntityIterator entityIterator;
+    private Integrator integrator;
     
     private final MoveEvent moveEvent = new MoveEvent();
     
@@ -55,6 +55,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
         
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         entityIterator = entitySystem.entities( MOVEMENT_ASPECT );
+        integrator = new DummyIntegrator();
         
         context.registerListener( UpdateEvent.TYPE_KEY, this );
     }
@@ -64,27 +65,38 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
         context.disposeListener( UpdateEvent.TYPE_KEY, this );
     }
 
+    public final Integrator getIntegrator() {
+        return integrator;
+    }
+
+    public final void setIntegrator( Integrator integrator ) {
+        if ( integrator != null ) {
+            return;
+        }
+        this.integrator = integrator;
+    }
+
     @Override
     public final void update( UpdateEvent event ) {
         moveEvent.entityIds.clear();
         entityIterator.reset();
         while ( entityIterator.hasNext() ) {
-            int entityId = entityIterator.next();
-            IndexedTypeSet components = entitySystem.getComponents( entityId );
-            EMovement movement = components.get( EMovement.TYPE_KEY );
+            final int entityId = entityIterator.next();
+            final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
+            final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
+            
             if ( !movement.active || !movement.needsUpdate( event.timer ) ) {
                 continue;
             }
 
-            if ( movement.velocity.dx == 0f && movement.velocity.dy == 0f ) {
-                continue;
+            if ( movement.velocity.dx != 0f || movement.velocity.dy != 0f ) {
+                integrator.step( context, movement, transform );
+                moveEvent.add( entityId );
             }
 
-            ETransform transform = components.get( ETransform.TYPE_KEY );
-            transform.move( movement.velocity.dx, movement.velocity.dy );
-
-            moveEvent.add( entityId );
+            integrator.integrate( context, movement, transform );
         }
+        
         context.notify( moveEvent );
     }
 
