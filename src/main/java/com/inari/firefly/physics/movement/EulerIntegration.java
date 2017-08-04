@@ -5,8 +5,8 @@ import com.inari.firefly.graphics.ETransform;
 public final class EulerIntegration implements Integrator {
     
     private float gravity = 9.8f;
-    private float massFactor = 0.5f;
-    private float maxGravityVelocity = -60f;
+    private float massFactor = 0.2f;
+    private float maxGravityVelocity = 100f;
 
     public final float getGravity() {
         return gravity;
@@ -38,7 +38,6 @@ public final class EulerIntegration implements Integrator {
         
         movement.setVelocityX( movement.getVelocityX() +  movement.getAccelerationX() * deltaTimeInSeconds );
         movement.setVelocityY( movement.getVelocityY() +  movement.getAccelerationY() * deltaTimeInSeconds );
-        
     }
 
     private void gravityIntegration( final EMovement movement ) {
