@@ -17,6 +17,12 @@ public final class DummyIntegrator implements Integrator {
 
     @Override
     public final void integrate( FFContext context, EMovement movement, ETransform transform ) {
+        if ( movement.onGround ) {
+            if ( movement.getVelocityY() != 0f ) {
+                movement.setVelocityY( 0f );
+            }
+            return;
+        }
         final float vy = movement.getVelocityY();
         movement.setVelocityY( vy + Math.abs( ( vy / movement.mass - 1f ) * 0.2f ) );
     }
