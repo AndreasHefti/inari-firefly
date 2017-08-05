@@ -37,7 +37,7 @@ public final class EulerIntegration implements Integrator {
         } else {
             final float maxGravityVelocity = movement.getMaxGravityVelocity();
             final float massFactor = movement.getMassFactor();
-            if ( movement.getVelocityY() > maxGravityVelocity ) {
+            if ( movement.getVelocityY() >= maxGravityVelocity ) {
                 movement.setAccelerationY( 0f );
                 movement.setVelocityY( maxGravityVelocity );
                 return;
