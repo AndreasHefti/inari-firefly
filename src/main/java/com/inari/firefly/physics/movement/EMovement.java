@@ -35,6 +35,8 @@ public final class EMovement extends EntityComponent {
     public static final AttributeKey<Float> ACCELERATION_X = AttributeKey.createFloat( "ax", EMovement.class );
     public static final AttributeKey<Float> ACCELERATION_Y = AttributeKey.createFloat( "ay", EMovement.class );
     public static final AttributeKey<Float> MASS = AttributeKey.createFloat( "mass", EMovement.class );
+    public static final AttributeKey<Float> MASS_FACTOR = AttributeKey.createFloat( "massFactor", EMovement.class );
+    public static final AttributeKey<Float> MAX_GRAVITY_VEL = AttributeKey.createFloat( "maxGravityVelocity", EMovement.class );
     public static final AttributeKey<Boolean> ON_GROUND = AttributeKey.createBoolean( "onGround", EMovement.class );
     public static final AttributeKey<Float> UPDATE_RESOLUTION = AttributeKey.createFloat( "updateResolution", EMovement.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
@@ -44,6 +46,8 @@ public final class EMovement extends EntityComponent {
         ACCELERATION_X,
         ACCELERATION_Y,
         MASS,
+        MASS_FACTOR,
+        MAX_GRAVITY_VEL,
         ON_GROUND,
         UPDATE_RESOLUTION
     );
@@ -52,6 +56,9 @@ public final class EMovement extends EntityComponent {
     final Vector2f velocity = new Vector2f( 0, 0 );
     final Vector2f acceleration = new Vector2f( 0, 0 );
     float mass;
+    float massFactor;
+    float maxGravityVelocity;
+    
     UpdateScheduler updateScheduler = null;
     
     boolean active;
@@ -74,6 +81,8 @@ public final class EMovement extends EntityComponent {
         updateScheduler = null;
         mass = 0f;
         onGround = false;
+        massFactor = 0f;
+        maxGravityVelocity = 200f;
     }
 
     public final boolean isActive() {
@@ -134,6 +143,22 @@ public final class EMovement extends EntityComponent {
         this.mass = mass;
     }
 
+    public final float getMassFactor() {
+        return massFactor;
+    }
+
+    public final void setMassFactor( float massFactor ) {
+        this.massFactor = massFactor;
+    }
+
+    public final float getMaxGravityVelocity() {
+        return maxGravityVelocity;
+    }
+
+    public final void setMaxGravityVelocity( float maxGravityVelocity ) {
+        this.maxGravityVelocity = maxGravityVelocity;
+    }
+
     public final boolean isOnGround() {
         return onGround;
     }
@@ -179,6 +204,8 @@ public final class EMovement extends EntityComponent {
         acceleration.dx = attributes.getValue( ACCELERATION_X, acceleration.dx );
         acceleration.dy = attributes.getValue( ACCELERATION_Y, acceleration.dy );
         mass = attributes.getValue( MASS, mass );
+        massFactor = attributes.getValue( MASS_FACTOR, massFactor );
+        maxGravityVelocity = attributes.getValue( MAX_GRAVITY_VEL, maxGravityVelocity );
         onGround = attributes.getValue( ON_GROUND, onGround );
         setUpdateResolution( attributes.getValue( UPDATE_RESOLUTION, updateResolution ) );
     }
@@ -191,6 +218,8 @@ public final class EMovement extends EntityComponent {
         attributes.put( ACCELERATION_X, acceleration.dx );
         attributes.put( ACCELERATION_Y, acceleration.dy );
         attributes.put( MASS, mass );
+        attributes.put( MASS_FACTOR, massFactor );
+        attributes.put( MAX_GRAVITY_VEL, maxGravityVelocity );
         attributes.put( ON_GROUND, onGround );
         attributes.put( UPDATE_RESOLUTION, updateResolution );
     }
