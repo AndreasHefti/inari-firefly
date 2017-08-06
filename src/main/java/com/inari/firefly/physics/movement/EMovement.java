@@ -81,7 +81,7 @@ public final class EMovement extends EntityComponent {
         updateScheduler = null;
         mass = 0f;
         onGround = false;
-        massFactor = 0f;
+        massFactor = 1f;
         maxGravityVelocity = 200f;
     }
 
