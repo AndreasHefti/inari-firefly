@@ -39,6 +39,22 @@ public final class ContactConstraint  {
     public final int layerId() {
         return layerId;
     }
+    
+    public final int width() {
+        return contactScanBounds.width;
+    }
+    
+    public final int height() {
+        return contactScanBounds.height;
+    }
+    
+    public final int pivotX() {
+        return contactScanBounds.x;
+    }
+    
+    public final int pivotY() {
+        return contactScanBounds.y;
+    }
 
     public final ContactConstraint layerId( int layerId ) {
         this.layerId = layerId;
