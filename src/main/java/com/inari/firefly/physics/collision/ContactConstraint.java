@@ -230,14 +230,29 @@ public final class ContactConstraint  {
         return null;
     }
 
-    public final Contact getFirstContact( final Aspect contactType ) {
+    public final Contact getFirstContactOfType( final Aspect contactType ) {
         for ( int i = 0; i < contacts.capacity(); i++ ) {
             Contact contact = contacts.get( i );
             if ( contact == null ) {
                 continue;
             }
             
-            if ( contact.contactType() == contactType ) {
+            if ( contact.contactType == contactType ) {
+                return contact;
+            }
+        }
+        
+        return null;
+    }
+    
+    public final Contact getFirstContactOfMaterial( final Aspect materialType ) {
+        for ( int i = 0; i < contacts.capacity(); i++ ) {
+            Contact contact = contacts.get( i );
+            if ( contact == null ) {
+                continue;
+            }
+            
+            if ( contact.materialType == materialType ) {
                 return contact;
             }
         }
