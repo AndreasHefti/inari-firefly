@@ -40,6 +40,7 @@ public class View extends SystemComponent {
     public static final AttributeKey<BlendMode> BLEND_MODE = AttributeKey.createBlendMode( "blendMode", ESprite.class );
     public static final AttributeKey<Boolean> LAYERING_ENABLED = AttributeKey.createBoolean( "layeringEnabled", View.class );
     public static final AttributeKey<Float> ZOOM = AttributeKey.createFloat( "zoom", View.class );
+    public static final AttributeKey<Float> FBO_SCALER = AttributeKey.createFloat( "fboScaler", View.class );
     public static final AttributeKey<String> CONTROLLER_NAME = AttributeKey.createString( "controllerName", View.class );
     public static final AttributeKey<Integer> CONTROLLER_ID = AttributeKey.createInt( "controllerId", View.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
@@ -50,6 +51,7 @@ public class View extends SystemComponent {
         BLEND_MODE,
         LAYERING_ENABLED,
         ZOOM,
+        FBO_SCALER,
         CONTROLLER_ID
     );
     
@@ -63,6 +65,7 @@ public class View extends SystemComponent {
     private final RGBColor tintColor;
     private BlendMode blendMode;
     private float zoom;
+    private float fboScaler;
     private int controllerId;
     
     View( int viewId ) {
@@ -74,6 +77,7 @@ public class View extends SystemComponent {
         tintColor = new RGBColor( 1f, 1f, 1f, 1f );
         blendMode = BlendMode.NONE;
         zoom = 1.0f;
+        fboScaler = 4.0f;
         controllerId = -1;
     }
     
@@ -160,6 +164,14 @@ public class View extends SystemComponent {
         this.zoom = zoom;
     }
 
+    public final float getFboScaler() {
+        return fboScaler;
+    }
+
+    public final void setFboScaler( float fboScaler ) {
+        this.fboScaler = fboScaler;
+    }
+
     public final int getControllerId() {
         return controllerId;
     }
@@ -188,6 +200,7 @@ public class View extends SystemComponent {
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
         layeringEnabled = attributes.getValue( LAYERING_ENABLED, layeringEnabled );
         zoom = attributes.getValue( ZOOM, zoom );
+        fboScaler = attributes.getValue( FBO_SCALER, fboScaler );
         controllerId = attributes.getIdForName( CONTROLLER_NAME, CONTROLLER_ID, Controller.TYPE_KEY, controllerId );
     }
 
@@ -202,6 +215,7 @@ public class View extends SystemComponent {
         attributes.put( BLEND_MODE, blendMode );
         attributes.put( LAYERING_ENABLED, layeringEnabled );
         attributes.put( ZOOM, zoom );
+        attributes.put( FBO_SCALER, fboScaler );
         attributes.put( CONTROLLER_ID, controllerId );
     }
 

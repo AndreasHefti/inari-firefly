@@ -33,6 +33,7 @@ public class ViewSystemTest extends FFTest {
             "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
+            "fboScaler:Float=4.0, " +
             "controllerId:Integer=-1", 
             attrs.toString() 
         );
@@ -80,6 +81,7 @@ public class ViewSystemTest extends FFTest {
             "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
+            "fboScaler:Float=4.0, " +
             "controllerId:Integer=-1 " +
             "SystemComponent:View(1)::" +
             "name:String=Header, " +
@@ -90,6 +92,7 @@ public class ViewSystemTest extends FFTest {
             "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
+            "fboScaler:Float=4.0, " +
             "controllerId:Integer=-1 " +
             "SystemComponent:View(2)::" +
             "name:String=Body, " +
@@ -100,6 +103,7 @@ public class ViewSystemTest extends FFTest {
             "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=false, " +
             "zoom:Float=1.0, " +
+            "fboScaler:Float=4.0, " +
             "controllerId:Integer=-1", 
             attrs.toString() 
         );
@@ -171,6 +175,7 @@ public class ViewSystemTest extends FFTest {
             "blendMode:BlendMode:ESprite=NONE, " +
             "layeringEnabled:Boolean=true, " +
             "zoom:Float=1.0, " +
+            "fboScaler:Float=4.0, " +
             "controllerId:Integer=-1 " +
             "SystemComponent:Layer(1)::" +
             "name:String=Layer1, " +

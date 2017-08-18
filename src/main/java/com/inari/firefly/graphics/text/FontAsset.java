@@ -21,6 +21,10 @@ public final class FontAsset extends Asset implements TextureData {
     
     public static final AttributeKey<String> TEXTURE_RESOURCE_NAME = AttributeKey.createString( "textureResourceName", FontAsset.class );
     public static final AttributeKey<Boolean> MIP_MAP = AttributeKey.createBoolean( "mipmap", FontAsset.class );
+    public static final AttributeKey<Integer> WRAP_S = AttributeKey.createInt( "wrapS", FontAsset.class );
+    public static final AttributeKey<Integer> WRAP_T = AttributeKey.createInt( "wrapT", FontAsset.class );
+    public static final AttributeKey<Integer> MIN_FILTER = AttributeKey.createInt( "minFilter", FontAsset.class );
+    public static final AttributeKey<Integer> MAG_FILTER = AttributeKey.createInt( "magFilter", FontAsset.class );
     public static final AttributeKey<IntFunction> COLOR_CONVERTER = new AttributeKey<IntFunction>( "colorConverter", IntFunction.class, TextureAsset.class );
     public static final AttributeKey<char[][]> CHAR_TEXTURE_MAP = AttributeKey.create( "charTextureMap", char[][].class, FontAsset.class );
     public static final AttributeKey<Integer> CHAR_WIDTH = AttributeKey.createInt( "charWidth", FontAsset.class );
@@ -31,6 +35,10 @@ public final class FontAsset extends Asset implements TextureData {
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         TEXTURE_RESOURCE_NAME,
         MIP_MAP,
+        WRAP_S,
+        WRAP_T,
+        MIN_FILTER,
+        MAG_FILTER,
         COLOR_CONVERTER,
         CHAR_TEXTURE_MAP,
         CHAR_WIDTH,
@@ -42,6 +50,10 @@ public final class FontAsset extends Asset implements TextureData {
 
     private String textureResourceName;
     private boolean mipmap;
+    private int wrapS;
+    private int wrapT;
+    private int minFilter;
+    private int magFilter;
     private IntFunction colorConverter;
     private int textureWidth;
     private int textureHeight;
@@ -65,7 +77,11 @@ public final class FontAsset extends Asset implements TextureData {
         charSpace = 0;
         lineSpace = 0;
         defaultChar = -1;
-        mipmap = true;
+        mipmap = false;
+        wrapS = -1;
+        wrapT = -1;
+        minFilter = -1;
+        magFilter = -1;
         colorConverter = null;
     }
 
@@ -102,6 +118,38 @@ public final class FontAsset extends Asset implements TextureData {
 
     public final void setMipmap( boolean mipmap ) {
         this.mipmap = mipmap;
+    }
+
+    public final int getWrapS() {
+        return wrapS;
+    }
+
+    public final void setWrapS( int wrapS ) {
+        this.wrapS = wrapS;
+    }
+
+    public final int getWrapT() {
+        return wrapT;
+    }
+
+    public final void setWrapT( int wrapT ) {
+        this.wrapT = wrapT;
+    }
+
+    public final int getMinFilter() {
+        return minFilter;
+    }
+
+    public final void setMinFilter( int minFilter ) {
+        this.minFilter = minFilter;
+    }
+
+    public final int getMagFilter() {
+        return magFilter;
+    }
+
+    public final void setMagFilter( int magFilter ) {
+        this.magFilter = magFilter;
     }
 
     public final IntFunction getColorConverter() {
@@ -195,6 +243,10 @@ public final class FontAsset extends Asset implements TextureData {
         lineSpace = attributes.getValue( LINE_SPACE, lineSpace );
         defaultChar = attributes.getValue( DEFAULT_CHAR, defaultChar );
         mipmap = attributes.getValue( MIP_MAP, mipmap );
+        wrapS = attributes.getValue( WRAP_S, wrapS );
+        wrapT = attributes.getValue( WRAP_T, wrapT );
+        minFilter = attributes.getValue( MIN_FILTER, minFilter );
+        magFilter = attributes.getValue( MAG_FILTER, magFilter );
         colorConverter = attributes.getValue( COLOR_CONVERTER, colorConverter );
     }
 
@@ -210,6 +262,10 @@ public final class FontAsset extends Asset implements TextureData {
         attributes.put( LINE_SPACE, lineSpace );
         attributes.put( DEFAULT_CHAR, defaultChar );
         attributes.put( MIP_MAP, mipmap );
+        attributes.put( WRAP_S, wrapS );
+        attributes.put( WRAP_T, wrapT );
+        attributes.put( MIN_FILTER, minFilter );
+        attributes.put( MAG_FILTER, magFilter );
         attributes.put( COLOR_CONVERTER, colorConverter );
     }
 

@@ -14,4 +14,9 @@ public interface TextureData {
     
     void setTextureHeight( int height );
     
+    int getWrapS();
+    int getWrapT();
+    int getMinFilter();
+    int getMagFilter();
+
 }
