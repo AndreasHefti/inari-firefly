@@ -5,6 +5,8 @@ import com.inari.firefly.graphics.ETransform;
 public final class EulerIntegration implements Integrator {
     
     private float gravity = 9.8f;
+    private float shift = (float) Math.pow( 10, 0 );
+    private int scale = -1;
 
     public final float getGravity() {
         return gravity;
@@ -12,6 +14,17 @@ public final class EulerIntegration implements Integrator {
 
     public final void setGravity( float gravity ) {
         this.gravity = gravity;
+    }
+
+    public final int getScale() {
+        return scale;
+    }
+
+    public final void setScale( int scale ) {
+        this.scale = scale;
+        shift = ( scale < 0 )? 
+            (float) Math.pow( 10, 0 ) : 
+                (float) Math.pow( 10, scale );
     }
 
     @Override
@@ -25,8 +38,8 @@ public final class EulerIntegration implements Integrator {
     @Override
     public final void step( final EMovement movement, final ETransform transform, final float deltaTimeInSeconds ) {
         transform.move( 
-            movement.getVelocityX() * deltaTimeInSeconds, 
-            movement.getVelocityY() * deltaTimeInSeconds
+            Math.round( movement.getVelocityX() * deltaTimeInSeconds * shift ) / shift, 
+            Math.round( movement.getVelocityY() * deltaTimeInSeconds * shift ) / shift 
         );
     }
     
