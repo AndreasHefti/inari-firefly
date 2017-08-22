@@ -1,5 +1,6 @@
 package com.inari.firefly.graphics.rendering;
 
+import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntityComponent;
@@ -8,7 +9,7 @@ import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.graphics.tile.TileGridSystem;
-import com.inari.firefly.system.RenderEvent;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class FullTileGridRenderer extends Renderer {
     
@@ -37,16 +38,15 @@ public final class FullTileGridRenderer extends Renderer {
     }
 
     @Override
-    public final void render( RenderEvent event ) {
-        int viewId = event.getViewId();
-        int layerId = event.getLayerId();
+    public final void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer ) {
+
         
         TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
         if ( tileGrid == null ) {
             return;
         }
         
-        TileGridIterator tileGridIterator = tileGrid.getTileGridIterator( event.getClip() );
+        TileGridIterator tileGridIterator = tileGrid.getTileGridIterator( clip );
         while( tileGridIterator.hasNext() ) {
             int entityId = tileGridIterator.next();
             ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );

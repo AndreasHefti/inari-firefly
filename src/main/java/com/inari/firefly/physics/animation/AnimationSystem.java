@@ -29,6 +29,7 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public final class AnimationSystem 
@@ -162,7 +163,7 @@ public final class AnimationSystem
     }
 
     @Override
-    public final void update( UpdateEvent event ) {
+    public final void update( final FFTimer timer ) {
         for ( int i = 0; i < animations.capacity(); i++ ) {
             Animation animation = animations.get( i );
             if ( animation != null ) {
@@ -178,7 +179,7 @@ public final class AnimationSystem
                     continue;
                 }
                 
-                if ( animation.startTime > 0 && event.timer.getTime() >= animation.startTime ) {
+                if ( animation.startTime > 0 && timer.getTime() >= animation.startTime ) {
                     animation.activate();
                     continue;
                 }

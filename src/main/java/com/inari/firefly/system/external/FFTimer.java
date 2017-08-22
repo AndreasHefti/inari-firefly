@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.system.FireFlyApp.SystemTimer;
 
-public abstract class FFTimer {
+public abstract class FFTimer extends SystemTimer {
     
     protected long lastUpdateTime, time, timeElapsed;
     
@@ -43,8 +44,6 @@ public abstract class FFTimer {
         }
     }
 
-    public abstract void tick();
-    
     public final UpdateScheduler createUpdateScheduler( float resolution ) {
         UpdateScheduler updateScheduler = updateSchedulers.get( resolution );
         if ( updateScheduler == null ) {

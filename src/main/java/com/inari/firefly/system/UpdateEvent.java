@@ -24,14 +24,14 @@ public final class UpdateEvent extends Event<UpdateEventListener> {
 
     public final FFTimer timer;
 
-    public UpdateEvent( FFTimer timer ) {
+    UpdateEvent( FFTimer timer ) {
         super( TYPE_KEY );
         this.timer = timer;
     }
 
     @Override
     protected final void notify( final UpdateEventListener listener ) {
-        listener.update( this );
+        listener.update( timer );
     }
 
 }

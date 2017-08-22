@@ -1,5 +1,6 @@
 package com.inari.firefly.graphics.rendering;
 
+import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
@@ -10,7 +11,7 @@ import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.graphics.text.FontAsset;
-import com.inari.firefly.system.RenderEvent;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class SimpleTextRenderer extends Renderer {
     
@@ -32,10 +33,7 @@ public final class SimpleTextRenderer extends Renderer {
     }
 
     @Override
-    public final void render( RenderEvent event ) {
-        int viewId = event.getViewId();
-        int layerId = event.getLayerId();
-        
+    public final void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer ) {
         DynArray<IndexedTypeSet> texts = getEntites( viewId, layerId, false );
         if ( texts == null ) {
             return;

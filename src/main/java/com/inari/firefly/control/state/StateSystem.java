@@ -27,6 +27,7 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.utils.Condition;
 
@@ -84,7 +85,7 @@ public class StateSystem
     }
 
     @Override
-    public final void update( UpdateEvent event ) {
+    public final void update( final FFTimer timer ) {
         
         for ( int w = 0; w < workflows.size(); w++ ) {
             Workflow workflow = workflows.get( w );

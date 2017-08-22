@@ -27,6 +27,7 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public final class ControllerSystem
@@ -139,7 +140,7 @@ public final class ControllerSystem
     }
 
     @Override
-    public final void update( UpdateEvent event ) {
+    public final void update( final FFTimer timer ) {
         for ( int i = 0; i < controller.capacity(); i++ ) {
             Controller c = controller.get( i );
             if ( c != null ) {

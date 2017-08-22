@@ -17,13 +17,13 @@ package com.inari.firefly.system;
 
 import com.inari.commons.event.Event;
 import com.inari.commons.geom.Rectangle;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class RenderEvent extends Event<RenderEventListener> {
     
     public static final EventTypeKey TYPE_KEY = createTypeKey( RenderEvent.class );
 
-    /** Use this if the game loop works with approximation time on rendering */
-    long approximationTime;
+    final FFTimer timer;
     /** Defines current View for rendering */
     int viewId;
     
@@ -31,29 +31,14 @@ public final class RenderEvent extends Event<RenderEventListener> {
     /** Defines a clipping area */
     final Rectangle clip = new Rectangle();
     
-    RenderEvent() {
+    RenderEvent( FFTimer timer ) {
         super( TYPE_KEY );
-    }
-    
-    public final long getApproximationTime() {
-        return approximationTime;
-    }
-    
-    public final int getViewId() {
-        return viewId;
-    }
-
-    public final int getLayerId() {
-        return layerId;
-    }
-
-    public final Rectangle getClip() {
-        return clip;
+        this.timer = timer;
     }
 
     @Override
     protected final void notify( RenderEventListener listener ) {
-        listener.render( this );
+        listener.render( viewId, layerId, clip, timer );
     }
 
     @Override
@@ -63,8 +48,8 @@ public final class RenderEvent extends Event<RenderEventListener> {
         builder.append( viewId );
         builder.append( ", clip=" );
         builder.append( clip );
-        builder.append( ", approximationTime=" );
-        builder.append( approximationTime );
+        builder.append( ", timer=" );
+        builder.append( timer );
         builder.append( "]" );
         return builder.toString();
     }

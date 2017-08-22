@@ -2,6 +2,7 @@ package com.inari.firefly.graphics.rendering;
 
 import java.util.Set;
 
+import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntityActivationEvent;
@@ -12,6 +13,7 @@ import com.inari.firefly.system.RenderEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public final class RenderingSystem 
@@ -97,14 +99,14 @@ public final class RenderingSystem
     }
 
     @Override
-    public final void render( final RenderEvent event ) {
+    public final void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer ) {
         for ( int i = 0; i < renderingChain.elements.capacity(); i++ ) {
             RenderingChain.Element element = renderingChain.elements.get( i );
             if ( element == null || element.renderer == null ) {
                 continue;
             }
             
-            element.renderer.render( event );
+            element.renderer.render( viewId, layerId, clip, timer );
         }
     }
     

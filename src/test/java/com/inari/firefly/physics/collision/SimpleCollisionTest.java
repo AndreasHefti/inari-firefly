@@ -9,6 +9,7 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.FFTest;
+import com.inari.firefly.TestTimer;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.tile.ETile;
@@ -16,23 +17,18 @@ import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.physics.movement.MovementSystem;
-import com.inari.firefly.system.UpdateEvent;
-import com.inari.firefly.system.external.FFTimer;
 
 public class SimpleCollisionTest extends FFTest {
 
     private static final Rectangle WORLD_BOUNDS = new Rectangle( 0, 0, 100, 100 );
-    
 
-    
     @Test @Ignore
     public void testSimpleCollision() {
 
-        FFTimer timer = ffContext.getTimer();
+        TestTimer timer = (TestTimer) ffContext.getTimer();
         EntitySystem entitySystem = ffContext.getSystem( EntitySystem.SYSTEM_KEY );
         MovementSystem movementSystem = ffContext.getSystem( MovementSystem.SYSTEM_KEY );
         CollisionSystem collisionSystem = ffContext.getSystem( CollisionSystem.SYSTEM_KEY );
-        UpdateEvent updateEvent = new UpdateEvent( timer );
         
         collisionSystem.getContactPoolBuilder( CollisionQuadTree.class )
             .set( CollisionQuadTree.VIEW_ID, 0 )
@@ -64,7 +60,7 @@ public class SimpleCollisionTest extends FFTest {
         );
         
         timer.tick();
-        movementSystem.update( updateEvent );
+        movementSystem.update( timer );
         
         assertEquals( 
             "EventLog [events=["
@@ -75,11 +71,11 @@ public class SimpleCollisionTest extends FFTest {
         );
         
         timer.tick();
-        movementSystem.update( updateEvent );
+        movementSystem.update( timer );
         timer.tick();
-        movementSystem.update( updateEvent );
+        movementSystem.update( timer );
         timer.tick();
-        movementSystem.update( updateEvent );
+        movementSystem.update( timer );
         
         assertEquals( 
             "EventLog [events=["
@@ -97,12 +93,11 @@ public class SimpleCollisionTest extends FFTest {
     @Test @Ignore
     public void testSimpleTileCollision() {
         
-        FFTimer timer = ffContext.getTimer();
+        TestTimer timer = (TestTimer) ffContext.getTimer();
         ffContext.loadSystem( CollisionSystem.SYSTEM_KEY );
         EntitySystem entitySystem = ffContext.getSystem( EntitySystem.SYSTEM_KEY );
         MovementSystem movementSystem = ffContext.getSystem( MovementSystem.SYSTEM_KEY );
         TileGridSystem tileGridSystem = ffContext.getSystem( TileGridSystem.SYSTEM_KEY );
-        UpdateEvent updateEvent = new UpdateEvent( timer );
         
         tileGridSystem.getTileGridBuilder()
             .set( TileGrid.CELL_WIDTH, 16 )
@@ -137,13 +132,13 @@ public class SimpleCollisionTest extends FFTest {
         );
         
         timer.tick();
-        movementSystem.update( updateEvent );
+        movementSystem.update( timer );
         timer.tick();
-        movementSystem.update( updateEvent );
+        movementSystem.update( timer );
         timer.tick();
-        movementSystem.update( updateEvent );
+        movementSystem.update( timer );
         timer.tick();
-        movementSystem.update( updateEvent );
+        movementSystem.update( timer );
         
         assertEquals( 
             "EventLog [events=["

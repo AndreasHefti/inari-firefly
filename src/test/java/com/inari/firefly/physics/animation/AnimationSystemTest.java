@@ -11,7 +11,7 @@ import com.inari.firefly.TestTimer;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.graphics.sprite.ESprite;
-import com.inari.firefly.system.UpdateEvent;
+import com.inari.firefly.system.external.FFTimer;
 
 public class AnimationSystemTest extends FFTest {
 
@@ -55,6 +55,7 @@ public class AnimationSystemTest extends FFTest {
     @Test
     public void testOneAnimationWithEntityAdapter() {
         AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.SYSTEM_KEY );
+        FFTimer timer = ffContext.getTimer();
         
         assertEquals( "0", String.valueOf( animationSystem.activeMappings.size() ) );
 
@@ -81,13 +82,13 @@ public class AnimationSystemTest extends FFTest {
         
         assertEquals( "1", String.valueOf( animationSystem.activeMappings.size() ) );
         
-        animationSystem.update( new UpdateEvent( ffContext.getTimer() ) );
+        animationSystem.update( timer );
         assertEquals( "1", String.valueOf( sprite.getSpriteId() ) );
-        animationSystem.update( new UpdateEvent( ffContext.getTimer() ) );
+        animationSystem.update( timer );
         assertEquals( "2", String.valueOf( sprite.getSpriteId() ) );
-        animationSystem.update( new UpdateEvent( ffContext.getTimer() ) );
+        animationSystem.update( timer );
         assertEquals( "3", String.valueOf( sprite.getSpriteId() ) );
-        animationSystem.update( new UpdateEvent( ffContext.getTimer() ) );
+        animationSystem.update( timer );
         assertEquals( "4", String.valueOf( sprite.getSpriteId() ) );
     }
 
@@ -107,10 +108,9 @@ public class AnimationSystemTest extends FFTest {
         );
 
         TestTimer timer = new TestTimer();
-        UpdateEvent updateEvent = new UpdateEvent( timer );
         
         timer.tick();
-        animationSystem.update( updateEvent );
+        animationSystem.update( timer );
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",
@@ -118,7 +118,7 @@ public class AnimationSystemTest extends FFTest {
         );
         
         timer.setTime( 9 );
-        animationSystem.update( updateEvent );
+        animationSystem.update( timer );
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",
@@ -126,7 +126,7 @@ public class AnimationSystemTest extends FFTest {
         );
 
         timer.setTime( 10 );
-        animationSystem.update( updateEvent );
+        animationSystem.update( timer );
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=true, finished=false}",
@@ -134,7 +134,7 @@ public class AnimationSystemTest extends FFTest {
         );
 
         timer.setTime( 11 );
-        animationSystem.update( updateEvent );
+        animationSystem.update( timer );
 
         // now the Animation should be active
         assertEquals(
@@ -153,7 +153,7 @@ public class AnimationSystemTest extends FFTest {
 
         // ...and after next update be removed
         timer.setTime( 12 );
-        animationSystem.update( updateEvent );
+        animationSystem.update( timer );
         assertFalse( animationSystem.exists( 0 ) );
     }
 

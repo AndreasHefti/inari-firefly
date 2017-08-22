@@ -71,7 +71,7 @@ public abstract class FireFlyApp {
         context.loadSystem( TaskSystem.SYSTEM_KEY );
         
         updateEvent = new UpdateEvent( timer );
-        renderEvent = new RenderEvent();
+        renderEvent = new RenderEvent( timer );
         postRenderEvent = new PostRenderEvent( context );
     }
     
@@ -100,8 +100,6 @@ public abstract class FireFlyApp {
         }
         View baseView = viewSystem.getView( ViewSystem.BASE_VIEW_ID );
         
-        // NOTE: for now there is no renderer that works with approximationTime so I skip the calculation so far.
-        // TODO: implements the calculation of approximationTime and set it to the event.
         if ( viewSystem.hasActiveViewports() ) {
             final DynArray<View> viewports = viewSystem.getActiveViewports();
             for ( int i = 0; i < viewports.size(); i++ ) {
@@ -122,9 +120,9 @@ public abstract class FireFlyApp {
     }
     
     private void render( final View view ) {
-        Rectangle bounds = view.getBounds();
-        PositionF worldPosition = view.getWorldPosition();
-        int viewId = view.index();
+        final Rectangle bounds = view.getBounds();
+        final PositionF worldPosition = view.getWorldPosition();
+        final int viewId = view.index();
         
         renderEvent.viewId = viewId;
         renderEvent.clip.x = (int) Math.floor( worldPosition.x );
@@ -151,6 +149,12 @@ public abstract class FireFlyApp {
         } 
 
         graphics.endRendering( view );
+    }
+    
+    public static abstract class SystemTimer {
+        
+        protected abstract void tick();
+        
     }
 
 }

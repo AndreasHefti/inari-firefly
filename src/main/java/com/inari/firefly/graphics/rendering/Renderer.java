@@ -1,5 +1,6 @@
 package com.inari.firefly.graphics.rendering;
 
+import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
@@ -7,9 +8,9 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
-import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.TransformData;
 
 public abstract class Renderer extends SystemComponent {
@@ -99,7 +100,7 @@ public abstract class Renderer extends SystemComponent {
     public abstract boolean match( final Aspects aspects );
     
     
-    public abstract void render( RenderEvent event );
+    public abstract void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer );
     
     
     protected interface TransformDataCollector extends TransformData {

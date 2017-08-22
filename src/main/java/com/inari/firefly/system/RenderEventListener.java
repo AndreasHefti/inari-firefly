@@ -15,8 +15,11 @@
  ******************************************************************************/ 
 package com.inari.firefly.system;
 
+import com.inari.commons.geom.Rectangle;
+import com.inari.firefly.system.external.FFTimer;
+
 public interface RenderEventListener {
     
-    public void render( RenderEvent event );
+    public void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer );
 
 }

@@ -15,7 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.system;
 
+import com.inari.firefly.system.external.FFTimer;
+
 public interface UpdateEventListener {
 
-    public void update( UpdateEvent event );
+    public void update( final FFTimer timer );
 }

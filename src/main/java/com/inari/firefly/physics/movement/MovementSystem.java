@@ -25,6 +25,7 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class MovementSystem implements FFSystem, UpdateEventListener {
     
@@ -78,7 +79,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
     }
 
     @Override
-    public final void update( UpdateEvent event ) {
+    public final void update( final FFTimer timer ) {
         moveEvent.entityIds.clear();
         entityIterator.reset();
         while ( entityIterator.hasNext() ) {
@@ -86,7 +87,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
             final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
             final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
             
-            if ( !movement.active || !movement.needsUpdate( event.timer ) ) {
+            if ( !movement.active || !movement.needsUpdate( timer ) ) {
                 continue;
             }
             

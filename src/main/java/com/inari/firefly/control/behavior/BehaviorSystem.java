@@ -19,6 +19,7 @@ import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implements UpdateEventListener, EntityActivationListener {
     
@@ -127,7 +128,7 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
     }
 
     @Override
-    public final void update( UpdateEvent event ) {
+    public final void update( final FFTimer timer ) {
         final int nullValue = entityIds.getNullValue();
         for ( int i = 0; i < entityIds.length(); i++ ) {
             final int entityId = entityIds.get( i );
