@@ -21,7 +21,7 @@ public abstract class Scene extends SystemComponent {
     
     boolean runAgain;
     
-    Callback callback;
+    Callback callback; 
     protected boolean running = false;
     protected boolean paused = false;
 
