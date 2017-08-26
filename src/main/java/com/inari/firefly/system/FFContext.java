@@ -195,8 +195,9 @@ public final class FFContext {
      *  @return {@link FFSystem} of type of key type
      *  @throws {@link FFInitExcpetion} if the {@link FFSystem} was not loaded and an error occurs on load
      */
-    public final <T extends FFSystem> void loadSystem( FFSystemTypeKey<T> key ) {
+    public final <T extends FFSystem> FFContext loadSystem( FFSystemTypeKey<T> key ) {
         loadSystem( key, false );
+        return this;
     }
     
     /** Use this to load a specified {@link FFSystem} into the context.<p>
@@ -207,13 +208,13 @@ public final class FFContext {
      *  @return {@link FFSystem} of type of key type
      *  @throws {@link FFInitExcpetion} if the {@link FFSystem} was not loaded and an error occurs on load
      */
-    public final <T extends FFSystem> void loadSystem( FFSystemTypeKey<T> key, boolean force ) {
+    public final <T extends FFSystem> FFContext loadSystem( FFSystemTypeKey<T> key, boolean force ) {
         if ( systems.contains( key.index() ) ) {
             if ( force ) {
                 FFSystem oldSystem = systems.remove( key.index() );
                 oldSystem.dispose( this );
             } else {
-                return;
+                return this;
             }
         }
         
@@ -236,17 +237,21 @@ public final class FFContext {
         } catch ( Exception e ) {
             throw new FFInitException( "Failed to load system: " + key, e );
         }
+        
+        return this;
     }
     
     /** Use this to dispose a specified {@link FFSystem} that was loaded into the context.
      * @param key {@link FFSystemTypeKey} specifies the {@link FFSystem}
      */
-    public final <T extends FFSystem> void disposeSystem( FFSystemTypeKey<T> key ) {
+    public final <T extends FFSystem> FFContext disposeSystem( FFSystemTypeKey<T> key ) {
         @SuppressWarnings( "unchecked" )
         final T system = (T) systems.remove( key.index() );
         if ( system != null ) {
             system.dispose( this );
         }
+        
+        return this;
     }
     
     //---- SystemComponent adaption ----
@@ -359,38 +364,44 @@ public final class FFContext {
         return builderHelper.getAll();
     }
     
-    public final <C extends SystemComponent, CS extends C> void activateSystemComponent( SystemComponentKey<C> key, int id ) {
+    public final <C extends SystemComponent, CS extends C> FFContext activateSystemComponent( SystemComponentKey<C> key, int id ) {
         @SuppressWarnings( "unchecked" )
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.activate( id );
+        return this;
     }
     
-    public final <C extends SystemComponent, CS extends C> void activateSystemComponent( SystemComponentKey<C> key, String name ) {
+    public final <C extends SystemComponent, CS extends C> FFContext activateSystemComponent( SystemComponentKey<C> key, String name ) {
         @SuppressWarnings( "unchecked" )
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.activate( builderHelper.getId( name ) );
+        return this;
     }
     
-    public final <C extends SystemComponent, CS extends C> void deactivateSystemComponent( SystemComponentKey<C> key, int id ) {
+    public final <C extends SystemComponent, CS extends C> FFContext deactivateSystemComponent( SystemComponentKey<C> key, int id ) {
         @SuppressWarnings( "unchecked" )
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.deactivate( id );
+        return this;
     }
     
-    public final <C extends SystemComponent, CS extends C> void deactivateSystemComponent( SystemComponentKey<C> key, String name ) {
+    public final <C extends SystemComponent, CS extends C> FFContext deactivateSystemComponent( SystemComponentKey<C> key, String name ) {
         @SuppressWarnings( "unchecked" )
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.deactivate( builderHelper.getId( name ) );
+        return this;
     }
     
-    public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, int componentIndex ) {
+    public final <C extends SystemComponent> FFContext deleteSystemComponent( SystemComponentKey<C> key, int componentIndex ) {
         final SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         builderHelper.delete( componentIndex );
+        return this;
     }
     
-    public final <C extends SystemComponent> void deleteSystemComponent( SystemComponentKey<C> key, String componentName ) {
+    public final <C extends SystemComponent> FFContext deleteSystemComponent( SystemComponentKey<C> key, String componentName ) {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         builderHelper.delete( builderHelper.getId( componentName ) );
+        return this;
     }
     
     public final <C extends SystemComponent> ComponentBuilder getComponentBuilder( SystemComponentKey<C> key ) {
@@ -429,12 +440,14 @@ public final class FFContext {
         return entitySystem.getEntityComponentAspects( entityId );
     }
     
-    public final void activateEntity( int entityId ) {
+    public final FFContext activateEntity( int entityId ) {
         entitySystem.activateEntity( entityId );
+        return this;
     }
     
-    public final void activateEntity( String name ) {
+    public final FFContext activateEntity( String name ) {
         entitySystem.activateEntity( entitySystem.getEntityId( name ) );
+        return this;
     }
     
     public final boolean isEntityActive( int entityId ) {
@@ -445,16 +458,19 @@ public final class FFContext {
         return entitySystem.isActive( entitySystem.getEntityId( name ) );
     }
     
-    public final void deactivateEntity( int entityId ) {
+    public final FFContext deactivateEntity( int entityId ) {
         entitySystem.deactivateEntity( entityId );
+        return this;
     }
     
-    public final void deactivateEntity( String name  ) {
+    public final FFContext deactivateEntity( String name  ) {
         entitySystem.deactivateEntity( entitySystem.getEntityId( name ) );
+        return this;
     }
     
-    public final void deleteEntity( int entityId ) {
+    public final FFContext deleteEntity( int entityId ) {
         entitySystem.delete( entityId );
+        return this;
     }
     
     public final int getAssetInstanceId( String assetName ) {
@@ -484,51 +500,64 @@ public final class FFContext {
         return key.cast( property );
     }
     
-    public final <T> void setProperty( TypedKey<T> key, T value ) {
+    public final <T> FFContext setProperty( TypedKey<T> key, T value ) {
         properties.put( key, value );
+        return this;
     }
     
-    public final <L> void registerListener( EventTypeKey eventType, L listener ) {
+    public final <L> FFContext registerListener( EventTypeKey eventType, L listener ) {
         eventDispatcher.register( eventType, listener );
+        return this;
     }
     
-    public final <L> void disposeListener( EventTypeKey eventType, L listener ) {
+    public final <L> FFContext disposeListener( EventTypeKey eventType, L listener ) {
         eventDispatcher.unregister( eventType, listener );
+        return this;
     }
     
-    public final <L> void notify( final Event<L> event ) {
+    public final <L> FFContext notify( final Event<L> event ) {
         eventDispatcher.notify( event );
+        return this;
     }
     
-    public final <L extends AspectedEventListener> void notify( final AspectedEvent<L> event ) {
+    public final <L extends AspectedEventListener> FFContext notify( final AspectedEvent<L> event ) {
         eventDispatcher.notify( event );
+        return this;
     }
     
-    public final <L extends PredicatedEventListener> void notify( final PredicatedEvent<L> event ) {
+    public final <L extends PredicatedEventListener> FFContext notify( final PredicatedEvent<L> event ) {
         eventDispatcher.notify( event );
+        return this;
     }
     
-    public final void fromAttributes( Attributes attributes ) {
+    public final FFContext fromAttributes( Attributes attributes ) {
         fromAttributes( attributes, BuildType.CLEAR_OLD );
+        return this;
     }
     
-    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
+    public final FFContext fromAttributes( Attributes attributes, BuildType buildType ) {
         for ( SystemBuilderAdapter<?> builderAdapter : systemBuilderAdapter ) {
             builderAdapter.fromAttributes( attributes, buildType );
         }
+        
+        return this;
     }
     
-    public final void toAttributes( Attributes attributes ) {
+    public final FFContext toAttributes( Attributes attributes ) {
         for ( SystemBuilderAdapter<?> builderAdapter : systemBuilderAdapter ) {
             builderAdapter.toAttributes( attributes, this );
         }
+        
+        return this;
     }
     
-    public final void toAttributes( Attributes attributes, SystemComponentKey<?>... componentKeys ) {
+    public final FFContext toAttributes( Attributes attributes, SystemComponentKey<?>... componentKeys ) {
         for ( SystemComponentKey<?> componentKey : componentKeys ) {
             SystemBuilderAdapter<?> builderAdapter = systemBuilderAdapter.get( componentKey.index() );
             builderAdapter.toAttributes( attributes, this );
         }
+        
+        return this;
     }
 
     public final int getScreenWidth() {
