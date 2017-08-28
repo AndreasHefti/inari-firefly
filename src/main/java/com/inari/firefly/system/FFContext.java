@@ -36,9 +36,8 @@ import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent;
-import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentNameId;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.external.FFAudio;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.FFInput;
@@ -359,17 +358,7 @@ public final class FFContext {
         }
         return subType.cast( component );
     }
-    
-    @SuppressWarnings( "unchecked" )
-    public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentNameId id ) {
-        final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( id.type.typeKey.index() );
-        final C component = builderHelper.get( builderHelper.getId( id.name ) );
-        if ( component == null ) {
-            return null;
-        }
-        return (CS) component;
-    }
-    
+
     @SuppressWarnings( "unchecked" )
     public <C extends SystemComponent> Iterator<C> getSystemComponents( SystemComponentKey<C> key ) {
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
@@ -390,11 +379,6 @@ public final class FFContext {
         return this;
     }
     
-    public final <C extends SystemComponent, CS extends C> FFContext activateSystemComponent( SystemComponentNameId id ) {
-        activateSystemComponent( id.type.typeKey, id.name );
-        return this;
-    }
-    
     public final <C extends SystemComponent, CS extends C> FFContext deactivateSystemComponent( SystemComponentKey<C> key, int id ) {
         @SuppressWarnings( "unchecked" )
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
@@ -409,11 +393,6 @@ public final class FFContext {
         return this;
     }
     
-    public final <C extends SystemComponent, CS extends C> FFContext deactivateSystemComponent( SystemComponentNameId id ) {
-        deactivateSystemComponent( id.type.typeKey, id.name );
-        return this;
-    }
-    
     public final <C extends SystemComponent> FFContext deleteSystemComponent( SystemComponentKey<C> key, int componentIndex ) {
         final SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         builderHelper.delete( componentIndex );
@@ -425,11 +404,7 @@ public final class FFContext {
         builderHelper.delete( builderHelper.getId( componentName ) );
         return this;
     }
-    
-    public final <C extends SystemComponent> FFContext deleteSystemComponent( SystemComponentNameId id ) {
-        return deleteSystemComponent( id.type.typeKey, id.name );
-    }
-    
+
     public final <C extends SystemComponent> ComponentBuilder getComponentBuilder( SystemComponentKey<C> key ) {
         int id = key.index();
         if ( !systemBuilderAdapter.contains( id ) ) {
