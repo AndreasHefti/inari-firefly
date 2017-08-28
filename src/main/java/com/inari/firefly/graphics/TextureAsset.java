@@ -23,12 +23,14 @@ import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.TextureData;
 import com.inari.firefly.system.utils.Disposable;
 
 public final class TextureAsset extends Asset implements TextureData {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Asset.TYPE_KEY, TextureAsset.class );
     public static final AttributeKey<String> RESOURCE_NAME = AttributeKey.createString( "resourceName", TextureAsset.class );
     public static final AttributeKey<Boolean> MIP_MAP = AttributeKey.createBoolean( "mipmap", TextureAsset.class );
     public static final AttributeKey<Integer> WRAP_S = AttributeKey.createInt( "wrapS", TextureAsset.class );

@@ -36,7 +36,9 @@ import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentNameId;
 import com.inari.firefly.system.external.FFAudio;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.FFInput;
@@ -359,6 +361,16 @@ public final class FFContext {
     }
     
     @SuppressWarnings( "unchecked" )
+    public final <C extends SystemComponent, CS extends C> CS getSystemComponent( SystemComponentNameId id ) {
+        final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( id.type.typeKey.index() );
+        final C component = builderHelper.get( builderHelper.getId( id.name ) );
+        if ( component == null ) {
+            return null;
+        }
+        return (CS) component;
+    }
+    
+    @SuppressWarnings( "unchecked" )
     public <C extends SystemComponent> Iterator<C> getSystemComponents( SystemComponentKey<C> key ) {
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         return builderHelper.getAll();
@@ -378,6 +390,11 @@ public final class FFContext {
         return this;
     }
     
+    public final <C extends SystemComponent, CS extends C> FFContext activateSystemComponent( SystemComponentNameId id ) {
+        activateSystemComponent( id.type.typeKey, id.name );
+        return this;
+    }
+    
     public final <C extends SystemComponent, CS extends C> FFContext deactivateSystemComponent( SystemComponentKey<C> key, int id ) {
         @SuppressWarnings( "unchecked" )
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
@@ -389,6 +406,11 @@ public final class FFContext {
         @SuppressWarnings( "unchecked" )
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.deactivate( builderHelper.getId( name ) );
+        return this;
+    }
+    
+    public final <C extends SystemComponent, CS extends C> FFContext deactivateSystemComponent( SystemComponentNameId id ) {
+        deactivateSystemComponent( id.type.typeKey, id.name );
         return this;
     }
     
@@ -404,6 +426,10 @@ public final class FFContext {
         return this;
     }
     
+    public final <C extends SystemComponent> FFContext deleteSystemComponent( SystemComponentNameId id ) {
+        return deleteSystemComponent( id.type.typeKey, id.name );
+    }
+    
     public final <C extends SystemComponent> ComponentBuilder getComponentBuilder( SystemComponentKey<C> key ) {
         int id = key.index();
         if ( !systemBuilderAdapter.contains( id ) ) {
@@ -414,7 +440,7 @@ public final class FFContext {
         return builderAdapter.createComponentBuilder( null );
     }
     
-    public final <C extends SystemComponent> ComponentBuilder getComponentBuilder( SystemComponentKey<C> key, Class<? extends C> componentType ) {
+    public final <C extends SystemComponent> ComponentBuilder getComponentBuilder( final SystemComponentKey<C> key, Class<? extends C> componentType ) {
         int id = key.index();
         if ( !systemBuilderAdapter.contains( id ) ) {
             throw new FFInitException( "No component builder for key: " + key + " found. Maybe the appropriate System is not loaded?" );
@@ -422,6 +448,16 @@ public final class FFContext {
         @SuppressWarnings( "unchecked" )
         SystemBuilderAdapter<C> builderAdapter = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( id );
         return builderAdapter.createComponentBuilder( componentType );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public final <C extends SystemComponent> ComponentBuilder getComponentBuilder( final SystemComponentType type ) {
+        int id = type.typeKey.index();
+        if ( !systemBuilderAdapter.contains( id ) ) {
+            throw new FFInitException( "No component builder for ComponentType: " + type + " found. Maybe the appropriate System is not loaded?" );
+        }
+        SystemBuilderAdapter<C> builderAdapter = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( id );
+        return builderAdapter.createComponentBuilder( (Class<? extends C>) type.getSubType() );
     }
     
     public final EntityBuilder getEntityBuilder() {

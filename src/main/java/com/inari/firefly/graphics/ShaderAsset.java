@@ -7,10 +7,12 @@ import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.utils.Disposable;
 
 public final class ShaderAsset extends Asset {
 
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Asset.TYPE_KEY, ShaderAsset.class );
     public static final AttributeKey<String> VERTEX_SHADER_RESOURCE_NAME = AttributeKey.createString( "vertexShaderResourceName", ShaderAsset.class );
     public static final AttributeKey<String> VERTEX_SHADER_PROGRAM = AttributeKey.createString( "vertexShaderProgram", ShaderAsset.class );
     public static final AttributeKey<String> FRAGMENT_SHADER_RESOURCE_NAME = AttributeKey.createString( "fragmentShaderResourceName", ShaderAsset.class );

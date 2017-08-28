@@ -24,11 +24,13 @@ import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.external.SpriteData;
 import com.inari.firefly.system.utils.Disposable;
 
 public final class SpriteAsset extends Asset implements SpriteData {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Asset.TYPE_KEY, SpriteAsset.class );
     public static final AttributeKey<String> TEXTURE_ASSET_NAME = AttributeKey.createString( "textureAssetName", SpriteAsset.class );
     public static final AttributeKey<Integer> TEXTURE_ASSET_ID = AttributeKey.createInt( "textureAssetId", SpriteAsset.class );
     public static final AttributeKey<Rectangle> TEXTURE_REGION  = AttributeKey.createRectangle( "textureRegion", SpriteAsset.class );

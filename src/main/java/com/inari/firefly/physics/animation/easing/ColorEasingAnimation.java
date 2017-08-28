@@ -6,10 +6,13 @@ import com.inari.commons.JavaUtils;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.ValueAnimation;
+import com.inari.firefly.system.component.SystemComponentType;
 
 public final class ColorEasingAnimation extends ValueAnimation<RGBColor> {
 
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Animation.TYPE_KEY, ColorEasingAnimation.class );
     public static final AttributeKey<EasingData> EASING_DATA_RED = AttributeKey.createEasingData( "easingDataRed", EasingAnimation.class );
     public static final AttributeKey<EasingData> EASING_DATA_GREEN = AttributeKey.createEasingData( "easingDataGreen", EasingAnimation.class );
     public static final AttributeKey<EasingData> EASING_DATA_BLUE = AttributeKey.createEasingData( "easingDataBlue", EasingAnimation.class );

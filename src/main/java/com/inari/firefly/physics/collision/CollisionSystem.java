@@ -96,7 +96,9 @@ public final class CollisionSystem
     
     @Override
     public final boolean match( Aspects aspects ) {
-        return aspects.contains( ECollision.TYPE_KEY ) && !aspects.contains( ETile.TYPE_KEY );
+        return aspects.contains( ECollision.TYPE_KEY ) && 
+               aspects.contains( ETransform.TYPE_KEY ) && 
+               !aspects.contains( ETile.TYPE_KEY );
     }
     
     public final void entityActivated( int entityId, final Aspects aspects ) {

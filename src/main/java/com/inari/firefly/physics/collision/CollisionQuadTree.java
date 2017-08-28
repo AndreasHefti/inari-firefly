@@ -11,9 +11,11 @@ import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.graphics.ETransform;
+import com.inari.firefly.system.component.SystemComponentType;
 
 public final class CollisionQuadTree extends ContactPool {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( ContactPool.TYPE_KEY, CollisionQuadTree.class );
     public static final AttributeKey<Rectangle> WORLD_AREA = AttributeKey.createRectangle( "world_area", CollisionQuadTree.class );
     public static final AttributeKey<Integer> MAX_ENTRIES_OF_AREA = AttributeKey.createInt( "maxEntities", CollisionQuadTree.class );
     public static final AttributeKey<Integer> MAX_LEVEL = AttributeKey.createInt( "maxLevel", CollisionQuadTree.class );

@@ -8,9 +8,11 @@ import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponentType;
 
 public final class RandomSelection extends BehaviorNode {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( BehaviorNode.TYPE_KEY, RandomSelection.class );
     public static final AttributeKey<IntBag> NODE_IDS = AttributeKey.createIntBag( "nodeIds", RandomSelection.class );
     public static final AttributeKey<DynArray<String>> NODE_NAMES = AttributeKey.createDynArray( "nodeNames", RandomSelection.class, String.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(

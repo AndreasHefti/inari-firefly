@@ -5,6 +5,7 @@ import java.util.ArrayDeque;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.IntBag;
+import com.inari.firefly.system.component.SystemComponentType;
 
 /** This is a very simple ContactPool implementation that just collect the id's of all Entities of View and Layer.
  *  And gives them all back for iteration on get.
@@ -14,6 +15,8 @@ import com.inari.commons.lang.list.IntBag;
  *
  */
 public final class VerySimpleContactPool extends ContactPool {
+    
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( ContactPool.TYPE_KEY, VerySimpleContactPool.class );
     
     private final IntBag entities = new IntBag( 50, -1 );
     

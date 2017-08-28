@@ -11,10 +11,12 @@ import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.graphics.text.FontAsset;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class SimpleTextRenderer extends Renderer {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Renderer.TYPE_KEY, SimpleTextRenderer.class );
     public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "SimpleTextRenderer", SimpleTextRenderer.class );
     public static final Aspects MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
         ETransform.TYPE_KEY, 

@@ -7,10 +7,12 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.sprite.ESprite;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class SimpleSpriteRenderer extends Renderer {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Renderer.TYPE_KEY, SimpleSpriteRenderer.class );
     public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "SimpleSpriteRenderer", SimpleSpriteRenderer.class );
     public static final Aspects MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
         ETransform.TYPE_KEY, 

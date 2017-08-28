@@ -70,18 +70,18 @@ public final class ComponentId {
         if ( typeKey == null ) {
             if ( other.typeKey != null )
                 return false;
-        } else if ( !typeKey.equals( other.typeKey ) )
+        } else if ( !typeKey.aspectGroup().equals( other.typeKey.aspectGroup() ) || typeKey.index() != other.typeKey.index() )
             return false;
         return true;
     }
 
-        @Override
-        public final String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append( typeKey );
-            builder.append( "(" );
-            builder.append( indexId );
-            builder.append( ")" );
-            return builder.toString();
-        }
+    @Override
+    public final String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( typeKey );
+        builder.append( "(" );
+        builder.append( indexId );
+        builder.append( ")" );
+        return builder.toString();
+    }
 }

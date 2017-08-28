@@ -22,10 +22,12 @@ import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.utils.Disposable;
 
 public class SoundAsset extends Asset {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Asset.TYPE_KEY, SoundAsset.class );
     public static final AttributeKey<String> RESOURCE_NAME = AttributeKey.createString( "resourceName", SoundAsset.class );
     public static final AttributeKey<Boolean> STREAMING = AttributeKey.createBoolean( "streaming", SoundAsset.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(

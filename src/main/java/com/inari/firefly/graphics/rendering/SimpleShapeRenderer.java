@@ -8,10 +8,12 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.shape.EShape;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class SimpleShapeRenderer extends Renderer {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Renderer.TYPE_KEY, SimpleShapeRenderer.class );
     public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "SimpleShapeRenderer", SimpleShapeRenderer.class );
 
     protected SimpleShapeRenderer( int index ) {

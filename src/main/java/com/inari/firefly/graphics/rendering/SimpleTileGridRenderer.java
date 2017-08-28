@@ -9,10 +9,12 @@ import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGrid.TileGridIterator;
 import com.inari.firefly.graphics.tile.TileGridSystem;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class SimpleTileGridRenderer extends Renderer {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Renderer.TYPE_KEY, SimpleTileGridRenderer.class );
     public static final RenderingChain.RendererKey CHAIN_KEY = new RenderingChain.RendererKey( "SimpleTileGridRenderer", SimpleTileGridRenderer.class );
     public static final Aspects MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
         ETransform.TYPE_KEY, 

@@ -6,9 +6,11 @@ import com.inari.commons.JavaUtils;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponentType;
 
 public class ConditionalLeaf extends BehaviorNode {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( BehaviorNode.TYPE_KEY, ConditionalLeaf.class );
     public static final AttributeKey<Integer> ACTION_ID = AttributeKey.createInt( "actionId", ConditionalLeaf.class );
     public static final AttributeKey<BCondition> RUN_CONDITION = AttributeKey.create( "runCondition", BCondition.class, ConditionalLeaf.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet( 

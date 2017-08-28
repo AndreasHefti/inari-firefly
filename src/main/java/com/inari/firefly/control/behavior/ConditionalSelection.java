@@ -7,9 +7,11 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponentType;
 
 public final class ConditionalSelection extends BehaviorNode {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( BehaviorNode.TYPE_KEY, ConditionalSelection.class );
     public static final AttributeKey<DynArray<Mapping>> NODE_MAPPING = AttributeKey.createDynArray( "subNodeMapping", ConditionalSelection.class, Mapping.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         NODE_MAPPING

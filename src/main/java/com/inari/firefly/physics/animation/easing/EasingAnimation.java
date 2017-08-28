@@ -6,10 +6,13 @@ import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Easing;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.FloatAnimation;
+import com.inari.firefly.system.component.SystemComponentType;
 
 public final class EasingAnimation extends FloatAnimation {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Animation.TYPE_KEY, EasingAnimation.class );
     public static final AttributeKey<EasingData> EASING_DATA = AttributeKey.createEasingData( "easingData", EasingAnimation.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         EASING_DATA

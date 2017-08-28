@@ -12,6 +12,7 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.SpriteData;
 import com.inari.firefly.system.external.TextureData;
@@ -19,6 +20,7 @@ import com.inari.firefly.system.utils.Disposable;
 
 public final class FontAsset extends Asset implements TextureData {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Asset.TYPE_KEY, FontAsset.class );
     public static final AttributeKey<String> TEXTURE_RESOURCE_NAME = AttributeKey.createString( "textureResourceName", FontAsset.class );
     public static final AttributeKey<Boolean> MIP_MAP = AttributeKey.createBoolean( "mipmap", FontAsset.class );
     public static final AttributeKey<Integer> WRAP_S = AttributeKey.createInt( "wrapS", FontAsset.class );

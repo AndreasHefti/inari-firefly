@@ -10,11 +10,13 @@ import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.external.SpriteData;
 import com.inari.firefly.system.utils.Disposable;
 
 public class SpriteSetAsset extends Asset {
     
+    public static final SystemComponentType COMPONENT_TYPE = new SystemComponentType( Asset.TYPE_KEY, SpriteSetAsset.class );
     public static final AttributeKey<String> TEXTURE_ASSET_NAME = AttributeKey.createString( "textureAssetName", SpriteSetAsset.class );
     public static final AttributeKey<Integer> TEXTURE_ASSET_ID = AttributeKey.createInt( "textureAssetId", SpriteSetAsset.class );
     public static final AttributeKey<DynArray<Sprite>> SPRITE_DATA = AttributeKey.createDynArray( "spriteData", SpriteSetAsset.class, Sprite.class );
