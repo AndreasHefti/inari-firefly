@@ -76,7 +76,7 @@ public final class SpriteGroupRenderer extends Renderer {
         }
     }
     
-    private final Comparator<IndexedTypeSet> RENDERABLE_COMPARATOR = new Comparator<IndexedTypeSet>() {
+    final Comparator<IndexedTypeSet> RENDERABLE_COMPARATOR = new Comparator<IndexedTypeSet>() {
         
         @Override
         public final int compare( IndexedTypeSet its1, IndexedTypeSet its2 ) {
@@ -97,7 +97,7 @@ public final class SpriteGroupRenderer extends Renderer {
                 return 0;
             }
             
-            return ( o1 < o2 )? 1 : -1;
+            return ( o1 < o2 )? -1 : 1;
         }
     };
 
