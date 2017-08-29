@@ -4,9 +4,11 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.entity.EGroup;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.sprite.ESprite;
+import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.component.SystemComponentType;
 import com.inari.firefly.system.external.FFTimer;
 
@@ -18,6 +20,10 @@ public final class SimpleSpriteRenderer extends Renderer {
         ETransform.TYPE_KEY, 
         ESprite.TYPE_KEY 
     );
+    public static final Aspects NONE_MATCHING_ASPECTS = EntityComponent.ASPECT_GROUP.createAspects( 
+        EGroup.TYPE_KEY, 
+        ETile.TYPE_KEY
+    );
 
     protected SimpleSpriteRenderer( int index ) {
         super( index );
@@ -26,7 +32,8 @@ public final class SimpleSpriteRenderer extends Renderer {
     
     @Override
     public final boolean match( Aspects aspects ) {
-        return aspects.include( MATCHING_ASPECTS );
+        return aspects.include( MATCHING_ASPECTS ) && 
+               aspects.exclude( NONE_MATCHING_ASPECTS );
     }
 
     @Override
