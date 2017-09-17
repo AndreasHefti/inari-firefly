@@ -199,7 +199,7 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
     }
     
     @Override
-    public final  void clear() {
+    public final  void clearSystem() {
         for ( int i = 0; i < scenes.capacity(); i++ ) {
             if ( scenes.contains( i ) ) {
                 deleteScene( i );
@@ -214,7 +214,7 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
     public final void dispose( FFContext context ) {
         context.disposeListener( UpdateEvent.TYPE_KEY, this );
         context.disposeListener( SceneEvent.TYPE_KEY, this );
-        clear();
+        clearSystem();
     }
     
     private final class SceneBuilder extends SystemComponentBuilder {

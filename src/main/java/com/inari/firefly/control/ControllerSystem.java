@@ -59,7 +59,7 @@ public final class ControllerSystem
     public final void dispose( FFContext context ) {
         context.disposeListener( UpdateEvent.TYPE_KEY, this );
         
-        clear();
+        clearSystem();
     }
     
     public final Controller getController( int controllerId ) {
@@ -132,7 +132,7 @@ public final class ControllerSystem
         controller.get( controllerId ).removeComponentId( componentId );
     }
 
-    public final void clear() {
+    public final void clearSystem() {
         for ( Controller c : controller ) {
             disposeSystemComponent( c );
         }

@@ -72,7 +72,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
     
     @Override
     public final void dispose( FFContext context ) {
-        clear();
+        clearSystem();
     }
 
     public final boolean hasView( int viewId ) {
@@ -192,7 +192,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         deleteView( getViewId( viewName ) );
     }
     
-    public final void clear() {
+    public final void clearSystem() {
         for ( View view : views ) {
             disableLayering( view.index() );
             deleteView( view.index() );

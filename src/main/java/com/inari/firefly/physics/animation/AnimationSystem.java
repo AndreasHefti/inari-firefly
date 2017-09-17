@@ -64,7 +64,7 @@ public final class AnimationSystem
     
     @Override
     public void dispose( FFContext context ) {
-        clear();
+        clearSystem();
         
         context.disposeListener( UpdateEvent.TYPE_KEY, this );
         context.disposeListener( AnimationSystemEvent.TYPE_KEY, this );
@@ -108,7 +108,7 @@ public final class AnimationSystem
         }
     }
     
-    public final void clear() {
+    public final void clearSystem() {
         for ( Animation animation : animations ) {
             disposeSystemComponent( animation );
         }

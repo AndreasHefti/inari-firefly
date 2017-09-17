@@ -31,8 +31,8 @@ public abstract class SoundController extends Controller {
             if ( componentIds.isEmpty( i ) ) {
                 continue;
             }
-            int soundId = componentIds.get( i );
-            update( soundSystem.getSound( soundId ) );
+            
+            update( soundSystem.sounds.get( componentIds.get( i ) ) );
         }
     }
 

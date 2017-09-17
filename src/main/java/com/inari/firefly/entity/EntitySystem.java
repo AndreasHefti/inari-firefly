@@ -82,7 +82,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     
     @Override
     public void dispose( FFContext context ) {
-        clear();
+        clearSystem();
     }
     
     public final EntityBuilder getEntityBuilder() {
@@ -194,7 +194,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     }
     
     @Override
-    public final void clear() {
+    public final void clearSystem() {
         for ( int i = activeEntities.nextSetBit( 0 ); i >= 0; i = activeEntities.nextSetBit( i+1 ) ) {
             deleteSilently( i );
         }

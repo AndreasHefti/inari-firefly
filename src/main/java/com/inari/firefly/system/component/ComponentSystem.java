@@ -70,6 +70,6 @@ public abstract class ComponentSystem<T extends ComponentSystem<T>> implements F
    
     public abstract Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter();
     
-    public abstract void clear();
+    public abstract void clearSystem();
 
 }

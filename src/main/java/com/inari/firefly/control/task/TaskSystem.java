@@ -50,7 +50,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
     @Override
     public final void dispose( FFContext context ) {
         context.disposeListener( TaskSystemEvent.TYPE_KEY, this );
-        clear();
+        clearSystem();
     }
     
     public final Task getTask( int taskId ) {
@@ -70,7 +70,7 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         return subType.cast( task );
     }
 
-    public final void clear() {
+    public final void clearSystem() {
         for ( Task task : tasks ) {
             disposeSystemComponent( task );
         }

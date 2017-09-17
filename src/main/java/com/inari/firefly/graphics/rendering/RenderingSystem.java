@@ -144,7 +144,7 @@ public final class RenderingSystem
     }
 
     @Override
-    public final void clear() {
+    public final void clearSystem() {
         dispose( context );
         renderingChain = null;
     }

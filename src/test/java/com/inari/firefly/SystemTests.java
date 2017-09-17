@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.inari.commons.geom.Rectangle;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
@@ -24,15 +25,15 @@ public class SystemTests extends FFTest {
         EntitySystem entitySystem = ffContext.getSystem( EntitySystem.SYSTEM_KEY );
         FFGraphics lowerSystemMock = ffContext.getGraphics();
         
-        assetSystem
-            .getAssetBuilder( TextureAsset.class )
+        ffContext
+            .getComponentBuilder( Asset.TYPE_KEY, TextureAsset.class )
                 .set( TextureAsset.NAME, TEXTURE_ASSET_NAME )
                 .set( TextureAsset.RESOURCE_NAME, "origTiles.png" )
             .build();
-         assetSystem
-            .getAssetBuilder( SpriteAsset.class )
+         ffContext
+            .getComponentBuilder( Asset.TYPE_KEY, SpriteAsset.class )
                 .set( SpriteAsset.NAME, SPRITE_ASSET_NAME )
-                .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( TEXTURE_ASSET_NAME ) )
+                .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.assetMap().getId( TEXTURE_ASSET_NAME ) )
                 .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, 32, 32 ) )
             .build()
             ;

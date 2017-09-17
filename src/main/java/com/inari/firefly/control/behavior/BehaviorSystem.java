@@ -118,7 +118,7 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
     }
     
     @Override
-    public final void clear() {
+    public final void clearSystem() {
         entityIds.clear();
         for ( BehaviorNode node : behaviorNodes ) {
             disposeBehaviorNode( node );

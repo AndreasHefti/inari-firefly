@@ -63,10 +63,10 @@ public class StateSystem
         context.disposeListener( UpdateEvent.TYPE_KEY, this );
         context.disposeListener( StateSystemEvent.TYPE_KEY, this );
         
-        clear();
+        clearSystem();
     }
 
-    public final void clear() {
+    public final void clearSystem() {
         for ( Workflow workflow : workflows ) {
             deleteWorkflow( workflow.index() );
         }

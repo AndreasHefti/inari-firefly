@@ -34,7 +34,7 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
     
     @Override
     public final void dispose( FFContext context ) {
-        clear();
+        clearSystem();
     }
     
     public final Prototype getPrototype( int prototypeId ) {
@@ -64,7 +64,7 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
         return subType.cast( prototype );
     }
 
-    public final void clear() {
+    public final void clearSystem() {
         for ( Prototype prototype : prototypes ) {
             disposeSystemComponent( prototype );
         }

@@ -54,12 +54,12 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     
     @Override
     public void dispose( FFContext context ) {
-        clear();
+        clearSystem();
         
         context.disposeListener( EntityPrefabSystemEvent.TYPE_KEY, this );
     }
     
-    public final  void clear() {
+    public final  void clearSystem() {
         for ( int i = 0; i < prefabs.capacity(); i++ ) {
             EntityPrefab prefab = prefabs.get( i );
             if ( prefab != null ) {

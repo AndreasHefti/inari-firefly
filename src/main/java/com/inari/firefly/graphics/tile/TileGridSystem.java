@@ -76,7 +76,7 @@ public final class TileGridSystem
         context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
         context.disposeListener( TileSystemEvent.TYPE_KEY, this );
         
-        clear();
+        clearSystem();
     }
 
     final void removeMultiTilePosition( final int tileGridId, final int entityId, final int x, final int y ) {
@@ -245,7 +245,7 @@ public final class TileGridSystem
     }
 
     @Override
-    public final void clear() {
+    public final void clearSystem() {
         tileGridOfViewsPerLayer.clear();
     }
     

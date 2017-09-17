@@ -45,7 +45,7 @@ public abstract class SystemBuilderAdapter<C extends SystemComponent> implements
         
     public void fromAttributes( Attributes attributes, BuildType buildType ) {
         if ( buildType == BuildType.CLEAR_OLD ) {
-            getSystem().clear();
+            getSystem().clearSystem();
         }
         @SuppressWarnings( "unchecked" )
         Class<C> indexedType = (Class<C>) componentTypeKey().indexedType;

@@ -80,7 +80,7 @@ public final class CollisionSystem
 
     @Override
     public final void dispose( FFContext context ) {
-        clear();
+        clearSystem();
         context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
         context.disposeListener( ViewEvent.TYPE_KEY, this );
         context.disposeListener( MoveEvent.TYPE_KEY, this );
@@ -491,7 +491,7 @@ public final class CollisionSystem
     }
 
     @Override
-    public final void clear() {
+    public final void clearSystem() {
         for ( ContactPool pool : contactPools ) {
             disposeContactPool( pool );
         }

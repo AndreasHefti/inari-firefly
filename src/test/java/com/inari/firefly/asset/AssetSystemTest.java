@@ -10,8 +10,8 @@ import org.junit.Test;
 import com.inari.firefly.FFTest;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
+import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.utils.Disposable;
 
 public class AssetSystemTest extends FFTest {
@@ -36,7 +36,7 @@ public class AssetSystemTest extends FFTest {
         service.init( ffContext );
         Attributes attrs = new Attributes();
         
-        SystemComponentBuilder assetBuilder = service.getAssetBuilder( TestAsset.class );
+        ComponentBuilder assetBuilder = ffContext.getComponentBuilder( Asset.TYPE_KEY, TestAsset.class );
         assetBuilder
             .set( TestAsset.NAME, "asset1" )
             .build();
@@ -80,9 +80,9 @@ public class AssetSystemTest extends FFTest {
         service.init( ffContext );
         Attributes attrs = new Attributes();
         
-        service
-            .getAssetBuilder( TestAsset.class )
-                .set( TestAsset.NAME, "asset1" )
+        ffContext
+            .getComponentBuilder( Asset.TYPE_KEY, TestAsset.class )
+            .set( TestAsset.NAME, "asset1" )
             .build();
         
         assertEquals( 
@@ -112,7 +112,7 @@ public class AssetSystemTest extends FFTest {
             eventLog.toString() 
         );
         
-        service.disposeAsset( "asset1" );
+        service.assetMap().deactivate( "asset1" );
         assertFalse( service.isLoaded( "asset1" ) );
         attrs.clear();
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
@@ -124,7 +124,7 @@ public class AssetSystemTest extends FFTest {
             eventLog.toString() 
         );
         
-        service.deleteAsset( "asset1" );
+        service.assetMap().delete( "asset1" );
         attrs.clear();
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 
@@ -143,15 +143,16 @@ public class AssetSystemTest extends FFTest {
     
     @Test
     public void testPreventingOfUseOfIdTwice() {
-        AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
         Attributes attrs = new Attributes();
         
-        service.getAssetBuilder( TestAsset.class )
+        ffContext
+            .getComponentBuilder( Asset.TYPE_KEY, TestAsset.class )
             .set( Asset.NAME, "asset2" )
             .buildAndNext( 1 );
         
         try {
-            service.getAssetBuilder( TestAsset.class )
+            ffContext
+                .getComponentBuilder( Asset.TYPE_KEY, TestAsset.class )
                 .set( Asset.NAME, "asset2" )
                 .buildAndNext( 1 );
             fail( "Exception expected here" );
@@ -176,11 +177,10 @@ public class AssetSystemTest extends FFTest {
     
     @Test
     public void testDifferentTypes() {
-        AssetSystem service = ffContext.getSystem( AssetSystem.SYSTEM_KEY );
-        
         Attributes attrs = new Attributes();
         
-        service.getAssetBuilder( TestAsset.class )
+        ffContext
+            .getComponentBuilder( Asset.TYPE_KEY, TestAsset.class )
             .set( Asset.NAME, "asset2" )
             .buildAndNext( 1 )
             .set( Asset.NAME, "asset3" )
@@ -189,7 +189,8 @@ public class AssetSystemTest extends FFTest {
             .buildAndNext( 3 )
             .set( Asset.NAME, "asset5" )
             .build( 4 );
-        service.getAssetBuilder( TestAsset2.class )
+        ffContext
+            .getComponentBuilder( Asset.TYPE_KEY, TestAsset2.class )
             .set( Asset.NAME, "asset22" )
             .buildAndNext( 21 )
             .set( Asset.NAME, "asset23" )

@@ -87,7 +87,7 @@ public class EntityActionSystem extends ComponentSystem<EntityActionSystem> impl
         action.dispose();
     }
     
-    public final void clear() {
+    public final void clearSystem() {
         for ( Action action : actions ) {
             disposeAction( action );
         }
@@ -104,7 +104,7 @@ public class EntityActionSystem extends ComponentSystem<EntityActionSystem> impl
     
     @Override
     public void dispose( FFContext context ) {
-        clear();
+        clearSystem();
         
         context.disposeListener( EntityActionEvent.TYPE_KEY, this );
     }

@@ -51,7 +51,7 @@ public final class AudioSystemEvent extends Event<AudioSystem> {
                 if ( soundId >= 0 ) {
                     listener.playSound( soundId ); 
                 } else {
-                    listener.playSound( name ); 
+                    listener.playSound( listener.sounds.getId( name ) ); 
                 }
                 break;
             }
@@ -59,7 +59,7 @@ public final class AudioSystemEvent extends Event<AudioSystem> {
                 if ( soundId >= 0 ) {
                     listener.stopPlaying( soundId ); 
                 } else {
-                    listener.stopPlaying( name ); 
+                    listener.stopPlaying( listener.sounds.getId( name ) ); 
                 }
                 break;
             }
