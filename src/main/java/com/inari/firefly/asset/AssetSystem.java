@@ -153,7 +153,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         for ( Asset asset : assets.map ) {
             if ( asset.dependsOn >= 0 ) {
                 if ( asset.dependsOn == assetId ) {
-                    toDisposeFirst.add( asset.dependsOn );
+                    toDisposeFirst.add( asset.index() );
                     break;
                 }
             }
