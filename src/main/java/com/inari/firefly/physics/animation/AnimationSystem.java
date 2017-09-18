@@ -69,10 +69,6 @@ public final class AnimationSystem
         context.registerListener( AnimationSystemEvent.TYPE_KEY, this );
         context.registerListener( EntityActivationEvent.TYPE_KEY, this );
     }
-    
-    public final SystemComponentMap<Animation> animationMap() {
-        return animations;
-    }
 
     public final boolean match( Aspects aspects ) {
         return aspects.contains( EAnimation.TYPE_KEY );

@@ -52,8 +52,8 @@ public final class TileGridSystem
 
     private EntitySystem entitySystem;
     
-    private final SystemComponentMap<TileGrid> tileGrids;
-    private final DynArray<DynArray<TileGrid>> tileGridOfViewsPerLayer;
+    final SystemComponentMap<TileGrid> tileGrids;
+    final DynArray<DynArray<TileGrid>> tileGridOfViewsPerLayer;
     
     public TileGridSystem() {
         super( SYSTEM_KEY );

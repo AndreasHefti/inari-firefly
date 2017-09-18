@@ -112,7 +112,7 @@ public class AssetSystemTest extends FFTest {
             eventLog.toString() 
         );
         
-        service.assetMap().deactivate( "asset1" );
+        service.assets.deactivate( "asset1" );
         assertFalse( service.isLoaded( "asset1" ) );
         attrs.clear();
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
@@ -124,7 +124,7 @@ public class AssetSystemTest extends FFTest {
             eventLog.toString() 
         );
         
-        service.assetMap().delete( "asset1" );
+        service.assets.delete( "asset1" );
         attrs.clear();
         ffContext.toAttributes( attrs, Asset.TYPE_KEY );
         assertEquals( 

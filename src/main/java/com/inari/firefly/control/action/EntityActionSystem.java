@@ -31,10 +31,6 @@ public class EntityActionSystem extends ComponentSystem<EntityActionSystem> impl
         
         context.registerListener( EntityActionEvent.TYPE_KEY, this );
     }
-
-    public final SystemComponentMap<Action> actionMap() {
-        return actions;
-    }
     
     public final void clearSystem() {
         actions.clear();

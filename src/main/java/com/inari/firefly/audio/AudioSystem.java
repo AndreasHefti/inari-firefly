@@ -18,7 +18,7 @@ package com.inari.firefly.audio;
 import java.util.Set;
 
 import com.inari.commons.JavaUtils;
-import com.inari.firefly.asset.AssetSystem;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.system.FFContext;
@@ -131,10 +131,7 @@ public final class AudioSystem
     }
     
     private void build( Sound sound ) {
-        SoundAsset asset = context
-            .getSystem( AssetSystem.SYSTEM_KEY )
-            .assetMap()
-            .getAs( sound.getSoundAssetId(), SoundAsset.class );
+        final SoundAsset asset = context.getSystemComponent( Asset.TYPE_KEY, sound.getSoundAssetId(), SoundAsset.class );
         
         if ( asset == null ) {
             throw new ComponentCreationException( "The SoundAsset with id: " + sound.getSoundId() + " does not exist" );

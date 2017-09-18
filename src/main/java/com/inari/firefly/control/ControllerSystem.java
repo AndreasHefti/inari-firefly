@@ -60,10 +60,6 @@ public final class ControllerSystem
         
         context.registerListener( UpdateEvent.TYPE_KEY, this );
     }
-
-    public final SystemComponentMap<Controller> controllerMap() {
-        return controller;
-    }
     
     public final void activate( int controllerId ) {
         if ( !controller.map.contains( controllerId ) ) {

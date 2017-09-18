@@ -32,7 +32,7 @@ import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.EntityActivationEvent.Type;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.system.FFContext;
@@ -291,14 +291,13 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     }
     
     private void notifyEntityController( int entityId, boolean activated ) {
-        final ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
-        IntBag controllerIds = getComponent( entityId, EEntity.TYPE_KEY ).getControllerIds();
+        final IntBag controllerIds = getComponent( entityId, EEntity.TYPE_KEY ).getControllerIds();
         for ( int i = 0; i < controllerIds.length(); i++ ) {
             if ( controllerIds.isEmpty( i ) ) {
                 continue;
             }
             
-            EntityController entityController = controllerSystem.controllerMap().getAs( controllerIds.get( i ), EntityController.class );
+            final EntityController entityController = context.getSystemComponent( Controller.TYPE_KEY, controllerIds.get( i ), EntityController.class );
             if ( entityController != null ) {
                 if ( activated ) {
                     entityController.entityActivated( entityId );

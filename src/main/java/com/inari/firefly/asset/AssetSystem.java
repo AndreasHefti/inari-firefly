@@ -24,7 +24,6 @@ import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentMap;
 import com.inari.firefly.system.component.SystemComponentMap.BuilderAdapter;
 import com.inari.firefly.system.component.SystemComponentNameMap;
 
@@ -35,8 +34,8 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         Asset.TYPE_KEY
     );
     
-    private final SystemComponentNameMap<Asset> assets;
-    private final IntBag dependingAssetIds = new IntBag( 1, -1 );
+    final SystemComponentNameMap<Asset> assets;
+    final IntBag dependingAssetIds = new IntBag( 1, -1 );
     
     AssetSystem() {
         super( SYSTEM_KEY );
@@ -56,10 +55,6 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     @Override
     public void init( FFContext context ) {
         super.init( context );
-    }
-    
-    public final SystemComponentMap<Asset> assetMap() {
-        return assets;
     }
     
     public final void loadAsset( int assetId ) {

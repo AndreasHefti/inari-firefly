@@ -11,7 +11,7 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
@@ -166,15 +166,14 @@ public final class EntityProvider implements FFSystem  {
         }
         
         final IntBag controllerIds = attributes.getValue( EEntity.CONTROLLER_IDS );
-        final ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
-        
         for ( int i = 0; i < controllerIds.length(); i++ ) {
             if ( controllerIds.isEmpty( i ) ) {
                 continue;
             }
             
-            EntityController controller = controllerSystem.controllerMap().getAs( controllerIds.get( i ), EntityController.class );
-            controller.initEntity( attributes );
+            context
+                .getSystemComponent( Controller.TYPE_KEY, controllerIds.get( i ), EntityController.class )
+                .initEntity( attributes );
         }
     }
 

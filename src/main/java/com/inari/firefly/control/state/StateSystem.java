@@ -41,7 +41,7 @@ public class StateSystem
         Workflow.TYPE_KEY
     );
 
-    private final SystemComponentMap<Workflow> workflows;
+    final SystemComponentMap<Workflow> workflows;
 
 
     public StateSystem() {
@@ -62,10 +62,6 @@ public class StateSystem
         
         context.registerListener( UpdateEvent.TYPE_KEY, this );
         context.registerListener( StateSystemEvent.TYPE_KEY, this );
-    }
-    
-    public final SystemComponentMap<Workflow> workflowMap() {
-        return workflows;
     }
     
     public final String getCurrentState( int workflowId ) {

@@ -33,7 +33,7 @@ public class SystemTests extends FFTest {
          ffContext
             .getComponentBuilder( Asset.TYPE_KEY, SpriteAsset.class )
                 .set( SpriteAsset.NAME, SPRITE_ASSET_NAME )
-                .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.assetMap().getId( TEXTURE_ASSET_NAME ) )
+                .set( SpriteAsset.TEXTURE_ASSET_ID, ffContext.getSystemComponentId( Asset.TYPE_KEY, TEXTURE_ASSET_NAME ) )
                 .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, 32, 32 ) )
             .build()
             ;

@@ -54,10 +54,6 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         context.registerListener( TaskSystemEvent.TYPE_KEY, this );
     }
 
-    public final SystemComponentMap<Task> taskMap() {
-        return tasks;
-    }
-
     public final void runTask( int taskId ) {
         if ( !tasks.map.contains( taskId ) ) {
             return;
