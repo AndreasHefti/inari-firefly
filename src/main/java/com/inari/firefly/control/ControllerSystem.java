@@ -15,20 +15,19 @@
  ******************************************************************************/ 
 package com.inari.firefly.control;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import com.inari.commons.JavaUtils;
-import com.inari.commons.StringUtils;
-import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
+import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.component.SystemComponentBuilder;
+import com.inari.firefly.system.component.SystemComponentMap;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class ControllerSystem
     extends
@@ -41,11 +40,18 @@ public final class ControllerSystem
        Controller.TYPE_KEY
     );
 
-    private final DynArray<Controller> controller;
+    private final SystemComponentMap<Controller> controller;
 
     ControllerSystem() {
         super( SYSTEM_KEY );
-        controller = DynArray.create( Controller.class, 20, 10 );
+        controller = SystemComponentMap.create( 
+            this, Controller.TYPE_KEY,
+            new Activation() {
+                public final void activate( int id ) { activate( id ); }
+                public final void deactivate( int id ) { deactivate( id ); }
+            },
+            20, 10 
+        );
     }
     
     @Override
@@ -55,102 +61,61 @@ public final class ControllerSystem
         context.registerListener( UpdateEvent.TYPE_KEY, this );
     }
 
-    @Override
-    public final void dispose( FFContext context ) {
-        context.disposeListener( UpdateEvent.TYPE_KEY, this );
-        
-        clearSystem();
+    public final SystemComponentMap<Controller> controllerMap() {
+        return controller;
     }
     
-    public final Controller getController( int controllerId ) {
-        if ( !controller.contains( controllerId ) ) {
-            return null;
-        }
-        return controller.get( controllerId );
-    }
-    
-    public final <T extends Controller> T getControllerAs( int controllerId, Class<T> controllerType ) {
-        Controller c = getController( controllerId );
-        if ( c == null ) {
-            return null;
-        }
-        return controllerType.cast( c );
-    }
-    
-    public final <T extends Controller> T getControllerAs( String controllerName, Class<T> controllerType ) {
-        Controller c = getController( getControllerId( controllerName ) );
-        if ( c == null ) {
-            return null;
-        }
-        return controllerType.cast( c );
-    }
-    
-    public final void deleteController( int controllerId ) {
-        if ( controllerId < 0 ) {
+    public final void activate( int controllerId ) {
+        if ( !controller.map.contains( controllerId ) ) {
             return;
         }
         
-        if ( !controller.contains( controllerId ) ) {
+        controller.map.get( controllerId ).setActive( true );
+    }
+    
+    public final void deactivate( int controllerId ) {
+        if ( !controller.map.contains( controllerId ) ) {
             return;
         }
         
-        Controller removed = controller.remove( controllerId );
-        if ( removed != null ) {
-            disposeSystemComponent( removed );
-        }
-    }
-    
-    public final void deleteController( String name ) {
-        deleteController( getControllerId( name ) );
+        controller.map.get( controllerId ).setActive( false );
     }
 
-    public final int getControllerId( String name ) {
-        if ( StringUtils.isBlank( name ) ) {
-            return -1;
-        }
-        
-        for ( Controller c : controller ) {
-            if ( name.equals( c.getName() ) ) {
-                return c.index();
-            }
-        }
-        
-        return -1;
-    }
-    
     public final void addControlledComponentId( int controllerId, int componentId ) {
-        if ( !controller.contains( controllerId ) ) {
+        if ( !controller.map.contains( controllerId ) ) {
             return;
         }
-        controller.get( controllerId ).addComponentId( componentId );
+        controller.map.get( controllerId ).addComponentId( componentId );
     }
     
     public final void removeControlledComponentId( int controllerId, int componentId ) {
-        if ( !controller.contains( controllerId ) ) {
+        if ( !controller.map.contains( controllerId ) ) {
             return;
         }
-        controller.get( controllerId ).removeComponentId( componentId );
+        controller.map.get( controllerId ).removeComponentId( componentId );
     }
 
-    public final void clearSystem() {
-        for ( Controller c : controller ) {
-            disposeSystemComponent( c );
-        }
-        controller.clear();
-    }
-
-    @Override
     public final void update( final FFTimer timer ) {
-        for ( int i = 0; i < controller.capacity(); i++ ) {
-            Controller c = controller.get( i );
+        for ( int i = 0; i < controller.map.capacity(); i++ ) {
+            final Controller c = controller.map.get( i );
             if ( c != null ) {
                 c.processUpdate();
             }
         }
     }
     
+    public final void dispose( FFContext context ) {
+        context.disposeListener( UpdateEvent.TYPE_KEY, this );
+        
+        clearSystem();
+    }
+    
+    public final void clearSystem() {
+        controller.clear();
+    }
+    
     public final SystemComponentBuilder getControllerBuilder( Class<? extends Controller> componentType ) {
-        return new ControllerBuilder( componentType );
+        return controller.getBuilder( componentType );
     }
 
     public final Set<SystemComponentKey<?>> supportedComponentTypes() {
@@ -160,69 +125,8 @@ public final class ControllerSystem
     @Override
     public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
         return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            new ControllerBuilderAdapter()
+            controller.getBuilderAdapter()
         );
     }
-    
-    private final class ControllerBuilder extends SystemComponentBuilder {
-        
-        private ControllerBuilder( Class<? extends Controller> componentType ) {
-            super( context, componentType );
-        }
-        
-        @Override
-        public final SystemComponentKey<Controller> systemComponentKey() {
-            return Controller.TYPE_KEY;
-        }
-
-        @Override
-        public final int doBuild( int componentId, Class<?> controllerType, boolean activate ) {
-            Controller result = createSystemComponent( componentId, controllerType, context );
-            controller.set( result.index(), result );
-            
-            if ( activate ) {
-                result.setActive( true );
-            }
-            
-            return result.index();
-        }
-    }
-
-    private final class ControllerBuilderAdapter extends SystemBuilderAdapter<Controller> {
-        private ControllerBuilderAdapter() {
-            super( ControllerSystem.this, Controller.TYPE_KEY );
-        }
-        @Override
-        public final Controller get( int id ) {
-            return controller.get( id );
-        }
-        @Override
-        public final Iterator<Controller> getAll() {
-            return controller.iterator();
-        }
-        @Override
-        public final void delete( int id ) {
-            deleteController( id );
-        }
-        @Override
-        public final int getId( String name ) {
-            return getControllerId( name );
-        }
-        @Override
-        public final void activate( int id ) {
-            get( id ).setActive( true );
-        }
-        @Override
-        public final void deactivate( int id ) {
-            get( id ).setActive( false );
-        }
-        @Override
-        public final SystemComponentBuilder createComponentBuilder( Class<? extends Controller> componentType ) {
-            if ( componentType == null ) {
-                throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + componentTypeKey().name() );
-            }
-            return new ControllerBuilder( componentType );
-        }
-    }
-
+   
 }

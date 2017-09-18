@@ -298,7 +298,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
                 continue;
             }
             
-            EntityController entityController = controllerSystem.getControllerAs( controllerIds.get( i ), EntityController.class );
+            EntityController entityController = controllerSystem.controllerMap().getAs( controllerIds.get( i ), EntityController.class );
             if ( entityController != null ) {
                 if ( activated ) {
                     entityController.entityActivated( entityId );

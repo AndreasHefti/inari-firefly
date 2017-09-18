@@ -173,7 +173,7 @@ public final class EntityProvider implements FFSystem  {
                 continue;
             }
             
-            EntityController controller = controllerSystem.getControllerAs( controllerIds.get( i ), EntityController.class );
+            EntityController controller = controllerSystem.controllerMap().getAs( controllerIds.get( i ), EntityController.class );
             controller.initEntity( attributes );
         }
     }

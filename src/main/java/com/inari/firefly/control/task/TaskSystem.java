@@ -40,8 +40,8 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         tasks = SystemComponentMap.create( 
             this, Task.TYPE_KEY,
             new Activation() {
-                @Override public final void activate( int id ) { runTask( id ); }
-                @Override public final void deactivate( int id ) {}
+                public final void activate( int id ) { runTask( id ); }
+                public final void deactivate( int id ) {}
             },
             20, 10 
         );

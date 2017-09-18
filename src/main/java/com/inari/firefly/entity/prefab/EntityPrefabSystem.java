@@ -26,6 +26,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     );
 
     private DynArray<EntityPrefab> prefabs;
+    
     private DynArray<IndexedTypeSet> prefabComponents;
     private DynArray<ArrayDeque<IndexedTypeSet>> components;
     
