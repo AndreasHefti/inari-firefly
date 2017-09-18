@@ -22,7 +22,7 @@ public class EntityActionSystem extends ComponentSystem<EntityActionSystem> impl
     
     EntityActionSystem() {
         super( SYSTEM_KEY );
-        actions = SystemComponentMap.create( this, Action.TYPE_KEY, 20, 10 );
+        actions = new SystemComponentMap<>( this, Action.TYPE_KEY, 20, 10 );
     }
 
     @Override

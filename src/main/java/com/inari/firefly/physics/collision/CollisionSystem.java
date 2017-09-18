@@ -44,7 +44,7 @@ public final class CollisionSystem
     public static final AspectGroup MATERIAL_ASPECT_GROUP = new AspectGroup( "MATERIAL_ASPECT_GROUP" );
     public static final AspectGroup CONTACT_ASPECT_GROUP = new AspectGroup( "CONTACT_ASPECT_GROUP" );
     private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
-        CollisionQuadTree.TYPE_KEY,
+        ContactPool.TYPE_KEY,
         CollisionResolver.TYPE_KEY
     );
     

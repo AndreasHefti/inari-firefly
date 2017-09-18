@@ -31,9 +31,10 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.graphics.rendering.RenderingChain.RendererKey;
 import com.inari.firefly.graphics.view.Layer;
 import com.inari.firefly.graphics.view.View;
+import com.inari.firefly.graphics.view.ViewAndLayerAware;
 import com.inari.firefly.system.component.SystemComponent;
 
-public final class TileGrid extends SystemComponent {
+public final class TileGrid extends SystemComponent implements ViewAndLayerAware {
     
     public static final SystemComponentKey<TileGrid> TYPE_KEY = SystemComponentKey.create( TileGrid.class );
     

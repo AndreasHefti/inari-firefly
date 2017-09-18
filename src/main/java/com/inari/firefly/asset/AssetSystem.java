@@ -39,7 +39,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     
     AssetSystem() {
         super( SYSTEM_KEY );
-        assets = SystemComponentNameMap.create( 
+        assets = new SystemComponentNameMap<>( 
             this, Asset.TYPE_KEY,
             new Activation() {
                 public final void activate( int id ) { loadAsset( id ); }

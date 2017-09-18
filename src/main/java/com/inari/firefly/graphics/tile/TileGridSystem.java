@@ -21,7 +21,6 @@ import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Position;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.entity.EntitySystem;
@@ -34,9 +33,7 @@ import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
-import com.inari.firefly.system.component.SystemComponentMap;
-import com.inari.firefly.system.component.SystemComponentMap.BuilderAdapter;
-import com.inari.firefly.system.component.SystemComponentNameMap;
+import com.inari.firefly.system.component.SystemComponentViewLayerMap;
 
 public final class TileGridSystem
     extends 
@@ -52,19 +49,11 @@ public final class TileGridSystem
 
     private EntitySystem entitySystem;
     
-    final SystemComponentMap<TileGrid> tileGrids;
-    final DynArray<DynArray<TileGrid>> tileGridOfViewsPerLayer;
+    final SystemComponentViewLayerMap<TileGrid> tileGrids;
     
     public TileGridSystem() {
         super( SYSTEM_KEY );
-        tileGrids = SystemComponentNameMap.create( 
-            this, TileGrid.TYPE_KEY,
-            new BuilderAdapter<TileGrid>() {
-                public final void finishBuild( TileGrid component ) { build( component ); }
-                public final void finishDeletion( TileGrid component ) { removeTileGrid( component ); }
-            }
-        );
-        tileGridOfViewsPerLayer = DynArray.createTyped( DynArray.class, 10, 10 );
+        tileGrids = new SystemComponentViewLayerMap<>( this, TileGrid.TYPE_KEY );
     }
     
     @Override
@@ -144,13 +133,7 @@ public final class TileGridSystem
     }
 
     public final TileGrid getTileGrid( int viewId, int layerId ) {
-        if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
-            return null;
-        }
-
-        return tileGridOfViewsPerLayer
-            .get( viewId )
-            .get( layerId );
+        return tileGrids.get( viewId, layerId );
     }
     
     public final int getTile( int viewId, int layerId, final Position position ) {
@@ -172,25 +155,11 @@ public final class TileGridSystem
     }
 
     public final void deleteAllTileGrid( int viewId ) {
-        if ( tileGridOfViewsPerLayer.contains( viewId ) ) {
-            DynArray<TileGrid> toDelete = tileGridOfViewsPerLayer.get( viewId );
-            for ( TileGrid tileGrid : toDelete ) {
-                tileGrids.delete( tileGrid.index() );
-            }
-        }
+        tileGrids.deleteAll( viewId );
     }
     
     public final void deleteTileGrid( int viewId, int layerId ) {
-        if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
-            return;
-        }
-        DynArray<TileGrid> tileGridsForView = tileGridOfViewsPerLayer.get( viewId );
-        if ( !tileGridsForView.contains( layerId ) ) {
-            return;
-        }
-        
-        TileGrid tileGrid = tileGridsForView.get( layerId );
-        tileGrids.delete( tileGrid.index() );
+        tileGrids.delete( viewId, layerId );
     }
 
     public final SystemComponentBuilder getTileGridBuilder() {
@@ -209,35 +178,6 @@ public final class TileGridSystem
 
     public final void clearSystem() {
         tileGrids.clear();
-        tileGridOfViewsPerLayer.clear();
-    }
-    
-    
-    private void build( TileGrid tileGrid ) {
-        int viewId = tileGrid.getViewId();
-        int layerId = tileGrid.getLayerId();
-        
-        if ( viewId < 0 ) {
-            throw new FFInitException( "ViewId is mandatory for TileGrid" );
-        }
-        
-        if ( layerId < 0 ) {
-            throw new FFInitException( "LayerId is mandatory for TileGrid" );
-        }
-        
-        if ( !tileGridOfViewsPerLayer.contains( viewId ) ) {
-            tileGridOfViewsPerLayer.set( viewId, DynArray.create( TileGrid.class, 20, 10 ) );
-        }
-        
-        tileGridOfViewsPerLayer
-            .get( viewId )
-            .set( layerId, tileGrid );
-    }
-    
-    private void removeTileGrid( TileGrid component ) {
-        tileGridOfViewsPerLayer
-            .get( component.getViewId() )
-            .remove( component.getLayerId() );
     }
 
 }

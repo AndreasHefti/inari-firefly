@@ -42,7 +42,7 @@ public final class AudioSystem
 
     AudioSystem() {
         super( SYSTEM_KEY );
-        sounds = SystemComponentMap.create( 
+        sounds = new SystemComponentMap<>( 
             this, Sound.TYPE_KEY, 
             new Activation() {
                 public final void activate( int id ) { playSound( id ); }

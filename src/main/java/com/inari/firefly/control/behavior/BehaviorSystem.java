@@ -33,7 +33,7 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
     
     BehaviorSystem() {
         super( SYSTEM_KEY );
-        behaviorNodes = SystemComponentMap.create( this, BehaviorNode.TYPE_KEY, 20, 10 );
+        behaviorNodes = new SystemComponentMap<>( this, BehaviorNode.TYPE_KEY, 20, 10 );
         entityIds = new IntBag( 50, -1 );
     }
     

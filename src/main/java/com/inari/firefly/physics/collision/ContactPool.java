@@ -16,6 +16,7 @@ import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.view.Layer;
 import com.inari.firefly.graphics.view.View;
+import com.inari.firefly.graphics.view.ViewAndLayerAware;
 import com.inari.firefly.system.component.SystemComponent;
 
 /** A ContactPool pools and organize the id's of all Entities for a given View and Layer that can collide
@@ -33,7 +34,7 @@ import com.inari.firefly.system.component.SystemComponent;
  *  do this.
  *
  */
-public abstract class ContactPool extends SystemComponent {
+public abstract class ContactPool extends SystemComponent implements ViewAndLayerAware {
     
     /** The Components type key. Use this to build, access, request and dispose a specified Component within the Context */
     public static final SystemComponentKey<ContactPool> TYPE_KEY = SystemComponentKey.create( ContactPool.class );

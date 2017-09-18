@@ -10,7 +10,33 @@ public final class SystemComponentNameMap<C extends SystemComponent> extends Sys
     
     private final Map<String, C> nameMapping;
 
-    protected SystemComponentNameMap( 
+    @SuppressWarnings( "unchecked" )
+    public SystemComponentNameMap( 
+        ComponentSystem<?> system, 
+        SystemComponentKey<C> componentKey
+    ) {
+        this( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, 20, 10 );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public SystemComponentNameMap( 
+        ComponentSystem<?> system, 
+        SystemComponentKey<C> componentKey, 
+        int cap, int grow 
+    ) {
+        this( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, cap, grow );
+    }
+    
+    public SystemComponentNameMap( 
+        ComponentSystem<?> system, 
+        SystemComponentKey<C> componentKey, 
+        Activation activationAdapter, 
+        BuilderAdapter<C> builderAdapter
+    ) {
+        this( system, componentKey, activationAdapter, builderAdapter, 20, 10 );
+    }
+    
+    public SystemComponentNameMap( 
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey, 
         Activation activationAdapter, 
@@ -60,38 +86,6 @@ public final class SystemComponentNameMap<C extends SystemComponent> extends Sys
     public final void clear() {
         super.clear();
         nameMapping.clear();
-    }
-    
-    @SuppressWarnings( "unchecked" )
-    public final static <C extends  SystemComponent> SystemComponentNameMap<C> create( ComponentSystem<?> system, SystemComponentKey<C> componentKey ) {
-        return new SystemComponentNameMap<C>( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, 20, 10 );
-    }
-    
-    @SuppressWarnings( "unchecked" )
-    public final static <C extends  SystemComponent> SystemComponentNameMap<C> create( ComponentSystem<?> system, SystemComponentKey<C> componentKey, Activation activationAdapter ) {
-        return new SystemComponentNameMap<C>( system, componentKey, activationAdapter, DUMMY_BUILDER_ADAPTER, 20, 10 );
-    }
-    
-    public final static <C extends  SystemComponent> SystemComponentNameMap<C> create( ComponentSystem<?> system, SystemComponentKey<C> componentKey, BuilderAdapter<C> builderAdapter ) {
-        return new SystemComponentNameMap<C>( system, componentKey, UNSUPPORTED_ACTIVATION, builderAdapter, 20, 10 );
-    }
-    
-    public final static <C extends  SystemComponent> SystemComponentNameMap<C> create( ComponentSystem<?> system, SystemComponentKey<C> componentKey, Activation activationAdapter, BuilderAdapter<C> builderAdapter ) {
-        return new SystemComponentNameMap<C>( system, componentKey, activationAdapter, builderAdapter, 20, 10 );
-    }
-    
-    @SuppressWarnings( "unchecked" )
-    public final static <C extends  SystemComponent> SystemComponentNameMap<C> create( ComponentSystem<?> system, SystemComponentKey<C> componentKey, int cap, int grow ) {
-        return new SystemComponentNameMap<C>( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, cap, grow );
-    }
-    
-    @SuppressWarnings( "unchecked" )
-    public final static <C extends  SystemComponent> SystemComponentNameMap<C> create( ComponentSystem<?> system, SystemComponentKey<C> componentKey, Activation activationAdapter, int cap, int grow ) {
-        return new SystemComponentNameMap<C>( system, componentKey, activationAdapter, DUMMY_BUILDER_ADAPTER, cap, grow );
-    }
-    
-    public final static <C extends  SystemComponent> SystemComponentNameMap<C> create( ComponentSystem<?> system, SystemComponentKey<C> componentKey, Activation activationAdapter, BuilderAdapter<C> builderAdapter, int cap, int grow ) {
-        return new SystemComponentNameMap<C>( system, componentKey, activationAdapter, builderAdapter, cap, grow );
     }
 
 }

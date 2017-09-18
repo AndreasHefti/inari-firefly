@@ -35,7 +35,7 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
     public void init( FFContext context ) throws FFInitException {
         super.init( context );
         
-        scenes = SystemComponentMap.create( this, Scene.TYPE_KEY );
+        scenes = new SystemComponentMap<>( this, Scene.TYPE_KEY );
         activeScenes = new IntBag( 10, -1, 5 );
         
         context.registerListener( UpdateEvent.TYPE_KEY, this );

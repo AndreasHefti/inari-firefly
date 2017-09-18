@@ -25,13 +25,14 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.view.Layer;
 import com.inari.firefly.graphics.view.View;
+import com.inari.firefly.graphics.view.ViewAndLayerAware;
 import com.inari.firefly.physics.animation.AttributeAnimationAdapter.AttributeAnimationAdapterKey;
 import com.inari.firefly.physics.animation.EntityFloatAnimationAdapter;
 import com.inari.firefly.physics.animation.FloatAnimation;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.TransformData;
 
-public final class ETransform extends EntityComponent implements TransformData {
+public final class ETransform extends EntityComponent implements TransformData, ViewAndLayerAware {
     
     public static final EntityComponentTypeKey<ETransform> TYPE_KEY = EntityComponentTypeKey.create( ETransform.class );
 
