@@ -47,8 +47,8 @@ public final class ControllerSystem
         controller = SystemComponentMap.create( 
             this, Controller.TYPE_KEY,
             new Activation() {
-                public final void activate( int id ) { activate( id ); }
-                public final void deactivate( int id ) { deactivate( id ); }
+                public final void activate( int id ) { ControllerSystem.this.activate( id ); }
+                public final void deactivate( int id ) { ControllerSystem.this.deactivate( id ); }
             },
             20, 10 
         );
