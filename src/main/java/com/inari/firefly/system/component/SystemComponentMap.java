@@ -46,24 +46,33 @@ public class SystemComponentMap<C extends SystemComponent> {
     }
 
     public final C get( int id ) {
+        if ( !map.contains( id ) ) {
+            return null;
+        }
+        
         return map.get( id );
     }
     
     public final C get( String name ) {
-        return get( getId( name ) );
+        return map.get( getId( name ) );
     }
 
     public final <SC extends C> SC getAs( int id, Class<SC> subType ) {
-        C component = get( id );
-        if ( component == null ) {
+        final C c = get( id );
+        if ( c == null ) {
             return null;
         }
         
-        return subType.cast( component );
+        return subType.cast( c );
     }
     
     public final <SC extends C> SC getAs( String name, Class<SC> subType ) {
-        return subType.cast( getId( name ) );
+        int id = getId( name );
+        if ( id < 0 ) {
+            return null;
+        }
+        
+        return getAs( id, subType );
     }
     
     public int getId( String name ) {
