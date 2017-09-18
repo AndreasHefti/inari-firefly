@@ -23,12 +23,20 @@ public class SystemComponentMap<C extends SystemComponent> {
     public final SystemComponentKey<C> componentKey;
     public final DynArray<C> map;
     
+    private final ComponentSystem<?> system;
     private final Activation activationAdapter;
     private final BuilderAdapter<C> builderAdapter;
 
-    protected SystemComponentMap( SystemComponentKey<C> componentKey, Activation activationAdapter, BuilderAdapter<C> builderAdapter, int cap ) {
+    protected SystemComponentMap( 
+        ComponentSystem<?> system, 
+        SystemComponentKey<C> componentKey, 
+        Activation activationAdapter, 
+        BuilderAdapter<C> builderAdapter, 
+        int cap, int grow 
+    ) {
+        this.system = system;
         this.componentKey = componentKey;
-        map = DynArray.create( componentKey.<C>type(), cap );
+        map = DynArray.create( componentKey.<C>type(), cap, grow );
         this.activationAdapter = activationAdapter;
         this.builderAdapter = builderAdapter;
     }
@@ -139,9 +147,9 @@ public class SystemComponentMap<C extends SystemComponent> {
     }
     
     private SystemBuilderAdapter<C> componentBuilderAdapter = null;
-    public final SystemBuilderAdapter<C>  getBuilderAdapter( final FFContext context, final ComponentSystem<?> system ) {
+    public final SystemBuilderAdapter<C>  getBuilderAdapter( final FFContext context ) {
         if ( componentBuilderAdapter == null ) {
-            componentBuilderAdapter = new ComponentBuilderAdapter( context, system );
+            componentBuilderAdapter = new ComponentBuilderAdapter( context );
         }
         
         return componentBuilderAdapter;
@@ -149,31 +157,59 @@ public class SystemComponentMap<C extends SystemComponent> {
 
     
     @SuppressWarnings( "unchecked" )
-    public static <C extends  SystemComponent> SystemComponentMap<C> create( SystemComponentKey<C> componentKey ) {
-        return new SystemComponentMap<C>( componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, 20 );
+    public static <C extends  SystemComponent> SystemComponentMap<C> create( 
+        ComponentSystem<?> system, 
+        SystemComponentKey<C> componentKey 
+    ) {
+        return new SystemComponentMap<C>( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, 20, 10 );
     }
     
     @SuppressWarnings( "unchecked" )
-    public static <C extends  SystemComponent> SystemComponentMap<C> create( SystemComponentKey<C> componentKey, Activation activationAdapter ) {
-        return new SystemComponentMap<C>( componentKey, activationAdapter, DUMMY_BUILDER_ADAPTER, 20 );
+    public static <C extends  SystemComponent> SystemComponentMap<C> create( 
+        ComponentSystem<?> system, 
+        SystemComponentKey<C> componentKey, 
+        Activation activationAdapter 
+    ) {
+        return new SystemComponentMap<C>( system, componentKey, activationAdapter, DUMMY_BUILDER_ADAPTER, 20, 10 );
     }
     
-    public static <C extends  SystemComponent> SystemComponentMap<C> create( SystemComponentKey<C> componentKey, Activation activationAdapter, BuilderAdapter<C> builderAdapter ) {
-        return new SystemComponentMap<C>( componentKey, activationAdapter, builderAdapter, 20 );
+    public static <C extends  SystemComponent> SystemComponentMap<C> create( 
+        ComponentSystem<?> system, 
+        SystemComponentKey<C> componentKey, 
+        Activation activationAdapter, 
+        BuilderAdapter<C> builderAdapter 
+    ) {
+        return new SystemComponentMap<C>( system, componentKey, activationAdapter, builderAdapter, 20, 10 );
     }
     
     @SuppressWarnings( "unchecked" )
-    public static <C extends  SystemComponent> SystemComponentMap<C> create( SystemComponentKey<C> componentKey, int cap ) {
-        return new SystemComponentMap<C>( componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, cap );
+    public static <C extends  SystemComponent> SystemComponentMap<C> create( 
+        ComponentSystem<?> system, 
+        SystemComponentKey<C> componentKey, 
+        int cap, int grow 
+    ) {
+        return new SystemComponentMap<C>( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, cap, grow );
     }
+
     
     @SuppressWarnings( "unchecked" )
-    public static <C extends  SystemComponent> SystemComponentMap<C> create( SystemComponentKey<C> componentKey, Activation activationAdapter, int cap ) {
-        return new SystemComponentMap<C>( componentKey, activationAdapter, DUMMY_BUILDER_ADAPTER, cap );
+    public static <C extends  SystemComponent> SystemComponentMap<C> create( 
+        ComponentSystem<?> system, 
+        SystemComponentKey<C> componentKey, 
+        Activation activationAdapter, 
+        int cap, int grow 
+    ) {
+        return new SystemComponentMap<C>( system, componentKey, activationAdapter, DUMMY_BUILDER_ADAPTER, cap, grow );
     }
     
-    public static <C extends  SystemComponent> SystemComponentMap<C> create( SystemComponentKey<C> componentKey, Activation activationAdapter, BuilderAdapter<C> builderAdapter, int cap ) {
-        return new SystemComponentMap<C>( componentKey, activationAdapter, builderAdapter, cap );
+    public static <C extends  SystemComponent> SystemComponentMap<C> create( 
+        ComponentSystem<?> system, 
+        SystemComponentKey<C> componentKey, 
+        Activation activationAdapter, 
+        BuilderAdapter<C> builderAdapter, 
+        int cap, int grow 
+    ) {
+        return new SystemComponentMap<C>( system, componentKey, activationAdapter, builderAdapter, cap, grow );
     }
 
     
@@ -214,7 +250,7 @@ public class SystemComponentMap<C extends SystemComponent> {
     
     private final class ComponentBuilderAdapter extends SystemBuilderAdapter<C> {
         private final FFContext context;
-        public ComponentBuilderAdapter( final FFContext context, final ComponentSystem<?> system ) {
+        public ComponentBuilderAdapter( final FFContext context ) {
             super( system, componentKey );
             this.context = context;
         }

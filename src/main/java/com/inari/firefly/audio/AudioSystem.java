@@ -43,7 +43,7 @@ public final class AudioSystem
     AudioSystem() {
         super( SYSTEM_KEY );
         sounds = SystemComponentMap.create( 
-            Sound.TYPE_KEY, 
+            this, Sound.TYPE_KEY, 
             new Activation() {
                 @Override public final void activate( int id ) { playSound( id ); }
                 @Override public final void deactivate( int id ) { stopPlaying( id ); }
@@ -151,7 +151,7 @@ public final class AudioSystem
     @Override
     public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
         return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            sounds.getBuilderAdapter( context, this )
+            sounds.getBuilderAdapter( context )
         );
     }
 

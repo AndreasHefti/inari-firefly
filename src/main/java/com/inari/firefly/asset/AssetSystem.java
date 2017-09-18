@@ -36,12 +36,12 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     );
     
     private final SystemComponentNameMap<Asset> assets;
-    private final IntBag toDisposeFirst = new IntBag( 1, -1 );
+    private final IntBag dependingAssetIds = new IntBag( 1, -1 );
     
     AssetSystem() {
         super( SYSTEM_KEY );
         assets = SystemComponentNameMap.create( 
-            Asset.TYPE_KEY,
+            this, Asset.TYPE_KEY,
             new Activation() {
                 @Override public final void activate( int id ) { loadAsset( id ); }
                 @Override public final void deactivate( int id ) { disposeAsset( id ); }
@@ -61,9 +61,17 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     public final SystemComponentMap<Asset> assetMap() {
         return assets;
     }
+    
+    public final void loadAsset( int assetId ) {
+        loadAsset( assets.get( assetId ) );
+    }
 
     public final void loadAsset( String name ) {
         assets.activate( assets.getId( name ) );
+    }
+    
+    public final boolean isLoaded( int assetId ) {
+        return assets.get( assetId ).isLoaded();
     }
 
     public final boolean isLoaded( String name ) {
@@ -89,7 +97,7 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
     
     public SystemBuilderAdapter<Asset> getAssetBuilderAdapter() {
-        return assets.getBuilderAdapter( context, this );
+        return assets.getBuilderAdapter( context );
     }
 
     @Override
@@ -112,10 +120,6 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         
         return asset.getInstanceId();
     }
-    
-    private final void loadAsset( int assetId ) {
-        loadAsset( assets.get( assetId ) );
-    }
 
     private final void disposeAsset( int assetId ) {
         Asset asset = assets.get( assetId );
@@ -131,13 +135,13 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
     
     private IntBag disposeAsset( Asset asset ) {
-        findeAssetsToDisposeFirst( asset.index() );
-        if ( !toDisposeFirst.isEmpty() ) {
-            for ( int i = 0; i < toDisposeFirst.length(); i++ ) {
-                if ( toDisposeFirst.isEmpty( i ) ) {
+        findeDependingAssets( asset.index() );
+        if ( !dependingAssetIds.isEmpty() ) {
+            for ( int i = 0; i < dependingAssetIds.length(); i++ ) {
+                if ( dependingAssetIds.isEmpty( i ) ) {
                     continue;
                 }
-                Asset toDispose = assets.get( toDisposeFirst.get( i ) );
+                Asset toDispose = assets.get( dependingAssetIds.get( i ) );
                 if ( toDispose.loaded ) {
                     dispose( toDispose );
                 }
@@ -145,15 +149,21 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         }
         
         dispose( asset );
-        return toDisposeFirst;
+        return dependingAssetIds;
     }
     
-    private void findeAssetsToDisposeFirst( int assetId ) {
-        toDisposeFirst.clear();
+    private void dispose( Asset asset ) {
+        asset.dispose( context );
+        context.notify( AssetEvent.create( AssetEvent.Type.ASSET_DISPOSED, asset ) );
+        asset.loaded = false;
+    }
+    
+    private void findeDependingAssets( int assetId ) {
+        dependingAssetIds.clear();
         for ( Asset asset : assets.map ) {
             if ( asset.dependsOn >= 0 ) {
                 if ( asset.dependsOn == assetId ) {
-                    toDisposeFirst.add( asset.index() );
+                    dependingAssetIds.add( asset.index() );
                     break;
                 }
             }
@@ -162,25 +172,19 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     
     private void deleteAsset( Asset asset ) {
         if ( asset.loaded ) {
-            IntBag alsoDisposedAssets = disposeAsset( asset );
-            if ( alsoDisposedAssets != null ) {
-                for ( int i = 0; i < alsoDisposedAssets.length(); i++ ) {
-                    if ( alsoDisposedAssets.isEmpty( i ) ) {
+            disposeAsset( asset );
+            if ( dependingAssetIds != null ) {
+                for ( int i = 0; i < dependingAssetIds.length(); i++ ) {
+                    if ( dependingAssetIds.isEmpty( i ) ) {
                         continue;
                     }
 
-                    assets.delete( alsoDisposedAssets.get( i ) );
+                    assets.delete( dependingAssetIds.get( i ) );
                 }
             }
         }
         
         context.notify( AssetEvent.create( AssetEvent.Type.ASSET_DELETED, asset ) );
-    }
-
-    private void dispose( Asset asset ) {
-        asset.dispose( context );
-        context.notify( AssetEvent.create( AssetEvent.Type.ASSET_DISPOSED, asset ) );
-        asset.loaded = false;
     }
 
     private void loadAsset( Asset asset ) {

@@ -42,7 +42,7 @@ public final class StateSystemEvent extends Event<StateSystem> {
             case DO_STATE_CHANGE: {
                 int wId = workflowId;
                 if ( wId < 0 ) {
-                    wId = listener.getWorkflowId( workflowName );
+                    wId = listener.workflowMap().getId( workflowName );
                 }
                 
                 if ( stateChangeName != null ) {
