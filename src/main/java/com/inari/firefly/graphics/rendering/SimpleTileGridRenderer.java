@@ -41,12 +41,12 @@ public final class SimpleTileGridRenderer extends Renderer {
 
     @Override
     public final void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer ) {
-        TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
+        final TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
         if ( tileGrid == null ) {
             return;
         }
         
-        TileGridIterator tileGridIterator = tileGrid.getTileGridIterator( clip );
+        final TileGridIterator tileGridIterator = tileGrid.getTileGridIterator( clip );
         while( tileGridIterator.hasNext() ) {
             ETile tile = entitySystem.getComponent( tileGridIterator.next(), ETile.TYPE_KEY );
             graphics.renderSprite( tile, tileGridIterator.getWorldXPos(), tileGridIterator.getWorldYPos() );

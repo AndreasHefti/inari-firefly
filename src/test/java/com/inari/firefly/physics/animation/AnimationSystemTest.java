@@ -48,7 +48,7 @@ public class AnimationSystemTest extends FFTest {
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",
-            animationSystem.getAnimation( 0 ).toString()
+            animationSystem.animations.get( 0 ).toString()
         );
     }
     
@@ -104,7 +104,7 @@ public class AnimationSystemTest extends FFTest {
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",
-            animationSystem.getAnimation( 0 ).toString()
+            animationSystem.animations.get( 0 ).toString()
         );
 
         TestTimer timer = new TestTimer();
@@ -114,7 +114,7 @@ public class AnimationSystemTest extends FFTest {
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",
-            animationSystem.getAnimation( 0 ).toString()
+            animationSystem.animations.get( 0 ).toString()
         );
         
         timer.setTime( 9 );
@@ -122,7 +122,7 @@ public class AnimationSystemTest extends FFTest {
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=false}",
-            animationSystem.getAnimation( 0 ).toString()
+            animationSystem.animations.get( 0 ).toString()
         );
 
         timer.setTime( 10 );
@@ -130,7 +130,7 @@ public class AnimationSystemTest extends FFTest {
 
         assertEquals(
             "Animation{startTime=10, looping=false, active=true, finished=false}",
-            animationSystem.getAnimation( 0 ).toString()
+            animationSystem.animations.get( 0 ).toString()
         );
 
         timer.setTime( 11 );
@@ -139,7 +139,7 @@ public class AnimationSystemTest extends FFTest {
         // now the Animation should be active
         assertEquals(
             "Animation{startTime=10, looping=false, active=true, finished=false}",
-            animationSystem.getAnimation( 0 ).toString()
+            animationSystem.animations.get( 0 ).toString()
         );
 
         // the TestAnimation is finished just after the first getValue call
@@ -148,13 +148,13 @@ public class AnimationSystemTest extends FFTest {
         // now the Animation should be finished...
         assertEquals(
             "Animation{startTime=10, looping=false, active=false, finished=true}",
-            animationSystem.getAnimation( 0 ).toString()
+            animationSystem.animations.get( 0 ).toString()
         );
 
         // ...and after next update be removed
         timer.setTime( 12 );
         animationSystem.update( timer );
-        assertFalse( animationSystem.exists( 0 ) );
+        assertFalse( animationSystem.animations.map.contains( 0 ) );
     }
 
 }

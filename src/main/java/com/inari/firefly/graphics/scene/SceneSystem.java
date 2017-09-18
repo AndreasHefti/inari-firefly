@@ -1,12 +1,10 @@
 package com.inari.firefly.graphics.scene;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.functional.Callback;
-import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.system.FFContext;
@@ -15,8 +13,9 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.component.SystemComponentBuilder;
+import com.inari.firefly.system.component.SystemComponentMap;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class SceneSystem extends ComponentSystem<SceneSystem> implements SceneEventListener, UpdateEventListener {
     
@@ -25,7 +24,7 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
         Scene.TYPE_KEY
     );
     
-    private DynArray<Scene> scenes;
+    private SystemComponentMap<Scene> scenes;
     private IntBag activeScenes;
 
     protected SceneSystem() {
@@ -36,38 +35,15 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
     public void init( FFContext context ) throws FFInitException {
         super.init( context );
         
-        scenes = DynArray.create( Scene.class );
+        scenes = SystemComponentMap.create( this, Scene.TYPE_KEY );
         activeScenes = new IntBag( 10, -1, 5 );
         
         context.registerListener( UpdateEvent.TYPE_KEY, this );
         context.registerListener( SceneEvent.TYPE_KEY, this );
     }
 
-    public final Scene getScene( int id ) {
-        return scenes.get( id );
-    }
-
-    public final int getSceneId( String name ) {
-        if ( name == null ) {
-            return -1;
-        }
-        
-        for ( int i = 0; i < scenes.capacity(); i++ ) {
-            Scene scene = scenes.get( i );
-            if ( scene == null ) {
-                continue;
-            }
-            
-            if ( name.equals( scene.getName() ) ) {
-                return scene.index();
-            }
-        }
-        
-        return -1;
-    }
-
     public final void runScene( String sceneName, final Callback callback ) {
-        Scene scene = getScene( getSceneId( sceneName ) );
+        final Scene scene = scenes.get( sceneName );
         if ( scene != null && !scene.running ) {
             scene.running = true;
             scene.paused = false;
@@ -78,7 +54,7 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
     }
 
     public final void pauseScene( String sceneName ) {
-        Scene scene = getScene( getSceneId( sceneName ) );
+        final Scene scene = scenes.get( sceneName );
         if ( scene != null && scene.running ) {
             scene.paused = true;
         }
@@ -91,9 +67,8 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
         }
     }
     
-    @Override
     public final void resumeScene( String sceneName ) {
-        Scene scene = getScene( getSceneId( sceneName ) );
+        final Scene scene = scenes.get( sceneName );
         if ( scene != null && scene.running && scene.paused ) {
             scene.paused = false;
         }
@@ -106,12 +81,10 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
         }
     }
 
-    @Override
     public final void stopScene( String sceneName ) {
-        stopScene( getScene( getSceneId( sceneName ) ) );
+        stopScene( scenes.get( sceneName ) );
     }
 
-    @Override
     public final void stopAll() {
         final IntIterator iterator = activeScenes.iterator();
         while( iterator.hasNext() ) {
@@ -119,7 +92,6 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
         }
     }
 
-    @Override
     public final void update( final FFTimer timer ) {
         final IntIterator iterator = activeScenes.iterator();
         while( iterator.hasNext() ) {
@@ -149,7 +121,7 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
             scene.paused = false;
             scene.reset( context );
         } else {
-            deleteScene( scene.index() );
+            scenes.delete( scene.index() );
         }
         
         activeScenes.remove( scene.index() );
@@ -160,7 +132,7 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
             throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Scene.TYPE_KEY.name() );
         }
         
-        return new SceneBuilder( type );
+        return scenes.getBuilder( type );
     }
     
     @Override
@@ -171,27 +143,12 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
     @Override
     public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
         return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            new SceneBuilderAdapter()
+            scenes.getBuilderAdapter()
         );
-    }
-    
-    public final void deleteScene( int index ) {
-        Scene removed = scenes.remove( index );
-        if ( removed.running ) {
-            activeScenes.remove( index );
-        }
-        
-        removed.dispose( context );
     }
     
     @Override
     public final  void clearSystem() {
-        for ( int i = 0; i < scenes.capacity(); i++ ) {
-            if ( scenes.contains( i ) ) {
-                deleteScene( i );
-            }
-        }
-        
         scenes.clear();
         activeScenes.clear();
     }
@@ -201,59 +158,6 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
         context.disposeListener( UpdateEvent.TYPE_KEY, this );
         context.disposeListener( SceneEvent.TYPE_KEY, this );
         clearSystem();
-    }
-    
-    private final class SceneBuilder extends SystemComponentBuilder {
-        
-        private SceneBuilder( Class<? extends Scene> componentType ) {
-            super( context, componentType );
-        }
-        
-        @Override
-        public final SystemComponentKey<Scene> systemComponentKey() {
-            return Scene.TYPE_KEY;
-        }
-
-        @Override
-        public int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            Scene scene = createSystemComponent( componentId, componentType, context );
-            scenes.set( scene.index(), scene );
-            return scene.index();
-        }
-    }
-    
-    private final class SceneBuilderAdapter extends SystemBuilderAdapter<Scene> {
-        private SceneBuilderAdapter() {
-            super( SceneSystem.this, Scene.TYPE_KEY );
-        }
-        @Override
-        public final SystemComponentBuilder createComponentBuilder( Class<? extends Scene> type ) {
-            return getSceneBuilder( type );
-        }
-        @Override
-        public final Scene get( int id ) {
-            return getScene( id );
-        }
-        @Override
-        public final void delete( int id ) {
-            deleteScene( id );
-        }
-        @Override
-        public final Iterator<Scene> getAll() {
-            return scenes.iterator();
-        }
-        @Override
-        public final int getId( String name ) {
-            return getSceneId( name );
-        }
-        @Override
-        public final void activate( int id ) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public final void deactivate( int id ) {
-            throw new UnsupportedOperationException();
-        }
     }
 
 }

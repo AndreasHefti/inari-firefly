@@ -72,6 +72,10 @@ public final class SystemComponentNameMap<C extends SystemComponent> extends Sys
         return new SystemComponentNameMap<C>( system, componentKey, activationAdapter, DUMMY_BUILDER_ADAPTER, 20, 10 );
     }
     
+    public final static <C extends  SystemComponent> SystemComponentNameMap<C> create( ComponentSystem<?> system, SystemComponentKey<C> componentKey, BuilderAdapter<C> builderAdapter ) {
+        return new SystemComponentNameMap<C>( system, componentKey, UNSUPPORTED_ACTIVATION, builderAdapter, 20, 10 );
+    }
+    
     public final static <C extends  SystemComponent> SystemComponentNameMap<C> create( ComponentSystem<?> system, SystemComponentKey<C> componentKey, Activation activationAdapter, BuilderAdapter<C> builderAdapter ) {
         return new SystemComponentNameMap<C>( system, componentKey, activationAdapter, builderAdapter, 20, 10 );
     }
