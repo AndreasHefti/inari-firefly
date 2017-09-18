@@ -54,7 +54,7 @@ public class SystemComponentMap<C extends SystemComponent> {
     }
     
     public final C get( String name ) {
-        return map.get( getId( name ) );
+        return get( getId( name) );
     }
 
     public final <SC extends C> SC getAs( int id, Class<SC> subType ) {
