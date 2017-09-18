@@ -45,12 +45,12 @@ public final class AudioSystem
         sounds = SystemComponentMap.create( 
             this, Sound.TYPE_KEY, 
             new Activation() {
-                @Override public final void activate( int id ) { playSound( id ); }
-                @Override public final void deactivate( int id ) { stopPlaying( id ); }
+                public final void activate( int id ) { playSound( id ); }
+                public final void deactivate( int id ) { stopPlaying( id ); }
             },
             new BuilderAdapter<Sound>() {
-                @Override public final void finishBuild( Sound component ) { build( component ); }
-                @Override public final void finishDeletion( Sound component ) {}
+                public final void finishBuild( Sound component ) { build( component ); }
+                public final void finishDeletion( Sound component ) {}
             }
         );
     }
@@ -62,7 +62,6 @@ public final class AudioSystem
         context.registerListener( AudioSystemEvent.TYPE_KEY, this );
     }
     
-    @Override
     public final void dispose( FFContext context ) {
         clearSystem();
         
@@ -148,10 +147,9 @@ public final class AudioSystem
         return SUPPORTED_COMPONENT_TYPES;
     }
 
-    @Override
     public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
         return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            sounds.getBuilderAdapter( context )
+            sounds.getBuilderAdapter()
         );
     }
 

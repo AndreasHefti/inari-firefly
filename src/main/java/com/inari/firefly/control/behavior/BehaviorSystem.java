@@ -96,7 +96,7 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
 
     public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
         return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            behaviorNodes.getBuilderAdapter( context )
+            behaviorNodes.getBuilderAdapter()
         );
     }
     
@@ -104,6 +104,6 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
         if ( componentType == null ) {
             throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Action.TYPE_KEY.name() );
         }
-        return behaviorNodes.getBuilder( context, componentType );
+        return behaviorNodes.getBuilder( componentType );
     }
 }

@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.utils.Disposable;
 
 public class SystemComponentMap<C extends SystemComponent> {
 
@@ -114,6 +114,9 @@ public class SystemComponentMap<C extends SystemComponent> {
         
         C removed = remove( id );
         builderAdapter.finishDeletion( removed );
+        if ( removed instanceof Disposable ) {
+            ( (Disposable) removed ).dispose( system.context );
+        }
         removed.dispose();
     }
     
@@ -137,19 +140,19 @@ public class SystemComponentMap<C extends SystemComponent> {
     
     
     
-    public final SystemComponentBuilder getBuilder( final FFContext context ) {
+    public final SystemComponentBuilder getBuilder() {
         final Class<C> type = componentKey.type();
-        return new ComponentBuilder( context, type );
+        return new ComponentBuilder( type );
     }
     
-    public final SystemComponentBuilder getBuilder( final FFContext context, Class<? extends C> subType ) {
-        return new ComponentBuilder( context, subType );
+    public final SystemComponentBuilder getBuilder( Class<? extends C> subType ) {
+        return new ComponentBuilder( subType );
     }
     
     private SystemBuilderAdapter<C> componentBuilderAdapter = null;
-    public final SystemBuilderAdapter<C>  getBuilderAdapter( final FFContext context ) {
+    public final SystemBuilderAdapter<C>  getBuilderAdapter() {
         if ( componentBuilderAdapter == null ) {
-            componentBuilderAdapter = new ComponentBuilderAdapter( context );
+            componentBuilderAdapter = new ComponentBuilderAdapter();
         }
         
         return componentBuilderAdapter;
@@ -221,10 +224,8 @@ public class SystemComponentMap<C extends SystemComponent> {
 
     private final class ComponentBuilder extends SystemComponentBuilder {
 
-        private final FFContext context;
-        ComponentBuilder( final FFContext context, Class<? extends C> subType ) {
-            super( context, subType );
-            this.context = context;
+        ComponentBuilder( Class<? extends C> subType ) {
+            super( system.context, subType );
         }
         
         @Override
@@ -234,7 +235,7 @@ public class SystemComponentMap<C extends SystemComponent> {
 
         @Override
         public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            final C component = createSystemComponent( componentId, componentType, context );
+            final C component = createSystemComponent( componentId, componentType, system.context );
             final int index = component.index();
 
             builderAdapter.finishBuild( component );
@@ -249,10 +250,8 @@ public class SystemComponentMap<C extends SystemComponent> {
     }
     
     private final class ComponentBuilderAdapter extends SystemBuilderAdapter<C> {
-        private final FFContext context;
-        public ComponentBuilderAdapter( final FFContext context ) {
+        public ComponentBuilderAdapter() {
             super( system, componentKey );
-            this.context = context;
         }
         
         @Override
@@ -285,7 +284,7 @@ public class SystemComponentMap<C extends SystemComponent> {
 
         @Override
         public final SystemComponentBuilder createComponentBuilder( Class<? extends C> componentType ) {
-            return SystemComponentMap.this.getBuilder( context, componentType );
+            return SystemComponentMap.this.getBuilder( componentType );
         }
     }
 

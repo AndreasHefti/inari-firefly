@@ -43,12 +43,12 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         assets = SystemComponentNameMap.create( 
             this, Asset.TYPE_KEY,
             new Activation() {
-                @Override public final void activate( int id ) { loadAsset( id ); }
-                @Override public final void deactivate( int id ) { disposeAsset( id ); }
+                public final void activate( int id ) { loadAsset( id ); }
+                public final void deactivate( int id ) { disposeAsset( id ); }
             },
             new BuilderAdapter<Asset>() {
-                @Override public final void finishBuild( Asset component ) { build( component ); }
-                @Override public final void finishDeletion( Asset component ) { deleteAsset( component ); }
+                public final void finishBuild( Asset component ) { build( component ); }
+                public final void finishDeletion( Asset component ) { deleteAsset( component ); }
             }
         );
     }
@@ -86,28 +86,24 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         return getAssetInstanceId( assets.getId( assetName ) );
     }
 
-    @Override
     public final void clearSystem() {
         assets.clear();
     }
 
-    @Override
     public final Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
     
     public SystemBuilderAdapter<Asset> getAssetBuilderAdapter() {
-        return assets.getBuilderAdapter( context );
+        return assets.getBuilderAdapter();
     }
 
-    @Override
     public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
         return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             getAssetBuilderAdapter()
         );
     }
     
-    @Override
     public final void dispose( FFContext context ) {
         clearSystem();
     }

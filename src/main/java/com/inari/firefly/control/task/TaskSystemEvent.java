@@ -51,15 +51,15 @@ public final class TaskSystemEvent extends Event<TaskSystem> {
                if ( taskId >= 0 ) {
                    listener.runTask( taskId );
                } else {
-                   listener.runTask( listener.getTaskId( taskName ) );
+                   listener.runTask( listener.tasks.getId( taskName ) );
                }
                break;
             }
             case REMOVE_TASK: {
                 if ( taskId >= 0 ) {
-                    listener.deleteTask( taskId );
+                    listener.tasks.delete( taskId );
                 } else {
-                    listener.deleteTask( listener.getTaskId( taskName ) );
+                    listener.tasks.delete( taskName );
                 }
                 break;
             }

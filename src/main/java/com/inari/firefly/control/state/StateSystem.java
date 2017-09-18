@@ -49,8 +49,8 @@ public class StateSystem
         workflows = SystemComponentMap.create( 
             this, Workflow.TYPE_KEY,
             new Activation() {
-                @Override public final void activate( int id ) { activateWorkflow( id ); }
-                @Override public final void deactivate( int id ) {}
+                public final void activate( int id ) { activateWorkflow( id ); }
+                public final void deactivate( int id ) {}
             },
             20, 10 
         ); 
@@ -146,10 +146,9 @@ public class StateSystem
         return SUPPORTED_COMPONENT_TYPES;
     }
 
-    @Override
     public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
         return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            workflows.getBuilderAdapter( context )
+            workflows.getBuilderAdapter()
         );
     }
 

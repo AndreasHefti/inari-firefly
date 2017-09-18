@@ -54,6 +54,7 @@ public abstract class ComponentSystem<T extends ComponentSystem<T>> implements F
         this.context = context;
     }
     
+    @Deprecated
     protected final void disposeSystemComponent( SystemComponent component ) {
         if ( component == null ) {
             return;

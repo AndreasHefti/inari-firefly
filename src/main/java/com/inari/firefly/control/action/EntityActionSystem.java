@@ -59,7 +59,7 @@ public class EntityActionSystem extends ComponentSystem<EntityActionSystem> impl
 
     public Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
         return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            actions.getBuilderAdapter( context )
+            actions.getBuilderAdapter()
         );
     }
     
@@ -67,6 +67,7 @@ public class EntityActionSystem extends ComponentSystem<EntityActionSystem> impl
         if ( componentType == null ) {
             throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Action.TYPE_KEY.name() );
         }
-        return actions.getBuilder( context, componentType );
+        
+        return actions.getBuilder( componentType );
     }
 }
