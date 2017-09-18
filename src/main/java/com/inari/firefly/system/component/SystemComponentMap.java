@@ -67,16 +67,22 @@ public class SystemComponentMap<C extends SystemComponent> {
     }
     
     public int getId( String name ) {
+        if ( name == null ) {
+            return -1;
+        }
+        
         for ( int i = 0; i < map.capacity(); i++ ) {
             final C component = map.get( i );
             if ( component == null ) {
                 continue;
             }
             
-            return component.index();
+            if ( name.equals( component.getName() ) ) {
+                return component.index();
+            }
         }
         
-        throw new FFInitException( "No Component with name: " + name + " found" );
+        return -1;
     }
     
     public final Iterator<C> getAll() {
