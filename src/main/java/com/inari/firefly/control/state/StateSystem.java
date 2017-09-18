@@ -90,7 +90,7 @@ public class StateSystem
         
         for ( int i = 0; i < workflows.map.capacity(); i++ ) {
             Workflow workflow = workflows.get( i );
-            if ( workflow != null && !workflow.isActive() ) {
+            if ( workflow == null || !workflow.isActive() ) {
                 continue;
             }
             
