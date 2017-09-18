@@ -1,24 +1,20 @@
 package com.inari.firefly.graphics.rendering;
 
-import java.util.Set;
-
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
-import com.inari.firefly.system.component.ComponentSystem;
-import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.component.SystemComponentBuilder;
+import com.inari.firefly.system.external.FFTimer;
 
-public final class RenderingSystem 
-    extends ComponentSystem<RenderingSystem> 
-    implements RenderEventListener, EntityActivationListener {
+public final class RenderingSystem implements FFSystem, RenderEventListener, EntityActivationListener {
     
     public static final RenderingChain DEFAULT_RENDERING_CHAIN = new RenderingChain()
         .addElement( SimpleTileGridRenderer.CHAIN_KEY )
@@ -33,22 +29,28 @@ public final class RenderingSystem
     
     private final RendererBuilder rendererBuilder = new RendererBuilder();
     
+    private FFContext context;
     private boolean allowMultipleAcceptance = false;
     private RenderingChain renderingChain;
     
 
-    RenderingSystem() {
-        super( SYSTEM_KEY );
-    }
+    RenderingSystem() {}
 
-    @Override
     public void init( FFContext context ) throws FFInitException {
-        super.init( context );
+        this.context = context;
         
         context.registerListener( RenderEvent.TYPE_KEY, this );
         context.registerListener( EntityActivationEvent.TYPE_KEY, this );
         
         setRenderingChain( DEFAULT_RENDERING_CHAIN );
+    }
+    
+    public final IIndexedTypeKey indexedTypeKey() {
+        return SYSTEM_KEY;
+    }
+
+    public final FFSystemTypeKey<?> systemTypeKey() {
+        return SYSTEM_KEY;
     }
 
     public final boolean isAllowMultipleAcceptance() {
@@ -59,12 +61,10 @@ public final class RenderingSystem
         this.allowMultipleAcceptance = allowMultipleAcceptance;
     }
 
-    @Override
     public final boolean match( final Aspects aspects ) {
         return true;
     }
 
-    @Override
     public final void entityActivated( final int entityId, final Aspects aspects ) {
         for ( int i = 0; i < renderingChain.elements.capacity(); i++ ) {
             RenderingChain.Element element = renderingChain.elements.get( i );
@@ -82,7 +82,6 @@ public final class RenderingSystem
         }
     }
 
-    @Override
     public final void entityDeactivated( final int entityId, final Aspects aspects ) {
         for ( int i = 0; i < renderingChain.elements.capacity(); i++ ) {
             RenderingChain.Element element = renderingChain.elements.get( i );
@@ -98,7 +97,6 @@ public final class RenderingSystem
         }
     }
 
-    @Override
     public final void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer ) {
         for ( int i = 0; i < renderingChain.elements.capacity(); i++ ) {
             RenderingChain.Element element = renderingChain.elements.get( i );
@@ -128,7 +126,6 @@ public final class RenderingSystem
         return renderingChain;
     }
 
-    @Override
     public final void dispose( FFContext context ) {
         context.disposeListener( RenderEvent.TYPE_KEY, this );
         context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
@@ -141,22 +138,8 @@ public final class RenderingSystem
             
             element.renderer = null;
         }
-    }
-
-    @Override
-    public final void clearSystem() {
-        dispose( context );
+        
         renderingChain = null;
-    }
-    
-    @Override
-    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
-        return null;
-    }
-
-    @Override
-    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
-        return null;
     }
     
     private final class RendererBuilder extends SystemComponentBuilder {
