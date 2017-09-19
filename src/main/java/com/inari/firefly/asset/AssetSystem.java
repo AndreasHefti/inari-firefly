@@ -57,6 +57,16 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         super.init( context );
     }
     
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+ 
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            assets.getBuilderAdapter()
+        );
+    }
+    
     public final void loadAsset( int assetId ) {
         loadAsset( assets.get( assetId ) );
     }
@@ -74,7 +84,12 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     }
 
     public final int getAssetInstanceId( int assetId ) {
-        return getAssetInstanceId( assets.get( assetId ) );
+        final Asset asset = assets.get( assetId );
+        if ( !asset.loaded ) {
+            throw new IllegalStateException( "Asset with name: " + asset.getName() + " not loaded" );
+        }
+        
+        return asset.getInstanceId();
     }
     
     public final int getAssetInstanceId( String assetName ) {
@@ -85,32 +100,12 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         assets.clear();
     }
 
-    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
-        return SUPPORTED_COMPONENT_TYPES;
-    }
-    
-    public SystemBuilderAdapter<Asset> getAssetBuilderAdapter() {
-        return assets.getBuilderAdapter();
-    }
-
-    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
-        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            getAssetBuilderAdapter()
-        );
-    }
-    
     public final void dispose( FFContext context ) {
         clearSystem();
     }
     
     
-    private int getAssetInstanceId( Asset asset ) {
-        if ( !asset.loaded ) {
-            throw new IllegalStateException( "Asset with name: " + asset.getName() + " not loaded" );
-        }
-        
-        return asset.getInstanceId();
-    }
+
 
     private final void disposeAsset( int assetId ) {
         Asset asset = assets.get( assetId );

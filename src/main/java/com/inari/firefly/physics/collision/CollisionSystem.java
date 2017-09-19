@@ -85,7 +85,7 @@ public final class CollisionSystem
 
     public final void onViewEvent( ViewEvent event ) {
         if ( event.isOfType( Type.VIEW_DELETED ) ) {
-            contactPools.delete( event.getView().index() );
+            contactPools.deleteAll( event.getView().index() );
             return;
         }
     }
@@ -183,6 +183,22 @@ public final class CollisionSystem
         scanTileContacts( entityId, viewId, layerId, constraint );
         scanSpriteContacts( entityId, viewId, layerId, constraint );
     }
+
+    public final void clearSystem() {
+        contactPools.clear();
+        collisionResolvers.clear();
+    }
+    
+    public final void dispose( FFContext context ) {
+        clearSystem();
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
+        context.disposeListener( ViewEvent.TYPE_KEY, this );
+        context.disposeListener( MoveEvent.TYPE_KEY, this );
+    }
+    
+    
+    
+    
 
     private void scanContacts( int entityId, ECollision collision ) {
         final Aspects aspects = context.getEntityComponentAspects( entityId );
@@ -317,18 +333,6 @@ public final class CollisionSystem
         }
         
         contact.dispose();
-    }
-
-    public final void clearSystem() {
-        contactPools.clear();
-        collisionResolvers.clear();
-    }
-    
-    public final void dispose( FFContext context ) {
-        clearSystem();
-        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
-        context.disposeListener( ViewEvent.TYPE_KEY, this );
-        context.disposeListener( MoveEvent.TYPE_KEY, this );
     }
 
 }

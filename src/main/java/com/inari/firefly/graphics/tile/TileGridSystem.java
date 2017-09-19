@@ -32,7 +32,6 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.component.SystemComponentViewLayerMap;
 
 public final class TileGridSystem
@@ -65,14 +64,15 @@ public final class TileGridSystem
         context.registerListener( EntityActivationEvent.TYPE_KEY, this );
         context.registerListener( TileSystemEvent.TYPE_KEY, this );
     }
+    
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
+        return SUPPORTED_COMPONENT_TYPES;
+    }
 
-
-    public final void dispose( FFContext context ) {
-        context.disposeListener( ViewEvent.TYPE_KEY, this );
-        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
-        context.disposeListener( TileSystemEvent.TYPE_KEY, this );
-        
-        clearSystem();
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            tileGrids.getBuilderAdapter()
+        );
     }
 
     final void removeMultiTilePosition( final int tileGridId, final int entityId, final int x, final int y ) {
@@ -119,7 +119,7 @@ public final class TileGridSystem
     
     public final void onViewEvent( ViewEvent event ) {
         if ( event.isOfType( Type.VIEW_DELETED ) ) {
-            deleteAllTileGrid( event.getView().index() );
+            tileGrids.deleteAll( event.getView().index() );
             return;
         }
     }
@@ -153,27 +153,13 @@ public final class TileGridSystem
         
         return tileGrid.getTileAt( position );
     }
-
-    public final void deleteAllTileGrid( int viewId ) {
-        tileGrids.deleteAll( viewId );
-    }
     
-    public final void deleteTileGrid( int viewId, int layerId ) {
-        tileGrids.delete( viewId, layerId );
-    }
-
-    public final SystemComponentBuilder getTileGridBuilder() {
-        return tileGrids.getBuilder();
-    }
-    
-    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
-        return SUPPORTED_COMPONENT_TYPES;
-    }
-
-    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
-        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            tileGrids.getBuilderAdapter()
-        );
+    public final void dispose( FFContext context ) {
+        context.disposeListener( ViewEvent.TYPE_KEY, this );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
+        context.disposeListener( TileSystemEvent.TYPE_KEY, this );
+        
+        clearSystem();
     }
 
     public final void clearSystem() {

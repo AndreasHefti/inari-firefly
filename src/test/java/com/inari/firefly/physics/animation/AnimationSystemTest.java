@@ -32,7 +32,7 @@ public class AnimationSystemTest extends FFTest {
     public void testOneAnimation() {
         AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.SYSTEM_KEY );
 
-        animationSystem.getAnimationBuilder( TestAnimation.class )
+        ffContext.getComponentBuilder( Animation.TYPE_KEY, TestAnimation.class )
             .set( Animation.NAME, "testAnimation" )
             .set( Animation.START_TIME, 10l )
             .set( Animation.LOOPING, false )
@@ -59,7 +59,7 @@ public class AnimationSystemTest extends FFTest {
         
         assertEquals( "0", String.valueOf( animationSystem.activeMappings.size() ) );
 
-        animationSystem.getAnimationBuilder( TestIntAnimation.class )
+        ffContext.getComponentBuilder( Animation.TYPE_KEY, TestIntAnimation.class )
             .set( Animation.NAME, "testAnimation" )
             .set( Animation.LOOPING, false )
         .activate( 0 );
@@ -96,7 +96,7 @@ public class AnimationSystemTest extends FFTest {
     public void testUpdate() {
         AnimationSystem animationSystem = ffContext.getSystem( AnimationSystem.SYSTEM_KEY );
 
-        animationSystem.getAnimationBuilder( TestAnimation.class )
+        ffContext.getComponentBuilder( Animation.TYPE_KEY, TestAnimation.class )
             .set( Animation.NAME, "testAnimation" )
             .set( Animation.START_TIME, 10l )
             .set( Animation.LOOPING, false )

@@ -13,7 +13,6 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.component.SystemComponentMap;
 import com.inari.firefly.system.external.FFTimer;
 
@@ -40,6 +39,16 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
         
         context.registerListener( UpdateEvent.TYPE_KEY, this );
         context.registerListener( SceneEvent.TYPE_KEY, this );
+    }
+    
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            scenes.getBuilderAdapter()
+        );
     }
 
     public final void runScene( String sceneName, final Callback callback ) {
@@ -127,33 +136,11 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
         activeScenes.remove( scene.index() );
     }
     
-    public final SystemComponentBuilder getSceneBuilder( Class<? extends Scene> type ) {
-        if ( type == null ) {
-            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Scene.TYPE_KEY.name() );
-        }
-        
-        return scenes.getBuilder( type );
-    }
-    
-    @Override
-    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
-        return SUPPORTED_COMPONENT_TYPES;
-    }
-
-    @Override
-    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
-        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            scenes.getBuilderAdapter()
-        );
-    }
-    
-    @Override
     public final  void clearSystem() {
         scenes.clear();
         activeScenes.clear();
     }
 
-    @Override
     public final void dispose( FFContext context ) {
         context.disposeListener( UpdateEvent.TYPE_KEY, this );
         context.disposeListener( SceneEvent.TYPE_KEY, this );

@@ -23,7 +23,6 @@ import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.component.SystemComponentMap;
 
 public final class TaskSystem extends ComponentSystem<TaskSystem> {
@@ -53,6 +52,16 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
         
         context.registerListener( TaskSystemEvent.TYPE_KEY, this );
     }
+    
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            tasks.getBuilderAdapter()
+        );
+    }
 
     public final void runTask( int taskId ) {
         if ( !tasks.map.contains( taskId ) ) {
@@ -74,25 +83,6 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
     
     public final void clearSystem() {
         tasks.clear();
-    }
-
-    public final SystemComponentBuilder getTaskBuilder( Class<? extends Task> componentType ) {
-        if ( componentType == null ) {
-            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Task.TYPE_KEY.name() );
-        }
-        
-        return tasks.getBuilder( componentType );
-    }
-
-    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
-        return SUPPORTED_COMPONENT_TYPES;
-    }
-
-    @Override
-    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
-        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            tasks.getBuilderAdapter()
-        );
     }
 
 }

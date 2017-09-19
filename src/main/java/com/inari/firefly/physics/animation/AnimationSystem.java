@@ -29,7 +29,6 @@ import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.component.SystemComponentMap;
 import com.inari.firefly.system.external.FFTimer;
 
@@ -69,6 +68,17 @@ public final class AnimationSystem
         context.registerListener( AnimationSystemEvent.TYPE_KEY, this );
         context.registerListener( EntityActivationEvent.TYPE_KEY, this );
     }
+    
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    @Override
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            animations.getBuilderAdapter()
+        );
+    }
 
     public final boolean match( Aspects aspects ) {
         return aspects.contains( EAnimation.TYPE_KEY );
@@ -102,18 +112,6 @@ public final class AnimationSystem
                 activeMappings.remove( i );
             }
         }
-    }
-    
-    public void dispose( FFContext context ) {
-        clearSystem();
-        
-        context.disposeListener( UpdateEvent.TYPE_KEY, this );
-        context.disposeListener( AnimationSystemEvent.TYPE_KEY, this );
-        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
-    }
-    
-    public final void clearSystem() {
-        animations.clear();
     }
 
     final void onAnimationEvent( AnimationSystemEvent event ) {
@@ -219,24 +217,17 @@ public final class AnimationSystem
         ValueAnimation<V> animation = animations.getAs( animationId, ValueAnimation.class );
         return animation.getValue( componentId, currentValue );
     }
-
-    public final SystemComponentBuilder getAnimationBuilder( Class<? extends Animation> componentType ) {
-        if ( componentType == null ) {
-            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Animation.TYPE_KEY.name() );
-        }
+    
+    public void dispose( FFContext context ) {
+        clearSystem();
         
-        return animations.getBuilder( componentType );
+        context.disposeListener( UpdateEvent.TYPE_KEY, this );
+        context.disposeListener( AnimationSystemEvent.TYPE_KEY, this );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
     }
     
-    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
-        return SUPPORTED_COMPONENT_TYPES;
-    }
-
-    @Override
-    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
-        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            animations.getBuilderAdapter()
-        );
+    public final void clearSystem() {
+        animations.clear();
     }
 
 }

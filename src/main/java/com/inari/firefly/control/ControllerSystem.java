@@ -25,7 +25,6 @@ import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.component.SystemComponentMap;
 import com.inari.firefly.system.external.FFTimer;
 
@@ -61,6 +60,16 @@ public final class ControllerSystem
         context.registerListener( UpdateEvent.TYPE_KEY, this );
     }
     
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            controller.getBuilderAdapter()
+        );
+    }
+    
     public final void activate( int controllerId ) {
         if ( !controller.map.contains( controllerId ) ) {
             return;
@@ -75,20 +84,6 @@ public final class ControllerSystem
         }
         
         controller.map.get( controllerId ).setActive( false );
-    }
-
-    public final void addControlledComponentId( int controllerId, int componentId ) {
-        if ( !controller.map.contains( controllerId ) ) {
-            return;
-        }
-        controller.map.get( controllerId ).addComponentId( componentId );
-    }
-    
-    public final void removeControlledComponentId( int controllerId, int componentId ) {
-        if ( !controller.map.contains( controllerId ) ) {
-            return;
-        }
-        controller.map.get( controllerId ).removeComponentId( componentId );
     }
 
     public final void update( final FFTimer timer ) {
@@ -109,20 +104,5 @@ public final class ControllerSystem
     public final void clearSystem() {
         controller.clear();
     }
-    
-    public final SystemComponentBuilder getControllerBuilder( Class<? extends Controller> componentType ) {
-        return controller.getBuilder( componentType );
-    }
 
-    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
-        return SUPPORTED_COMPONENT_TYPES;
-    }
-
-    @Override
-    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
-        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            controller.getBuilderAdapter()
-        );
-    }
-   
 }

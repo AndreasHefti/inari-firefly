@@ -8,7 +8,6 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.component.SystemComponentMap;
 
 public class EntityActionSystem extends ComponentSystem<EntityActionSystem> implements EntityActionEventListener {
@@ -28,27 +27,9 @@ public class EntityActionSystem extends ComponentSystem<EntityActionSystem> impl
     @Override
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
-        
         context.registerListener( EntityActionEvent.TYPE_KEY, this );
     }
     
-    public final void clearSystem() {
-        actions.clear();
-    }
-    
-    public final void performAction( int actionId, int entityId ) {
-        Action action = actions.get( actionId );
-        if ( action != null ) {
-            action.action( entityId );
-        }
-    }
-    
-    public void dispose( FFContext context ) {
-        clearSystem();
-        
-        context.disposeListener( EntityActionEvent.TYPE_KEY, this );
-    }
-
     public Set<SystemComponentKey<?>> supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
@@ -59,11 +40,19 @@ public class EntityActionSystem extends ComponentSystem<EntityActionSystem> impl
         );
     }
     
-    public final SystemComponentBuilder getActionBuilder( Class<? extends Action> componentType ) {
-        if ( componentType == null ) {
-            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Action.TYPE_KEY.name() );
+    public final void performAction( int actionId, int entityId ) {
+        Action action = actions.get( actionId );
+        if ( action != null ) {
+            action.action( entityId );
         }
-        
-        return actions.getBuilder( componentType );
+    }
+
+    public final void clearSystem() {
+        actions.clear();
+    }
+    
+    public void dispose( FFContext context ) {
+        clearSystem();
+        context.disposeListener( EntityActionEvent.TYPE_KEY, this );
     }
 }

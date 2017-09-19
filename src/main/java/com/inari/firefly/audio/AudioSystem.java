@@ -20,7 +20,7 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.build.ComponentCreationException;
-import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.control.Controller;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
@@ -62,14 +62,14 @@ public final class AudioSystem
         context.registerListener( AudioSystemEvent.TYPE_KEY, this );
     }
     
-    public final void dispose( FFContext context ) {
-        clearSystem();
-        
-        context.disposeListener( AudioSystemEvent.TYPE_KEY, this );
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
+        return SUPPORTED_COMPONENT_TYPES;
     }
 
-    public final void clearSystem() {
-        sounds.clear();
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            sounds.getBuilderAdapter()
+        );
     }
 
     void stopPlaying( int soundId ) {
@@ -91,8 +91,8 @@ public final class AudioSystem
         int controllerId = sound.getControllerId();
         if ( controllerId >= 0 ) {
             context
-                .getSystem( ControllerSystem.SYSTEM_KEY )
-                .removeControlledComponentId( controllerId, sound.soundId );
+                .getSystemComponent( Controller.TYPE_KEY, controllerId )
+                .removeComponentId( sound.soundId );
         }
     }
 
@@ -125,9 +125,19 @@ public final class AudioSystem
         int controllerId = sound.getControllerId();
         if ( controllerId >= 0 ) {
             context
-                .getSystem( ControllerSystem.SYSTEM_KEY )
-                .addControlledComponentId( controllerId, sound.soundId );
+                .getSystemComponent( Controller.TYPE_KEY, controllerId )
+                .addComponentId( sound.soundId );
         }
+    }
+    
+    public final void dispose( FFContext context ) {
+        clearSystem();
+        
+        context.disposeListener( AudioSystemEvent.TYPE_KEY, this );
+    }
+
+    public final void clearSystem() {
+        sounds.clear();
     }
     
     private void build( Sound sound ) {
@@ -139,16 +149,5 @@ public final class AudioSystem
         sound.soundId = asset.getSoundId();
         sound.streaming = asset.isStreaming();
     }
-    
-    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
-        return SUPPORTED_COMPONENT_TYPES;
-    }
-
-    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
-        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            sounds.getBuilderAdapter()
-        );
-    }
-
 
 }

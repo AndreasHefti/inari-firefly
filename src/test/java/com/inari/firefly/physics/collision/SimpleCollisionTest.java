@@ -14,7 +14,6 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
-import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.physics.movement.MovementSystem;
 
@@ -96,9 +95,8 @@ public class SimpleCollisionTest extends FFTest {
         ffContext.loadSystem( CollisionSystem.SYSTEM_KEY );
         EntitySystem entitySystem = ffContext.getSystem( EntitySystem.SYSTEM_KEY );
         MovementSystem movementSystem = ffContext.getSystem( MovementSystem.SYSTEM_KEY );
-        TileGridSystem tileGridSystem = ffContext.getSystem( TileGridSystem.SYSTEM_KEY );
         
-        tileGridSystem.getTileGridBuilder()
+        ffContext.getComponentBuilder( TileGrid.TYPE_KEY )
             .set( TileGrid.CELL_WIDTH, 16 )
             .set( TileGrid.CELL_HEIGHT, 16 )
             .set( TileGrid.WORLD_XPOS, 0 )

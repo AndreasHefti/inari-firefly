@@ -6,7 +6,6 @@ import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.control.action.Action;
 import com.inari.firefly.control.action.EntityActionSystem;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
@@ -16,7 +15,6 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.component.SystemComponentMap;
 import com.inari.firefly.system.external.FFTimer;
 
@@ -47,6 +45,16 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
         context.registerListener( EntityActivationEvent.TYPE_KEY, this );
     }
     
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            behaviorNodes.getBuilderAdapter()
+        );
+    }
+    
     public final boolean match( final Aspects aspects ) {
         return aspects.contains( EBehavoir.TYPE_KEY );
     }
@@ -58,20 +66,7 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
     public final void entityDeactivated( int entityId, final Aspects aspects ) {
         entityIds.remove( entityId );
     }
-
-    public final void dispose( final FFContext context ) {
-        clearSystem();
-        
-        context.disposeListener( UpdateEvent.TYPE_KEY, this );
-        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
-        
-        actionSystem = null;
-    }
-
-    public final void clearSystem() {
-        behaviorNodes.clear();
-    }
-
+    
     public final void update( final FFTimer timer ) {
         final int nullValue = entityIds.getNullValue();
         for ( int i = 0; i < entityIds.length(); i++ ) {
@@ -90,20 +85,17 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
         }
     }
 
-    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
-        return SUPPORTED_COMPONENT_TYPES;
+    public final void dispose( final FFContext context ) {
+        clearSystem();
+        
+        context.disposeListener( UpdateEvent.TYPE_KEY, this );
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
+        
+        actionSystem = null;
     }
 
-    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
-        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            behaviorNodes.getBuilderAdapter()
-        );
+    public final void clearSystem() {
+        behaviorNodes.clear();
     }
-    
-    public final SystemComponentBuilder getBehaviorNodeBuilder( Class<? extends BehaviorNode> componentType ) {
-        if ( componentType == null ) {
-            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + Action.TYPE_KEY.name() );
-        }
-        return behaviorNodes.getBuilder( componentType );
-    }
+
 }

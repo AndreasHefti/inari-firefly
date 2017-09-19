@@ -64,6 +64,16 @@ public class StateSystem
         context.registerListener( StateSystemEvent.TYPE_KEY, this );
     }
     
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            workflows.getBuilderAdapter()
+        );
+    }
+    
     public final String getCurrentState( int workflowId ) {
         return workflows.get( workflowId ).getCurrentState();
     }
@@ -106,6 +116,17 @@ public class StateSystem
         }
     }
     
+    public final void dispose( FFContext context ) {
+        context.disposeListener( UpdateEvent.TYPE_KEY, this );
+        context.disposeListener( StateSystemEvent.TYPE_KEY, this );
+        
+        clearSystem();
+    }
+
+    public final void clearSystem() {
+        workflows.clear();
+    }
+    
     final void doStateChange( final int workflowId, final String stateChangeName ) {
         final Workflow workflow = workflows.get( workflowId );
         doStateChange( workflow, workflow.getStateChangeForCurrentState( stateChangeName ) );
@@ -125,27 +146,6 @@ public class StateSystem
         } else {
             context.notify( WorkflowEvent.createWorkflowFinishedEvent( workflow.index(), workflow.getName(), stateChange ) );
         }
-    }
-
-    public final void dispose( FFContext context ) {
-        context.disposeListener( UpdateEvent.TYPE_KEY, this );
-        context.disposeListener( StateSystemEvent.TYPE_KEY, this );
-        
-        clearSystem();
-    }
-
-    public final void clearSystem() {
-        workflows.clear();
-    }
-
-    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
-        return SUPPORTED_COMPONENT_TYPES;
-    }
-
-    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
-        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            workflows.getBuilderAdapter()
-        );
     }
 
 }
