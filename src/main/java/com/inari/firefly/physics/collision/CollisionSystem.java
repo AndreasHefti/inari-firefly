@@ -1,6 +1,5 @@
 package com.inari.firefly.physics.collision;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import com.inari.commons.GeomUtils;
@@ -10,9 +9,7 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
-import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
-import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.graphics.ETransform;
@@ -30,7 +27,8 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentBuilder;
+import com.inari.firefly.system.component.SystemComponentMap;
+import com.inari.firefly.system.component.SystemComponentViewLayerMap;
 
 public final class CollisionSystem 
     extends 
@@ -48,9 +46,8 @@ public final class CollisionSystem
         CollisionResolver.TYPE_KEY
     );
     
-    private final DynArray<ContactPool> contactPools;
-    private final DynArray<DynArray<ContactPool>> contactPoolsPerViewAndLayer;
-    private final DynArray<CollisionResolver> collisionResolvers;
+    private final SystemComponentViewLayerMap<ContactPool> contactPools;
+    private final SystemComponentMap<CollisionResolver> collisionResolvers;
     
     private TileGridSystem tileGridSystem;
     private final Rectangle checkPivot = new Rectangle( 0, 0, 0, 0 );
@@ -60,13 +57,10 @@ public final class CollisionSystem
 
     CollisionSystem() {
         super( SYSTEM_KEY );
-        contactPools = DynArray.create( ContactPool.class, 10, 10 ); 
-        contactPoolsPerViewAndLayer = DynArray.createTyped( DynArray.class, 10, 10 );
-        collisionResolvers = DynArray.create( CollisionResolver.class, 20, 10 );
+        contactPools = new SystemComponentViewLayerMap<>( this, ContactPool.TYPE_KEY, 10, 10 ); 
+        collisionResolvers = new SystemComponentMap<>( this, CollisionResolver.TYPE_KEY, 20, 10 );
     }
-    
-    
-    
+
     @Override
     public final void init( FFContext context ) {
         super.init( context );
@@ -77,24 +71,25 @@ public final class CollisionSystem
         
         tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
     }
-
-    @Override
-    public final void dispose( FFContext context ) {
-        clearSystem();
-        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
-        context.disposeListener( ViewEvent.TYPE_KEY, this );
-        context.disposeListener( MoveEvent.TYPE_KEY, this );
-    }
     
-    @Override
+    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
+        return SUPPORTED_COMPONENT_TYPES;
+    }
+
+    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
+        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
+            contactPools.getBuilderAdapter(),
+            collisionResolvers.getBuilderAdapter()
+        );
+    }
+
     public final void onViewEvent( ViewEvent event ) {
         if ( event.isOfType( Type.VIEW_DELETED ) ) {
-            contactPoolsPerViewAndLayer.remove( event.getView().index() );
+            contactPools.delete( event.getView().index() );
             return;
         }
     }
     
-    @Override
     public final boolean match( Aspects aspects ) {
         return aspects.contains( ECollision.TYPE_KEY ) && 
                aspects.contains( ETransform.TYPE_KEY ) && 
@@ -102,20 +97,19 @@ public final class CollisionSystem
     }
     
     public final void entityActivated( int entityId, final Aspects aspects ) {
-        final ContactPool pool = getContactPoolForEntity( entityId );
+        final ContactPool pool = contactPools.get( context.getEntityComponent( entityId, ETransform.TYPE_KEY ) );
         if ( pool != null ) {
             pool.add( entityId );
         }
     }
 
     public final void entityDeactivated( int entityId, final Aspects aspects ) {
-        final ContactPool pool = getContactPoolForEntity( entityId );
+        final ContactPool pool = contactPools.get( context.getEntityComponent( entityId, ETransform.TYPE_KEY ) );
         if ( pool != null ) {
             pool.remove( entityId );
         }
     }
     
-    @Override
     public final void onMoveEvent( final MoveEvent event ) {
         final IntBag movedEntityIds = event.movedEntityIds();
         final int nullValue = movedEntityIds.getNullValue();
@@ -147,7 +141,7 @@ public final class CollisionSystem
             }
             
             // update the contact pool if there is one for the moved entity
-            ContactPool contactPool = getContactPool( transform.getViewId(), transform.getLayerId() );
+            final ContactPool contactPool = contactPools.get( transform );
             if ( contactPool != null ) {
                 contactPool.update( entityId );
             }
@@ -227,12 +221,12 @@ public final class CollisionSystem
 
     
     private void scanSpriteContacts( final int entityId, final int viewId, final int layerId, final ContactConstraint constraint ) {
-        final ContactPool pool = getContactPool( viewId, layerId );
+        final ContactPool pool = contactPools.get( viewId, layerId );
         if ( pool == null ) {
             return;
         }
         
-        IntIterator entityIterator = pool.get( constraint.worldBounds );
+        final IntIterator entityIterator = pool.get( constraint.worldBounds );
         if ( entityIterator == null || !entityIterator.hasNext() ) {
             return;
         }
@@ -324,309 +318,17 @@ public final class CollisionSystem
         
         contact.dispose();
     }
-    
-    public final ContactPool getContactPool( int id ) {
-        return contactPools.get( id );
-    }
-    
-    public final ContactPool getContactPool( String name ) {
-        for ( int i = 0; i < contactPools.capacity(); i++ ) {
-            final ContactPool contactPool = contactPools.get( i );
-            if ( contactPool == null ) {
-                continue;
-            }
-            
-            if ( name.equals( contactPool.getName() ) ) {
-                return contactPool;
-            }
-        }
-        return null;
-    }
-    
-    public final int getContactPoolId( String name ) {
-        for ( int i = 0; i < contactPools.capacity(); i++ ) {
-            final ContactPool contactPool = contactPools.get( i );
-            if ( contactPool == null ) {
-                continue;
-            }
-            
-            if ( name.equals( contactPool.getName() ) ) {
-                return contactPool.index();
-            }
-        }
-        
-        return -1;
-    }
-    
-    public final ContactPool getContactPool( int viewId, int layerId ) {
-        if ( !contactPoolsPerViewAndLayer.contains( viewId ) ) {
-            return null;
-        }
-        
-        final DynArray<ContactPool> ofLayer = contactPoolsPerViewAndLayer.get( viewId );
-        if ( !ofLayer.contains( layerId ) ) {
-            return null;
-        }
-        
-        return ofLayer.get( layerId );
-    }
-    
-    public final ContactPool getContactPoolForEntity( int entityId ) {
-        final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
-        int viewId = transform.getViewId();
-        int layerId = transform.getLayerId();
-        if ( !contactPoolsPerViewAndLayer.contains( viewId ) ) {
-            return null;
-        }
-        
-        DynArray<ContactPool> poolsPerView = contactPoolsPerViewAndLayer.get( viewId );
-        if ( !poolsPerView.contains( layerId ) ) {
-            return null;
-        }
-        
-        ContactPool quadTree = poolsPerView.get( layerId );
-        if ( quadTree == null ) {
-            return null;
-        }
-        
-        return quadTree;
-    }
-    
-    
-    
-    public final void deleteContactPool( int id ) {
-        ContactPool pool = getContactPool( id );
-        if ( pool == null ) {
-            return;
-        }
-        
-        disposeContactPool( contactPools.remove( pool.index() ) );
-        contactPoolsPerViewAndLayer.get( pool.getViewId() ).remove( pool.getLayerId() );
-    }
-    
-    public final void deleteContactPool( String name ) {
-        ContactPool pool = getContactPool( name );
-        if ( pool == null ) {
-            return;
-        }
-        
-        disposeContactPool( contactPools.remove( pool.index() ) );
-        contactPoolsPerViewAndLayer.get( pool.getViewId() ).remove( pool.getLayerId() );
-    }
-    
-    private final void disposeContactPool( ContactPool contactPool ) {
-        if ( contactPool != null ) {
-            contactPool.dispose();
-        }
-    }
-    
-    public final CollisionResolver getCollisionResolver( int id ) {
-        if ( collisionResolvers.contains( id ) ) {
-            return collisionResolvers.get( id );
-        }
-        
-        return null;
-    }
 
-    public final CollisionResolver getCollisionResolver( String name ) {
-        for ( CollisionResolver cr : collisionResolvers ) {
-            if ( name.equals( cr.getName() ) ) {
-                return cr;
-            }
-        }
-        
-        return null;
-    }
-    
-    public final int getCollisionResolverId( String name ) {
-        for ( CollisionResolver cr : collisionResolvers ) {
-            if ( name.equals( cr.getName() ) ) {
-                return cr.index();
-            }
-        }
-        
-        return -1;
-    }
-
-    public final void deleteCollisionResolver( String name ) {
-        CollisionResolver cr = getCollisionResolver( name );
-        if ( cr == null ) {
-            return;
-        }
-        
-        deleteCollisionResolver( cr.index() );
-    }
-
-    public final void deleteCollisionResolver( int id ) {
-        disposeCollisionConstraint( collisionResolvers.remove( id ) );
-    }
-
-    private void disposeCollisionConstraint( CollisionResolver cr ) {
-        if ( cr != null ) {
-            cr.dispose();
-        }
-    }
-
-    public final Set<SystemComponentKey<?>> supportedComponentTypes() {
-        return SUPPORTED_COMPONENT_TYPES;
-    }
-
-    @Override
-    public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
-        return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
-            new ContactPoolBuilderAdapter(),
-            new CollisionResolverBuilderAdapter()
-        );
-    }
-    
-    public final SystemComponentBuilder getContactPoolBuilder( Class<? extends ContactPool> componentType ) {
-        return new ContactPoolBuilder( componentType );
-    }
-
-    public final SystemComponentBuilder getCollisionResolverBuilder( Class<? extends CollisionResolver> componentType ) {
-        if ( componentType == null ) {
-            throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + CollisionResolver.TYPE_KEY.name() );
-        }
-        return new CollisionResolverBuilder( componentType );
-    }
-
-    @Override
     public final void clearSystem() {
-        for ( ContactPool pool : contactPools ) {
-            disposeContactPool( pool );
-        }
-        for ( CollisionResolver cr : collisionResolvers ) {
-            disposeCollisionConstraint( cr );
-        }
-        
         contactPools.clear();
-        contactPoolsPerViewAndLayer.clear();
         collisionResolvers.clear();
     }
-
-    private final class ContactPoolBuilder extends SystemComponentBuilder {
-        
-        private ContactPoolBuilder( Class<? extends ContactPool> componentType ) {
-            super( context, componentType );
-        }
-        
-        @Override
-        public final SystemComponentKey<ContactPool> systemComponentKey() {
-            return ContactPool.TYPE_KEY;
-        }
-
-        public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            ContactPool pool = createSystemComponent( componentId, componentType, context );
-            
-            int viewId = pool.getViewId();
-            int layerId = pool.getLayerId();
-            
-            if ( viewId < 0 ) {
-                throw new FFInitException( "ViewId is mandatory for CollisionQuadTree" );
-            }
-            
-            if ( layerId < 0 ) {
-                throw new FFInitException( "LayerId is mandatory for CollisionQuadTree" );
-            }
-            
-            if ( !contactPoolsPerViewAndLayer.contains( viewId ) ) {
-                contactPoolsPerViewAndLayer.set( viewId, DynArray.create( ContactPool.class, 20, 10 ) );
-            }
-            
-            contactPools.set( pool.index(), pool );
-            contactPoolsPerViewAndLayer
-                .get( viewId )
-                .set( layerId, pool );
-            
-            return pool.index();
-        }
-    }
     
-    private final class CollisionResolverBuilder extends SystemComponentBuilder {
-        
-        private CollisionResolverBuilder( Class<? extends CollisionResolver> componentType ) {
-            super( context, componentType );
-        }
-        
-        @Override
-        public final SystemComponentKey<CollisionResolver> systemComponentKey() {
-            return CollisionResolver.TYPE_KEY;
-        }
-
-        public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            CollisionResolver cr = createSystemComponent( componentId, componentType, context );
-            collisionResolvers.set( cr.index(), cr );
-            return cr.index();
-        }
-    }
-
-    private final class ContactPoolBuilderAdapter extends SystemBuilderAdapter<ContactPool> {
-        private ContactPoolBuilderAdapter() {
-            super( CollisionSystem.this, ContactPool.TYPE_KEY );
-        }
-        @Override
-        public final ContactPool get( int id ) {
-            return getContactPool( id );
-        }
-        @Override
-        public final Iterator<ContactPool> getAll() {
-            return contactPools.iterator();
-        }
-        @Override
-        public final void delete( int id ) {
-            deleteContactPool( id );
-        }
-        @Override
-        public final int getId( String name ) {
-            return getContactPoolId( name );
-        }
-        @Override
-        public final void activate( int id ) {
-            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
-        }
-        @Override
-        public final void deactivate( int id ) {
-            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
-        }
-        @Override
-        public final SystemComponentBuilder createComponentBuilder( Class<? extends ContactPool> componentType ) {
-            return new ContactPoolBuilder( componentType );
-        }
-
-    }
-
-    private final class CollisionResolverBuilderAdapter extends SystemBuilderAdapter<CollisionResolver> {
-        private CollisionResolverBuilderAdapter() {
-            super( CollisionSystem.this, CollisionResolver.TYPE_KEY );
-        }
-        @Override
-        public final CollisionResolver get( int id ) {
-            return getCollisionResolver( id );
-        }
-        @Override
-        public final Iterator<CollisionResolver> getAll() {
-            return collisionResolvers.iterator();
-        }
-        @Override
-        public final void delete( int id ) {
-            deleteCollisionResolver( id );
-        }
-        @Override
-        public final int getId( String name ) {
-            return getCollisionResolverId( name );
-        }
-        @Override
-        public final void activate( int id ) {
-            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
-        }
-        @Override
-        public final void deactivate( int id ) {
-            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
-        }
-        @Override
-        public final SystemComponentBuilder createComponentBuilder( Class<? extends CollisionResolver> componentType ) {
-            return getCollisionResolverBuilder( componentType );
-        }
+    public final void dispose( FFContext context ) {
+        clearSystem();
+        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
+        context.disposeListener( ViewEvent.TYPE_KEY, this );
+        context.disposeListener( MoveEvent.TYPE_KEY, this );
     }
 
 }

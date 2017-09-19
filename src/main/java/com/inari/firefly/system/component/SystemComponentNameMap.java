@@ -15,7 +15,7 @@ public final class SystemComponentNameMap<C extends SystemComponent> extends Sys
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey
     ) {
-        this( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, 20, 10 );
+        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, 20, 10 );
     }
     
     @SuppressWarnings( "unchecked" )
@@ -24,7 +24,7 @@ public final class SystemComponentNameMap<C extends SystemComponent> extends Sys
         SystemComponentKey<C> componentKey, 
         int cap, int grow 
     ) {
-        this( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, cap, grow );
+        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, cap, grow );
     }
     
     public SystemComponentNameMap( 

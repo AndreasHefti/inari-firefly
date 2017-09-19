@@ -13,7 +13,7 @@ public class SystemComponentViewLayerMap<C extends SystemComponent & ViewAndLaye
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey
     ) {
-        this( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, 20, 10 );
+        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, 20, 10 );
     }
     
     @SuppressWarnings( "unchecked" )
@@ -22,7 +22,7 @@ public class SystemComponentViewLayerMap<C extends SystemComponent & ViewAndLaye
         SystemComponentKey<C> componentKey, 
         int cap, int grow 
     ) {
-        this( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, cap, grow );
+        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, cap, grow );
     }
     
     public SystemComponentViewLayerMap( 
@@ -56,6 +56,13 @@ public class SystemComponentViewLayerMap<C extends SystemComponent & ViewAndLaye
         
         DynArray<C> perLayer = componentOfViewsPerLayer.get( viewId );
         perLayer.set( component.getLayerId(), component );
+    }
+    
+    public final C get( ViewAndLayerAware viewAndLayerAwareComponent ) {
+        return get( 
+            viewAndLayerAwareComponent.getViewId(), 
+            viewAndLayerAwareComponent.getLayerId() 
+        ); 
     }
     
     public final C get( int viewId, int layerId ) {

@@ -3,19 +3,18 @@ package com.inari.firefly.system.component;
 import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.FFInitException;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.utils.Disposable;
 
 public class SystemComponentMap<C extends SystemComponent> {
 
-    public static final Activation UNSUPPORTED_ACTIVATION = new Activation() {
-        @Override public final void activate( int id ) { throw new UnsupportedOperationException(); }
-        @Override public void deactivate( int id ) { throw new UnsupportedOperationException(); }
+    public static final Activation VOID_ACTIVATION = new Activation() {
+        @Override public final void activate( int id ) {}
+        @Override public void deactivate( int id ) {}
     };
-    
+
     @SuppressWarnings( "rawtypes" )
-    public static final BuilderAdapter DUMMY_BUILDER_ADAPTER = new BuilderAdapter() {
+    public static final BuilderAdapter VOID_BUILDER_ADAPTER = new BuilderAdapter() {
         @Override public final void finishBuild( final SystemComponent component ) {}
         @Override public final void finishDeletion( final SystemComponent component ) {}
     };
@@ -32,7 +31,7 @@ public class SystemComponentMap<C extends SystemComponent> {
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey
     ) {
-        this( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, 20, 10 );
+        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, 20, 10 );
     }
     
     @SuppressWarnings( "unchecked" )
@@ -41,7 +40,7 @@ public class SystemComponentMap<C extends SystemComponent> {
         SystemComponentKey<C> componentKey, 
         int cap, int grow 
     ) {
-        this( system, componentKey, UNSUPPORTED_ACTIVATION, DUMMY_BUILDER_ADAPTER, cap, grow );
+        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, cap, grow );
     }
     
     public SystemComponentMap( 
@@ -142,18 +141,18 @@ public class SystemComponentMap<C extends SystemComponent> {
     
     public C remove( int id ) {
         if ( !map.contains( id ) ) {
-            throw new FFInitException( "Invalid id/index: " + id );
+            return null;
         }
         
         return map.remove( id );
     }
     
     public final void delete( int id ) {
-        if ( !map.contains( id ) ) {
-            throw new FFInitException( "Invalid id/index: " + id );
+        final C removed = remove( id );
+        if ( removed == null ) {
+            return;
         }
         
-        C removed = remove( id );
         builderAdapter.finishDeletion( removed );
         if ( removed instanceof Disposable ) {
             ( (Disposable) removed ).dispose( system.context );
@@ -206,7 +205,7 @@ public class SystemComponentMap<C extends SystemComponent> {
         Activation activationAdapter, 
         int cap, int grow 
     ) {
-        return new SystemComponentMap<C>( system, componentKey, activationAdapter, DUMMY_BUILDER_ADAPTER, cap, grow );
+        return new SystemComponentMap<C>( system, componentKey, activationAdapter, VOID_BUILDER_ADAPTER, cap, grow );
     }
     
     public static <C extends  SystemComponent> SystemComponentMap<C> create( 

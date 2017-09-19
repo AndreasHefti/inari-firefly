@@ -28,9 +28,8 @@ public class SimpleCollisionTest extends FFTest {
         TestTimer timer = (TestTimer) ffContext.getTimer();
         EntitySystem entitySystem = ffContext.getSystem( EntitySystem.SYSTEM_KEY );
         MovementSystem movementSystem = ffContext.getSystem( MovementSystem.SYSTEM_KEY );
-        CollisionSystem collisionSystem = ffContext.getSystem( CollisionSystem.SYSTEM_KEY );
         
-        collisionSystem.getContactPoolBuilder( CollisionQuadTree.class )
+        ffContext.getComponentBuilder( ContactPool.TYPE_KEY, CollisionQuadTree.class )
             .set( CollisionQuadTree.VIEW_ID, 0 )
             .set( CollisionQuadTree.LAYER_ID, 0 )
             .set( CollisionQuadTree.MAX_ENTRIES_OF_AREA, 10 )
