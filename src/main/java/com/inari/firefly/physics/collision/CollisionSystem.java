@@ -52,9 +52,6 @@ public final class CollisionSystem
     private TileGridSystem tileGridSystem;
     private final Rectangle checkPivot = new Rectangle( 0, 0, 0, 0 );
     
-    // TODO make Event pooling within ContactEvent
-    private final ContactEvent contactEvent = new ContactEvent();
-
     CollisionSystem() {
         super( SYSTEM_KEY );
         contactPools = new SystemComponentViewLayerMap<>( this, ContactPool.TYPE_KEY, 10, 10 ); 
@@ -136,8 +133,7 @@ public final class CollisionSystem
             }
             
             if ( contactScan.hasAnyContact() ) {
-                contactEvent.entityId = entityId;
-                context.notify( contactEvent );
+                ContactEvent.notify( context, entityId );
             }
             
             // update the contact pool if there is one for the moved entity
