@@ -17,14 +17,16 @@ package com.inari.firefly.physics.movement;
 
 import com.inari.commons.event.Event;
 import com.inari.commons.lang.list.IntBag;
+import com.inari.firefly.system.FFContext;
 
 public final class MoveEvent extends Event<MoveEventListener> {
     
     public static final EventTypeKey TYPE_KEY = createTypeKey( MoveEvent.class );
+    private static final MoveEvent SINGLETON_EVENT = new MoveEvent();
     
-    final IntBag entityIds = new IntBag( 10, -1 );
+    private IntBag entityIds;
     
-    MoveEvent() {
+    private MoveEvent() {
         super( TYPE_KEY );
     }
     
@@ -36,9 +38,13 @@ public final class MoveEvent extends Event<MoveEventListener> {
         return entityIds;
     }
 
-    @Override
     protected final void notify( MoveEventListener listener ) {
         listener.onMoveEvent( this );
+    }
+
+    @Override
+    protected final void restore() {
+        entityIds = null;
     }
 
     @Override
@@ -48,6 +54,12 @@ public final class MoveEvent extends Event<MoveEventListener> {
         builder.append( entityIds );
         builder.append( "]" );
         return builder.toString();
+    }
+    
+    // NOTE: this is not thread save
+    public final static FFContext notify( final FFContext context, final IntBag entityIds ) {
+        SINGLETON_EVENT.entityIds = entityIds;
+        return context.notify( SINGLETON_EVENT );
     }
 
 }

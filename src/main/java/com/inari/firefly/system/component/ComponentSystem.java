@@ -22,7 +22,6 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.utils.Disposable;
 
 public abstract class ComponentSystem<T extends ComponentSystem<T>> implements FFSystem {
     
@@ -52,19 +51,6 @@ public abstract class ComponentSystem<T extends ComponentSystem<T>> implements F
     @Override
     public void init( FFContext context ) throws FFInitException {
         this.context = context;
-    }
-    
-    @Deprecated
-    protected final void disposeSystemComponent( SystemComponent component ) {
-        if ( component == null ) {
-            return;
-        }
-        
-        if ( component instanceof Disposable ) {
-            ( (Disposable) component ).dispose( context );
-        }
-
-        component.dispose();
     }
 
     public abstract Set<SystemComponentKey<?>> supportedComponentTypes();

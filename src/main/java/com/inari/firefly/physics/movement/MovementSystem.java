@@ -17,6 +17,7 @@ package com.inari.firefly.physics.movement;
 
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.EntitySystem.EntityIterator;
@@ -38,19 +39,16 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
     private EntityIterator entityIterator;
     private Integrator integrator;
     
-    private final MoveEvent moveEvent = new MoveEvent();
-    
-    @Override
+    private IntBag entityIds = new IntBag( 10, -1 );
+
     public IIndexedTypeKey indexedTypeKey() {
         return SYSTEM_KEY;
     }
 
-    @Override
     public FFSystemTypeKey<MovementSystem> systemTypeKey() {
         return SYSTEM_KEY;
     }
     
-    @Override
     public void init( FFContext context ) {
         this.context = context;
         
@@ -61,7 +59,6 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
         context.registerListener( UpdateEvent.TYPE_KEY, this );
     }
     
-    @Override
     public final void dispose( FFContext context ) {
         context.disposeListener( UpdateEvent.TYPE_KEY, this );
     }
@@ -78,9 +75,8 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
         this.integrator = integrator;
     }
 
-    @Override
     public final void update( final FFTimer timer ) {
-        moveEvent.entityIds.clear();
+        entityIds.clear();
         entityIterator.reset();
         while ( entityIterator.hasNext() ) {
             final int entityId = entityIterator.next();
@@ -95,13 +91,13 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
 
             if ( movement.velocity.dx != 0f || movement.velocity.dy != 0f ) {
                 integrator.step( movement, transform, deltaTimeInSeconds );
-                moveEvent.add( entityId );
+                entityIds.add( entityId );
             }
 
             integrator.integrate( movement, transform, deltaTimeInSeconds );
         }
         
-        context.notify( moveEvent );
+        MoveEvent.notify( context, entityIds );
     }
 
 }
