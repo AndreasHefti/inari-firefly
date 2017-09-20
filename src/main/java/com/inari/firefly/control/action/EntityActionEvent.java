@@ -1,24 +1,20 @@
 package com.inari.firefly.control.action;
 
-import java.util.ArrayDeque;
-
 import com.inari.commons.event.Event;
-import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
 
 public final class EntityActionEvent extends Event<EntityActionEventListener> {
     
     public static final EventTypeKey TYPE_KEY = createTypeKey( EntityActionEvent.class );
-    private static final ArrayDeque<EntityActionEvent> POOL = new ArrayDeque<EntityActionEvent>( 2 );
+    private static final EntityActionEvent SINGLETON_EVENT = new EntityActionEvent();
     
-    int actionId;
-    int entityId;
+    private int actionId;
+    private int entityId;
 
-    protected EntityActionEvent() {
+    private EntityActionEvent() {
         super( TYPE_KEY );
     }
 
-    @Override
     protected final void notify( final EntityActionEventListener listener ) {
         listener.performAction( actionId, entityId );
     }
@@ -27,36 +23,20 @@ public final class EntityActionEvent extends Event<EntityActionEventListener> {
     protected final void restore() {
         actionId = -1;
         entityId = -1;
-        
-        POOL.addLast( this );
     }
     
-    static final EntityActionEvent create( String actionName, int entityId, FFContext context ) {
-        return create( 
-            context.getSystemComponentId( Action.TYPE_KEY, actionName ), entityId
-        );
+    // NOTE: this is not thread save
+    public static FFContext notify( FFContext context, int actionId, int entityId ) {
+        SINGLETON_EVENT.actionId = actionId;
+        SINGLETON_EVENT.entityId = entityId;
+        return context.notify( SINGLETON_EVENT );
     }
     
-    static final EntityActionEvent create( String actionName, String entityName, FFContext context ) {
-        return create( 
-            context.getSystemComponentId( Action.TYPE_KEY, actionName ),
-            context.getSystem( EntitySystem.SYSTEM_KEY ).getEntityId( entityName )
-        );
-    }
-    
-    static final EntityActionEvent create( int actionId, int entityId ) {
-        final EntityActionEvent result;
-        if ( POOL.isEmpty() ) {
-            result = new EntityActionEvent();
-            POOL.addLast( result );
-        } else {
-            result = POOL.removeLast();
-        }
-        
-        result.actionId = actionId;
-        result.entityId = entityId;
-        
-        return result;
+    public static FFContext notifyThreadSave( FFContext context, int actionId, int entityId ) {
+        EntityActionEvent event = new EntityActionEvent();
+        event.actionId = actionId;
+        event.entityId = entityId;
+        return context.notify( SINGLETON_EVENT );
     }
 
 }

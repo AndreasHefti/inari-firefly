@@ -7,6 +7,7 @@ import com.inari.commons.lang.list.DynArray;
 
 public final class ContactScan {
 
+    // TODO instead of the ContactConstraint only the ContactInstance is mapped within a complete ContactScan
     private final HashMap<String, ContactConstraint> constraintsNameMapping = new HashMap<String, ContactConstraint>();
     final DynArray<ContactConstraint> constraints = DynArray.create( ContactConstraint.class );
     

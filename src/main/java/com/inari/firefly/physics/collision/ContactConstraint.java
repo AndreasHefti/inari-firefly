@@ -11,14 +11,17 @@ import com.inari.commons.lang.list.DynArray;
 public final class ContactConstraint  {
     
     final String name;
-    int layerId = -1;
     
+    int layerId = -1;
     final Rectangle contactScanBounds = new Rectangle();
     final Rectangle normalizedContactScanBounds = new Rectangle();
     final Rectangle worldBounds = new Rectangle();
     private final Aspects materialTypeFilter = CollisionSystem.MATERIAL_ASPECT_GROUP.createAspects();
     private boolean filtering = false;
     
+    // TODO split up the ContactConstraint to a ContactConstraint that contains only the definition data (static) and is a SystemComponent and a ContactInstance
+    //      class that contains the contact information for a specified entity. The following fields are instance fields:
+    // final String name; 
     private final Aspects contactTypes = CollisionSystem.CONTACT_ASPECT_GROUP.createAspects();
     private final Aspects materialTypes = CollisionSystem.MATERIAL_ASPECT_GROUP.createAspects();
     private final BitMask intersectionMask = new BitMask( 0, 0 );
