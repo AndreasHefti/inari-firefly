@@ -20,11 +20,10 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentMap.BuilderAdapter;
+import com.inari.firefly.system.component.SystemComponentMap.BuilderListener;
 import com.inari.firefly.system.component.SystemComponentNameMap;
 
 public class AssetSystem extends ComponentSystem<AssetSystem> {
@@ -41,13 +40,11 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
         super( SYSTEM_KEY );
         assets = new SystemComponentNameMap<>( 
             this, Asset.TYPE_KEY,
-            new Activation() {
-                public final void activate( int id ) { loadAsset( id ); }
-                public final void deactivate( int id ) { disposeAsset( id ); }
-            },
-            new BuilderAdapter<Asset>() {
-                public final void finishBuild( Asset component ) { build( component ); }
-                public final void finishDeletion( Asset component ) { deleteAsset( component ); }
+            new BuilderListener<Asset>() {
+                public final void notifyBuild( Asset component ) { build( component ); }
+                public final void notifyActivation( int id ) { loadAsset( id ); }
+                public final void notifyDeactivation( int id ) { disposeAsset( id ); }
+                public final void notifyDeletion( Asset component ) { deleteAsset( component ); }
             }
         );
     }

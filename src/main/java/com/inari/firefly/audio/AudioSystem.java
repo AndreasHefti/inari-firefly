@@ -22,12 +22,11 @@ import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentMap;
-import com.inari.firefly.system.component.SystemComponentMap.BuilderAdapter;
+import com.inari.firefly.system.component.SystemComponentMap.BuilderListener;
 
 public final class AudioSystem
     extends
@@ -44,13 +43,11 @@ public final class AudioSystem
         super( SYSTEM_KEY );
         sounds = new SystemComponentMap<>( 
             this, Sound.TYPE_KEY, 
-            new Activation() {
-                public final void activate( int id ) { playSound( id ); }
-                public final void deactivate( int id ) { stopPlaying( id ); }
-            },
-            new BuilderAdapter<Sound>() {
-                public final void finishBuild( Sound component ) { build( component ); }
-                public final void finishDeletion( Sound component ) {}
+            new BuilderListener<Sound>() {
+                public final void notifyBuild( Sound component ) { build( component ); }
+                public final void notifyActivation( int id ) { playSound( id ); }
+                public final void notifyDeactivation( int id ) { stopPlaying( id ); }
+                public final void notifyDeletion( Sound component ) {}
             }
         );
     }

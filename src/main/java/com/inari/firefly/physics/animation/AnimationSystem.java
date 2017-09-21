@@ -25,11 +25,10 @@ import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
-import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentMap;
+import com.inari.firefly.system.component.SystemComponentActivationMap;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class AnimationSystem 
@@ -44,19 +43,12 @@ public final class AnimationSystem
         Animation.TYPE_KEY
     );
 
-    final SystemComponentMap<Animation> animations;
+    final SystemComponentActivationMap<Animation> animations;
     final DynArray<AnimationMapping> activeMappings;
 
     AnimationSystem() {
         super( SYSTEM_KEY );
-        animations = SystemComponentMap.create( 
-            this, Animation.TYPE_KEY,
-            new Activation() {
-                public final void activate( int id ) { activateAnimation( id ); }
-                public final void deactivate( int id ) { resetAnimation( id ); }
-            },
-            20, 10 
-        ); 
+        animations = new SystemComponentActivationMap<>( this, Animation.TYPE_KEY, 20, 10 ); 
         activeMappings = DynArray.create( AnimationMapping.class, 100, 100 );
     }
     
@@ -73,7 +65,6 @@ public final class AnimationSystem
         return SUPPORTED_COMPONENT_TYPES;
     }
 
-    @Override
     public final Set<SystemBuilderAdapter<?>> getSupportedBuilderAdapter() {
         return JavaUtils.<SystemBuilderAdapter<?>>unmodifiableSet( 
             animations.getBuilderAdapter()
@@ -140,16 +131,7 @@ public final class AnimationSystem
     public final boolean isActive( int animationId ) {
         return animations.map.get( animationId ).active;
     }
-    
-    public final void activateAnimation( int animationId ) {
-        animations.get( animationId ).activate();
-    }
-    
-    public final void resetAnimation( int animationId ) {
-        animations.get( animationId ).reset();
-    }
 
-    @Override
     public final void update( final FFTimer timer ) {
         for ( int i = 0; i < animations.map.capacity(); i++ ) {
             final Animation animation = animations.map.get( i );

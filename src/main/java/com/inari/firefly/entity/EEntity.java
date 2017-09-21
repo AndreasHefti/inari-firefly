@@ -35,7 +35,7 @@ public class EEntity extends EntityComponent {
     public EEntity() {
         super( TYPE_KEY );
         aspects = ENTITY_ASPECT_GROUP.createAspects();
-        controllerIds = new IntBag( 10, -1, 10 );
+        controllerIds = new IntBag( 1, -1, 5 );
         resetAttributes();
     }
 

@@ -22,11 +22,11 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
-import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentMap;
+import com.inari.firefly.system.component.SystemComponentMap.BuilderListenerAdapter;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.utils.Condition;
 
@@ -46,11 +46,10 @@ public class StateSystem
 
     public StateSystem() {
         super( SYSTEM_KEY );
-        workflows = SystemComponentMap.create( 
+        workflows = new SystemComponentMap<>( 
             this, Workflow.TYPE_KEY,
-            new Activation() {
-                public final void activate( int id ) { activateWorkflow( id ); }
-                public final void deactivate( int id ) {}
+            new BuilderListenerAdapter<Workflow>() {
+                public final void notifyActivation( int id ) { activateWorkflow( id ); }
             },
             20, 10 
         ); 

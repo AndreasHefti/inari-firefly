@@ -21,11 +21,10 @@ import com.inari.commons.JavaUtils;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
-import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentMap;
+import com.inari.firefly.system.component.SystemComponentActivationMap;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class ControllerSystem
@@ -39,18 +38,11 @@ public final class ControllerSystem
        Controller.TYPE_KEY
     );
 
-    private final SystemComponentMap<Controller> controller;
+    private final SystemComponentActivationMap<Controller> controller;
 
     ControllerSystem() {
         super( SYSTEM_KEY );
-        controller = SystemComponentMap.create( 
-            this, Controller.TYPE_KEY,
-            new Activation() {
-                public final void activate( int id ) { ControllerSystem.this.activate( id ); }
-                public final void deactivate( int id ) { ControllerSystem.this.deactivate( id ); }
-            },
-            20, 10 
-        );
+        controller = new SystemComponentActivationMap<>( this, Controller.TYPE_KEY, 20, 10 );
     }
     
     @Override
@@ -69,26 +61,10 @@ public final class ControllerSystem
             controller.getBuilderAdapter()
         );
     }
-    
-    public final void activate( int controllerId ) {
-        if ( !controller.map.contains( controllerId ) ) {
-            return;
-        }
-        
-        controller.map.get( controllerId ).setActive( true );
-    }
-    
-    public final void deactivate( int controllerId ) {
-        if ( !controller.map.contains( controllerId ) ) {
-            return;
-        }
-        
-        controller.map.get( controllerId ).setActive( false );
-    }
 
     public final void update( final FFTimer timer ) {
-        for ( int i = 0; i < controller.map.capacity(); i++ ) {
-            final Controller c = controller.map.get( i );
+        for ( int i = 0; i < controller.activeComponents.capacity(); i++ ) {
+            final Controller c = controller.activeComponents.get( i );
             if ( c != null ) {
                 c.processUpdate();
             }

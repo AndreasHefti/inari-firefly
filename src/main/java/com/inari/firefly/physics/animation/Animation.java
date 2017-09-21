@@ -21,6 +21,7 @@ import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.component.Activatable;
 import com.inari.firefly.system.component.SystemComponent;
 
 /** General and abstract implementation of the Animation SystemComponent.
@@ -35,7 +36,7 @@ import com.inari.firefly.system.component.SystemComponent;
  *  This is implemented by concrete value type implementation such as IntAnimation, FloatAnimation or a 
  *  general generic ValueAnimation.
  */
-public abstract class Animation extends SystemComponent {
+public abstract class Animation extends SystemComponent implements Activatable {
     
     /** The SystemComponent type key for Animation components */
     public static final SystemComponentKey<Animation> TYPE_KEY = SystemComponentKey.create( Animation.class );
@@ -100,6 +101,14 @@ public abstract class Animation extends SystemComponent {
         return active;
     }
     
+    public final void setActive( boolean active ) {
+        if ( active ) {
+            activate();
+        } else {
+            reset();
+        }
+    }
+    
     public final boolean isFinished() {
         return finished;
     }
@@ -108,8 +117,12 @@ public abstract class Animation extends SystemComponent {
         reset();
         finished = true;
     }
-    
+
     public void activate() {
+        if ( active ) {
+            return;
+        }
+        
         startedTime = context.getTime();
         active = true;
     }

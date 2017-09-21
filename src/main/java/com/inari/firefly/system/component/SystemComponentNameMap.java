@@ -15,7 +15,7 @@ public final class SystemComponentNameMap<C extends SystemComponent> extends Sys
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey
     ) {
-        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, 20, 10 );
+        this( system, componentKey, (BuilderListener<C>) VOID_BUILDER_LSTENER, 20, 10 );
     }
     
     @SuppressWarnings( "unchecked" )
@@ -24,26 +24,24 @@ public final class SystemComponentNameMap<C extends SystemComponent> extends Sys
         SystemComponentKey<C> componentKey, 
         int cap, int grow 
     ) {
-        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, cap, grow );
+        this( system, componentKey, (BuilderListener<C>) VOID_BUILDER_LSTENER, cap, grow );
     }
     
     public SystemComponentNameMap( 
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey, 
-        Activation activationAdapter, 
-        BuilderAdapter<C> builderAdapter
+        BuilderListener<C> builderAdapter
     ) {
-        this( system, componentKey, activationAdapter, builderAdapter, 20, 10 );
+        this( system, componentKey, builderAdapter, 20, 10 );
     }
     
     public SystemComponentNameMap( 
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey, 
-        Activation activationAdapter, 
-        BuilderAdapter<C> builderAdapter, 
+        BuilderListener<C> builderAdapter, 
         int cap, int grow  
     ) {
-        super( system, componentKey, activationAdapter, builderAdapter, cap, grow );
+        super( system, componentKey, builderAdapter, cap, grow );
         nameMapping = new HashMap<>( cap );
     }
 

@@ -22,10 +22,11 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.component.Activatable;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
-public abstract class Controller extends SystemComponent {
+public abstract class Controller extends SystemComponent implements Activatable {
     
     public static final SystemComponentKey<Controller> TYPE_KEY = SystemComponentKey.create( Controller.class );
     public static final AttributeKey<Float> UPDATE_RESOLUTION = AttributeKey.createFloat( "updateResolution", Controller.class );

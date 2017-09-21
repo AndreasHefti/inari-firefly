@@ -19,11 +19,11 @@ import java.util.Set;
 
 import com.inari.commons.JavaUtils;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.component.Activation;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentMap;
+import com.inari.firefly.system.component.SystemComponentMap.BuilderListenerAdapter;
 
 public final class TaskSystem extends ComponentSystem<TaskSystem> {
     
@@ -36,11 +36,10 @@ public final class TaskSystem extends ComponentSystem<TaskSystem> {
     
     TaskSystem() {
         super( SYSTEM_KEY );
-        tasks = SystemComponentMap.create( 
+        tasks = new SystemComponentMap<>( 
             this, Task.TYPE_KEY,
-            new Activation() {
-                public final void activate( int id ) { runTask( id ); }
-                public final void deactivate( int id ) {}
+            new BuilderListenerAdapter<Task>() {
+                public final void notifyActivation( int id ) { runTask( id ); }
             },
             20, 10 
         );

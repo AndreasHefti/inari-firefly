@@ -7,31 +7,35 @@ import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.utils.Disposable;
 
 public class SystemComponentMap<C extends SystemComponent> {
-
-    public static final Activation VOID_ACTIVATION = new Activation() {
-        @Override public final void activate( int id ) {}
-        @Override public void deactivate( int id ) {}
-    };
-
-    @SuppressWarnings( "rawtypes" )
-    public static final BuilderAdapter VOID_BUILDER_ADAPTER = new BuilderAdapter() {
-        @Override public final void finishBuild( final SystemComponent component ) {}
-        @Override public final void finishDeletion( final SystemComponent component ) {}
-    };
     
+    public interface BuilderListener<C extends SystemComponent> {
+        void notifyBuild( final C component );
+        void notifyActivation( int id );
+        void notifyDeactivation( int id ); 
+        void notifyDeletion( final C component );
+    }
+    
+    public static class BuilderListenerAdapter<C extends SystemComponent> implements BuilderListener<C> {
+        public void notifyBuild( C component ) {}
+        public void notifyActivation( int id ) {}
+        public void notifyDeactivation( int id ) {}
+        public void notifyDeletion( C component ) {}
+    }
+
+    protected static final BuilderListener<?> VOID_BUILDER_LSTENER = new BuilderListenerAdapter<>();
+
     public final SystemComponentKey<C> componentKey;
     public final DynArray<C> map;
     
     private final ComponentSystem<?> system;
-    private final Activation activationAdapter;
-    private final BuilderAdapter<C> builderAdapter;
+    private final BuilderListener<C> builderListener;
     
     @SuppressWarnings( "unchecked" )
     public SystemComponentMap( 
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey
     ) {
-        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, 20, 10 );
+        this( system, componentKey, (BuilderListener<C>) VOID_BUILDER_LSTENER, 20, 10 );
     }
     
     @SuppressWarnings( "unchecked" )
@@ -40,30 +44,27 @@ public class SystemComponentMap<C extends SystemComponent> {
         SystemComponentKey<C> componentKey, 
         int cap, int grow 
     ) {
-        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, cap, grow );
+        this( system, componentKey, (BuilderListener<C>) VOID_BUILDER_LSTENER, cap, grow );
     }
     
     public SystemComponentMap( 
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey, 
-        Activation activationAdapter, 
-        BuilderAdapter<C> builderAdapter
+        BuilderListener<C> builderListener
     ) {
-        this( system, componentKey, activationAdapter, builderAdapter, 20, 10 );
+        this( system, componentKey, builderListener, 20, 10 );
     }
 
     public SystemComponentMap( 
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey, 
-        Activation activationAdapter, 
-        BuilderAdapter<C> builderAdapter, 
+        BuilderListener<C> builderListener, 
         int cap, int grow 
     ) {
         this.system = system;
         this.componentKey = componentKey;
         map = DynArray.create( componentKey.<C>type(), cap, grow );
-        this.activationAdapter = activationAdapter;
-        this.builderAdapter = builderAdapter;
+        this.builderListener = builderListener;
     }
     
     public void set( int index, C value ) {
@@ -123,20 +124,20 @@ public class SystemComponentMap<C extends SystemComponent> {
         return map.iterator();
     }
 
-    public final void activate( int id ) {
-        activationAdapter.activate( id );
+    public void activate( int id ) {
+        builderListener.notifyActivation( id );
     }
     
     public final void activate( String name ) {
-        activationAdapter.activate( getId( name ) );
+        builderListener.notifyActivation( getId( name ) );
     }
 
-    public final void deactivate( int id ) {
-        activationAdapter.deactivate( id );
+    public void deactivate( int id ) {
+        builderListener.notifyDeactivation( id );
     }
     
     public final void deactivate( String name ) {
-        activationAdapter.deactivate( getId( name ) );
+        builderListener.notifyDeactivation( getId( name ) );
     }
     
     public C remove( int id ) {
@@ -153,7 +154,7 @@ public class SystemComponentMap<C extends SystemComponent> {
             return;
         }
         
-        builderAdapter.finishDeletion( removed );
+        builderListener.notifyDeletion( removed );
         if ( removed instanceof Disposable ) {
             ( (Disposable) removed ).dispose( system.context );
         }
@@ -198,32 +199,6 @@ public class SystemComponentMap<C extends SystemComponent> {
         return componentBuilderAdapter;
     }
     
-    @SuppressWarnings( "unchecked" )
-    public static <C extends  SystemComponent> SystemComponentMap<C> create( 
-        ComponentSystem<?> system, 
-        SystemComponentKey<C> componentKey, 
-        Activation activationAdapter, 
-        int cap, int grow 
-    ) {
-        return new SystemComponentMap<C>( system, componentKey, activationAdapter, VOID_BUILDER_ADAPTER, cap, grow );
-    }
-    
-    public static <C extends  SystemComponent> SystemComponentMap<C> create( 
-        ComponentSystem<?> system, 
-        SystemComponentKey<C> componentKey, 
-        Activation activationAdapter, 
-        BuilderAdapter<C> builderAdapter, 
-        int cap, int grow 
-    ) {
-        return new SystemComponentMap<C>( system, componentKey, activationAdapter, builderAdapter, cap, grow );
-    }
-
-    
-    
-    public interface BuilderAdapter<C extends SystemComponent> {
-        void finishBuild( final C component );
-        void finishDeletion( final C component );
-    }
 
     private final class ComponentBuilder extends SystemComponentBuilder {
 
@@ -231,21 +206,19 @@ public class SystemComponentMap<C extends SystemComponent> {
             super( system.context, subType );
         }
         
-        @Override
         public final SystemComponentKey<?> systemComponentKey() {
             return componentKey;
         }
 
-        @Override
         public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
             final C component = createSystemComponent( componentId, componentType, system.context );
             final int index = component.index();
 
-            builderAdapter.finishBuild( component );
+            builderListener.notifyBuild( component );
             SystemComponentMap.this.set( index, component );
             
             if ( activate ) {
-                activationAdapter.activate( index );
+                SystemComponentMap.this.activate( index );
             }
             
             return index;
@@ -257,35 +230,28 @@ public class SystemComponentMap<C extends SystemComponent> {
             super( system, componentKey );
         }
         
-        @Override
         public final C get( int id ) {
             return SystemComponentMap.this.get( id );
         }
         
-        @Override
         public final void delete( int id ) {
             SystemComponentMap.this.delete( id );
         }
         
-        @Override
         public final Iterator<C> getAll() {
             return SystemComponentMap.this.getAll();
         }
         
-        @Override
         public final int getId( String name ) {
             return SystemComponentMap.this.getId( name );
         }
-        @Override
         public final void activate( int id ) {
-            SystemComponentMap.this.activationAdapter.activate( id );
+            SystemComponentMap.this.activate( id );
         }
-        @Override
         public final void deactivate( int id ) {
-            SystemComponentMap.this.activationAdapter.deactivate( id );
+            SystemComponentMap.this.deactivate( id );
         }
 
-        @Override
         public final SystemComponentBuilder createComponentBuilder( Class<? extends C> componentType ) {
             return SystemComponentMap.this.getBuilder( componentType );
         }

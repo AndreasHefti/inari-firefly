@@ -13,7 +13,7 @@ public class SystemComponentViewLayerMap<C extends SystemComponent & ViewAndLaye
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey
     ) {
-        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, 20, 10 );
+        this( system, componentKey, (BuilderListener<C>) VOID_BUILDER_LSTENER, 20, 10 );
     }
     
     @SuppressWarnings( "unchecked" )
@@ -22,26 +22,24 @@ public class SystemComponentViewLayerMap<C extends SystemComponent & ViewAndLaye
         SystemComponentKey<C> componentKey, 
         int cap, int grow 
     ) {
-        this( system, componentKey, VOID_ACTIVATION, VOID_BUILDER_ADAPTER, cap, grow );
+        this( system, componentKey, (BuilderListener<C>) VOID_BUILDER_LSTENER, cap, grow );
     }
     
     public SystemComponentViewLayerMap( 
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey, 
-        Activation activationAdapter, 
-        BuilderAdapter<C> builderAdapter
+        BuilderListener<C> builderAdapter
     ) {
-        this( system, componentKey, activationAdapter, builderAdapter, 20, 10 );
+        this( system, componentKey, builderAdapter, 20, 10 );
     }
     
     public SystemComponentViewLayerMap( 
         ComponentSystem<?> system, 
         SystemComponentKey<C> componentKey, 
-        Activation activationAdapter, 
-        BuilderAdapter<C> builderAdapter, 
+        BuilderListener<C> builderAdapter, 
         int cap, int grow  
     ) {
-        super( system, componentKey, activationAdapter, builderAdapter, cap, grow );
+        super( system, componentKey, builderAdapter, cap, grow );
         componentOfViewsPerLayer = DynArray.createTyped( DynArray.class, cap, grow );
     }
     
