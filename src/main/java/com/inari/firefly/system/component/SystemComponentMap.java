@@ -158,6 +158,7 @@ public class SystemComponentMap<C extends SystemComponent> {
         if ( removed instanceof Disposable ) {
             ( (Disposable) removed ).dispose( system.context );
         }
+        
         removed.dispose();
     }
     

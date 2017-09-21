@@ -58,4 +58,16 @@ public final class SystemComponentActivationMap<C extends SystemComponent & Acti
         activeComponents.remove( component );
     }
 
+    @Override
+    public C remove( int id ) {
+        C component = super.remove( id );
+        if ( component != null && component.isActive() ) {
+            activeComponents.remove( component );
+        }
+        
+        return component;
+    }
+    
+    
+
 }
