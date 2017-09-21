@@ -44,18 +44,22 @@ public final class SystemComponentActivationMap<C extends SystemComponent & Acti
 
     @Override
     public final void activate( int id ) {
-        super.activate( id );
         C component = get( id );
-        component.setActive( true );
-        activeComponents.add( component );
+        if ( !component.isActive() ) {
+            component.setActive( true );
+            activeComponents.add( component );
+            super.activate( id );
+        }
     }
 
     @Override
     public final void deactivate( int id ) {
-        super.deactivate( id );
         C component = get( id );
-        component.setActive( false );
-        activeComponents.remove( component );
+        if ( component.isActive() ) {
+            component.setActive( false );
+            activeComponents.remove( component );
+            super.deactivate( id );
+        }
     }
 
     @Override
