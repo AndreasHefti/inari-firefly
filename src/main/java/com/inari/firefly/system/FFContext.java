@@ -439,6 +439,10 @@ public final class FFContext {
         return entitySystem.getEntityBuilder();
     }
     
+    public final int getEntityId( String entityName ) {
+        return entitySystem.getEntityId( entityName );
+    }
+    
     public final <T extends EntityComponent> T getEntityComponent( int entityId, EntityComponentTypeKey<T> typeKey ) {
         return entitySystem.getComponent( entityId, typeKey );
     }
