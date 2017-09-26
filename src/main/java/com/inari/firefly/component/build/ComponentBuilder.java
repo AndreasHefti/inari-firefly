@@ -51,11 +51,13 @@ public interface ComponentBuilder {
     void activate( int componentId );
 
     ComponentBuilder buildAndNext();
+    <CC extends SystemComponent> ComponentBuilder buildAndNext( FFContext context, SystemComponentKey<CC> key );
     <CC extends SystemComponent> ComponentBuilder buildAndNext( FFContext context, SystemComponentKey<CC> key, Class<? extends CC> type );
     ComponentBuilder buildAndNext( int componentId );
     
 
     ComponentBuilder activateAndNext();
+    <CC extends SystemComponent> ComponentBuilder activateAndNext( FFContext context, SystemComponentKey<CC> key );
     <CC extends SystemComponent> ComponentBuilder activateAndNext( FFContext context, SystemComponentKey<CC> key, Class<? extends CC> type );
     ComponentBuilder activateAndNext( int componentId );
 

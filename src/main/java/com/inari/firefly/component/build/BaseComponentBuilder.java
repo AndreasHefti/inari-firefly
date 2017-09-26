@@ -178,10 +178,16 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return this;
     }
     
+     @Override
+    public final <CC extends SystemComponent> ComponentBuilder buildAndNext( FFContext context, SystemComponentKey<CC> key ) {
+        build();
+        return context.getComponentBuilder( key );
+    }
+    
     @Override
     public final <CC extends SystemComponent> ComponentBuilder buildAndNext( FFContext context, SystemComponentKey<CC> key, Class<? extends CC> type ) {
         build();
-        return context.getComponentBuilder( key );
+        return context.getComponentBuilder( key, type );
     }
 
     public final ComponentBuilder buildAndNext( int componentId ) {
@@ -195,9 +201,15 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     }
     
     @Override
-    public final <CC extends SystemComponent> ComponentBuilder activateAndNext( FFContext context, SystemComponentKey<CC> key, Class<? extends CC> type ) {
+    public final <CC extends SystemComponent> ComponentBuilder activateAndNext( FFContext context, SystemComponentKey<CC> key ) {
         activate();
         return context.getComponentBuilder( key );
+    }
+    
+    @Override
+    public final <CC extends SystemComponent> ComponentBuilder activateAndNext( FFContext context, SystemComponentKey<CC> key, Class<? extends CC> type ) {
+        activate();
+        return context.getComponentBuilder( key, type );
     }
 
     public final ComponentBuilder activateAndNext( int componentId ) {
