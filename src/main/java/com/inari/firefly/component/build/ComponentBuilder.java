@@ -20,6 +20,9 @@ import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.Attribute;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public interface ComponentBuilder {
 
@@ -48,9 +51,12 @@ public interface ComponentBuilder {
     void activate( int componentId );
 
     ComponentBuilder buildAndNext();
+    <CC extends SystemComponent> ComponentBuilder buildAndNext( FFContext context, SystemComponentKey<CC> key, Class<? extends CC> type );
     ComponentBuilder buildAndNext( int componentId );
+    
 
     ComponentBuilder activateAndNext();
+    <CC extends SystemComponent> ComponentBuilder activateAndNext( FFContext context, SystemComponentKey<CC> key, Class<? extends CC> type );
     ComponentBuilder activateAndNext( int componentId );
 
 }

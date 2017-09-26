@@ -27,6 +27,9 @@ import com.inari.firefly.component.NamedComponent;
 import com.inari.firefly.component.attr.Attribute;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.SystemComponent;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public abstract class BaseComponentBuilder<C extends Component> implements ComponentBuilder {
     
@@ -38,55 +41,46 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         this.componentType = componentType;
     }
     
-    @Override
     public final ComponentBuilder clear() {
         attributes.clear();
         return this;
     }
 
-    @Override
     public final BaseComponentBuilder<C> setAttributes( AttributeMap attributes ) {
         attributes.putAll( attributes );
         return this;
     }
 
-    @Override
     public final AttributeMap getAttributes() {
         return attributes;
     }
 
-    @Override
     public final ComponentBuilder set( AttributeKey<Float> key, float value ) {
         attributes.put( key, value );
         return this;
     }
     
-    @Override
     public final ComponentBuilder set( AttributeKey<Integer> key, int value ) {
         attributes.put( key, value );
         return this;
     }
     
-    @Override
     public final ComponentBuilder set( AttributeKey<Long> key, long value ) {
         attributes.put( key, value );
         return this;
     }
     
-    @Override
     public final ComponentBuilder set( AttributeKey<Double> key, double value ) {
         attributes.put( key, value );
         return this;
     }
     
-    @Override
     public final <T> ComponentBuilder set( AttributeKey<T> key, T value ) {
         attributes.putUntyped( key, value );
         return this;
     }
     
     @SuppressWarnings( "unchecked" )
-    @Override
     public final <T, V extends T> ComponentBuilder set( AttributeKey<DynArray<T>> key, V value, int index ) {
         DynArray<T> array;
         if ( ! attributes.contains( key ) ) {
@@ -99,7 +93,6 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return this;
     }
 
-    @Override
     public final ComponentBuilder add( AttributeKey<IntBag> key, int value ) {
         if ( ! attributes.contains( key ) ) {
             attributes.put( key, new IntBag( 1, -1 ) );
@@ -112,7 +105,6 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     }
 
     @SuppressWarnings( "unchecked" )
-    @Override
     public final <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, V value ) {
         if ( value == null ) {
             return this;
@@ -170,12 +162,10 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     }
     
     @SuppressWarnings( "unchecked" )
-    @Override
     public final <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<V> values ) {
         return createAndAdd( key, values.getArray(), (Class<T>) key.typedValueType() );
     }
 
-    @Override
     public final ComponentBuilder add( Attribute<?>... attributes ) {
         for ( Attribute<?> attribute : attributes ) {
             this.attributes.putUntyped( attribute.getKey(), attribute.getValue() );
@@ -183,25 +173,33 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return this;
     }
 
-    @Override
     public final ComponentBuilder buildAndNext() {
         build();
         return this;
     }
-
+    
     @Override
+    public final <CC extends SystemComponent> ComponentBuilder buildAndNext( FFContext context, SystemComponentKey<CC> key, Class<? extends CC> type ) {
+        build();
+        return context.getComponentBuilder( key );
+    }
+
     public final ComponentBuilder buildAndNext( int componentId ) {
         build( componentId );
         return this;
     }
 
-    @Override
     public final ComponentBuilder activateAndNext() {
         activate();
         return this;
     }
-
+    
     @Override
+    public final <CC extends SystemComponent> ComponentBuilder activateAndNext( FFContext context, SystemComponentKey<CC> key, Class<? extends CC> type ) {
+        activate();
+        return context.getComponentBuilder( key );
+    }
+
     public final ComponentBuilder activateAndNext( int componentId ) {
         activate( componentId );
         return this;
