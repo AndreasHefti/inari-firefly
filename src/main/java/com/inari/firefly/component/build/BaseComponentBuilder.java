@@ -33,10 +33,12 @@ import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public abstract class BaseComponentBuilder<C extends Component> implements ComponentBuilder {
     
+    protected final FFContext context;
     protected final AttributeMap attributes;
     protected final Class<? extends C> componentType;
-    
-    protected BaseComponentBuilder( AttributeMap attributes, Class<? extends C> componentType ) {
+
+    protected BaseComponentBuilder( FFContext context, AttributeMap attributes, Class<? extends C> componentType ) {
+        this.context = context;
         this.attributes = attributes;
         this.componentType = componentType;
     }
@@ -172,6 +174,11 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         }
         return this;
     }
+    
+    public final FFContext buildToContext() {
+        build();
+        return context;
+    }
 
     public final ComponentBuilder buildAndNext() {
         build();
@@ -179,13 +186,13 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     }
     
      @Override
-    public final <CC extends SystemComponent> ComponentBuilder buildAndNext( FFContext context, SystemComponentKey<CC> key ) {
+    public final <CC extends SystemComponent> ComponentBuilder buildAndNext( SystemComponentKey<CC> key ) {
         build();
         return context.getComponentBuilder( key );
     }
     
     @Override
-    public final <CC extends SystemComponent> ComponentBuilder buildAndNext( FFContext context, SystemComponentKey<CC> key, Class<? extends CC> type ) {
+    public final <CC extends SystemComponent> ComponentBuilder buildAndNext( SystemComponentKey<CC> key, Class<? extends CC> type ) {
         build();
         return context.getComponentBuilder( key, type );
     }
@@ -194,6 +201,11 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         build( componentId );
         return this;
     }
+    
+    public final FFContext activateToContext() {
+        activate();
+        return context;
+    }
 
     public final ComponentBuilder activateAndNext() {
         activate();
@@ -201,13 +213,13 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     }
     
     @Override
-    public final <CC extends SystemComponent> ComponentBuilder activateAndNext( FFContext context, SystemComponentKey<CC> key ) {
+    public final <CC extends SystemComponent> ComponentBuilder activateAndNext( SystemComponentKey<CC> key ) {
         activate();
         return context.getComponentBuilder( key );
     }
     
     @Override
-    public final <CC extends SystemComponent> ComponentBuilder activateAndNext( FFContext context, SystemComponentKey<CC> key, Class<? extends CC> type ) {
+    public final <CC extends SystemComponent> ComponentBuilder activateAndNext( SystemComponentKey<CC> key, Class<? extends CC> type ) {
         activate();
         return context.getComponentBuilder( key, type );
     }

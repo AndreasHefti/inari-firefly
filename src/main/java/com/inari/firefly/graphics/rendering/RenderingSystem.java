@@ -26,9 +26,7 @@ public final class RenderingSystem implements FFSystem, RenderEventListener, Ent
         .build();
     
     public static final FFSystemTypeKey<RenderingSystem> SYSTEM_KEY = FFSystemTypeKey.create( RenderingSystem.class );
-    
-    private final RendererBuilder rendererBuilder = new RendererBuilder();
-    
+
     private FFContext context;
     private boolean allowMultipleAcceptance = false;
     private RenderingChain renderingChain;
@@ -111,7 +109,8 @@ public final class RenderingSystem implements FFSystem, RenderEventListener, Ent
     public final void setRenderingChain( RenderingChain renderingChain ) {
         renderingChain.build();
         this.renderingChain = renderingChain;
-
+        
+        final RendererBuilder rendererBuilder = new RendererBuilder();
         for ( int i = 0; i < renderingChain.elements.capacity(); i++ ) {
             RenderingChain.Element element = renderingChain.elements.get( i );
             if ( element == null ) {
@@ -145,7 +144,7 @@ public final class RenderingSystem implements FFSystem, RenderEventListener, Ent
     private final class RendererBuilder extends SystemComponentBuilder {
         
         private RendererBuilder() { 
-            super( context, null ); 
+            super( RenderingSystem.this.context ); 
         }
         
         @Override
@@ -167,7 +166,7 @@ public final class RenderingSystem implements FFSystem, RenderEventListener, Ent
                 super.attributes.putAll( element.attributes );
             }
             
-            element.renderer = createSystemComponent( -1, element.key.rendererType, context );
+            element.renderer = createSystemComponent( -1, element.key.rendererType );
         }
     }
 

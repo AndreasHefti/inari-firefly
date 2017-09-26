@@ -212,7 +212,7 @@ public class SystemComponentMap<C extends SystemComponent> {
         }
 
         public final int doBuild( int componentId, Class<?> componentType, boolean activate ) {
-            final C component = createSystemComponent( componentId, componentType, system.context );
+            final C component = createSystemComponent( componentId, componentType );
             final int index = component.index();
 
             builderListener.notifyBuild( component );

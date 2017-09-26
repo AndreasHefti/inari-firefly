@@ -11,15 +11,15 @@ public abstract class SystemComponentBuilder extends BaseComponentBuilder<System
     
     @SuppressWarnings( "unchecked" )
     protected SystemComponentBuilder( FFContext context, Class<?> componentType ) {
-        super( new ComponentAttributeMap( context ), (Class<SystemComponent>) componentType );
+        super( context, new ComponentAttributeMap( context ), (Class<SystemComponent>) componentType );
     }
     
     protected SystemComponentBuilder( FFContext context ) {
-        super( new ComponentAttributeMap( context ), null );
+        super( context, new ComponentAttributeMap( context ), null );
     }
     
-    protected SystemComponentBuilder( AttributeMap attributes ) {
-        super( attributes, null );
+    protected SystemComponentBuilder( FFContext context, AttributeMap attributes ) {
+        super( context, attributes, null );
     }
 
     public abstract SystemComponentKey<?> systemComponentKey();
@@ -50,7 +50,7 @@ public abstract class SystemComponentBuilder extends BaseComponentBuilder<System
         doBuild( componentId, ( componentType != null )? componentType : systemComponentKey().baseComponentType(), true );
     }
     
-    protected <SC extends SystemComponent> SC createSystemComponent( int componentId, Class<?> componentType, FFContext context ) {
+    protected <SC extends SystemComponent> SC createSystemComponent( int componentId, Class<?> componentType ) {
         if ( !systemComponentKey().indexedType.isAssignableFrom( componentType ) ) {
             throw new FFInitException( "Component Builder Type missmatch. builderType: " + componentType.getName() + " is not a valid substitute of type: " + componentType.getName() );
         }

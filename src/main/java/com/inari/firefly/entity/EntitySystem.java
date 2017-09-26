@@ -381,7 +381,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         private IndexedTypeSet prefabComponents;
 
         private EntityBuilder() {
-            super( new EntityAttributeMap( context ) );
+            super( EntitySystem.this.context, new EntityAttributeMap( EntitySystem.this.context ) );
         }
         
         public EntityBuilder setPrefabComponents( IndexedTypeSet prefabComponents ) {

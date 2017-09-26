@@ -239,7 +239,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
     private final class EntityPrefabBuilder extends SystemComponentBuilder {
         
         private EntityPrefabBuilder() {
-            super( new EntityAttributeMap( context ) );
+            super( EntityPrefabSystem.this.context, new EntityAttributeMap( EntityPrefabSystem.this.context ) );
         }
 
         @Override
@@ -253,7 +253,7 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
             entityProvider.initAttributesOnController( (EntityAttributeMap) attributes );
             entityProvider.createComponents( components, (EntityAttributeMap) attributes );
 
-            EntityPrefab prefab = createSystemComponent( componentId, subType, context );
+            EntityPrefab prefab = createSystemComponent( componentId, subType );
             checkName( prefab );
             
             int prefabId = prefab.index();
