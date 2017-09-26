@@ -488,6 +488,11 @@ public final class FFContext {
         return this;
     }
     
+    public final FFContext deleteEntity( String entityName ) {
+        entitySystem.delete( entityName );
+        return this;
+    }
+    
     public final int getAssetInstanceId( String assetName ) {
         Asset asset = getSystemComponent( Asset.TYPE_KEY, assetName );
         if ( asset == null ) {
