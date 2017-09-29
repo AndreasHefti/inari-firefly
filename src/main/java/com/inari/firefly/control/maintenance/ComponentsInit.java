@@ -19,12 +19,20 @@ public abstract class ComponentsInit extends Init {
         return ids.iterator();
     }
     
+    public final ComponentId getComponentId( final Index index ) {
+        return getComponentId( index.index() );
+    }
+    
     public final ComponentId getComponentId( int index ) {
         if ( !ids.contains( index ) ) {
             return null;
         }
         
         return ids.get( index );
+    }
+    
+    public final <C extends Component> C getComponent( final Index index ) {
+        return getComponent( index.index() );
     }
 
     public final <C extends Component> C getComponent( int index ) {
@@ -42,6 +50,10 @@ public abstract class ComponentsInit extends Init {
         }
         
         ids.clear();
+    }
+    
+    public interface Index {
+        int index();
     }
 
 }
