@@ -279,6 +279,15 @@ public final class FFContext {
         
         return null;
     }
+    
+    @SuppressWarnings( "unchecked" )
+    public final <C extends Component> FFContext deleteComponent( ComponentId id ) {
+        if ( id.typeKey.baseType() == SystemComponent.class ) {
+            deleteSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
+        }
+        
+        return this;
+    }
 
     /** Use this to get a {@link SystemComponent} by component id.
      *  <p>The {@link SystemComponentKey} usually is provided with a static field within the Component's base class. For example:<p>
