@@ -9,7 +9,7 @@ import com.inari.firefly.component.ComponentId;
 
 public abstract class NamedComponentsInit extends Init {
     
-    protected Map<String, ComponentId> ids;
+    protected Map<String, ComponentId> ids; 
 
     protected NamedComponentsInit( int index ) {
         super( index );
