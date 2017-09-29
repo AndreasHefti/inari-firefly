@@ -7,11 +7,11 @@ import java.util.Map;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentId;
 
-public abstract class ComponentInit extends Init {
+public abstract class NamedComponentsInit extends Init {
     
     protected Map<String, ComponentId> ids;
 
-    protected ComponentInit( int index ) {
+    protected NamedComponentsInit( int index ) {
         super( index );
         ids = new HashMap<String, ComponentId>();
     }
@@ -42,7 +42,7 @@ public abstract class ComponentInit extends Init {
         return context.getComponent( id );
     }
 
-    public void cleanup() {
+    protected void cleanup() {
         for ( ComponentId id : ids.values() ) {
             context.deleteComponent( id );
         }

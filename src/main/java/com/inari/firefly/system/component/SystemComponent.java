@@ -52,6 +52,7 @@ public abstract class SystemComponent extends BaseIndexedObject implements Index
         this.context = context;
     }
     
+    // TODO rename to initComponent
     protected void init() throws FFInitException {
         // NOOP for default
     }
