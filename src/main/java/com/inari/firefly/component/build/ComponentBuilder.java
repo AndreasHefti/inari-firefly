@@ -35,11 +35,12 @@ public interface ComponentBuilder {
 
     ComponentBuilder set( AttributeKey<Float> key, float value );
     ComponentBuilder set( AttributeKey<Integer> key, int value );
+    ComponentBuilder set( AttributeKey<Integer> key, Indexed indexed );
     ComponentBuilder set( AttributeKey<Long> key, long value );
     ComponentBuilder set( AttributeKey<Double> key, double value );
     <T> ComponentBuilder set( AttributeKey<T> key, T value );
     ComponentBuilder add( AttributeKey<IntBag> key, int value );
-    ComponentBuilder add( AttributeKey<IntBag> key, Indexed index );
+    ComponentBuilder add( AttributeKey<IntBag> key, Indexed indexed );
     <T, V extends T> ComponentBuilder set( AttributeKey<DynArray<T>> key, V value, int index );
     <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, V value );
     <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, V[] values );

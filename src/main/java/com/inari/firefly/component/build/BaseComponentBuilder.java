@@ -68,6 +68,10 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return this;
     }
     
+    public final ComponentBuilder set( AttributeKey<Integer> key, Indexed indexed ) {
+        return set( key, indexed.index() );
+    }
+    
     public final ComponentBuilder set( AttributeKey<Long> key, long value ) {
         attributes.put( key, value );
         return this;
@@ -107,8 +111,8 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return this;
     }
     
-    public final ComponentBuilder add( AttributeKey<IntBag> key, Indexed index ) {
-        return add( key, index.index() );
+    public final ComponentBuilder add( AttributeKey<IntBag> key, Indexed indexed ) {
+        return add( key, indexed.index() );
     }
 
     @SuppressWarnings( "unchecked" )
