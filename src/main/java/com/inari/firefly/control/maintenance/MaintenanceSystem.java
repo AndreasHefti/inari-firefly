@@ -24,13 +24,14 @@ public final class MaintenanceSystem extends ComponentSystem<MaintenanceSystem> 
         super( SYSTEM_KEY );
     }
 
+    @Override
     public void init( final FFContext context ) throws FFInitException {
         super.init( context );
         inits = new SystemComponentMap<Init>( 
             this, Init.TYPE_KEY,
             new BuilderListenerAdapter<Init>() {
-                public void notifyActivation( int id ) { init( id ); }
-                public void notifyDeactivation( int id ) { dispose( id ); }
+                @Override public void notifyActivation( int id ) { init( id ); }
+                @Override public void notifyDeactivation( int id ) { cleanup( id ); }
             }
         );
     }
@@ -53,7 +54,7 @@ public final class MaintenanceSystem extends ComponentSystem<MaintenanceSystem> 
         return context;
     }
     
-    public final FFContext dispose( int id ) {
+    public final FFContext cleanup( int id ) {
         if ( inits.map.contains( id ) ) {
             inits.get( id ).dispose( context );
         }

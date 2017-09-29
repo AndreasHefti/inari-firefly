@@ -38,8 +38,7 @@ public abstract class Task extends SystemComponent {
         TRIGGER
     );
     
-    public static final Triggerer TASK_TRIGGERER = new Triggerer() {
-        @Override
+    private static final Triggerer TASK_TRIGGERER = new Triggerer() {
         public final void trigger( FFContext context, int componentId ) {
             context.getSystem( TaskSystem.SYSTEM_KEY ).runTask( componentId );
         }
@@ -54,7 +53,6 @@ public abstract class Task extends SystemComponent {
         trigger = DynArray.create( Trigger.class, 1, 2 );
     }
     
-    @Override
     public final IndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;
     }

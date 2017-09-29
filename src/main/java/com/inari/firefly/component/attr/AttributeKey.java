@@ -29,6 +29,7 @@ import com.inari.firefly.component.Component;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.physics.animation.easing.EasingData;
+import com.inari.firefly.system.utils.Trigger;
 
 /** An AttributeKey defines the value type, the name and the component type of an Attribute and is the identity
  *  of that Attribute.
@@ -265,6 +266,10 @@ public final class AttributeKey<T> {
 
     public static AttributeKey<EasingData> createEasingData( String name,  Class<? extends Component> componentType ) {
         return new AttributeKey<>( name, EasingData.class, componentType );
+    }
+
+    public static AttributeKey<Trigger> createTrigger( String name, Class<? extends Component> componentType ) {
+        return new AttributeKey<>( name, Trigger.class, componentType );
     }
 
 }

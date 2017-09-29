@@ -13,6 +13,7 @@ public abstract class Trigger {
         this.condition = condition;
     }
     
+    // TODO: try to move context to constructor and make it final
     public void register( FFContext context, int componentId, Triggerer triggerer ) {
         this.context = context;
         this.componentId = componentId;

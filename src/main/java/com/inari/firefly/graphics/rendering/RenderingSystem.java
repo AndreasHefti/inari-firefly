@@ -106,7 +106,7 @@ public final class RenderingSystem implements FFSystem, RenderEventListener, Ent
         }
     }
     
-    public final void setRenderingChain( RenderingChain renderingChain ) {
+    public final FFContext setRenderingChain( final RenderingChain renderingChain ) {
         renderingChain.build();
         this.renderingChain = renderingChain;
         
@@ -119,6 +119,8 @@ public final class RenderingSystem implements FFSystem, RenderEventListener, Ent
             
             rendererBuilder.create( element );
         }
+        
+        return context;
     }
 
     public final RenderingChain getRenderingChain() {
