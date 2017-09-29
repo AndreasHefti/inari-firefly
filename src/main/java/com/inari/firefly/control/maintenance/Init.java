@@ -109,7 +109,7 @@ public abstract class Init extends SystemComponent implements Initiable, Disposa
         initialised = false;
     }
     
-    protected abstract Disposable initialise();
+    protected abstract void initialise();
     protected abstract void cleanup();
     
     public final Set<AttributeKey<?>> attributeKeys() {
