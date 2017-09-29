@@ -286,7 +286,7 @@ public final class FFContext {
         if ( id.typeKey.baseType() == SystemComponent.class ) {
             activateSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
         } else if ( id.typeKey.baseType() == EntityComponent.class ) {
-            Activatable activatable = getEntityComponent( id.indexId, EntityComponentTypeKey.class.cast( id.typeKey ) );
+            Activatable activatable = (Activatable) getEntityComponent( id.indexId, EntityComponentTypeKey.class.cast( id.typeKey ) );
             if ( activatable != null ) {
                 activatable.setActive( true );
             }
@@ -300,7 +300,7 @@ public final class FFContext {
         if ( id.typeKey.baseType() == SystemComponent.class ) {
             deactivateSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
         } else if ( id.typeKey.baseType() == EntityComponent.class ) {
-            Activatable activatable = getEntityComponent( id.indexId, EntityComponentTypeKey.class.cast( id.typeKey ) );
+            Activatable activatable = (Activatable) getEntityComponent( id.indexId, EntityComponentTypeKey.class.cast( id.typeKey ) );
             if ( activatable != null ) {
                 activatable.setActive( false );
             }
