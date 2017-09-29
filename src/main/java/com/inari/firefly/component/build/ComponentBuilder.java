@@ -15,6 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.component.build;
 
+import com.inari.commons.lang.indexed.Indexed;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.Attribute;
@@ -38,6 +39,7 @@ public interface ComponentBuilder {
     ComponentBuilder set( AttributeKey<Double> key, double value );
     <T> ComponentBuilder set( AttributeKey<T> key, T value );
     ComponentBuilder add( AttributeKey<IntBag> key, int value );
+    ComponentBuilder add( AttributeKey<IntBag> key, Indexed index );
     <T, V extends T> ComponentBuilder set( AttributeKey<DynArray<T>> key, V value, int index );
     <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, V value );
     <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, V[] values );

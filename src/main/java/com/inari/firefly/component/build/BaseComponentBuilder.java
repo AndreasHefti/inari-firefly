@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import com.inari.commons.StringUtils;
+import com.inari.commons.lang.indexed.Indexed;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
@@ -104,6 +105,10 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         intBag.add( value );
         
         return this;
+    }
+    
+    public final ComponentBuilder add( AttributeKey<IntBag> key, Indexed index ) {
+        return add( key, index.index() );
     }
 
     @SuppressWarnings( "unchecked" )
