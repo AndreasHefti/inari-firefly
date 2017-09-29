@@ -459,7 +459,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             
             EntityBuilder entityBuilder = getEntityBuilder();
             for ( AttributeMap entityAttrs : attributes.getAllOfType( Entity.class ) ) {
-                int entityId = entityAttrs.getComponentId().getIndexId();
+                int entityId = entityAttrs.getComponentId().index();
                 if ( entityId < 0 ) {
                     continue;
                 }

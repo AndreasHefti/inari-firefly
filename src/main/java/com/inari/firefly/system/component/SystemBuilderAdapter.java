@@ -73,7 +73,7 @@ public abstract class SystemBuilderAdapter<C extends SystemComponent> implements
     ) {
         SystemComponentBuilder componentBuilder = createComponentBuilder( subType );
         for ( AttributeMap attributes : attrs.getAllOfType( subType ) ) {
-            int componentId = attributes.getComponentId().getIndexId();
+            int componentId = attributes.getComponentId().index();
             if ( buildType == BuildType.MERGE_ATTRIBUTES ) {
                 C component = get( componentId );
                 if ( component != null ) {
