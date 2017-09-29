@@ -32,6 +32,7 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.EntitySystem.Entity;
 import com.inari.firefly.entity.EntitySystem.EntityBuilder;
 import com.inari.firefly.system.FFSystem.FFSystemTypeKey;
+import com.inari.firefly.system.component.Activatable;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
@@ -281,7 +282,35 @@ public final class FFContext {
     }
     
     @SuppressWarnings( "unchecked" )
-    public final <C extends Component> FFContext deleteComponent( ComponentId id ) {
+    public final FFContext activateComponent( ComponentId id ) {
+        if ( id.typeKey.baseType() == SystemComponent.class ) {
+            activateSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
+        } else if ( id.typeKey.baseType() == EntityComponent.class ) {
+            Activatable activatable = getEntityComponent( id.indexId, EntityComponentTypeKey.class.cast( id.typeKey ) );
+            if ( activatable != null ) {
+                activatable.setActive( true );
+            }
+        } 
+        
+        return this;
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public final FFContext deactivateComponent( ComponentId id ) {
+        if ( id.typeKey.baseType() == SystemComponent.class ) {
+            deactivateSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
+        } else if ( id.typeKey.baseType() == EntityComponent.class ) {
+            Activatable activatable = getEntityComponent( id.indexId, EntityComponentTypeKey.class.cast( id.typeKey ) );
+            if ( activatable != null ) {
+                activatable.setActive( false );
+            }
+        } 
+        
+        return this;
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public final FFContext deleteComponent( ComponentId id ) {
         if ( id.typeKey.baseType() == SystemComponent.class ) {
             deleteSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
         }

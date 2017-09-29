@@ -22,10 +22,11 @@ import com.inari.commons.geom.Vector2f;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
+import com.inari.firefly.system.component.Activatable;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
-public final class EMovement extends EntityComponent {
+public final class EMovement extends EntityComponent implements Activatable {
     
     public static final EntityComponentTypeKey<EMovement> TYPE_KEY = EntityComponentTypeKey.create( EMovement.class );
     

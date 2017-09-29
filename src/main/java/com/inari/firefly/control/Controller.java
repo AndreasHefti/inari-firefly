@@ -57,7 +57,6 @@ public abstract class Controller extends SystemComponent implements Activatable 
         this.active = active;
     }
 
-    @Override
     public final IndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;
     }
