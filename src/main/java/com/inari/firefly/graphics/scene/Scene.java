@@ -7,9 +7,11 @@ import com.inari.commons.lang.functional.Callback;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.component.build.Singleton;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent;
 
+@Singleton
 public abstract class Scene extends SystemComponent {
     
     public static final SystemComponentKey<Scene> TYPE_KEY = SystemComponentKey.create( Scene.class );

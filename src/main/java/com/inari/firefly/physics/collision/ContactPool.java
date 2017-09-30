@@ -10,6 +10,7 @@ import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.component.build.Singleton;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
@@ -34,6 +35,7 @@ import com.inari.firefly.system.component.SystemComponent;
  *  do this.
  *
  */
+@Singleton
 public abstract class ContactPool extends SystemComponent implements ViewAndLayerAware {
     
     /** The Components type key. Use this to build, access, request and dispose a specified Component within the Context */

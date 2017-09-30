@@ -22,11 +22,13 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.component.build.Singleton;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.utils.Trigger;
 import com.inari.firefly.system.utils.Triggerer;
 
+@Singleton
 public abstract class Task extends SystemComponent {
     
     public static final SystemComponentKey<Task> TYPE_KEY = SystemComponentKey.create( Task.class );

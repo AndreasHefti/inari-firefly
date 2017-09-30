@@ -1,9 +1,12 @@
 package com.inari.firefly.system.component;
 
+import java.util.Iterator;
+
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
 import com.inari.firefly.component.build.BaseComponentBuilder;
+import com.inari.firefly.component.build.Singleton;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
@@ -61,7 +64,21 @@ public abstract class SystemComponentBuilder extends BaseComponentBuilder<System
         systemComponent.fromAttributes( attributes );
         systemComponent.init();
         
+        if ( componentType.getAnnotation( Singleton.class ) != null ) {
+            checkSingleton( componentType );
+        }
+        
         return systemComponent;
+    }
+    
+    private void checkSingleton( Class<?> componentType ) {
+        Iterator<? extends SystemComponent> systemComponents = context.getSystemComponents( systemComponentKey() );
+        while ( systemComponents.hasNext() ) {
+            SystemComponent c = systemComponents.next();
+            if ( c.getClass() == componentType ) {
+                throw new FFInitException( "Singleton SystemComponent check failed on: " + componentType.getName() );
+            }
+        }
     }
 
 }

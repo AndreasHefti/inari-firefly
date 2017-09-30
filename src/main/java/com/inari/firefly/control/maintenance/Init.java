@@ -4,8 +4,10 @@ import java.util.Set;
 
 import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.component.build.Singleton;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.utils.Disposable;
@@ -13,6 +15,7 @@ import com.inari.firefly.system.utils.Initiable;
 import com.inari.firefly.system.utils.Trigger;
 import com.inari.firefly.system.utils.Triggerer;
 
+@Singleton
 public abstract class Init extends SystemComponent implements Initiable, Disposable {
     
     public static final SystemComponentKey<Init> TYPE_KEY = SystemComponentKey.create( Init.class );
@@ -44,6 +47,12 @@ public abstract class Init extends SystemComponent implements Initiable, Disposa
         initTrigger = null;
         cleanupTrigger = null;
     }
+
+    protected void init() throws FFInitException {
+        super.init();
+    }
+
+
 
     public final IIndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;
