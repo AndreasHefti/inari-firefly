@@ -46,12 +46,14 @@ public abstract class ComponentsInit extends Init {
         return context.getComponent( id );
     }
     
-    protected void set( final Indexed index, IndexedTypeKey typeKey, int componentId ) {
+    protected ComponentsInit set( final Indexed index, IndexedTypeKey typeKey, int componentId ) {
         set( index.index(), typeKey, componentId );
+        return this;
     }
     
-    protected void set( int index, IndexedTypeKey typeKey, int componentId ) {
+    protected ComponentsInit set( int index, IndexedTypeKey typeKey, int componentId ) {
         ids.set( index, new ComponentId( typeKey, componentId ) );
+        return this;
     }
 
     protected void cleanup() {
