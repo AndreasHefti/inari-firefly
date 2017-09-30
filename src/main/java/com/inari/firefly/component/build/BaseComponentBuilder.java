@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import com.inari.commons.StringUtils;
+import com.inari.commons.lang.Named;
 import com.inari.commons.lang.indexed.Indexed;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
@@ -82,11 +83,15 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
         return this;
     }
     
+    public final ComponentBuilder set( AttributeKey<String> key, Named named ) {
+        return set( key, named.name() );
+    }
+    
     public final <T> ComponentBuilder set( AttributeKey<T> key, T value ) {
         attributes.putUntyped( key, value );
         return this;
     }
-    
+
     @SuppressWarnings( "unchecked" )
     public final <T, V extends T> ComponentBuilder set( AttributeKey<DynArray<T>> key, V value, int index ) {
         DynArray<T> array;
@@ -175,6 +180,10 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     @SuppressWarnings( "unchecked" )
     public final <T, V extends T> ComponentBuilder add( AttributeKey<DynArray<T>> key, DynArray<V> values ) {
         return createAndAdd( key, values.getArray(), (Class<T>) key.typedValueType() );
+    }
+    
+    public final ComponentBuilder add( AttributeKey<DynArray<String>> key, Named named ) {
+        return add( key, named.name() );
     }
 
     public final ComponentBuilder add( Attribute<?>... attributes ) {
