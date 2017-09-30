@@ -18,14 +18,14 @@ package com.inari.firefly.component.attr;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.Component;
-import com.inari.firefly.component.ComponentId;
+import com.inari.firefly.system.component.IComponentId;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public interface AttributeMap {
     
-    ComponentId getComponentId();
+    IComponentId getComponentId();
     
-    void setComponentId( ComponentId componentId );
+    void setComponentId( IComponentId componentId );
 
     boolean isEmpty();
 

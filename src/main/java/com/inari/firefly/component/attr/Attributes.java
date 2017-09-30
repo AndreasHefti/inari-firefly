@@ -24,10 +24,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.inari.firefly.component.ComponentId;
+import com.inari.firefly.system.component.IComponentId;
 
 public final class Attributes implements Iterable<AttributeMap> {
     
-    private final Map<ComponentId, AttributeMap> attributes = new LinkedHashMap<ComponentId, AttributeMap>();
+    private final Map<IComponentId, AttributeMap> attributes = new LinkedHashMap<IComponentId, AttributeMap>();
 
     @Override
     public final Iterator<AttributeMap> iterator() {
@@ -48,7 +49,7 @@ public final class Attributes implements Iterable<AttributeMap> {
     public Collection<AttributeMap> getAllOfType( Class<?> componentType ) {
         Collection<AttributeMap> result = new ArrayList<AttributeMap>();
         for ( AttributeMap attrs : attributes.values() ) {
-            if ( componentType == attrs.getComponentId().typeKey.type() ) {
+            if ( componentType == attrs.getComponentId().typeKey().type() ) {
                 result.add( attrs );
             }
         }
@@ -58,9 +59,9 @@ public final class Attributes implements Iterable<AttributeMap> {
     @SuppressWarnings( "unchecked" )
     public <C> Set<Class<? extends C>> getAllSubTypes( Class<C> componentType ) {
         Set<Class<? extends C>> result = new HashSet<Class<? extends C>>();
-        for ( ComponentId componentKey : attributes.keySet() ) {
-            if ( componentType.isAssignableFrom( componentKey.typeKey.type() ) ) {
-                result.add( (Class<? extends C>) componentKey.typeKey.type() );
+        for ( IComponentId componentKey : attributes.keySet() ) {
+            if ( componentType.isAssignableFrom( componentKey.typeKey().type() ) ) {
+                result.add( (Class<? extends C>) componentKey.typeKey().type() );
             }
         }
         return result;
@@ -73,7 +74,7 @@ public final class Attributes implements Iterable<AttributeMap> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for ( Map.Entry<ComponentId, AttributeMap> entry : attributes.entrySet() ) {
+        for ( Map.Entry<IComponentId, AttributeMap> entry : attributes.entrySet() ) {
             if ( builder.length() > 0 ) {
                 builder.append( " " );
             }

@@ -305,8 +305,8 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
 
     protected int getId() {
         int id = -1;
-        if ( attributes.getComponentId() != null && attributes.getComponentId().indexId >= 0 ) {
-            id = attributes.getComponentId().indexId; 
+        if ( attributes.getComponentId() != null && attributes.getComponentId().index() >= 0 ) {
+            id = attributes.getComponentId().index(); 
         }
         return id;
     }

@@ -19,10 +19,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.inari.firefly.component.Component;
-import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.IComponentId;
 
 public class EntityAttributeMap extends ComponentAttributeMap {
     
@@ -31,8 +31,9 @@ public class EntityAttributeMap extends ComponentAttributeMap {
     }
     
     @Override
-    public final void setComponentId( ComponentId componentId ) {
-        if ( componentId.getType() != EntitySystem.Entity.class ) {
+    public final void setComponentId( IComponentId componentId ) {
+        final Class<? extends Component> type = componentId.typeKey().type();
+        if ( type != EntitySystem.Entity.class ) {
             throw new IllegalArgumentException( "The ComponentKey has not the expected type: " + EntitySystem.Entity.class.getName() );
         }
         super.setComponentId( componentId );

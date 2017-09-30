@@ -1,7 +1,7 @@
 package com.inari.firefly.component;
 
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
-import com.inari.commons.lang.indexed.Indexed;
+import com.inari.firefly.system.component.IComponentId;
 
 /** A ComponentId defines the unique identity of a Component instance and consists of the indexed type 
  *  of the Component and an integer number.
@@ -13,7 +13,7 @@ import com.inari.commons.lang.indexed.Indexed;
  *  IIndexedTypeKey and the integer id.
  *
  */
-public final class ComponentId implements Indexed {
+public final class ComponentId implements IComponentId {
     
     public final IIndexedTypeKey typeKey;
     public final int indexId;
@@ -34,15 +34,8 @@ public final class ComponentId implements Indexed {
     /** Use this to get the IIndexedTypeKey part of the identity of the ComponentId.
      * @return IIndexedTypeKey part the identity of the ComponentId
      */
-    public final IIndexedTypeKey getTypeKey() {
+    public final IIndexedTypeKey typeKey() {
         return typeKey;
-    }
-    
-    /** Use this to get the Class that defines the base type of the Component.
-     * @return the Class that defines the base type of the Component
-     */
-    public final Class<? extends Component> getType() {
-        return typeKey.type();
     }
 
     /** Use this to get the index part of the ComponentId.

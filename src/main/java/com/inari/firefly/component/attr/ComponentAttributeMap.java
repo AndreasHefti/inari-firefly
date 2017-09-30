@@ -23,13 +23,13 @@ import java.util.Map;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.Component;
-import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.component.IComponentId;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
 public class ComponentAttributeMap implements AttributeMap {
 
-    protected ComponentId componentId;
+    protected IComponentId componentId;
     protected final HashMap<AttributeKey<?>, Object> attributes = new LinkedHashMap<AttributeKey<?>, Object>();
     protected final FFContext context;
     
@@ -37,13 +37,11 @@ public class ComponentAttributeMap implements AttributeMap {
         this.context = context;
     }
     
-    @Override
-    public final ComponentId getComponentId() {
+    public final IComponentId getComponentId() {
         return componentId;
     }
     
-    @Override
-    public void setComponentId( ComponentId componentId ) {
+    public void setComponentId( IComponentId componentId ) {
         this.componentId = componentId;
     }
 

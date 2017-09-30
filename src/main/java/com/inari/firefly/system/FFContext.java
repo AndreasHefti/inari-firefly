@@ -24,6 +24,7 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentId;
+import com.inari.firefly.component.ComponentName;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.entity.EntityComponent;
@@ -35,6 +36,8 @@ import com.inari.firefly.system.FFSystem.FFSystemTypeKey;
 import com.inari.firefly.system.component.Activatable;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
+import com.inari.firefly.system.component.IComponentId;
+import com.inari.firefly.system.component.IComponentName;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
@@ -271,48 +274,84 @@ public final class FFContext {
      * @return id the {@link Component} instance for specified {@link ComponentId} or null of no such {@link Component} exists within the context
      */
     @SuppressWarnings( "unchecked" )
-    public final <C extends Component> C getComponent( ComponentId id ) {
-        if ( id.typeKey.baseType() == SystemComponent.class ) {
-            return (C) getSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
-        } else if ( id.typeKey.baseType() == EntityComponent.class ) {
-            return (C) getEntityComponent( id.indexId, EntityComponentTypeKey.class.cast( id.typeKey ) );
+    public final <C extends Component> C getComponent( IComponentId id ) {
+        if ( id.typeKey().baseType() == SystemComponent.class ) {
+            return (C) getSystemComponent( SystemComponentKey.class.cast( id.typeKey() ), id.index() );
+        } else if ( id.typeKey().baseType() == EntityComponent.class ) {
+            return (C) getEntityComponent( id.index(), EntityComponentTypeKey.class.cast( id.typeKey() ) );
         } 
         
         return null;
     }
     
     @SuppressWarnings( "unchecked" )
-    public final FFContext activateComponent( ComponentId id ) {
-        if ( id.typeKey.baseType() == SystemComponent.class ) {
-            activateSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
-        } else if ( id.typeKey.baseType() == EntityComponent.class ) {
-            Activatable activatable = (Activatable) getEntityComponent( id.indexId, EntityComponentTypeKey.class.cast( id.typeKey ) );
-            if ( activatable != null ) {
-                activatable.setActive( true );
-            }
+    public final <C extends Component> C getComponent( IComponentName typeName ) {
+        if ( typeName.typeKey().baseType() == SystemComponent.class ) {
+            return (C) getSystemComponent( SystemComponentKey.class.cast( typeName.typeKey() ), typeName.name() );
+        } else if ( typeName.typeKey().baseType() == EntityComponent.class ) {
+            return (C) getEntityComponent( typeName.name(), EntityComponentTypeKey.class.cast( typeName.typeKey() ) );
+        } 
+        
+        return null;
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public final FFContext activateComponent( IComponentId id ) {
+        if ( id.typeKey().baseType() == SystemComponent.class ) {
+            activateSystemComponent( SystemComponentKey.class.cast( id.typeKey() ), id.index() );
+        } else if ( id.typeKey().baseType() == EntityComponent.class ) {
+            setActive( getEntityComponent( id.index(), EntityComponentTypeKey.class.cast( id.typeKey() ) ), true );
+        } 
+        
+        return this;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public final FFContext activateComponent( IComponentName typeName ) {
+        if ( typeName.typeKey().baseType() == SystemComponent.class ) {
+            activateSystemComponent( SystemComponentKey.class.cast( typeName.typeKey() ), typeName.name() );
+        } else if ( typeName.typeKey().baseType() == EntityComponent.class ) {
+            setActive( getEntityComponent( typeName.name(), EntityComponentTypeKey.class.cast( typeName.typeKey() ) ), true );
         } 
         
         return this;
     }
     
     @SuppressWarnings( "unchecked" )
-    public final FFContext deactivateComponent( ComponentId id ) {
-        if ( id.typeKey.baseType() == SystemComponent.class ) {
-            deactivateSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
-        } else if ( id.typeKey.baseType() == EntityComponent.class ) {
-            Activatable activatable = (Activatable) getEntityComponent( id.indexId, EntityComponentTypeKey.class.cast( id.typeKey ) );
-            if ( activatable != null ) {
-                activatable.setActive( false );
-            }
+    public final FFContext deactivateComponent( IComponentId id ) {
+        if ( id.typeKey().baseType() == SystemComponent.class ) {
+            deactivateSystemComponent( SystemComponentKey.class.cast( id.typeKey() ), id.index() );
+        } else if ( id.typeKey().baseType() == EntityComponent.class ) {
+            setActive( getEntityComponent( id.index(), EntityComponentTypeKey.class.cast( id.typeKey() ) ), false );
         } 
         
         return this;
     }
     
     @SuppressWarnings( "unchecked" )
-    public final FFContext deleteComponent( ComponentId id ) {
-        if ( id.typeKey.baseType() == SystemComponent.class ) {
-            deleteSystemComponent( SystemComponentKey.class.cast( id.typeKey ), id.indexId );
+    public final FFContext deactivateComponent( IComponentName typeName ) {
+        if ( typeName.typeKey().baseType() == SystemComponent.class ) {
+            deactivateSystemComponent( SystemComponentKey.class.cast( typeName.typeKey() ), typeName.name() );
+        } else if ( typeName.typeKey().baseType() == EntityComponent.class ) {
+            setActive( getEntityComponent( typeName.name(), EntityComponentTypeKey.class.cast( typeName.typeKey() ) ), false );
+        } 
+        
+        return this;
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public final FFContext deleteComponent( IComponentId id ) {
+        if ( id.typeKey().baseType() == SystemComponent.class ) {
+            deleteSystemComponent( SystemComponentKey.class.cast( id.typeKey() ), id.index() );
+        }
+        
+        return this;
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public final FFContext deleteComponent( IComponentName typeName ) {
+        if ( typeName.typeKey().baseType() == SystemComponent.class ) {
+            deleteSystemComponent( SystemComponentKey.class.cast( typeName.typeKey() ), typeName.name() );
         }
         
         return this;
@@ -647,6 +686,12 @@ public final class FFContext {
             for ( SystemBuilderAdapter<?> builderAdapter : supportedBuilderAdapter ) {
                 systemBuilderAdapter.set( builderAdapter.componentTypeKey().index(), builderAdapter );
             }
+        }
+    }
+    
+    private void setActive( Component activatable, boolean active ) {
+        if ( activatable != null && activatable instanceof Activatable ) {
+            ( (Activatable) activatable ).setActive( active );
         }
     }
 
