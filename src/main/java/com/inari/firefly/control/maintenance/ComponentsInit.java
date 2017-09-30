@@ -7,8 +7,9 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentId;
+import com.inari.firefly.component.build.ComponentConsumer;
 
-public abstract class ComponentsInit extends Init {
+public abstract class ComponentsInit extends Init implements ComponentConsumer {
     
     protected DynArray<ComponentId> ids;
 
@@ -46,6 +47,12 @@ public abstract class ComponentsInit extends Init {
         return context.getComponent( id );
     }
     
+    
+    
+    public void add( final ComponentId id ) {
+        ids.add( id );
+    }
+
     protected ComponentsInit set( final Indexed index, IndexedTypeKey typeKey, int componentId ) {
         set( index.index(), typeKey, componentId );
         return this;

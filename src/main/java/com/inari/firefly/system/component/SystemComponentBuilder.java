@@ -3,9 +3,11 @@ package com.inari.firefly.system.component;
 import java.util.Iterator;
 
 import com.inari.firefly.FFInitException;
+import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
 import com.inari.firefly.component.build.BaseComponentBuilder;
+import com.inari.firefly.component.build.ComponentConsumer;
 import com.inari.firefly.component.build.Singleton;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
@@ -27,7 +29,6 @@ public abstract class SystemComponentBuilder extends BaseComponentBuilder<System
 
     public abstract SystemComponentKey<?> systemComponentKey();
     
-    @Override
     public final int build() {
         int componentId = getId();
         int id = doBuild( componentId, ( componentType != null )? componentType : systemComponentKey().baseComponentType(), false );
@@ -35,12 +36,15 @@ public abstract class SystemComponentBuilder extends BaseComponentBuilder<System
         return id;
     }
     
-    @Override
     public final void build( int componentId ) {
         doBuild( componentId, ( componentType != null )? componentType : systemComponentKey().baseComponentType(), false );
     }
     
-    @Override
+    public final FFContext build( ComponentConsumer consumer ) {
+        consumer.add( new ComponentId( systemComponentKey(), build() ) );
+        return context;
+    }
+    
     public final int activate() {
         int componentId = getId();
         int id = doBuild( componentId, ( componentType != null )? componentType : systemComponentKey().baseComponentType(), true );
@@ -48,9 +52,13 @@ public abstract class SystemComponentBuilder extends BaseComponentBuilder<System
         return id;
     }
     
-    @Override
     public final void activate( int componentId ) {
         doBuild( componentId, ( componentType != null )? componentType : systemComponentKey().baseComponentType(), true );
+    }
+    
+    public final FFContext activate( ComponentConsumer consumer ) {
+        consumer.add( new ComponentId( systemComponentKey(), activate() ) );
+        return context;
     }
     
     protected <SC extends SystemComponent> SC createSystemComponent( int componentId, Class<?> componentType ) {

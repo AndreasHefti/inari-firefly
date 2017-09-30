@@ -49,9 +49,11 @@ public interface ComponentBuilder {
     
     int build();
     void build( int componentId );
+    FFContext build( ComponentConsumer consumer );
     
     int activate();
     void activate( int componentId );
+    FFContext activate( ComponentConsumer consumer );
 
     ComponentBuilder buildAndNext();
     FFContext buildToContext();
