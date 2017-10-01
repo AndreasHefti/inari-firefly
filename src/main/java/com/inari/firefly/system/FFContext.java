@@ -361,7 +361,7 @@ public final class FFContext {
     @SuppressWarnings( "unchecked" )
     public final int getComponentId( IComponentName typeName ) {
         if ( typeName.typeKey().baseType() == SystemComponent.class ) {
-            getSystemComponentId( SystemComponentKey.class.cast( typeName.typeKey() ), typeName.name() );
+            return getSystemComponentId( SystemComponentKey.class.cast( typeName.typeKey() ), typeName.name() );
         } else if ( typeName.typeKey() == Entity.ENTITY_TYPE_KEY ) {
             return getEntityId( typeName.name() );
         } 
