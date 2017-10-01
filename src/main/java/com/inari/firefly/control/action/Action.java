@@ -1,10 +1,8 @@
 package com.inari.firefly.control.action;
 
 import com.inari.commons.lang.indexed.IndexedTypeKey;
-import com.inari.firefly.component.build.Singleton;
 import com.inari.firefly.system.component.SystemComponent;
 
-@Singleton
 public abstract class Action extends SystemComponent {
     
     public static final SystemComponentKey<Action> TYPE_KEY = SystemComponentKey.create( Action.class );

@@ -67,12 +67,14 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
         return integrator;
     }
 
-    public final void setIntegrator( Integrator integrator ) {
+    public final FFContext setIntegrator( Integrator integrator ) {
         if ( integrator == null ) {
             this.integrator = new DummyIntegrator();
-            return;
+            return context;
         }
+        
         this.integrator = integrator;
+        return context;
     }
 
     public final void update( final FFTimer timer ) {

@@ -1,5 +1,7 @@
 package com.inari.firefly.control.maintenance;
 
+import java.util.Collection;
+
 import com.inari.firefly.system.component.IComponentName;
 
 public abstract class NamedComponentsInit extends Init {
@@ -8,19 +10,12 @@ public abstract class NamedComponentsInit extends Init {
         super( index );
     }
     
-    protected abstract IComponentName[] getComponentNames();
+    protected abstract Collection<IComponentName> getComponentNames();
 
 
     protected void cleanup() {
-        IComponentName[] componentNames = getComponentNames();
-        if ( componentNames == null ) {
-            return;
-        }
-        
-        for ( int i = 0; i < componentNames.length; i++ ) {
-            if ( componentNames[ i ] != null ) {
-                context.deleteComponent( componentNames[ i ] );
-            }
+        for ( IComponentName cName : getComponentNames() ) {
+            context.deleteComponent( cName );
         }
     }
 
