@@ -27,7 +27,6 @@ import com.inari.firefly.system.component.Activatable;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
-@Singleton
 public abstract class Controller extends SystemComponent implements Activatable {
     
     public static final SystemComponentKey<Controller> TYPE_KEY = SystemComponentKey.create( Controller.class );
