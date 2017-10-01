@@ -24,7 +24,6 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.component.ComponentId;
-import com.inari.firefly.component.ComponentName;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.entity.EntityComponent;
@@ -277,7 +276,7 @@ public final class FFContext {
     public final <C extends Component> C getComponent( IComponentId id ) {
         if ( id.typeKey().baseType() == SystemComponent.class ) {
             return (C) getSystemComponent( SystemComponentKey.class.cast( id.typeKey() ), id.index() );
-        } else if ( id.typeKey().baseType() == EntityComponent.class ) {
+        } else if ( id.typeKey() == Entity.ENTITY_TYPE_KEY ) {
             return (C) getEntityComponent( id.index(), EntityComponentTypeKey.class.cast( id.typeKey() ) );
         } 
         
@@ -288,7 +287,7 @@ public final class FFContext {
     public final <C extends Component> C getComponent( IComponentName typeName ) {
         if ( typeName.typeKey().baseType() == SystemComponent.class ) {
             return (C) getSystemComponent( SystemComponentKey.class.cast( typeName.typeKey() ), typeName.name() );
-        } else if ( typeName.typeKey().baseType() == EntityComponent.class ) {
+        } else if ( typeName.typeKey() == Entity.ENTITY_TYPE_KEY ) {
             return (C) getEntityComponent( typeName.name(), EntityComponentTypeKey.class.cast( typeName.typeKey() ) );
         } 
         
@@ -299,7 +298,7 @@ public final class FFContext {
     public final FFContext activateComponent( IComponentId id ) {
         if ( id.typeKey().baseType() == SystemComponent.class ) {
             activateSystemComponent( SystemComponentKey.class.cast( id.typeKey() ), id.index() );
-        } else if ( id.typeKey().baseType() == EntityComponent.class ) {
+        } else if ( id.typeKey() == Entity.ENTITY_TYPE_KEY ) {
             setActive( getEntityComponent( id.index(), EntityComponentTypeKey.class.cast( id.typeKey() ) ), true );
         } 
         
@@ -310,7 +309,7 @@ public final class FFContext {
     public final FFContext activateComponent( IComponentName typeName ) {
         if ( typeName.typeKey().baseType() == SystemComponent.class ) {
             activateSystemComponent( SystemComponentKey.class.cast( typeName.typeKey() ), typeName.name() );
-        } else if ( typeName.typeKey().baseType() == EntityComponent.class ) {
+        } else if ( typeName.typeKey() == Entity.ENTITY_TYPE_KEY ) {
             setActive( getEntityComponent( typeName.name(), EntityComponentTypeKey.class.cast( typeName.typeKey() ) ), true );
         } 
         
@@ -321,7 +320,7 @@ public final class FFContext {
     public final FFContext deactivateComponent( IComponentId id ) {
         if ( id.typeKey().baseType() == SystemComponent.class ) {
             deactivateSystemComponent( SystemComponentKey.class.cast( id.typeKey() ), id.index() );
-        } else if ( id.typeKey().baseType() == EntityComponent.class ) {
+        } else if ( id.typeKey() == Entity.ENTITY_TYPE_KEY ) {
             setActive( getEntityComponent( id.index(), EntityComponentTypeKey.class.cast( id.typeKey() ) ), false );
         } 
         
@@ -332,7 +331,7 @@ public final class FFContext {
     public final FFContext deactivateComponent( IComponentName typeName ) {
         if ( typeName.typeKey().baseType() == SystemComponent.class ) {
             deactivateSystemComponent( SystemComponentKey.class.cast( typeName.typeKey() ), typeName.name() );
-        } else if ( typeName.typeKey().baseType() == EntityComponent.class ) {
+        } else if ( typeName.typeKey() == Entity.ENTITY_TYPE_KEY ) {
             setActive( getEntityComponent( typeName.name(), EntityComponentTypeKey.class.cast( typeName.typeKey() ) ), false );
         } 
         
@@ -355,6 +354,17 @@ public final class FFContext {
         }
         
         return this;
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public final int getComponentId( IComponentName typeName ) {
+        if ( typeName.typeKey().baseType() == SystemComponent.class ) {
+            getSystemComponentId( SystemComponentKey.class.cast( typeName.typeKey() ), typeName.name() );
+        } else if ( typeName.typeKey() == Entity.ENTITY_TYPE_KEY ) {
+            return getEntityId( typeName.name() );
+        } 
+        
+        return -1;
     }
 
     /** Use this to get a {@link SystemComponent} by component id.
