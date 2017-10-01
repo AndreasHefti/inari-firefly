@@ -115,6 +115,10 @@ public final class EMovement extends EntityComponent implements Activatable {
         velocity.dy = velocityY;
     }
     
+    public final boolean moves() {
+        return velocity.dx != 0 || velocity.dy != 0;
+    }
+    
     public final void setAccelerationX( float acc ) {
         acceleration.dx = acc;
     }
