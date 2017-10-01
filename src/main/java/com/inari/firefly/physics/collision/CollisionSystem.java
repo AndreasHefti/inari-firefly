@@ -7,8 +7,10 @@ import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
+import com.inari.commons.lang.Named;
 import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.indexed.Indexed;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
@@ -149,6 +151,18 @@ public final class CollisionSystem
         scanContacts( entityId, collision );
     }
     
+    public final void updateContacts( Indexed indexed ) {
+        updateContacts( indexed.index() );
+    }
+    
+    public final void updateContacts( String entityName ) {
+        updateContacts( context.getEntityId( entityName ) );
+    }
+    
+    public final void updateContacts( Named entityName ) {
+        updateContacts( context.getEntityId( entityName ) );
+    }
+    
     public final void updateContacts( int entityId, final String constraintName ) {
         final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
         ContactConstraint constraint = collision.getContactScan().getContactContstraint( constraintName );
@@ -157,6 +171,18 @@ public final class CollisionSystem
         }
 
         updateContacts( entityId, constraint );
+    }
+    
+    public final void updateContacts( Indexed indexed, final String constraintName ) {
+        updateContacts( indexed.index(), constraintName );
+    }
+    
+    public final void updateContacts( String entityName, final String constraintName ) {
+        updateContacts( context.getEntityId( entityName ), constraintName );
+    }
+    
+    public final void updateContacts( Named entityName, final String constraintName ) {
+        updateContacts( context.getEntityId( entityName ), constraintName );
     }
 
     public final void updateContacts( int entityId, ContactConstraint constraint ) {
@@ -178,6 +204,18 @@ public final class CollisionSystem
         
         scanTileContacts( entityId, viewId, layerId, constraint );
         scanSpriteContacts( entityId, viewId, layerId, constraint );
+    }
+    
+    public final void updateContacts( Indexed indexed, ContactConstraint constraint ) {
+        updateContacts( indexed.index(), constraint );
+    }
+    
+    public final void updateContacts( String entityName, ContactConstraint constraint ) {
+        updateContacts( context.getEntityId( entityName ), constraint );
+    }
+    
+    public final void updateContacts( Named entityName, ContactConstraint constraint ) {
+        updateContacts( context.getEntityId( entityName ), constraint );
     }
 
     public final void clearSystem() {
