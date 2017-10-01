@@ -16,9 +16,11 @@ import com.inari.commons.event.Event.EventTypeKey;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.event.PredicatedEvent;
 import com.inari.commons.event.PredicatedEventListener;
+import com.inari.commons.lang.Named;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.indexed.Indexed;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.Asset;
@@ -530,12 +532,24 @@ public final class FFContext {
         return entitySystem.getEntityId( entityName );
     }
     
+    public final int getEntityId( Named named ) {
+        return entitySystem.getEntityId( named.name() );
+    }
+    
     public final <T extends EntityComponent> T getEntityComponent( int entityId, EntityComponentTypeKey<T> typeKey ) {
         return entitySystem.getComponent( entityId, typeKey );
     }
     
     public final <T extends EntityComponent> T getEntityComponent( String entityName, EntityComponentTypeKey<T> typeKey ) {
         return entitySystem.getComponent( entityName, typeKey );
+    }
+    
+    public final <T extends EntityComponent> T getEntityComponent( Named named, EntityComponentTypeKey<T> typeKey ) {
+        return entitySystem.getComponent( named.name(), typeKey );
+    }
+    
+    public final <T extends EntityComponent> T getEntityComponent( Indexed indexed, EntityComponentTypeKey<T> typeKey ) {
+        return entitySystem.getComponent( indexed.index(), typeKey );
     }
     
     public final Aspects getEntityComponentAspects( int entityId ) {
@@ -547,8 +561,18 @@ public final class FFContext {
         return this;
     }
     
+    public final FFContext activateEntity( Indexed indexed ) {
+        entitySystem.activateEntity( indexed.index() );
+        return this;
+    }
+    
     public final FFContext activateEntity( String name ) {
         entitySystem.activateEntity( entitySystem.getEntityId( name ) );
+        return this;
+    }
+    
+    public final FFContext activateEntity( Named named ) {
+        entitySystem.activateEntity( entitySystem.getEntityId( named.name() ) );
         return this;
     }
     
@@ -556,12 +580,25 @@ public final class FFContext {
         return entitySystem.isActive( entityId );
     }
     
+    public final boolean isEntityActive( Indexed indexed ) {
+        return entitySystem.isActive( indexed.index() );
+    }
+    
     public final boolean isEntityActive( String name ) {
         return entitySystem.isActive( entitySystem.getEntityId( name ) );
     }
     
+    public final boolean isEntityActive( Named named ) {
+        return entitySystem.isActive( entitySystem.getEntityId( named.name() ) );
+    }
+    
     public final FFContext deactivateEntity( int entityId ) {
         entitySystem.deactivateEntity( entityId );
+        return this;
+    }
+    
+    public final FFContext deactivateEntity( Indexed indexed ) {
+        entitySystem.deactivateEntity( indexed.index() );
         return this;
     }
     
@@ -570,13 +607,28 @@ public final class FFContext {
         return this;
     }
     
+    public final FFContext deactivateEntity( Named named  ) {
+        entitySystem.deactivateEntity( entitySystem.getEntityId( named.name() ) );
+        return this;
+    }
+    
     public final FFContext deleteEntity( int entityId ) {
         entitySystem.delete( entityId );
         return this;
     }
     
+    public final FFContext deleteEntity( Indexed indexed ) {
+        entitySystem.delete( indexed.index() );
+        return this;
+    }
+    
     public final FFContext deleteEntity( String entityName ) {
         entitySystem.delete( entityName );
+        return this;
+    }
+    
+    public final FFContext deleteEntity( Named named ) {
+        entitySystem.delete( named.name() );
         return this;
     }
     
@@ -589,6 +641,10 @@ public final class FFContext {
         return asset.getInstanceId();
     }
     
+    public final int getAssetInstanceId( Named named ) {
+        return getAssetInstanceId( named.name() );
+    }
+    
     public final int getAssetInstanceId( int id ) {
         Asset asset = getSystemComponent( Asset.TYPE_KEY, id );
         if ( asset == null ) {
@@ -596,6 +652,10 @@ public final class FFContext {
         }
         
         return asset.getInstanceId();
+    }
+    
+    public final int getAssetInstanceId( Indexed indexd ) {
+        return getAssetInstanceId( indexd.index() );
     }
 
     public final <T> T getProperty( TypedKey<T> key ) {
