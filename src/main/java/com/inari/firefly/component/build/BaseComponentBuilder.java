@@ -20,6 +20,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.lang.Named;
+import com.inari.commons.lang.aspect.Aspect;
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.Indexed;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
@@ -118,6 +120,23 @@ public abstract class BaseComponentBuilder<C extends Component> implements Compo
     
     public final ComponentBuilder add( AttributeKey<IntBag> key, Indexed indexed ) {
         return add( key, indexed.index() );
+    }
+    
+    public final ComponentBuilder add( AttributeKey<Aspects> key, Aspect aspect ) {
+        if ( aspect == null ) {
+            return this;
+        }
+        
+        Aspects aspects;
+        if ( ! attributes.contains( key ) ) {
+            aspects = aspect.aspectGroup().createAspects();
+            attributes.put( key, aspects );
+        } else {
+            aspects = attributes.getValue( key );
+        }
+        
+        aspects.set( aspect );
+        return this;
     }
 
     @SuppressWarnings( "unchecked" )
