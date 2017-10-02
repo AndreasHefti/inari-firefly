@@ -43,6 +43,14 @@ public final class Contacts  {
         intersectionMask.reset( 0, 0, contactBounds.width, contactBounds.height );
     }
     
+    public final int width() {
+        return normalizedContactBounds.width;
+    }
+    
+    public final int height() {
+        return normalizedContactBounds.height;
+    }
+    
     public final boolean hasContact( Position p ) {
         return intersectionMask.getBit( p.x, p.y );
     }
