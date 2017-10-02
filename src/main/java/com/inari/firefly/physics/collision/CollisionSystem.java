@@ -155,6 +155,31 @@ public final class CollisionSystem
         }
     }
     
+    public final Contacts createContacts( int contactConstraintId ) {
+        if ( !contactConstraints.map.contains( contactConstraintId ) ) {
+            return null;
+        }
+        
+        return new Contacts( contactConstraintId );
+    }
+    
+    public final Contacts createContacts( Indexed contactConstraintId ) {
+        return createContacts( contactConstraintId.index() );
+    }
+    
+    public final Contacts createContacts( String contactConstraintName ) {
+        ContactConstraint contactConstraint = contactConstraints.get( contactConstraintName );
+        if ( contactConstraint == null ) {
+            return null;
+        }
+        
+        return contactConstraint.createContacts();
+    }
+    
+    public final Contacts createContacts( Named contactConstraintName ) {
+        return createContacts( contactConstraintName.name() );
+    }
+    
     public final void updateContacts( int entityId ) {
         final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
         scanContacts( entityId, collision );

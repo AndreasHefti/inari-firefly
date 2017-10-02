@@ -76,6 +76,10 @@ public final class ContactConstraint extends SystemComponent {
         return contactBounds.y;
     }
     
+    public final Contacts createContacts() {
+        return new Contacts( this.index );
+    }
+    
     public final boolean match( final Aspect materialType ) {
         if ( !isFiltering() ) {
             return true;
