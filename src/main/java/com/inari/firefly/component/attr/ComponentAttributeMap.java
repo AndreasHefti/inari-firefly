@@ -45,12 +45,10 @@ public class ComponentAttributeMap implements AttributeMap {
         this.componentId = componentId;
     }
 
-    @Override
     public final boolean isEmpty() {
         return attributes.isEmpty();
     }
     
-    @Override
     public final <A> A getValue( AttributeKey<A> key ) {
         Object value = attributes.get( key );
         if ( value == null ) {
@@ -59,19 +57,16 @@ public class ComponentAttributeMap implements AttributeMap {
         return key.valueType.cast( value );
     }
 
-    @Override
     public final <A> AttributeMap put( AttributeKey<A> key, A value ) {
         attributes.put( key, value );
         return this;
     }
     
-    @Override
     public AttributeMap putAll( AttributeMap attributes ) {
         this.attributes.putAll( ( (ComponentAttributeMap) attributes ).attributes ); 
         return this;
     }
     
-    @Override
     public final AttributeMap putUntyped( AttributeKey<?> key, Object value ) {
         if ( value == null ) {
             attributes.remove( key );
@@ -85,7 +80,6 @@ public class ComponentAttributeMap implements AttributeMap {
         return this;
     }
 
-    @Override
     public final int getValue( AttributeKey<Integer> key, int defaultValue ) {
         Object attributeValue = getValue( key );
         if ( attributeValue == null ) {
@@ -95,7 +89,6 @@ public class ComponentAttributeMap implements AttributeMap {
         return key.valueType.cast( attributeValue );
     }
 
-    @Override
     public final float getValue( AttributeKey<Float> key, float defaultValue ) {
         Object attributeValue = getValue( key );
         if ( attributeValue == null ) {
@@ -105,7 +98,6 @@ public class ComponentAttributeMap implements AttributeMap {
         return key.valueType.cast( attributeValue );
     }
 
-    @Override
     public final boolean getValue( AttributeKey<Boolean> key, boolean defaultValue ) {
         Object attributeValue = getValue( key );
         if ( attributeValue == null ) {
@@ -115,7 +107,6 @@ public class ComponentAttributeMap implements AttributeMap {
         return key.valueType.cast( attributeValue );
     }
 
-    @Override
     public final long getValue( AttributeKey<Long> key, long defaultValue ) {
         Object attributeValue = getValue( key );
         if ( attributeValue == null ) {
@@ -125,7 +116,6 @@ public class ComponentAttributeMap implements AttributeMap {
         return key.valueType.cast( attributeValue );
     }
 
-    @Override
     public final <A> A getValue( AttributeKey<A> key, A defaultValue ) {
         Object attributeValue = getValue( key );
         if ( attributeValue == null ) {
@@ -135,7 +125,6 @@ public class ComponentAttributeMap implements AttributeMap {
         return key.valueType.cast( attributeValue );
     }
     
-    @Override
     public final Object getUntypedValue( AttributeKey<?> key, Object defaultValue ) {
         Object attributeValue = getValue( key );
         if ( attributeValue == null ) {
@@ -145,7 +134,6 @@ public class ComponentAttributeMap implements AttributeMap {
         return attributeValue;
     }
     
-    @Override
     public final int getIdForName( 
         AttributeKey<String> nameAttribute, 
         AttributeKey<Integer> idAttribute, 
@@ -160,7 +148,6 @@ public class ComponentAttributeMap implements AttributeMap {
         }
     }
     
-    @Override
     public final IntBag getIdsForNames( 
         AttributeKey<DynArray<String>> namesAttribute, 
         AttributeKey<IntBag> idsAttribute,
@@ -189,7 +176,6 @@ public class ComponentAttributeMap implements AttributeMap {
         return ( result != null )? result : defaultValue;
     }
     
-    @Override
     public final int getAssetInstanceId( 
         AttributeKey<String> nameAttribute, 
         AttributeKey<Integer> idAttribute, 
@@ -203,12 +189,10 @@ public class ComponentAttributeMap implements AttributeMap {
         }
     }
 
-    @Override
     public final void clear() {
         attributes.clear();
     }
     
-    @Override
     public final boolean contains( AttributeKey<?> key ) {
         return attributes.containsKey( key );
     }
@@ -227,6 +211,10 @@ public class ComponentAttributeMap implements AttributeMap {
             }
         }
         return builder.toString();
+    }
+
+    public final FFContext getContext() {
+        return context;
     }
     
 }

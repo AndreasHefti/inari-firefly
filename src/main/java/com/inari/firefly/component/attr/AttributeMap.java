@@ -18,6 +18,7 @@ package com.inari.firefly.component.attr;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.Component;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.IComponentId;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 
@@ -73,6 +74,6 @@ public interface AttributeMap {
 
     boolean contains( AttributeKey<?> key );
 
-    
+    FFContext getContext();
 
 }
