@@ -1,10 +1,9 @@
 package com.inari.firefly.physics.animation.easing;
 
-import com.inari.commons.config.StringConfigurable;
 import com.inari.commons.geom.Easing;
 import com.inari.commons.geom.Easing.Type;
 
-public final class EasingData implements StringConfigurable {
+public final class EasingData {
     
     final Easing.Type easingType;
     final float startValue;
@@ -39,18 +38,6 @@ public final class EasingData implements StringConfigurable {
 
     public final long getDuration() {
         return duration;
-    }
-
-    @Override
-    public final void fromConfigString( String stringValue ) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public final String toConfigString() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

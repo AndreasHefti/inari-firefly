@@ -244,6 +244,7 @@ public final class CollisionSystem
     public final void clearSystem() {
         contactPools.clear();
         collisionResolvers.clear();
+        contactConstraints.clear();
     }
     
     public final void dispose( FFContext context ) {

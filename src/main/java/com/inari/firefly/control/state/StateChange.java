@@ -15,10 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.control.state;
 
-import com.inari.commons.config.StringConfigurable;
 import com.inari.firefly.system.utils.Condition;
 
-public final class StateChange implements StringConfigurable {
+public final class StateChange {
 
     String name;
     String fromStateName;
@@ -50,18 +49,6 @@ public final class StateChange implements StringConfigurable {
 
     public final Condition getCondition() {
         return condition;
-    }
-
-    @Override
-    public final void fromConfigString( String stringValue ) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public final String toConfigString() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

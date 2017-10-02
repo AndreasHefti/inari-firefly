@@ -571,6 +571,27 @@ public final class FFContext {
         return this;
     }
     
+    public final <T extends EntityComponent & Activatable> FFContext activateEntityComponent( Indexed indexed, EntityComponentTypeKey<T> typeKey ) {
+        return activateEntityComponent( indexed.index(), typeKey );
+    }
+
+    public final <T extends EntityComponent & Activatable> FFContext activateEntityComponent( Named named, EntityComponentTypeKey<T> typeKey ) {
+        return activateEntityComponent( named.name(), typeKey );
+    }
+    
+    public final <T extends EntityComponent & Activatable> FFContext activateEntityComponent( String name, EntityComponentTypeKey<T> typeKey ) {
+        return activateEntityComponent( entitySystem.getEntityId( name ), typeKey );
+    }
+    
+    public final <T extends EntityComponent & Activatable> FFContext activateEntityComponent( int entityId, EntityComponentTypeKey<T> typeKey ) {
+        Activatable activatable = getEntityComponent( entityId, typeKey );
+        if ( activatable != null ) {
+            activatable.setActive( true );
+        }
+        
+        return this;
+    }
+    
     public final FFContext activateEntity( Named named ) {
         entitySystem.activateEntity( entitySystem.getEntityId( named.name() ) );
         return this;
