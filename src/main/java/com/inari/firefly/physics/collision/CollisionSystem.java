@@ -47,7 +47,8 @@ public final class CollisionSystem
     public static final AspectGroup CONTACT_ASPECT_GROUP = new AspectGroup( "CONTACT_ASPECT_GROUP" );
     private static final Set<SystemComponentKey<?>> SUPPORTED_COMPONENT_TYPES = JavaUtils.<SystemComponentKey<?>>unmodifiableSet( 
         ContactPool.TYPE_KEY,
-        CollisionResolver.TYPE_KEY
+        CollisionResolver.TYPE_KEY,
+        ContactConstraint.TYPE_KEY
     );
     
     private static final ArrayDeque<Contact> CONTACTS_POOL = new ArrayDeque<Contact>();
