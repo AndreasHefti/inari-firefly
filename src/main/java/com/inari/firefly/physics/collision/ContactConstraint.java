@@ -1,6 +1,5 @@
 package com.inari.firefly.physics.collision;
 
-import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
@@ -15,17 +14,17 @@ public final class ContactConstraint  {
     int layerId = -1;
     final Rectangle contactScanBounds = new Rectangle();
     final Rectangle normalizedContactScanBounds = new Rectangle();
-    private final Aspects materialTypeFilter = CollisionSystem.MATERIAL_ASPECT_GROUP.createAspects();
-    private boolean filtering = false;
+    final Aspects materialTypeFilter = CollisionSystem.MATERIAL_ASPECT_GROUP.createAspects();
+    boolean filtering = false;
     
     // TODO split up the ContactConstraint to a ContactConstraint that contains only the definition data (static) and is a SystemComponent and a ContactInstance
     //      class that contains the contact information for a specified entity. The following fields are instance fields:
     // final String name; 
     final Rectangle worldBounds = new Rectangle();
-    private final Aspects contactTypes = CollisionSystem.CONTACT_ASPECT_GROUP.createAspects();
-    private final Aspects materialTypes = CollisionSystem.MATERIAL_ASPECT_GROUP.createAspects();
-    private final BitMask intersectionMask = new BitMask( 0, 0 );
-    private final DynArray<Contact> contacts = DynArray.create( Contact.class, 20, 10 );
+    final Aspects contactTypes = CollisionSystem.CONTACT_ASPECT_GROUP.createAspects();
+    final Aspects materialTypes = CollisionSystem.MATERIAL_ASPECT_GROUP.createAspects();
+    final BitMask intersectionMask = new BitMask( 0, 0 );
+    final DynArray<Contact> contacts = DynArray.create( Contact.class, 20, 10 );
     
     public ContactConstraint( String name, Rectangle contactScanBounds ) {
         this.name = name;
@@ -262,66 +261,22 @@ public final class ContactConstraint  {
         
         return null;
     }
-    
-    final void clear() {
+
+    public final void clear() {
         for ( int i = 0; i < contacts.capacity(); i++ ) {
             Contact contact = contacts.get( i );
             if ( contact == null ) {
                 continue;
             }
             
-            contact.dispose();
+            CollisionSystem.disposeContact( contact );
         }
         contacts.clear();
         contactTypes.clear();
         materialTypes.clear();
         intersectionMask.clearMask();
     }
-    
-    final void update( float x, float y, float vx, float vy ) {
-        worldBounds.x = ( ( vx > 0 )? (int) Math.ceil( x ) : (int) Math.floor( x ) ) + contactScanBounds.x;
-        worldBounds.y = ( ( vy > 0 )? (int) Math.ceil( y ) : (int) Math.floor( y ) ) + contactScanBounds.y;
-        worldBounds.width = contactScanBounds.width;
-        worldBounds.height = contactScanBounds.height;
-        intersectionMask.reset( 0, 0, contactScanBounds.width, contactScanBounds.height );
-    }
-    
-    final boolean match( ECollision collision ) {
-        if ( !filtering ) {
-            return true;
-        } else {
-            final Aspect materialType = collision.getMaterialType();
-            return ( materialType != null && materialTypeFilter.contains( materialType ) );
-        }
-    }
-    
-    final boolean addContact( final Contact contact ) {
-        if ( contact == null ) { 
-            return false;
-        }
 
-        if ( !GeomUtils.intersect( contact.intersectionBounds(), normalizedContactScanBounds ) ) {
-            return false;
-        }
-
-        BitMask intersectionMask = contact.intersectionMask();
-        if ( intersectionMask != null && !intersectionMask.isEmpty() ) {
-            this.intersectionMask.or( intersectionMask );
-        } else {
-            Rectangle intersectionBounds = contact.intersectionBounds();
-            this.intersectionMask.setRegion( intersectionBounds, true );
-        }
-        
-        if ( contact.contactType != null ) {
-            contactTypes.set( contact.contactType );
-        }
-        if ( contact.materialType != null ) {
-            materialTypes.set( contact.materialType );
-        }
-        
-        contacts.add( contact );
-        return true;
-    }
 
     @Override
     public String toString() {

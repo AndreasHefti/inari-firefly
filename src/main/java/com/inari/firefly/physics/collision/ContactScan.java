@@ -13,16 +13,7 @@ public final class ContactScan {
     
     ContactScan() {}
 
-    public final void update( float x, float y, float vx, float vy ) {
-        for ( int i = 0; i < constraints.capacity(); i++ ) {
-            ContactConstraint constraint = constraints.get( i );
-            if ( constraint == null ) {
-                continue;
-            }
-            
-            constraint.update( x, y, vx, vy );
-        }
-    }
+    
 
     public final boolean hasAnyContact() {
         for ( int i = 0; i < constraints.capacity(); i++ ) {

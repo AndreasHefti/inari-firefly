@@ -1,5 +1,6 @@
 package com.inari.firefly.physics.collision;
 
+import java.util.ArrayDeque;
 import java.util.Set;
 
 import com.inari.commons.GeomUtils;
@@ -8,6 +9,7 @@ import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.Named;
+import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.Indexed;
@@ -48,11 +50,15 @@ public final class CollisionSystem
         CollisionResolver.TYPE_KEY
     );
     
+    private static final ArrayDeque<Contact> CONTACT_POOL = new ArrayDeque<Contact>();
+    
     private final SystemComponentViewLayerMap<ContactPool> contactPools;
     private final SystemComponentMap<CollisionResolver> collisionResolvers;
     
     private TileGridSystem tileGridSystem;
     private final Rectangle checkPivot = new Rectangle( 0, 0, 0, 0 );
+    
+    
     
     CollisionSystem() {
         super( SYSTEM_KEY );
@@ -195,7 +201,8 @@ public final class CollisionSystem
         }
         
         constraint.clear();
-        constraint.update( 
+        update( 
+            constraint,
             transform.getXpos(),
             transform.getYpos(),
             movement.getVelocityX(),
@@ -245,7 +252,8 @@ public final class CollisionSystem
         final ContactScan contactScan = collision.getContactScan();
         
         contactScan.clearContacts();
-        contactScan.update( 
+        update( 
+            contactScan,
             transform.getXpos(),
             transform.getYpos(),
             movement.getVelocityX(),
@@ -315,12 +323,12 @@ public final class CollisionSystem
         }
         
         final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
-        if ( !constraint.match( collision ) ) {
+        if ( !match( constraint, collision ) ) {
             return;
         }
         
         final Rectangle collisionBounds = collision.getCollisionBounds();
-        final Contact contact = Contact.createContact(
+        final Contact contact = createContact(
             entityId,
             collision.getMaterialType(),
             collision.getContactType(),
@@ -342,7 +350,7 @@ public final class CollisionSystem
         );
         
         if ( intersectionBounds.area() <= 0 ) {
-            contact.dispose();
+            disposeContact( contact );
             return;
         }
         
@@ -352,7 +360,7 @@ public final class CollisionSystem
         
         final BitMask bitmask2 = collision.getCollisionMask();
         if ( bitmask2 == null ) {
-            constraint.addContact( contact );
+            addContact( constraint, contact );
             return;
         }
         
@@ -362,11 +370,107 @@ public final class CollisionSystem
         checkPivot.height = constraintWorldBounds.height;
 
         if ( bitmask2 != null && BitMask.createIntersectionMask( checkPivot, bitmask2, intersectionMask, true ) ) {
-            constraint.addContact( contact );
+            addContact( constraint, contact );
             return;
         }
         
-        contact.dispose();
+        disposeContact( contact );
+    }
+    
+    
+    private final void update( final ContactScan contactScan, float x, float y, float vx, float vy ) {
+        for ( int i = 0; i < contactScan.constraints.capacity(); i++ ) {
+            ContactConstraint constraint = contactScan.constraints.get( i );
+            if ( constraint == null ) {
+                continue;
+            }
+            
+            update( constraint, x, y, vx, vy );
+        }
+    }
+    
+    private final void update( final ContactConstraint constraint, float x, float y, float vx, float vy ) {
+        constraint.worldBounds.x = ( ( vx > 0 )? (int) Math.ceil( x ) : (int) Math.floor( x ) ) + constraint.contactScanBounds.x;
+        constraint.worldBounds.y = ( ( vy > 0 )? (int) Math.ceil( y ) : (int) Math.floor( y ) ) + constraint.contactScanBounds.y;
+        constraint.worldBounds.width = constraint.contactScanBounds.width;
+        constraint.worldBounds.height = constraint.contactScanBounds.height;
+        constraint.intersectionMask.reset( 0, 0, constraint.contactScanBounds.width, constraint.contactScanBounds.height );
+    }
+    
+    private final boolean match( final ContactConstraint constraint, final ECollision collision ) {
+        if ( !constraint.filtering ) {
+            return true;
+        } else {
+            final Aspect materialType = collision.getMaterialType();
+            return ( materialType != null && constraint.materialTypeFilter.contains( materialType ) );
+        }
+    }
+    
+    private final boolean addContact( final ContactConstraint constraint, final Contact contact ) {
+        if ( contact == null ) { 
+            return false;
+        }
+
+        if ( !GeomUtils.intersect( contact.intersectionBounds(), constraint.normalizedContactScanBounds ) ) {
+            return false;
+        }
+
+        BitMask intersectionMask = contact.intersectionMask();
+        if ( intersectionMask != null && !intersectionMask.isEmpty() ) {
+            constraint.intersectionMask.or( intersectionMask );
+        } else {
+            Rectangle intersectionBounds = contact.intersectionBounds();
+            constraint.intersectionMask.setRegion( intersectionBounds, true );
+        }
+        
+        if ( contact.contactType != null ) {
+            constraint.contactTypes.set( contact.contactType );
+        }
+        if ( contact.materialType != null ) {
+            constraint.materialTypes.set( contact.materialType );
+        }
+        
+        constraint.contacts.add( contact );
+        return true;
+    }
+    
+    
+    
+    
+    
+    final static void disposeContact( final Contact contact ) {
+        contact.entityId = -1;
+        contact.intersectionMask.clearMask();
+        contact.worldBounds.clear();
+        contact.contactType = null;
+        contact.materialType = null;
+        contact.intersectionBounds.clear();
+        CONTACT_POOL.add( contact );
+    }
+    
+    final static Contact createContact( int entityId ) {
+        Contact contact = CONTACT_POOL.getFirst();
+        if ( contact == null ) {
+            contact = new Contact();
+        }
+        
+        contact.entityId = entityId;
+        return contact;
+    }
+
+    final static Contact createContact( int entityId, Aspect materialType, Aspect contactType, int x, int y, int width, int height ) {
+        Contact contact = ( !CONTACT_POOL.isEmpty() )? 
+            CONTACT_POOL.pollFirst() :
+                new Contact();
+        
+        contact.entityId = entityId;
+        contact.contactType = contactType;
+        contact.materialType = materialType;
+        contact.worldBounds.x = x;
+        contact.worldBounds.y = y;
+        contact.worldBounds.width = width;
+        contact.worldBounds.height = height;
+        return contact;
     }
 
 }
