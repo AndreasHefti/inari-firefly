@@ -122,6 +122,10 @@ public final class ECollision extends EntityComponent {
         return this;
     }
     
+    public final Contacts getContacts( int contactConstraintId ) {
+        return contactScan.getContacts( contactConstraintId );
+    }
+    
     public final ECollision clearContactConstraints() {
         for ( int i = 0; i < contactScan.contacts.capacity(); i++ ) {
             Contacts contacts = contactScan.contacts.get( i );
