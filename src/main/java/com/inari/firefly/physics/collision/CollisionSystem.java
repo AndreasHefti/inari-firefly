@@ -199,7 +199,7 @@ public final class CollisionSystem
         updateContacts( context.getEntityId( entityName ), constraintName );
     }
     
-    private final void updateContacts( int entityId, Contacts contacts ) {
+    public final void updateContacts( int entityId, Contacts contacts ) {
         _updateContacts( entityId, contacts );
     }
     
