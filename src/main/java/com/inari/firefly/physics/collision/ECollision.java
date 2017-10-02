@@ -115,7 +115,24 @@ public final class ECollision extends EntityComponent {
     }
     
     public final ECollision removeContactConstraint( int contactConstraintId ) {
-        contactScan.contacts.remove( contactConstraintId );
+        Contacts removed = contactScan.contacts.remove( contactConstraintId );
+        if ( removed != null ) {
+            removed.clear();
+        }
+        return this;
+    }
+    
+    public final ECollision clearContactConstraints() {
+        for ( int i = 0; i < contactScan.contacts.capacity(); i++ ) {
+            Contacts contacts = contactScan.contacts.get( i );
+            if ( contacts == null ) {
+                continue;
+            }
+            
+            contacts.clear();
+        }
+        
+        contactScan.contacts.clear();
         return this;
     }
 
@@ -130,7 +147,7 @@ public final class ECollision extends EntityComponent {
         materialType = attributes.getValue( MATERIAL_TYPE, materialType );
         contactType = attributes.getValue( CONTACT_TYPE, contactType );
 
-        contactScan.clear();
+        clearContactConstraints();
         final IntBag constraintIds = attributes.getIdsForNames( CONTACT_CONSTRAINT_NAMES, CONTACT_CONSTRAINT_IDS, ContactConstraint.TYPE_KEY, null );
         if ( constraintIds != null ) {
             for ( int i = 0; i < constraintIds.length(); i++ ) {
