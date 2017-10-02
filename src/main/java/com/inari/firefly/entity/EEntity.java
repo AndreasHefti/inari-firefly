@@ -101,23 +101,20 @@ public class EEntity extends EntityComponent {
         aspects.clear();
     }
 
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
     }
 
-    @Override
-    public void fromAttributes( AttributeMap attributes ) {
+    public final void fromAttributes( AttributeMap attributes ) {
         entityName = attributes.getValue( ENTITY_NAME, entityName );
         setControllerIds( attributes.getIdsForNames( CONTROLLER_NAMES, CONTROLLER_IDS, Controller.TYPE_KEY, controllerIds ) );
         if ( attributes.contains( ASPECTS ) ) {
-            this.aspects.clear();
-            this.aspects.set( attributes.getValue( ASPECTS ) );
+            aspects.clear();
+            aspects.set( attributes.getValue( ASPECTS ) );
         }
     }
 
-    @Override
-    public void toAttributes( AttributeMap attributes ) {
+    public final void toAttributes( AttributeMap attributes ) {
         attributes.put( ENTITY_NAME, entityName );
         attributes.put( CONTROLLER_IDS, controllerIds );
         attributes.put( ASPECTS, aspects );

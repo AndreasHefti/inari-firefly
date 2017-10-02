@@ -7,6 +7,7 @@ import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -21,27 +22,30 @@ public final class ECollision extends EntityComponent {
     public static final AttributeKey<Integer> COLLISION_RESOLVER_ID = AttributeKey.createInt( "collisionResolverId", ECollision.class );
     public static final AttributeKey<Aspect> MATERIAL_TYPE = AttributeKey.createAspect( "materialType", ECollision.class );
     public static final AttributeKey<Aspect> CONTACT_TYPE = AttributeKey.createAspect( "contactType", ECollision.class );
-    public static final AttributeKey<DynArray<ContactConstraint>> CONTACT_CONSTRAINTS = AttributeKey.createDynArray( "contactConstraints", ECollision.class, ContactConstraint.class );
+    public static final AttributeKey<IntBag> CONTACT_CONSTRAINT_IDS = AttributeKey.createIntBag( "constraintIds", ECollision.class );
+    public static final AttributeKey<DynArray<String>> CONTACT_CONSTRAINT_NAMES = AttributeKey.createDynArray( "constraintNames", ECollision.class, String.class );
     public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
         COLLISION_BOUNDS,
         COLLISION_MASK,
         COLLISION_RESOLVER_ID,
         MATERIAL_TYPE,
         CONTACT_TYPE,
-        CONTACT_CONSTRAINTS
+        CONTACT_CONSTRAINT_IDS,
+        CONTACT_CONSTRAINT_NAMES
     );
     
-    private final Rectangle collisionBounds;
-    private BitMask collisionMask;
-    private int collisionResolverId;
-    private Aspect materialType;
-    private Aspect contactType;
+    final Rectangle collisionBounds;
+    BitMask collisionMask;
+    int collisionResolverId;
+    Aspect materialType;
+    Aspect contactType;
     
-    private ContactScan contactScan;
+    final ContactScan contactScan;
 
     ECollision() {
         super( TYPE_KEY );
         collisionBounds = new Rectangle();
+        contactScan = new ContactScan();
         resetAttributes();
     }
     
@@ -51,7 +55,7 @@ public final class ECollision extends EntityComponent {
         collisionResolverId = -1;
         contactType = null;
         materialType = null;
-        contactScan = null;
+        contactScan.clear();
     }
 
     public final Rectangle getCollisionBounds() {
@@ -105,41 +109,56 @@ public final class ECollision extends EntityComponent {
         this.contactType = contactType;
     }
     
-    public final void addContactConstraint( ContactConstraint constraint ) {
-        if ( contactScan == null ) {
-            contactScan = new ContactScan();
-        }
-        contactScan.addContactContstraint( constraint );
+    public final ECollision addContactConstraint( int contactConstraintId ) {
+        contactScan.contacts.set( contactConstraintId, new Contacts( contactConstraintId ) );
+        return this;
+    }
+    
+    public final ECollision removeContactConstraint( int contactConstraintId ) {
+        contactScan.contacts.remove( contactConstraintId );
+        return this;
     }
 
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
     }
 
-    @Override
     public final void fromAttributes( AttributeMap attributes ) {
         setCollisionBounds( attributes.getValue( COLLISION_BOUNDS, collisionBounds ) );
         collisionMask = attributes.getValue( COLLISION_MASK, collisionMask );
         collisionResolverId = attributes.getIdForName( COLLISION_RESOLVER_NAME, COLLISION_RESOLVER_ID, CollisionResolver.TYPE_KEY, collisionResolverId );
         materialType = attributes.getValue( MATERIAL_TYPE, materialType );
         contactType = attributes.getValue( CONTACT_TYPE, contactType );
-        
-        if ( attributes.contains( CONTACT_CONSTRAINTS ) ) {
-            DynArray<ContactConstraint> constraints = attributes.getValue( CONTACT_CONSTRAINTS );
-            for ( ContactConstraint constraint : constraints ) {
-                addContactConstraint( constraint );
+
+        contactScan.clear();
+        final IntBag constraintIds = attributes.getIdsForNames( CONTACT_CONSTRAINT_NAMES, CONTACT_CONSTRAINT_IDS, ContactConstraint.TYPE_KEY, null );
+        if ( constraintIds != null ) {
+            for ( int i = 0; i < constraintIds.length(); i++ ) {
+                if ( constraintIds.isEmpty( i ) ) {
+                    continue;
+                }
+                addContactConstraint( constraintIds.get( i ) );
             }
         }
     }
 
-    @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( COLLISION_BOUNDS, collisionBounds );
         attributes.put( COLLISION_MASK, collisionMask );
         attributes.put( COLLISION_RESOLVER_ID, collisionResolverId );
         attributes.put( MATERIAL_TYPE, materialType );
         attributes.put( CONTACT_TYPE, contactType );
+        
+        IntBag constraintIds = new IntBag( contactScan.contacts.size() );
+        for ( int i = 0; i < contactScan.contacts.capacity(); i++ ) {
+            Contacts contacts = contactScan.contacts.get( i );
+            if ( contacts == null ) {
+                continue;
+            }
+            
+            constraintIds.add( i );
+        }
+        attributes.put( CONTACT_CONSTRAINT_IDS, constraintIds );
     }
 
 }

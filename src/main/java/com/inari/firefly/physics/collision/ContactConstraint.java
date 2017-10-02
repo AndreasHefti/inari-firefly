@@ -1,308 +1,107 @@
 package com.inari.firefly.physics.collision;
 
-import com.inari.commons.geom.BitMask;
-import com.inari.commons.geom.Position;
+import java.util.Set;
+
+import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.Aspects;
-import com.inari.commons.lang.list.DynArray; 
+import com.inari.commons.lang.indexed.IIndexedTypeKey;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.graphics.view.Layer;
+import com.inari.firefly.system.component.SystemComponent;
 
-public final class ContactConstraint  {
+public final class ContactConstraint extends SystemComponent {
     
-    final String name;
+    public static final SystemComponentKey<ContactConstraint> TYPE_KEY = SystemComponentKey.create( ContactConstraint.class );
+    public static final AttributeKey<Integer> LAYER_ID = AttributeKey.createInt( "layerId", ContactConstraint.class );
+    public static final AttributeKey<String> LAYER_NAME = AttributeKey.createString( "layerName", ContactConstraint.class );
+    public static final AttributeKey<Rectangle> CONTACT_BOUNDS = AttributeKey.createRectangle( "contactBounds", ContactConstraint.class );
+    public static final AttributeKey<Aspects> MATERIAL_TYPE_FILTER = AttributeKey.createAspects( "materialTypeFilter", ContactConstraint.class );
+    public static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = JavaUtils.<AttributeKey<?>>unmodifiableSet(
+        LAYER_ID,
+        CONTACT_BOUNDS,
+        MATERIAL_TYPE_FILTER
+    );
     
     int layerId = -1;
-    final Rectangle contactScanBounds = new Rectangle();
-    final Rectangle normalizedContactScanBounds = new Rectangle();
-    final Aspects materialTypeFilter = CollisionSystem.MATERIAL_ASPECT_GROUP.createAspects();
-    boolean filtering = false;
-    
-    // TODO split up the ContactConstraint to a ContactConstraint that contains only the definition data (static) and is a SystemComponent and a ContactInstance
-    //      class that contains the contact information for a specified entity. The following fields are instance fields:
-    // final String name; 
-    final Rectangle worldBounds = new Rectangle();
-    final Aspects contactTypes = CollisionSystem.CONTACT_ASPECT_GROUP.createAspects();
-    final Aspects materialTypes = CollisionSystem.MATERIAL_ASPECT_GROUP.createAspects();
-    final BitMask intersectionMask = new BitMask( 0, 0 );
-    final DynArray<Contact> contacts = DynArray.create( Contact.class, 20, 10 );
-    
-    public ContactConstraint( String name, Rectangle contactScanBounds ) {
-        this.name = name;
-        this.contactScanBounds.setFrom( contactScanBounds );
-        normalizedContactScanBounds.setFrom( contactScanBounds );
-        normalizedContactScanBounds.x = 0;
-        normalizedContactScanBounds.y = 0;
-    }
-    
-    public final String name() {
-        return name;
+    final Rectangle contactBounds;
+    final Aspects materialTypeFilter;
+
+    protected ContactConstraint( int index ) {
+        super( index );
+        
+        contactBounds = new Rectangle();
+        materialTypeFilter = CollisionSystem.MATERIAL_ASPECT_GROUP.createAspects();
     }
 
-    public final int layerId() {
+    public final IIndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
+    }
+
+    public final int getLayerId() {
         return layerId;
     }
+
+    public final void setLayerId( int layerId ) {
+        this.layerId = layerId;
+    }
+
+    public final Rectangle getContactBounds() {
+        return contactBounds;
+    }
+
+    public final Aspects getMaterialTypeFilter() {
+        return materialTypeFilter;
+    }
     
+    public final boolean isFiltering() {
+        return !materialTypeFilter.isEmpty();
+    }
+
     public final int width() {
-        return contactScanBounds.width;
+        return contactBounds.width;
     }
     
     public final int height() {
-        return contactScanBounds.height;
+        return contactBounds.height;
     }
     
     public final int pivotX() {
-        return contactScanBounds.x;
+        return contactBounds.x;
     }
     
     public final int pivotY() {
-        return contactScanBounds.y;
+        return contactBounds.y;
+    }
+    
+    public final boolean match( final Aspect materialType ) {
+        if ( !isFiltering() ) {
+            return true;
+        } else {
+            return ( materialType != null && materialTypeFilter.contains( materialType ) );
+        }
+    }
+    
+    public final Set<AttributeKey<?>> attributeKeys() {
+        return ATTRIBUTE_KEYS;
     }
 
-    public final ContactConstraint layerId( int layerId ) {
-        this.layerId = layerId;
-        return this;
+    public final void fromAttributes( AttributeMap attributes ) {
+        layerId = attributes.getIdForName( LAYER_NAME, LAYER_ID, Layer.TYPE_KEY, layerId );
+        contactBounds.setFrom( attributes.getValue( CONTACT_BOUNDS, contactBounds ) );
+
+        if ( attributes.contains( MATERIAL_TYPE_FILTER ) ) {
+            materialTypeFilter.clear();
+            materialTypeFilter.set( attributes.getValue( MATERIAL_TYPE_FILTER ) );
+        }
     }
 
-    
-    public final ContactConstraint addToMaterialFilter( Aspect contact ) {
-        materialTypeFilter.set( contact );
-        filtering = true;
-        return this;
-    }
-    
-    public final ContactConstraint removeFromFilter( Aspect contact ) {
-        materialTypeFilter.reset( contact );
-        filtering = !materialTypeFilter.getValues().isEmpty();
-        return this;
-    }
-
-    public final boolean filterAplied() {
-        return filtering;
-    }
-    
-    public final void clearFilter() {
-        materialTypeFilter.clear();
-        filtering = false;
-    }
-    
-    public final boolean hasContact( Position p ) {
-        return intersectionMask.getBit( p.x, p.y );
-    }
-    
-    public final boolean hasContact( Position p1, Position p2 ) {
-        return intersectionMask.getBit( p1.x, p1.y ) || intersectionMask.getBit( p2.x, p2.y );
-    }
-
-    public final boolean hasContact( int x, int y ) {
-        return intersectionMask.getBit( x, y );
-    }
-    
-    public final boolean hasContactType( final Aspect contactType, Position p ) {
-        return hasContactType( contactType, p.x, p.y );
-    }
-    
-    public final boolean hasContactType( final Aspect contactType, int x, int y ) {
-        if ( !contactTypes.contains( contactType ) ) {
-            return false;
-        }
-        
-        for ( int i = 0; i < contacts.capacity(); i++ ) {
-            Contact contact = contacts.get( i );
-            if ( contact == null || contact.contactType.index() != contactType.index() ) {
-                continue;
-            }
-            
-            if ( contact.hasContact( x, y ) ) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    public final boolean hasContactTypeExclusive( final Aspect contactType, Position p ) {
-        return hasContactTypeExclusive( contactType, p.x, p.y );
-    }
-    
-    public final boolean hasContactTypeExclusive( final Aspect contactType, int x, int y ) {
-        if ( contactTypes.contains( contactType ) ) {
-            return false;
-        }
-        
-        for ( int i = 0; i < contacts.capacity(); i++ ) {
-            Contact contact = contacts.get( i );
-            if ( contact == null || contact.contactType.index() == contactType.index() ) {
-                continue;
-            }
-            
-            if ( contact.hasContact( x, y ) ) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    public final boolean hasContact( final Aspect material, Position p ) {
-        return hasContact( material, p.x, p.y );
-    }
-
-    public final boolean hasContact( final Aspect material, int x, int y ) {
-        if ( !materialTypes.contains( material ) ) {
-            return false;
-        }
-        
-        for ( int i = 0; i < contacts.capacity(); i++ ) {
-            Contact contact = contacts.get( i );
-            if ( contact == null || contact.materialType.index() != material.index() ) {
-                continue;
-            }
-            
-            if ( contact.hasContact( x, y ) ) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    public final boolean hasContactExclusive( final Aspect material, Position p ) {
-        return hasContactExclusive( material, p.x, p.y );
-    }
-
-    public final boolean hasContactExclusive( final Aspect material, int x, int y ) {
-        if ( materialTypes.contains( material ) ) {
-            return false;
-        }
-        
-        for ( int i = 0; i < contacts.capacity(); i++ ) {
-            Contact contact = contacts.get( i );
-            if ( contact == null || contact.materialType.index() == material.index() ) {
-                continue;
-            }
-            
-            if ( contact.hasContact( x, y ) ) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-
-    public final BitMask getIntersectionMask() {
-        return intersectionMask;
-    }
-
-    public final boolean hasAnyContact() {
-        return !contacts.isEmpty();
-    }
-    
-    public final boolean hasAnyContacts( final Aspects contact ) {
-        return contactTypes.intersects( contact );
-    }
-    
-    public final boolean hasContact( final Aspect contact ) {
-        return contactTypes.contains( contact );
-    }
-    
-    public final boolean hasAnyMaterialContact( final Aspects materials ) {
-        return materialTypes.intersects( materials );
-    }
-    
-    public final boolean hasMaterialContact( final Aspect material ) {
-        return materialTypes.contains( material );
-    }
-    
-    public final DynArray<Contact> allContacts() {
-        return contacts;
-    }
-    
-    public final Contact get( int x, int y ) {
-        for ( int i = 0; i < contacts.capacity(); i++ ) {
-            Contact contact = contacts.get( i );
-            if ( contact == null ) {
-                continue;
-            }
-            
-            if ( contact.intersects( x, y ) ) {
-                return contact;
-            }
-        }
-        
-        return null;
-    }
-
-    public final Contact getFirstContactOfType( final Aspect contactType ) {
-        for ( int i = 0; i < contacts.capacity(); i++ ) {
-            Contact contact = contacts.get( i );
-            if ( contact == null ) {
-                continue;
-            }
-            
-            if ( contact.contactType == contactType ) {
-                return contact;
-            }
-        }
-        
-        return null;
-    }
-    
-    public final Contact getFirstContactOfMaterial( final Aspect materialType ) {
-        for ( int i = 0; i < contacts.capacity(); i++ ) {
-            Contact contact = contacts.get( i );
-            if ( contact == null ) {
-                continue;
-            }
-            
-            if ( contact.materialType == materialType ) {
-                return contact;
-            }
-        }
-        
-        return null;
-    }
-
-    public final void clear() {
-        for ( int i = 0; i < contacts.capacity(); i++ ) {
-            Contact contact = contacts.get( i );
-            if ( contact == null ) {
-                continue;
-            }
-            
-            CollisionSystem.disposeContact( contact );
-        }
-        contacts.clear();
-        contactTypes.clear();
-        materialTypes.clear();
-        intersectionMask.clearMask();
-    }
-
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "ContactConstraint [name=" );
-        builder.append( name );
-        builder.append( ", layerId=" );
-        builder.append( layerId );
-        builder.append( ", contactScanBounds=" );
-        builder.append( contactScanBounds );
-        builder.append( ", normalizedContactScanBounds=" );
-        builder.append( normalizedContactScanBounds );
-        builder.append( ", worldBounds=" );
-        builder.append( worldBounds );
-        builder.append( ", materialTypeFilter=" );
-        builder.append( materialTypeFilter );
-        builder.append( ", filtering=" );
-        builder.append( filtering );
-        builder.append( ", contactTypes=" );
-        builder.append( contactTypes );
-        builder.append( ", intersectionMask=" );
-        builder.append( intersectionMask );
-        builder.append( ", contacts=" );
-        builder.append( contacts );
-        builder.append( "]" );
-        return builder.toString();
+    public final void toAttributes( AttributeMap attributes ) {
+        attributes.put( LAYER_ID, layerId );
+        attributes.put( CONTACT_BOUNDS, contactBounds );
+        attributes.put( MATERIAL_TYPE_FILTER, materialTypeFilter );
     }
 
 }
