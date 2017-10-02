@@ -93,6 +93,8 @@ public final class ContactConstraint extends SystemComponent {
     }
 
     public final void fromAttributes( AttributeMap attributes ) {
+        super.fromAttributes( attributes );
+        
         layerId = attributes.getIdForName( LAYER_NAME, LAYER_ID, Layer.TYPE_KEY, layerId );
         contactBounds.setFrom( attributes.getValue( CONTACT_BOUNDS, contactBounds ) );
 
@@ -103,6 +105,8 @@ public final class ContactConstraint extends SystemComponent {
     }
 
     public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
+        
         attributes.put( LAYER_ID, layerId );
         attributes.put( CONTACT_BOUNDS, contactBounds );
         attributes.put( MATERIAL_TYPE_FILTER, materialTypeFilter );
