@@ -56,9 +56,10 @@ public final class AnimationSystem
     public void init( FFContext context ) {
         super.init( context );
         
-        context.registerListener( UpdateEvent.TYPE_KEY, this );
-        context.registerListener( AnimationSystemEvent.TYPE_KEY, this );
-        context.registerListener( EntityActivationEvent.TYPE_KEY, this );
+        context
+            .registerListener( UpdateEvent.TYPE_KEY, this )
+            .registerListener( AnimationSystemEvent.TYPE_KEY, this )
+            .registerListener( EntityActivationEvent.TYPE_KEY, this );
     }
     
     public final Set<SystemComponentKey<?>> supportedComponentTypes() {
@@ -76,7 +77,10 @@ public final class AnimationSystem
     }
 
     public final void entityActivated( int entityId, Aspects aspects ) {
-        DynArray<AnimationMapping> animationMappings = context.getEntityComponent( entityId, EAnimation.TYPE_KEY ).getAnimationMappings();
+        DynArray<AnimationMapping> animationMappings = context
+            .getEntityComponent( entityId, EAnimation.TYPE_KEY )
+            .getAnimationMappings();
+        
         for ( int i = 0; i < animationMappings.capacity(); i++ ) {
             final AnimationMapping animationMapping = animationMappings.get( i );
             if ( animationMapping == null ) {
@@ -203,13 +207,15 @@ public final class AnimationSystem
     public void dispose( FFContext context ) {
         clearSystem();
         
-        context.disposeListener( UpdateEvent.TYPE_KEY, this );
-        context.disposeListener( AnimationSystemEvent.TYPE_KEY, this );
-        context.disposeListener( EntityActivationEvent.TYPE_KEY, this );
+        context
+            .disposeListener( UpdateEvent.TYPE_KEY, this )
+            .disposeListener( AnimationSystemEvent.TYPE_KEY, this )
+            .disposeListener( EntityActivationEvent.TYPE_KEY, this );
     }
     
     public final void clearSystem() {
         animations.clear();
+        activeMappings.clear();
     }
 
 }

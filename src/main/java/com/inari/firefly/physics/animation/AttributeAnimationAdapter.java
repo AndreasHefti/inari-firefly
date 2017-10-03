@@ -23,7 +23,6 @@ public interface AttributeAnimationAdapter<A extends Animation> extends IndexedT
         }
 
         @SuppressWarnings( "rawtypes" )
-        @Override
         public final Class<AttributeAnimationAdapter> baseType() {
             return AttributeAnimationAdapter.class;
         }
@@ -33,7 +32,6 @@ public interface AttributeAnimationAdapter<A extends Animation> extends IndexedT
             return "AttributeAnimationAdapterKey:" + type().getSimpleName();
         }
         
-        @Override
         public final AspectGroup aspectGroup() {
             return ASPECT_TYPE;
         }
