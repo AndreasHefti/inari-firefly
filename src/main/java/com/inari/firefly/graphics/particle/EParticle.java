@@ -58,6 +58,11 @@ public final class EParticle extends EntityComponent {
     public final ReadOnlyDynArray<Particle> getParticle() {
         return particle;
     }
+    
+    public final EParticle clearParticle() {
+        particle.clear();
+        return this;
+    }
 
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
