@@ -45,13 +45,31 @@ public class SpriteSetAsset extends Asset {
         return sprite.instanceId;
     }
 
-    @Override
     public final int getInstanceId( int index ) {
         if ( !loaded ) {
             return -1;
         }
         
         return spriteData.get( index ).instanceId;
+    }
+    
+    public final int getInstanceId( String name ) {
+        if ( name == null ) {
+            return -1;
+        }
+        
+        for ( int i = 0; i < spriteData.capacity(); i++ ) {
+            Sprite sprite = spriteData.get( i );
+            if ( sprite == null ) {
+                continue;
+            }
+            
+            if ( name.equals( sprite.name ) ) {
+                return sprite.instanceId;
+            }
+        }
+        
+        return -1;
     }
     
     @Override
@@ -122,18 +140,26 @@ public class SpriteSetAsset extends Asset {
     
     public static final class Sprite {
         
+        public final String name;
         public final Rectangle textureRegion;
         public final boolean flipHorizontal, flipVertical;
         
         int instanceId = -1;
         
         public Sprite( int x, int y, int width, int height ) {
-            this.textureRegion = new Rectangle( x, y, width, height );
-            flipHorizontal = false;
-            flipVertical = false;
+            this( x, y, width, height, false, false, null );
+        }
+        
+        public Sprite( int x, int y, int width, int height, String name ) {
+            this( x, y, width, height, false, false, name );
         }
         
         public Sprite( int x, int y, int width, int height, boolean flipHorizontal, boolean flipVertical ) {
+            this( x, y, width, height, flipHorizontal, flipVertical, null );
+        }
+        
+        public Sprite( int x, int y, int width, int height, boolean flipHorizontal, boolean flipVertical, String name ) {
+            this.name = name;
             this.textureRegion = new Rectangle( x, y, width, height );
             this.flipHorizontal = flipHorizontal;
             this.flipVertical = flipVertical;
@@ -145,29 +171,12 @@ public class SpriteSetAsset extends Asset {
     }
     
     private final class SpriteDataContainer implements SpriteData {
-        
         int textureId;
         Sprite spriteData;
-
-        @Override
-        public final int getTextureId() {
-            return textureId;
-        }
-
-        @Override
-        public final Rectangle getTextureRegion() {
-            return spriteData.textureRegion;
-        }
-
-        @Override
-        public final boolean isHorizontalFlip() {
-            return spriteData.flipHorizontal;
-        }
-
-        @Override
-        public final boolean isVerticalFlip() {
-            return spriteData.flipVertical;
-        }
+        public final int getTextureId() { return textureId; }
+        public final Rectangle getTextureRegion() { return spriteData.textureRegion; }
+        public final boolean isHorizontalFlip() { return spriteData.flipHorizontal; }
+        public final boolean isVerticalFlip() { return spriteData.flipVertical; }
     };
 
 }
