@@ -3,10 +3,12 @@ package com.inari.firefly.graphics.particle;
 import java.util.Set;
 
 import com.inari.commons.JavaUtils;
+import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
+import com.inari.firefly.graphics.BlendMode;
 import com.inari.firefly.graphics.rendering.RenderingChain.RendererKey;
 
 public final class EParticle extends EntityComponent {
@@ -33,24 +35,33 @@ public final class EParticle extends EntityComponent {
         return rendererKey;
     }
 
-    public final void setRendererKey( RendererKey rendererKey ) {
+    public final EParticle setRendererKey( RendererKey rendererKey ) {
         this.rendererKey = rendererKey;
+        return this;
     }
     
     public final boolean rendererMatch( RendererKey chainKey ) {
         return rendererKey == chainKey ;
+    }
+    
+    public final EParticle addParticle( Particle particle ) {
+        this.particle.add( particle );
+        return this;
+    }
+    
+    public final EParticle addParticle( int spriteId, RGBColor tintColor, BlendMode blendMode, float x, float y ) {
+        this.particle.add( new Particle( spriteId, tintColor, blendMode, x, y ) );
+        return this;
     }
 
     public final DynArray<Particle> getParticle() {
         return particle;
     }
 
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
     }
 
-    @Override
     public final void fromAttributes( AttributeMap attributes ) {
         rendererKey = attributes.getValue( RENDERER_KEY, rendererKey );
         particle.clear();
@@ -59,13 +70,11 @@ public final class EParticle extends EntityComponent {
         }
     }
 
-    @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( RENDERER_KEY, rendererKey );
         attributes.put( PARTICLE, particle );
     }
 
-    @Override
     public final void resetAttributes() {
         rendererKey = null;
         particle.clear();
