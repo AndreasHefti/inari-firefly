@@ -3,6 +3,7 @@ package com.inari.firefly.system.component;
 import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.ReadOnlyDynArray;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.utils.Disposable;
 
@@ -25,8 +26,9 @@ public class SystemComponentMap<C extends SystemComponent> {
     protected static final BuilderListener<?> VOID_BUILDER_LSTENER = new BuilderListenerAdapter<>();
 
     public final SystemComponentKey<C> componentKey;
-    public final DynArray<C> map;
+    public final ReadOnlyDynArray<C> map;
     
+    private final DynArray<C> _map;
     private final ComponentSystem<?> system;
     private final BuilderListener<C> builderListener;
     
@@ -63,12 +65,13 @@ public class SystemComponentMap<C extends SystemComponent> {
     ) {
         this.system = system;
         this.componentKey = componentKey;
-        map = DynArray.create( componentKey.<C>type(), cap, grow );
+        _map = DynArray.create( componentKey.<C>type(), cap, grow );
+        map = _map;
         this.builderListener = builderListener;
     }
     
     public void set( int index, C value ) {
-        map.set( index, value );
+        _map.set( index, value );
     }
 
     public final C get( int id ) {
@@ -145,7 +148,7 @@ public class SystemComponentMap<C extends SystemComponent> {
             return null;
         }
         
-        return map.remove( id );
+        return _map.remove( id );
     }
     
     public final void delete( int id ) {
@@ -177,7 +180,7 @@ public class SystemComponentMap<C extends SystemComponent> {
             delete( i );
         }
         
-        map.clear();
+        _map.clear();
     }
     
     

@@ -5,6 +5,7 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.ReadOnlyDynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -54,7 +55,7 @@ public final class EParticle extends EntityComponent {
         return this;
     }
 
-    public final DynArray<Particle> getParticle() {
+    public final ReadOnlyDynArray<Particle> getParticle() {
         return particle;
     }
 

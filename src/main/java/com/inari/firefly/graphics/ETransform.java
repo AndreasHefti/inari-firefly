@@ -74,7 +74,6 @@ public final class ETransform extends EntityComponent implements TransformData, 
         resetAttributes();
     }
 
-    @Override
     public final void resetAttributes() {
         viewId = 0;
         layerId = 0;
@@ -179,32 +178,26 @@ public final class ETransform extends EntityComponent implements TransformData, 
         this.rotation = rotation;
     }
     
-    @Override
     public final float getXOffset() {
         return position.x;
     }
 
-    @Override
     public final float getYOffset() {
         return position.y;
     }
 
-    @Override
     public final boolean hasRotation() {
         return rotation != 0.0;
     }
 
-    @Override
     public final boolean hasScale() {
         return scalex != 1.0 || scaley != 1.0;
     }
 
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
     }
 
-    @Override
     public final void fromAttributes( AttributeMap attributes ) {
         viewId = attributes.getIdForName( VIEW_NAME, VIEW_ID, View.TYPE_KEY, viewId );
         layerId = attributes.getIdForName( LAYER_NAME, LAYER_ID, Layer.TYPE_KEY, layerId );
@@ -230,7 +223,6 @@ public final class ETransform extends EntityComponent implements TransformData, 
         rotation = attributes.getValue( ROTATION, rotation );
     }
 
-    @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( VIEW_ID, viewId );
         attributes.put( LAYER_ID, layerId );
@@ -256,8 +248,7 @@ public final class ETransform extends EntityComponent implements TransformData, 
     
     private static final class XAxisAnimationAdapter implements EntityFloatAnimationAdapter {
         public static final AttributeAnimationAdapterKey<XAxisAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new XAxisAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, final FloatAnimation animation, final FFContext context ) {
             final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
             transform.setXpos( animation.getValue( entityId, transform.getXpos() ) );
@@ -266,8 +257,7 @@ public final class ETransform extends EntityComponent implements TransformData, 
     
     private static final class YAxisAnimationAdapter implements EntityFloatAnimationAdapter {
         public static final AttributeAnimationAdapterKey<YAxisAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new YAxisAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, final FloatAnimation animation, final FFContext context ) {
             final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
             transform.setYpos( animation.getValue( entityId, transform.getYpos() ) );
@@ -276,8 +266,7 @@ public final class ETransform extends EntityComponent implements TransformData, 
     
     private static final class XAxisPivotAnimationAdapter implements EntityFloatAnimationAdapter {
         public static final AttributeAnimationAdapterKey<XAxisPivotAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new XAxisPivotAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, final FloatAnimation animation, final FFContext context ) {
             final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
             transform.setPivotX( animation.getValue( entityId, transform.getPivotX() ) );
@@ -296,8 +285,7 @@ public final class ETransform extends EntityComponent implements TransformData, 
     
     private static final class XScaleAnimationAdapter implements EntityFloatAnimationAdapter {
         public static final AttributeAnimationAdapterKey<XScaleAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new XScaleAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, final FloatAnimation animation, final FFContext context ) {
             final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
             transform.setScaleX( animation.getValue( entityId, transform.getScaleX() ) );
@@ -306,8 +294,7 @@ public final class ETransform extends EntityComponent implements TransformData, 
     
     public static final class YScaleAnimationAdapter implements EntityFloatAnimationAdapter {
         public static final AttributeAnimationAdapterKey<YScaleAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new YScaleAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, final FloatAnimation animation, final FFContext context ) {
             final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
             transform.setScaleY( animation.getValue( entityId, transform.getScaleY() ) );
@@ -316,8 +303,7 @@ public final class ETransform extends EntityComponent implements TransformData, 
     
     private static final class RotationAnimationAdapter implements EntityFloatAnimationAdapter {
         public static final AttributeAnimationAdapterKey<RotationAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new RotationAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, final FloatAnimation animation, final FFContext context ) {
             final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
             transform.setRotation( animation.getValue( entityId, transform.getRotation() ) );

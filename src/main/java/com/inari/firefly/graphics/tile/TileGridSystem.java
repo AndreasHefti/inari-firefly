@@ -20,7 +20,7 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Position;
 import com.inari.commons.lang.aspect.Aspects;
-import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.ReadOnlyDynArray;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.entity.EntitySystem;
@@ -76,14 +76,16 @@ public final class TileGridSystem
     }
 
     final void removeMultiTilePosition( final int tileGridId, final int entityId, final int x, final int y ) {
-        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
-        tile.getGridPositions().remove( new Position( x, y ) );
+        entitySystem
+            .getComponent( entityId, ETile.TYPE_KEY )
+            .removeGridPosition( x, y );
         tileGrids.map.get( tileGridId ).reset( x, y );
     }
 
     final void addMultiTilePosition( final int tileGridId, final int entityId, final int x, final int y ) {
-        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
-        tile.getGridPositions().add( new Position( x, y ) );
+        entitySystem
+            .getComponent( entityId, ETile.TYPE_KEY )
+            .addGridPosition( x, y );
         tileGrids.map.get( tileGridId ).set( entityId, x, y );
     }
     
@@ -91,7 +93,7 @@ public final class TileGridSystem
         final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         final ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         final TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
-        final DynArray<Position> gridPositions = tile.getGridPositions();
+        final ReadOnlyDynArray<Position> gridPositions = tile.getGridPositions();
         
         for ( int i = 0; i < gridPositions.capacity(); i++ ) {
             if ( !gridPositions.contains( i ) ) {
@@ -106,7 +108,7 @@ public final class TileGridSystem
         final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         final ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         final TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
-        final DynArray<Position> gridPositions = tile.getGridPositions();
+        final ReadOnlyDynArray<Position> gridPositions = tile.getGridPositions();
         
         for ( int i = 0; i < gridPositions.capacity(); i++ ) {
             if ( !gridPositions.contains( i ) ) {

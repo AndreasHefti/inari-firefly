@@ -63,7 +63,6 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         resetAttributes();
     }
 
-    @Override
     public final void resetAttributes() {
         spriteId = -1;
         setTintColor( new RGBColor( 1, 1, 1, 1 ) );
@@ -71,7 +70,6 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         shaderId = -1;
     }
 
-    @Override
     public final int getSpriteId() {
         return spriteId;
     }
@@ -80,7 +78,6 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         this.spriteId = spriteId;
     }
 
-    @Override
     public final RGBColor getTintColor() {
         return tintColor;
     }
@@ -92,7 +89,6 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         this.tintColor.a = tintColor.a;
     }
 
-    @Override
     public final BlendMode getBlendMode() {
         return blendMode;
     }
@@ -101,7 +97,6 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         this.blendMode = blendMode;
     }
 
-    @Override
     public final int getShaderId() {
         return shaderId;
     }
@@ -110,12 +105,10 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         this.shaderId = shaderId;
     }
 
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
     }
 
-    @Override
     public final void fromAttributes( AttributeMap attributes ) {
         spriteId = attributes.getAssetInstanceId( SPRITE_ASSET_NAME, SPRITE_ID, spriteId );
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
@@ -123,7 +116,6 @@ public final class ESprite extends EntityComponent implements SpriteRenderable {
         shaderId = attributes.getAssetInstanceId( SHADER_ASSET_NAME, SHADER_ID, shaderId );
     }
 
-    @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( SPRITE_ID, spriteId );
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );

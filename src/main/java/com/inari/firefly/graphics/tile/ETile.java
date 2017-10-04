@@ -22,6 +22,7 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.ReadOnlyDynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -68,7 +69,6 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         
     }
 
-    @Override
     public final void resetAttributes() {
         spriteId = -1;
         setTintColor( new RGBColor( 1, 1, 1, 1 ) );
@@ -77,7 +77,6 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         gridPositions.clear();
     }
     
-    @Override
     public final int getSpriteId() {
         return spriteId;
     }
@@ -86,7 +85,6 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         this.spriteId = spriteId;
     }
 
-    @Override
     public final RGBColor getTintColor() {
         return tintColor;
     }
@@ -98,7 +96,6 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         this.tintColor.a = tintColor.a;
     }
 
-    @Override
     public final BlendMode getBlendMode() {
         return blendMode;
     }
@@ -107,7 +104,6 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         this.blendMode = blendMode;
     }
     
-    @Override
     public final int getShaderId() {
         return shaderId;
     }
@@ -115,17 +111,35 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     public final void setShaderId( int shaderId ) {
         this.shaderId = shaderId;
     }
+    
+    public final ETile addGridPosition( Position pos ) {
+        gridPositions.add( pos );
+        return this;
+    }
+    
+    public final ETile addGridPosition( int xpos, int ypos ) {
+        gridPositions.add( new Position( xpos, ypos ) );
+        return this;
+    }
+    
+    public final ETile removeGridPosition( Position pos ) {
+        gridPositions.removeAll( pos );
+        return this;
+    }
+    
+    public final ETile removeGridPosition( int xpos, int ypos ) {
+        gridPositions.removeAll( new Position( xpos, ypos ) );
+        return this;
+    }
 
-    public final DynArray<Position> getGridPositions() {
+    public final ReadOnlyDynArray<Position> getGridPositions() {
         return gridPositions;
     }
 
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
     }
 
-    @Override
     public final void fromAttributes( AttributeMap attributes ) {
         spriteId = attributes.getAssetInstanceId( SPRITE_ASSET_NAME, SPRITE_ID, spriteId );
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
@@ -138,7 +152,6 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
         }
     }
 
-    @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( SPRITE_ID, spriteId );
         attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
@@ -158,8 +171,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     
     private static final class TileSpriteIdAnimationAdapter implements EntityIntAnimationAdapter {
         public static final AttributeAnimationAdapterKey<TileSpriteIdAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TileSpriteIdAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, IntAnimation animation, FFContext context ) {
             final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
             tile.setSpriteId( animation.getValue( entityId, tile.getSpriteId() ) );
@@ -168,8 +180,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     
     private static final class TintColorRedAnimationAdapter implements EntityFloatAnimationAdapter {
         public static final AttributeAnimationAdapterKey<TintColorRedAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorRedAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
             final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
             final RGBColor tintColor = tile.getTintColor();
@@ -179,8 +190,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     
     private static final class TintColorGreenAnimationAdapter implements EntityFloatAnimationAdapter {
         public static final AttributeAnimationAdapterKey<TintColorGreenAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorGreenAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
             final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
             final RGBColor tintColor = tile.getTintColor();
@@ -190,8 +200,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     
     private static final class TintColorBlueAnimationAdapter implements EntityFloatAnimationAdapter {
         public static final AttributeAnimationAdapterKey<TintColorBlueAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorBlueAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
             final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
             final RGBColor tintColor = tile.getTintColor();
@@ -201,8 +210,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     
     private static final class TintColorAlphaAnimationAdapter implements EntityFloatAnimationAdapter {
         public static final AttributeAnimationAdapterKey<TintColorAlphaAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorAlphaAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, FloatAnimation animation, FFContext context ) {
             final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
             final RGBColor tintColor = tile.getTintColor();
@@ -212,8 +220,7 @@ public final class ETile extends EntityComponent implements SpriteRenderable {
     
     private static final class TintColorAnimationAdapter implements EntityValueAnimationAdapter<RGBColor> {
         public static final AttributeAnimationAdapterKey<TintColorAnimationAdapter> TYPE_KEY = AttributeAnimationAdapterKey.create( new TintColorAnimationAdapter() );
-        @Override public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
-        @Override
+        public final IIndexedTypeKey indexedTypeKey() { return TYPE_KEY; }
         public final void apply( int entityId, ValueAnimation<RGBColor> animation, FFContext context ) {
             final ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
             tile.setTintColor( animation.getValue( entityId, tile.getTintColor() ) );

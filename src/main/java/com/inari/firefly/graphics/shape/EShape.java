@@ -5,6 +5,7 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.ReadOnlyDynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -46,7 +47,6 @@ public class EShape extends EntityComponent implements ShapeData {
         resetAttributes();
     }
     
-    @Override
     public final void resetAttributes() {
         shapeType = null;
         vertices = null;
@@ -73,7 +73,7 @@ public class EShape extends EntityComponent implements ShapeData {
         this.vertices = vertices;
     }
 
-    public final DynArray<RGBColor> getColors() {
+    public final ReadOnlyDynArray<RGBColor> getColors() {
         return colors;
     }
 
@@ -109,12 +109,10 @@ public class EShape extends EntityComponent implements ShapeData {
         this.shaderId = shaderId;
     }
 
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
     }
 
-    @Override
     public final void fromAttributes( AttributeMap attributes ) {
         shapeType = attributes.getValue( SHAPE_TYPE, shapeType );
         vertices = attributes.getValue( VERTICES, vertices );
@@ -128,7 +126,6 @@ public class EShape extends EntityComponent implements ShapeData {
         shaderId = attributes.getAssetInstanceId( SHADER_ASSET_NAME, SHADER_ID, shaderId );
     }
 
-    @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( SHAPE_TYPE, shapeType );
         attributes.put( VERTICES, vertices );

@@ -71,7 +71,6 @@ public final class EMovement extends EntityComponent implements Activatable {
         resetAttributes();
     }
 
-    @Override
     public final void resetAttributes() {
         active = false;
         setVelocityX( 0f );
@@ -196,12 +195,10 @@ public final class EMovement extends EntityComponent implements Activatable {
         return active && ( velocity.dx != 0 || velocity.dy != 0 );
     }
 
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
     }
 
-    @Override
     public final void fromAttributes( AttributeMap attributes ) {
         active = attributes.getValue( ACTIVE, active );
         velocity.dx = attributes.getValue( VELOCITY_X, velocity.dx );
@@ -215,7 +212,6 @@ public final class EMovement extends EntityComponent implements Activatable {
         setUpdateResolution( attributes.getValue( UPDATE_RESOLUTION, updateResolution ) );
     }
 
-    @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( ACTIVE, active );
         attributes.put( VELOCITY_X, velocity.dx );

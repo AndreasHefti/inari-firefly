@@ -49,7 +49,6 @@ public final class ECollision extends EntityComponent {
         resetAttributes();
     }
     
-    @Override
     public final void resetAttributes() {
         collisionMask = null;
         collisionResolverId = -1;

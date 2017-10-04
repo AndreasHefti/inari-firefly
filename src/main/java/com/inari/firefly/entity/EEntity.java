@@ -39,7 +39,6 @@ public class EEntity extends EntityComponent {
         resetAttributes();
     }
 
-    @Override
     public final void resetAttributes() {
         controllerIds.clear();
         entityName = null;

@@ -44,7 +44,6 @@ public class EText extends EntityComponent {
         resetAttributes();
     }
 
-    @Override
     public final void resetAttributes() {
         rendererKey = null;
         fontAssetId = -1;
@@ -117,12 +116,10 @@ public class EText extends EntityComponent {
         this.tintColor.a = tintColor.a;
     }
 
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
     }
 
-    @Override
     public final void fromAttributes( AttributeMap attributes ) {
         rendererKey = attributes.getValue( RENDERER_KEY, rendererKey );
         fontAssetId = attributes.getIdForName( FONT_ASSET_NAME, FONT_ASSET_ID, Asset.TYPE_KEY, fontAssetId );
@@ -134,7 +131,6 @@ public class EText extends EntityComponent {
         shaderId = attributes.getValue( SHADER_ID, shaderId );
     }
 
-    @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( RENDERER_KEY, rendererKey );
         attributes.put( FONT_ASSET_ID, fontAssetId );

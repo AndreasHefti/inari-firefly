@@ -25,13 +25,11 @@ public final class EGroup extends EntityComponent {
         resetAttributes();
     }
     
-    @Override
     public final void resetAttributes() {
         parentId = -1;
         positionZ = 0;
     }
 
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
     }
@@ -52,13 +50,11 @@ public final class EGroup extends EntityComponent {
         this.positionZ = positionZ;
     }
 
-    @Override
     public final void fromAttributes( AttributeMap attributes ) {
         parentId = attributes.getValue( PARENT_ID, parentId );
         positionZ = attributes.getValue( POSITION_Z, positionZ );
     }
 
-    @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( PARENT_ID, parentId );
         attributes.put( POSITION_Z, positionZ );
