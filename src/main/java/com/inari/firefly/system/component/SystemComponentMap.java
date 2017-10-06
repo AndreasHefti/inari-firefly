@@ -1,5 +1,6 @@
 package com.inari.firefly.system.component;
 
+import java.util.BitSet;
 import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
@@ -29,6 +30,7 @@ public class SystemComponentMap<C extends SystemComponent> {
     public final ReadOnlyDynArray<C> map;
     
     private final DynArray<C> _map;
+    private final BitSet activeComponents;
     private final ComponentSystem<?> system;
     private final BuilderListener<C> builderListener;
     
@@ -67,6 +69,7 @@ public class SystemComponentMap<C extends SystemComponent> {
         this.componentKey = componentKey;
         _map = DynArray.create( componentKey.<C>type(), cap, grow );
         map = _map;
+        activeComponents = new BitSet( cap );
         this.builderListener = builderListener;
     }
     
@@ -128,24 +131,54 @@ public class SystemComponentMap<C extends SystemComponent> {
     }
 
     public void activate( int id ) {
-        builderListener.notifyActivation( id );
+        if ( !_map.contains( id ) || activeComponents.get( id ) ) {
+            return;
+        }
+        
+        C component = _map.get( id );
+        if ( component != null && !activeComponents.get( id ) ) {
+            activeComponents.set( id );
+            builderListener.notifyActivation( id );
+        }
     }
     
     public final void activate( String name ) {
-        builderListener.notifyActivation( getId( name ) );
+        activate( getId( name ) );
     }
 
     public void deactivate( int id ) {
-        builderListener.notifyDeactivation( id );
+        if ( !_map.contains( id ) || !activeComponents.get( id ) ) {
+            return;
+        }
+        
+        C component = _map.get( id );
+        if ( component != null ) {
+            activeComponents.set( id, false );
+            builderListener.notifyDeactivation( id );
+        }
     }
     
     public final void deactivate( String name ) {
-        builderListener.notifyDeactivation( getId( name ) );
+        deactivate( getId( name ) );
+    }
+    
+    public final boolean isActive( int id ) {
+        return activeComponents.get( id );
+    }
+    
+    public final int nextActive( int from ) {
+        return activeComponents.nextSetBit( from );
     }
     
     public C remove( int id ) {
         if ( !map.contains( id ) ) {
             return null;
+        }
+        
+        C component = _map.get( id );
+        if ( component != null && activeComponents.get( id ) ) {
+            activeComponents.set( id, false );
+            builderListener.notifyDeactivation( id );
         }
         
         return _map.remove( id );
@@ -233,19 +266,15 @@ public class SystemComponentMap<C extends SystemComponent> {
         public ComponentBuilderAdapter() {
             super( system, componentKey );
         }
-        
         public final C get( int id ) {
             return SystemComponentMap.this.get( id );
         }
-        
         public final void delete( int id ) {
             SystemComponentMap.this.delete( id );
         }
-        
         public final Iterator<C> getAll() {
             return SystemComponentMap.this.getAll();
         }
-        
         public final int getId( String name ) {
             return SystemComponentMap.this.getId( name );
         }
@@ -255,7 +284,9 @@ public class SystemComponentMap<C extends SystemComponent> {
         public final void deactivate( int id ) {
             SystemComponentMap.this.deactivate( id );
         }
-
+        public boolean isActive( int id ) {
+            return SystemComponentMap.this.isActive( id );
+        }
         public final SystemComponentBuilder createComponentBuilder( Class<? extends C> componentType ) {
             return SystemComponentMap.this.getBuilder( componentType );
         }

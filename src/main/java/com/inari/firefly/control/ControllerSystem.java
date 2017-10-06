@@ -24,7 +24,7 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentActivationMap;
+import com.inari.firefly.system.component.SystemComponentMap;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class ControllerSystem
@@ -38,11 +38,11 @@ public final class ControllerSystem
        Controller.TYPE_KEY
     );
 
-    private final SystemComponentActivationMap<Controller> controller;
+    private final SystemComponentMap<Controller> controller;
 
     ControllerSystem() {
         super( SYSTEM_KEY );
-        controller = new SystemComponentActivationMap<>( this, Controller.TYPE_KEY, 20, 10 );
+        controller = new SystemComponentMap<>( this, Controller.TYPE_KEY, 20, 10 );
     }
     
     @Override
@@ -63,11 +63,8 @@ public final class ControllerSystem
     }
 
     public final void update( final FFTimer timer ) {
-        for ( int i = 0; i < controller.activeComponents.capacity(); i++ ) {
-            final Controller c = controller.activeComponents.get( i );
-            if ( c != null ) {
-                c.processUpdate();
-            }
+        for ( int i = controller.nextActive( 0 ); i >= 0; i = controller.nextActive( i+1 ) ) {
+            controller.map.get( i ).processUpdate();
         }
     }
     

@@ -368,6 +368,54 @@ public final class FFContext {
         
         return -1;
     }
+    
+    @SuppressWarnings( "unchecked" )
+    public final boolean isComponentActive( IComponentName typeName ) {
+        if ( typeName.typeKey().baseType() == SystemComponent.class ) {
+            return isComponentActive( SystemComponentKey.class.cast( typeName.typeKey() ), typeName.name() );
+        } else if ( typeName.typeKey() == Entity.ENTITY_TYPE_KEY ) {
+            EntityComponent entityComponent = getEntityComponent( typeName.name(), EntityComponentTypeKey.class.cast( typeName.typeKey() ) );
+            if ( entityComponent instanceof Activatable ) {
+                return ( (Activatable) entityComponent ).isActive();
+            }
+        } 
+        
+        return false;
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public final boolean isComponentActive( IComponentId id ) {
+        if ( id.typeKey().baseType() == SystemComponent.class ) {
+            return isComponentActive( SystemComponentKey.class.cast( id.typeKey() ), id.index() );
+        } else if ( id.typeKey() == Entity.ENTITY_TYPE_KEY ) {
+            EntityComponent entityComponent = getEntityComponent( id.index(), EntityComponentTypeKey.class.cast( id.typeKey() ) );
+            if ( entityComponent instanceof Activatable ) {
+                return ( (Activatable) entityComponent ).isActive();
+            }
+        } 
+        
+        return false;
+    }
+    
+    public final <C extends SystemComponent> boolean isComponentActive( SystemComponentKey<C> key, Indexed indexed ) {
+        return isComponentActive( key, indexed.index() );
+    }
+    
+    public final <C extends SystemComponent> boolean isComponentActive( SystemComponentKey<C> key, int id ) {
+        @SuppressWarnings( "unchecked" )
+        final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        return builderHelper.isActive( id );
+    }
+    
+    public final <C extends SystemComponent> boolean isComponentActive( SystemComponentKey<C> key, Named named ) {
+        return isComponentActive( key, named.name() );
+    }
+    
+    public final <C extends SystemComponent> boolean isComponentActive( SystemComponentKey<C> key, String name ) {
+        @SuppressWarnings( "unchecked" )
+        final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
+        return builderHelper.isActive( builderHelper.getId( name ) );
+    }
 
     /** Use this to get a {@link SystemComponent} by component id.
      *  <p>The {@link SystemComponentKey} usually is provided with a static field within the Component's base class. For example:<p>
@@ -454,34 +502,34 @@ public final class FFContext {
         return builderHelper.getAll();
     }
     
-    public final <C extends SystemComponent, CS extends C> FFContext activateSystemComponent( SystemComponentKey<C> key, int id ) {
+    public final <C extends SystemComponent> FFContext activateSystemComponent( SystemComponentKey<C> key, int id ) {
         @SuppressWarnings( "unchecked" )
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.activate( id );
         return this;
     }
     
-    public final <C extends SystemComponent, CS extends C> FFContext activateSystemComponent( SystemComponentKey<C> key, String name ) {
+    public final <C extends SystemComponent> FFContext activateSystemComponent( SystemComponentKey<C> key, String name ) {
         @SuppressWarnings( "unchecked" )
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.activate( builderHelper.getId( name ) );
         return this;
     }
     
-    public final <C extends SystemComponent, CS extends C> FFContext deactivateSystemComponent( SystemComponentKey<C> key, int id ) {
+    public final <C extends SystemComponent> FFContext deactivateSystemComponent( SystemComponentKey<C> key, int id ) {
         @SuppressWarnings( "unchecked" )
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.deactivate( id );
         return this;
     }
     
-    public final <C extends SystemComponent, CS extends C> FFContext deactivateSystemComponent( SystemComponentKey<C> key, String name ) {
+    public final <C extends SystemComponent> FFContext deactivateSystemComponent( SystemComponentKey<C> key, String name ) {
         @SuppressWarnings( "unchecked" )
         final SystemBuilderAdapter<C> builderHelper = (SystemBuilderAdapter<C>) systemBuilderAdapter.get( key.index() );
         builderHelper.deactivate( builderHelper.getId( name ) );
         return this;
     }
-    
+
     public final <C extends SystemComponent> FFContext deleteSystemComponent( SystemComponentKey<C> key, int componentIndex ) {
         final SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         builderHelper.delete( componentIndex );

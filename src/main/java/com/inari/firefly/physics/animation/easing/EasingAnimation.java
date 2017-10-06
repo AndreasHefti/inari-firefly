@@ -52,7 +52,6 @@ public final class EasingAnimation extends FloatAnimation {
         endValue = easingData.changeInValue + offset;
     }
 
-    @Override
     public final void update() {
         if ( runningTime > easingData.duration ) {
             if ( looping ) {
@@ -64,17 +63,11 @@ public final class EasingAnimation extends FloatAnimation {
         }
     }
     
-    @Override
     public final float getInitValue() {
         return easingData.getStartValue();
     }
 
-    @Override
     public final float getValue( int componentId, float currentValue ) {
-        if ( !isActive() ) {
-            return currentValue;
-        }
-        
         if ( inverse ) {
             return ( startValue - easingData.easingType.calc( runningTime , endValue, startValue, easingData.duration ) ) - offset;
         } else {

@@ -14,7 +14,6 @@ public class TestAnimation extends FloatAnimation {
     @Override
     public float getValue( int componentId, float currentValue ) {
         finished = true;
-        active = false;
         return currentValue;
     }
 
@@ -23,7 +22,6 @@ public class TestAnimation extends FloatAnimation {
         final StringBuffer sb = new StringBuffer( "Animation{" );
         sb.append( "startTime=" ).append( getStartTime() );
         sb.append( ", looping=" ).append( isLooping() );
-        sb.append( ", active=" ).append( active );
         sb.append( ", finished=" ).append( finished );
         sb.append( '}' );
         return sb.toString();

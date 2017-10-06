@@ -100,9 +100,6 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     public final void dispose( FFContext context ) {
         clearSystem();
     }
-    
-    
-
 
     private final void disposeAsset( int assetId ) {
         Asset asset = assets.get( assetId );

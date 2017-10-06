@@ -1,8 +1,6 @@
 package com.inari.firefly.physics.animation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -47,7 +45,7 @@ public class AnimationSystemTest extends FFTest {
         );
 
         assertEquals(
-            "Animation{startTime=10, looping=false, active=false, finished=false}",
+            "Animation{startTime=10, looping=false, finished=false}",
             animationSystem.animations.get( 0 ).toString()
         );
     }
@@ -103,9 +101,10 @@ public class AnimationSystemTest extends FFTest {
             .build( 0 );
 
         assertEquals(
-            "Animation{startTime=10, looping=false, active=false, finished=false}",
+            "Animation{startTime=10, looping=false, finished=false}",
             animationSystem.animations.get( 0 ).toString()
         );
+        assertFalse( animationSystem.isActive( 0 ) );
 
         TestTimer timer = new TestTimer();
         
@@ -113,47 +112,54 @@ public class AnimationSystemTest extends FFTest {
         animationSystem.update( timer );
 
         assertEquals(
-            "Animation{startTime=10, looping=false, active=false, finished=false}",
+            "Animation{startTime=10, looping=false, finished=false}",
             animationSystem.animations.get( 0 ).toString()
         );
+        assertFalse( animationSystem.isActive( 0 ) );
         
         timer.setTime( 9 );
         animationSystem.update( timer );
 
         assertEquals(
-            "Animation{startTime=10, looping=false, active=false, finished=false}",
+            "Animation{startTime=10, looping=false, finished=false}",
             animationSystem.animations.get( 0 ).toString()
         );
+        assertFalse( animationSystem.isActive( 0 ) );
 
         timer.setTime( 10 );
         animationSystem.update( timer );
 
         assertEquals(
-            "Animation{startTime=10, looping=false, active=true, finished=false}",
+            "Animation{startTime=10, looping=false, finished=false}",
             animationSystem.animations.get( 0 ).toString()
         );
+        assertTrue( animationSystem.isActive( 0 ) );
 
         timer.setTime( 11 );
         animationSystem.update( timer );
 
         // now the Animation should be active
         assertEquals(
-            "Animation{startTime=10, looping=false, active=true, finished=false}",
+            "Animation{startTime=10, looping=false, finished=false}",
             animationSystem.animations.get( 0 ).toString()
         );
+        assertTrue( animationSystem.isActive( 0 ) );
 
         // the TestAnimation is finished just after the first getValue call
         animationSystem.getValue( 0, 11, 0f );
 
-        // now the Animation should be finished...
+        // now the Animation should be finished... but still active...
         assertEquals(
-            "Animation{startTime=10, looping=false, active=false, finished=true}",
+            "Animation{startTime=10, looping=false, finished=true}",
             animationSystem.animations.get( 0 ).toString()
         );
-
+        assertTrue( animationSystem.isActive( 0 ) );
+        
+        
         // ...and after next update be removed
         timer.setTime( 12 );
         animationSystem.update( timer );
+        assertFalse( animationSystem.isActive( 0 ) );
         assertFalse( animationSystem.animations.map.contains( 0 ) );
     }
 

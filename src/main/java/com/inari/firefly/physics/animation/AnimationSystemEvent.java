@@ -31,8 +31,6 @@ public final class AnimationSystemEvent extends Event<AnimationSystem> {
         START_ANIMATION,
         /** Stops a running Animation */
         STOP_ANIMATION,
-        /** Finishes an Animation wheter it is running or not. Finished Animations are celand up and removed/deleted */
-        FINISH_ANIMATION
     }
     
     /** The id of the Animation to do the action event */

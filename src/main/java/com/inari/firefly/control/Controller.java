@@ -22,11 +22,10 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.component.Activatable;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
-public abstract class Controller extends SystemComponent implements Activatable {
+public abstract class Controller extends SystemComponent {
     
     public static final SystemComponentKey<Controller> TYPE_KEY = SystemComponentKey.create( Controller.class );
     public static final AttributeKey<Float> UPDATE_RESOLUTION = AttributeKey.createFloat( "updateResolution", Controller.class );
@@ -36,25 +35,15 @@ public abstract class Controller extends SystemComponent implements Activatable 
 
     private float updateResolution;
     
-    private boolean active;
     private UpdateScheduler updateScheduler;
     protected final IntBag componentIds;
     
     
     protected Controller( int id ) {
         super( id );
-        active = false;
         componentIds = new IntBag( 10, -1 );
         updateResolution = -1;
         updateScheduler = null;
-    }
-    
-    public final boolean isActive() {
-        return active;
-    }
-    
-    public final void setActive( boolean active ) {
-        this.active = active;
     }
 
     public final IndexedTypeKey indexedTypeKey() {
@@ -97,10 +86,6 @@ public abstract class Controller extends SystemComponent implements Activatable 
     }
     
     final void processUpdate() {
-        if ( !active ) {
-            return;
-        }
-        
         if ( updateResolution >= 0 ) {
             if ( updateScheduler == null ) {
                 updateScheduler = context.getTimer().createUpdateScheduler( updateResolution );

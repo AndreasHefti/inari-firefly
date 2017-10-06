@@ -435,19 +435,19 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         private EntityBuilderHelper() {
             super( EntitySystem.this, Entity.ENTITY_TYPE_KEY );
         }
-        @Override
+
         public final SystemComponentBuilder createComponentBuilder( Class<? extends Entity> componentType ) {
             return new EntityBuilder();
         }
-        @Override
+
         public final Entity get( int id ) {
             throw new UnsupportedOperationException();
         }
-        @Override
+
         public final void delete( int id ) {
             throw new UnsupportedOperationException();
         }
-        @Override
+
         public final Iterator<Entity> getAll() {
             throw new UnsupportedOperationException();
         }
@@ -515,17 +515,21 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
                 entityToAttribute( attributes, entityId );
             }
         }
-        @Override
+        
         public final int getId( String name ) {
             return getEntityId( name );
         }
-        @Override
+        
         public final void activate( int id ) {
             activateEntity( id );
         }
-        @Override
+        
         public final void deactivate( int id ) {
             deactivateEntity( id );
+        }
+
+        public final boolean isActive( int id ) {
+            return EntitySystem.this.isActive( id );
         }
     }
     

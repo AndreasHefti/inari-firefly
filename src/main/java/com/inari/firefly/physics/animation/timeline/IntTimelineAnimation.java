@@ -73,7 +73,7 @@ public final class IntTimelineAnimation extends IntAnimation {
         if ( currentIndex >= timeline.size() ) {
             currentIndex = 0;
             if ( !looping ) {
-                finish();
+                stop();
             } 
         } 
     }

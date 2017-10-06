@@ -47,7 +47,7 @@ public final class ColorEasingAnimation extends ValueAnimation<RGBColor> {
                          update( easingDataBlue ) || 
                          update( easingDataAlpha );
         if ( !active ) {
-            finish();
+            stop();
         }
     }
     

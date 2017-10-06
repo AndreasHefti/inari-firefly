@@ -29,7 +29,7 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
-import com.inari.firefly.system.component.SystemComponentActivationMap;
+import com.inari.firefly.system.component.SystemComponentMap;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class AnimationSystem 
@@ -44,12 +44,12 @@ public final class AnimationSystem
         Animation.TYPE_KEY
     );
 
-    final SystemComponentActivationMap<Animation> animations;
+    final SystemComponentMap<Animation> animations;
     final DynArray<AnimationMapping> activeMappings;
 
     AnimationSystem() {
         super( SYSTEM_KEY );
-        animations = new SystemComponentActivationMap<>( this, Animation.TYPE_KEY, 20, 10 ); 
+        animations = new SystemComponentMap<>( this, Animation.TYPE_KEY, 20, 10 ); 
         activeMappings = DynArray.create( AnimationMapping.class, 100, 100 );
     }
     
@@ -114,49 +114,45 @@ public final class AnimationSystem
         if ( !animations.map.contains( event.animationId ) ) {
             return;
         }
-        
-        final Animation animation = animations.get( event.animationId );
+
         switch ( event.type ) {
             case START_ANIMATION: {
-                animation.active = true;
-                break;
+                animations.activate( event.animationId );
             }
             case STOP_ANIMATION: {
-                animation.active = false;
-                break;
-            }
-            case FINISH_ANIMATION: {
-                animation.active = false;
-                animation.finished = true;
+                animations.deactivate( event.animationId );
                 break;
             }
         }
     }
 
     public final boolean isActive( int animationId ) {
-        return animations.map.get( animationId ).active;
+        return animations.isActive( animationId );
     }
 
     public final void update( final FFTimer timer ) {
         for ( int i = 0; i < animations.map.capacity(); i++ ) {
             final Animation animation = animations.map.get( i );
-            if ( animation != null ) {
-                if ( animation.active ) {
-                    animation.systemUpdate();
-                    applyValueAttribute( animation );
-                    continue;
-                }
-                
+            if ( animation == null ) {
+                continue;
+            }
+            
+            if ( animations.isActive( i ) ) {
                 if ( animation.finished ) {
                     animations.remove( animation.index() );
                     animation.dispose();
                     continue;
                 }
                 
-                if ( animation.startTime > 0 && timer.getTime() >= animation.startTime ) {
-                    animation.activate();
-                    continue;
-                }
+                animation.systemUpdate();
+                applyValueAttribute( animation );
+                continue;
+            }
+
+            if ( animation.startTime > 0 && timer.getTime() >= animation.startTime ) {
+                animations.activate( i );
+                animation.activate();
+                continue;
             }
         }
     }

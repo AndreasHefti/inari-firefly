@@ -147,6 +147,11 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         }
     }
     
+    public final boolean isViewActive( int viewId ) {
+        View view = getView( viewId );
+        return view != null && view.active;
+    }
+    
     public final void moveViewUp( int viewId ) {
         if ( viewId == BASE_VIEW_ID ) {
             throw new IllegalArgumentException( "The baseView (Screen) cannot change its order" );
@@ -265,6 +270,10 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         }
         
         getLayer( layerId ).active = false;
+    }
+    
+    public final boolean isLayerActive( int layerId ) {
+        return getLayer( layerId ).active;
     }
 
     public final boolean moveLayerUp( int viewId, int index ) {
@@ -486,33 +495,29 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         private ViewBuilderAdapter() {
             super( ViewSystem.this, View.TYPE_KEY );
         }
-        @Override
         public final View get( int id ) {
             return views.get( id );
         }
-        @Override
         public final Iterator<View> getAll() {
             return views.iterator();
         }
-        @Override
         public final void delete( int id ) {
             deleteView( id );
         }
-        @Override
         public int getId( String name ) {
             return getViewId( name );
         }
-        @Override
         public void activate( int id ) {
             activateView( id );
         }
-        @Override
         public void deactivate( int id ) {
             deactivateView( id );
         }
-        @Override
         public final SystemComponentBuilder createComponentBuilder( Class<? extends View> componentType ) {
             return new ViewBuilder();
+        }
+        public final boolean isActive( int id ) {
+            return ViewSystem.this.isViewActive( id );
         }
     }
     
@@ -520,11 +525,9 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         private LayerBuilderAdapter() {
             super( ViewSystem.this, Layer.TYPE_KEY );
         }
-        @Override
         public final Layer get( int id ) {
             return getLayer( id );
         }
-        @Override
         public final Iterator<Layer> getAll() {
             Collection<Layer> allLayers = new ArrayList<Layer>();
             for ( List<Layer> layersOfView : oderedLayersOfView ) {
@@ -536,25 +539,23 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
             }
             return allLayers.iterator();
         }
-        @Override
         public final void delete( int id ) {
             deleteLayer( id );
         }
-        @Override
         public final int getId( String name ) {
             return getLayerId( name );
         }
-        @Override
         public final void activate( int id ) {
             activateLayer( id );
         }
-        @Override
         public final void deactivate( int id ) {
             deactivateLayer( id );
         }
-        @Override
         public final SystemComponentBuilder createComponentBuilder( Class<? extends Layer> componentType ) {
             return new LayerBuilder();
+        }
+        public final boolean isActive( int id ) {
+            return ViewSystem.this.isLayerActive( id );
         }
     }
 

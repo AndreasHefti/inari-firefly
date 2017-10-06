@@ -304,6 +304,9 @@ public class EntityPrefabSystem extends ComponentSystem<EntityPrefabSystem> {
         public final SystemComponentBuilder createComponentBuilder( Class<? extends EntityPrefab> componentType ) {
             return new EntityPrefabBuilder();
         }
+        public boolean isActive( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
     }
 
 }

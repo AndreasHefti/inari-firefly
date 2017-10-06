@@ -21,7 +21,6 @@ import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.component.Activatable;
 import com.inari.firefly.system.component.SystemComponent;
 
 /** General and abstract implementation of the Animation SystemComponent.
@@ -36,7 +35,7 @@ import com.inari.firefly.system.component.SystemComponent;
  *  This is implemented by concrete value type implementation such as IntAnimation, FloatAnimation or a 
  *  general generic ValueAnimation.
  */
-public abstract class Animation extends SystemComponent implements Activatable {
+public abstract class Animation extends SystemComponent {
     
     /** The SystemComponent type key for Animation components */
     public static final SystemComponentKey<Animation> TYPE_KEY = SystemComponentKey.create( Animation.class );
@@ -57,7 +56,6 @@ public abstract class Animation extends SystemComponent implements Activatable {
     protected long startTime;
     protected boolean looping;
     
-    boolean active;
     boolean finished;
     
     protected long startedTime;
@@ -67,7 +65,6 @@ public abstract class Animation extends SystemComponent implements Activatable {
         super( id );
         startTime = -1;
         looping = false;
-        active = false;
         finished = false;
     }
 
@@ -95,40 +92,19 @@ public abstract class Animation extends SystemComponent implements Activatable {
     public final void setLooping( boolean looping ) {
         this.looping = looping;
     }
-
-    /** Use this to indicates wether this Animation is active or not */
-    public final boolean isActive() {
-        return active;
-    }
-    
-    public final void setActive( boolean active ) {
-        if ( active ) {
-            activate();
-        } else {
-            reset();
-        }
-    }
     
     public final boolean isFinished() {
         return finished;
     }
-    
-    public final void finish() {
-        reset();
-        finished = true;
-    }
 
-    public void activate() {
-        if ( active ) {
-            return;
-        }
-        
+    protected void activate() {
+        finished = false;
+        reset();
         startedTime = context.getTime();
-        active = true;
     }
     
     public final void stop() {
-        active = false;
+        finished = true;
     } 
 
     final void systemUpdate() {
@@ -146,8 +122,6 @@ public abstract class Animation extends SystemComponent implements Activatable {
     public abstract void update();
     
     public void reset() {
-        active = false;
-        finished = false;
         startedTime = -1;
         runningTime = 0;
     }
