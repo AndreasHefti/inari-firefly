@@ -22,10 +22,9 @@ public class EAnimation extends EntityComponent {
     
     public EAnimation() {
         super( TYPE_KEY );
-        animationMapping = DynArray.create( AnimationMapping.class, 10, 5 );
+        animationMapping = DynArray.create( AnimationMapping.class, 5, 5 );
     }
 
-    @Override
     public final void resetAttributes() {
         animationMapping.clear();
     }
@@ -34,12 +33,10 @@ public class EAnimation extends EntityComponent {
         return animationMapping;
     }
     
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         return ATTRIBUTE_KEYS;
     }
     
-    @Override
     public final void fromAttributes( AttributeMap attributes ) {
         animationMapping.clear();
         if ( attributes.contains( ANIMATION_MAPPING ) ) {
@@ -47,7 +44,6 @@ public class EAnimation extends EntityComponent {
         }
     }
 
-    @Override
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( ANIMATION_MAPPING, animationMapping );
     }

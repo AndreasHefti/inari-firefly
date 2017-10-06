@@ -3,7 +3,8 @@ package com.inari.firefly.physics.animation;
 import com.inari.firefly.physics.animation.AttributeAnimationAdapter.AttributeAnimationAdapterKey;
 
 public final class AnimationMapping {
-    public int animationId;
+    
+    int animationId;
     public final String animationName;
     public final AttributeAnimationAdapterKey<?> adapterKey;
     
@@ -16,6 +17,7 @@ public final class AnimationMapping {
         this.animationName = animationName;
         this.adapterKey = adapterKey;
     }
+    
     public AnimationMapping( int animationId, AttributeAnimationAdapterKey<?> adapterKey ) {
         super();
         this.animationId = animationId;

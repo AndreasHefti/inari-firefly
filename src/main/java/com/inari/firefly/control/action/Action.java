@@ -11,7 +11,6 @@ public abstract class Action extends SystemComponent {
         super( id );
     }
 
-    @Override
     public final IndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;
     }

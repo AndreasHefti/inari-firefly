@@ -4,24 +4,26 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.ReadOnlyDynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.physics.animation.IntAnimation;
 
 public final class IntTimelineAnimation extends IntAnimation {
     
-    public static final AttributeKey<DynArray<IntTimelineData>> TIMELINE = AttributeKey.createDynArray( "timeline", IntTimelineAnimation.class, IntTimelineData.class );
+    public static final AttributeKey<DynArray<IntTimeTuple>> TIMELINE = AttributeKey.createDynArray( "timeline", IntTimelineAnimation.class, IntTimeTuple.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         TIMELINE
     };
     
-    private IntTimelineData[] timeline;
+    private final DynArray<IntTimeTuple> timeline;
     
     private long lastUpdate;
     private int currentIndex;
 
     protected IntTimelineAnimation( int id ) {
         super( id );
+        timeline = DynArray.create( IntTimeTuple.class, 10, 10 );
         reset();
     }
 
@@ -32,15 +34,27 @@ public final class IntTimelineAnimation extends IntAnimation {
         currentIndex = 0;
     }
 
-    public final IntTimelineData[] getTimeline() {
+    public final ReadOnlyDynArray<IntTimeTuple> getTimeline() {
         return timeline;
     }
 
-    public final void setTimeline( IntTimelineData[] timeline ) {
-        this.timeline = timeline;
+    public final IntTimelineAnimation setTimeline( final ReadOnlyDynArray<IntTimeTuple> timeline ) {
+        this.timeline.clear();
+        this.timeline.addAll( timeline );
+        this.timeline.trim();
+        return this;
     }
     
-    @Override
+    public final IntTimelineAnimation addFrame( int value, int time ) {
+        return addFrame( new IntTimeTuple( value, time ) );
+    }
+    
+    public final IntTimelineAnimation addFrame( final IntTimeTuple tuple ) {
+        timeline.add( tuple );
+        timeline.trim();
+        return this;
+    }
+    
     public final void update() {
         long updateTime = context.getTime();
         
@@ -49,14 +63,14 @@ public final class IntTimelineAnimation extends IntAnimation {
             return;
         }
         
-        if ( updateTime - lastUpdate < timeline[ currentIndex ].time ) {
+        if ( updateTime - lastUpdate < timeline.get( currentIndex ).time ) {
             return;
         }
         
         lastUpdate = updateTime;
         currentIndex++;
         
-        if ( currentIndex >= timeline.length ) {
+        if ( currentIndex >= timeline.size() ) {
             currentIndex = 0;
             if ( !looping ) {
                 finish();
@@ -64,18 +78,16 @@ public final class IntTimelineAnimation extends IntAnimation {
         } 
     }
     
-    @Override
     public final int getInitValue() {
-        if ( timeline == null || timeline.length < 1 ) {
+        if ( timeline == null || timeline.size() < 1 ) {
             return -1;
         }
         
         return getValue( -1, -1 );
     }
 
-    @Override
     public final int getValue( int component, int currentValue ) {
-        return timeline[ currentIndex ].value;
+        return timeline.get( currentIndex ).value;
     }
     
     @Override
@@ -89,25 +101,18 @@ public final class IntTimelineAnimation extends IntAnimation {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        DynArray<IntTimelineData> timelineData = attributes.getValue( TIMELINE );
-        if ( timelineData != null ) {
-            timeline = timelineData.getArray();
+        timeline.clear();
+        if ( attributes.contains( TIMELINE ) ) {
+            timeline.addAll( attributes.getValue( TIMELINE ) );
+            timeline.trim();
         }
-        
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        
-        if ( timeline != null ) {
-            DynArray<IntTimelineData> result = DynArray.create( IntTimelineData.class );
-            for ( int i = 0; i < timeline.length; i++ ) {
-                result.set( i, timeline[ i ] );
-            }
-            attributes.put( TIMELINE, result );
-        }
-        
+
+        attributes.put( TIMELINE, timeline );
     }
 
 }
