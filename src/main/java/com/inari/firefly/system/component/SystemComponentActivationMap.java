@@ -72,6 +72,9 @@ public final class SystemComponentActivationMap<C extends SystemComponent & Acti
         return component;
     }
     
-    
+    interface Activatable {
+        void setActive( boolean active );
+        boolean isActive();
+    }
 
 }

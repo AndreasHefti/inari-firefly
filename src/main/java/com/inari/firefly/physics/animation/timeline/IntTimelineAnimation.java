@@ -45,7 +45,7 @@ public final class IntTimelineAnimation extends IntAnimation {
         return this;
     }
     
-    public final IntTimelineAnimation addFrame( int value, int time ) {
+    public final IntTimelineAnimation addFrame( int value, long time ) {
         return addFrame( new IntTimeTuple( value, time ) );
     }
     
