@@ -114,13 +114,26 @@ public final class AnimationSystem
         if ( !animations.map.contains( event.animationId ) ) {
             return;
         }
+        
+        final Animation a = animations.get( event.animationId );
+        if ( a == null ) {
+            return;
+        }
 
         switch ( event.type ) {
             case START_ANIMATION: {
                 animations.activate( event.animationId );
             }
             case STOP_ANIMATION: {
-                animations.deactivate( event.animationId );
+                a.stop();
+                break;
+            }
+            case RESUME_ANIMATION: {
+                a.resume();
+                break;
+            }
+            case FINISH_ANIMATION: {
+                a.finish();
                 break;
             }
         }

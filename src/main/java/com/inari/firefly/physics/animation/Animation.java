@@ -57,6 +57,7 @@ public abstract class Animation extends SystemComponent {
     protected boolean looping;
     
     boolean finished;
+    boolean paused;
     
     protected long startedTime;
     protected long runningTime;
@@ -66,6 +67,7 @@ public abstract class Animation extends SystemComponent {
         startTime = -1;
         looping = false;
         finished = false;
+        paused = false;
     }
 
     @Override
@@ -104,10 +106,22 @@ public abstract class Animation extends SystemComponent {
     }
     
     public final void stop() {
-        finished = true;
+        paused = true;
     } 
+    
+    public final void resume() {
+        paused = false;
+    }
+    
+    public final void finish() {
+        finished = true;
+    }
 
     final void systemUpdate() {
+        if ( paused ) {
+            return;
+        }
+        
         runningTime += context.getTimeElapsed();
         update();
     }

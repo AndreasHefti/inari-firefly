@@ -7,23 +7,24 @@ import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.ReadOnlyDynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.physics.animation.Frame;
 import com.inari.firefly.physics.animation.IntAnimation;
 
 public final class IntTimelineAnimation extends IntAnimation {
     
-    public static final AttributeKey<DynArray<IntTimeTuple>> TIMELINE = AttributeKey.createDynArray( "timeline", IntTimelineAnimation.class, IntTimeTuple.class );
+    public static final AttributeKey<DynArray<Frame.IntFrame>> TIMELINE = AttributeKey.createDynArray( "timeline", IntTimelineAnimation.class, Frame.IntFrame.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         TIMELINE
     };
     
-    private final DynArray<IntTimeTuple> timeline;
+    private final DynArray<Frame.IntFrame> timeline;
     
     private long lastUpdate;
     private int currentIndex;
 
     protected IntTimelineAnimation( int id ) {
         super( id );
-        timeline = DynArray.create( IntTimeTuple.class, 10, 10 );
+        timeline = DynArray.create( Frame.IntFrame.class, 10, 10 );
         reset();
     }
 
@@ -34,11 +35,11 @@ public final class IntTimelineAnimation extends IntAnimation {
         currentIndex = 0;
     }
 
-    public final ReadOnlyDynArray<IntTimeTuple> getTimeline() {
+    public final ReadOnlyDynArray<Frame.IntFrame> getTimeline() {
         return timeline;
     }
 
-    public final IntTimelineAnimation setTimeline( final ReadOnlyDynArray<IntTimeTuple> timeline ) {
+    public final IntTimelineAnimation setTimeline( final ReadOnlyDynArray<Frame.IntFrame> timeline ) {
         this.timeline.clear();
         this.timeline.addAll( timeline );
         this.timeline.trim();
@@ -46,10 +47,10 @@ public final class IntTimelineAnimation extends IntAnimation {
     }
     
     public final IntTimelineAnimation addFrame( int value, long time ) {
-        return addFrame( new IntTimeTuple( value, time ) );
+        return addFrame( new IntFrameImpl( value, time ) );
     }
     
-    public final IntTimelineAnimation addFrame( final IntTimeTuple tuple ) {
+    public final IntTimelineAnimation addFrame( final IntFrameImpl tuple ) {
         timeline.add( tuple );
         timeline.trim();
         return this;
@@ -63,7 +64,7 @@ public final class IntTimelineAnimation extends IntAnimation {
             return;
         }
         
-        if ( updateTime - lastUpdate < timeline.get( currentIndex ).time ) {
+        if ( updateTime - lastUpdate < timeline.get( currentIndex ).intervalTime() ) {
             return;
         }
         
@@ -71,10 +72,11 @@ public final class IntTimelineAnimation extends IntAnimation {
         currentIndex++;
         
         if ( currentIndex >= timeline.size() ) {
-            currentIndex = 0;
-            if ( !looping ) {
-                stop();
-            } 
+            if ( looping ) {
+                reset();
+            } else {
+                finish();
+            }
         } 
     }
     
@@ -87,7 +89,7 @@ public final class IntTimelineAnimation extends IntAnimation {
     }
 
     public final int getValue( int component, int currentValue ) {
-        return timeline.get( currentIndex ).value;
+        return timeline.get( currentIndex ).value();
     }
     
     @Override

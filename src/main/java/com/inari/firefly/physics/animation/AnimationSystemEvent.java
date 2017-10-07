@@ -29,8 +29,12 @@ public final class AnimationSystemEvent extends Event<AnimationSystem> {
     public enum Type {
         /** Starts an Animation ( if not already started ) */
         START_ANIMATION,
-        /** Stops a running Animation */
+        /** Stops a running Animation (keeping the current state) */
         STOP_ANIMATION,
+        /** Resumes a previously stopped Animation (continuing with the retained state) */
+        RESUME_ANIMATION,
+        /** Finishes a running or pausing animation. The finished Animation will be disposed on next update call */
+        FINISH_ANIMATION
     }
     
     /** The id of the Animation to do the action event */

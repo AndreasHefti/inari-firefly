@@ -2,34 +2,25 @@ package com.inari.firefly.physics.animation.timeline;
 
 import com.inari.commons.StringUtils;
 import com.inari.commons.config.StringConfigurable;
+import com.inari.firefly.physics.animation.Frame;
 
-public final class IntTimeTuple implements StringConfigurable {
+public final class IntFrameImpl implements Frame.IntFrame, StringConfigurable {
     
-    int value;
-    long time;
+    private int value;
+    private long time;
     
-    public IntTimeTuple() {
-    }
 
-    public IntTimeTuple( int value, long time ) {
+    public IntFrameImpl( int value, long time ) {
         this.value = value;
         this.time = time;
     }
 
-    public final int getValue() {
+    public final int value() {
         return value;
     }
 
-    public final void setValue( int value ) {
-        this.value = value;
-    }
-
-    public final long getTime() {
+    public final long intervalTime() {
         return time;
-    }
-
-    public final void setTime( long time ) {
-        this.time = time;
     }
 
     public final void fromConfigString( String stringValue ) {
