@@ -30,6 +30,7 @@ import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentMap;
+import com.inari.firefly.system.component.SystemComponentMap.BuilderListenerAdapter;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class AnimationSystem 
@@ -49,7 +50,13 @@ public final class AnimationSystem
 
     AnimationSystem() {
         super( SYSTEM_KEY );
-        animations = new SystemComponentMap<>( this, Animation.TYPE_KEY, 20, 10 ); 
+        animations = new SystemComponentMap<>( 
+            this, Animation.TYPE_KEY, 
+            new BuilderListenerAdapter<Animation>() {
+                public void notifyActivation( int id ) { animations.map.get( id ).activate();}
+            },
+            20, 10 
+        ); 
         activeMappings = DynArray.create( AnimationMapping.class, 100, 100 );
     }
     
@@ -152,8 +159,7 @@ public final class AnimationSystem
             
             if ( animations.isActive( i ) ) {
                 if ( animation.finished ) {
-                    animations.remove( animation.index() );
-                    animation.dispose();
+                    animations.delete( animation.index() );
                     continue;
                 }
                 
@@ -164,7 +170,6 @@ public final class AnimationSystem
 
             if ( animation.startTime > 0 && timer.getTime() >= animation.startTime ) {
                 animations.activate( i );
-                animation.activate();
                 continue;
             }
         }
