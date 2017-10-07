@@ -255,6 +255,15 @@ public final class FFContext {
         final T system = (T) systems.remove( key.index() );
         if ( system != null ) {
             system.dispose( this );
+            if ( system instanceof ComponentSystem ) {
+                @SuppressWarnings( { "unchecked", "rawtypes" } )
+                Set<SystemBuilderAdapter<?>> supportedBuilderAdapter = ( (ComponentSystem) system ).getSupportedBuilderAdapter();
+                if ( supportedBuilderAdapter != null ) {
+                    for ( SystemBuilderAdapter<?> builderAdapter : supportedBuilderAdapter ) {
+                        systemBuilderAdapter.remove( builderAdapter.componentTypeKey().index() );
+                    }
+                }
+            }
         }
         
         return this;
