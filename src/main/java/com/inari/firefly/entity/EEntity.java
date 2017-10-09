@@ -50,19 +50,31 @@ public class EEntity extends EntityComponent {
         return entityName;
     }
 
-    public final void setEntityName( String entityName ) {
+    public final EEntity setEntityName( String entityName ) {
         this.entityName = entityName;
+        return this;
     }
 
     public final IntBagRO getControllerIds() {
         return controllerIds;
     }
+    
+    public final EEntity addControllerId( int controllerId ) {
+        controllerIds.add( controllerId );
+        return this;
+    }
+    
+    public final EEntity clearControllerIds() {
+        controllerIds.clear();
+        return this;
+    }
 
-    public final void setControllerIds( IntBagRO controllerIds ) {
+    public final EEntity setControllerIds( IntBagRO controllerIds ) {
         this.controllerIds.clear();
         if ( controllerIds != null ) {
             this.controllerIds.addAll( controllerIds );
         }
+        return this;
     }
     
     public final boolean controlledBy( int controllerId ) {
@@ -77,28 +89,33 @@ public class EEntity extends EntityComponent {
         return aspects;
     }
     
-    public final void setAspect( Aspect aspect ) {
+    public final EEntity setAspect( Aspect aspect ) {
         aspects.set( aspect );
+        return this;
     }
     
-    public final void resetAspect( Aspect aspect ) {
+    public final EEntity resetAspect( Aspect aspect ) {
         aspects.reset( aspect );
+        return this;
     }
     
-    public final void resetAspects( Aspects aspects ) {
+    public final EEntity resetAspects( Aspects aspects ) {
         this.aspects.reset( aspects );
+        return this;
     }
 
-    public final void setAspects( Aspects aspects ) {
+    public final EEntity setAspects( Aspects aspects ) {
         this.aspects.set( aspects );
+        return this;
     }
     
     public final boolean hasAspect( Aspect aspect ) {
         return aspects.contains( aspect );
     }
     
-    public final void resetAspects() {
+    public final EEntity resetAspects() {
         aspects.clear();
+        return this;
     }
 
     public final Set<AttributeKey<?>> attributeKeys() {
