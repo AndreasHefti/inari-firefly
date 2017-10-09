@@ -53,7 +53,8 @@ public final class AnimationSystem
         animations = new SystemComponentMap<>( 
             this, Animation.TYPE_KEY, 
             new BuilderListenerAdapter<Animation>() {
-                public void notifyActivation( int id ) { animations.map.get( id ).activate();}
+                public void notifyActivation( int id ) { animations.map.get( id ).activate(); }
+                public void notifyDeactivation( int id ) { animations.map.get( id ).reset(); }
             },
             20, 10 
         ); 
