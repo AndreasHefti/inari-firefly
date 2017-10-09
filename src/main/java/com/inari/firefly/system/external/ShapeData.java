@@ -1,7 +1,7 @@
 package com.inari.firefly.system.external;
 
 import com.inari.commons.graphics.RGBColor;
-import com.inari.commons.lang.list.ReadOnlyDynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.graphics.BlendMode;
 
 public interface ShapeData {
@@ -25,7 +25,7 @@ public interface ShapeData {
     
     int getSegments();
     
-    ReadOnlyDynArray<RGBColor> getColors(); 
+    DynArrayRO<RGBColor> getColors(); 
     
     BlendMode getBlendMode(); boolean isFill();
     

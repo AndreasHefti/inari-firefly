@@ -5,7 +5,8 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.Aspects;
-import com.inari.commons.lang.list.DynArray; 
+import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO; 
 
 public final class Contacts  {
     
@@ -179,7 +180,7 @@ public final class Contacts  {
         return materialTypes.contains( material );
     }
     
-    public final DynArray<Contact> allContacts() {
+    public final DynArrayRO<Contact> allContacts() {
         return contacts;
     }
     

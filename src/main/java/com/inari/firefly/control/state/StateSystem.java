@@ -18,7 +18,7 @@ package com.inari.firefly.control.state;
 import java.util.Set;
 
 import com.inari.commons.JavaUtils;
-import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
@@ -99,7 +99,7 @@ public class StateSystem
                 continue;
             }
             
-            DynArray<StateChange> stateChangesOfCurrentState = workflow.getStateChangesOfCurrentState();
+            DynArrayRO<StateChange> stateChangesOfCurrentState = workflow.getStateChangesOfCurrentState();
             for ( int s = 0; s < stateChangesOfCurrentState.size(); s++ ) {
                 StateChange stateChange = stateChangesOfCurrentState.get( s );
                 Condition condition = stateChange.getCondition();

@@ -1,7 +1,7 @@
 package com.inari.firefly.prototype;
 
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
-import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
@@ -21,6 +21,6 @@ public abstract class Prototype extends SystemComponent implements Loadable, Dis
         return TYPE_KEY;
     }
 
-    public abstract DynArray<ComponentId> createOne( AttributeMap attributes );
+    public abstract DynArrayRO<ComponentId> createOne( AttributeMap attributes );
 
 }

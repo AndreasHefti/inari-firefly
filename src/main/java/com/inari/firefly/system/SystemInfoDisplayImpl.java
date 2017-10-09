@@ -2,6 +2,7 @@ package com.inari.firefly.system;
 
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.graphics.BlendMode;
@@ -150,7 +151,7 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
         @Override public final Type getShapeType() { return ShapeData.Type.RECTANGLE; }
         @Override public final float[] getVertices() { return rectVertices; }
         @Override public final int getSegments() { return 0; }
-        @Override public final DynArray<RGBColor> getColors() { return colors; }
+        @Override public final DynArrayRO<RGBColor> getColors() { return colors; }
         @Override public final BlendMode getBlendMode() { return BlendMode.NORMAL_ALPHA; }
         @Override public final boolean isFill() { return true; }
         @Override public final int getShaderId() { return -1; }

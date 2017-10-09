@@ -4,8 +4,7 @@ import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
-import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.ReadOnlyDynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.sprite.ESprite;
@@ -35,7 +34,7 @@ public final class MultiPositionSpriteRenderer extends Renderer {
 
     @Override
     public final void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer ) {
-        final DynArray<IndexedTypeSet> spritesToRender = getEntites( viewId, layerId, false );
+        final DynArrayRO<IndexedTypeSet> spritesToRender = getEntites( viewId, layerId, false );
         if ( spritesToRender == null ) {
             return;
         }
@@ -49,7 +48,7 @@ public final class MultiPositionSpriteRenderer extends Renderer {
             final ESprite sprite = components.get( ESprite.TYPE_KEY );
             final ETransform transform = components.get( ETransform.TYPE_KEY );
             final ESpriteMultiplier multiplier = components.get( ESpriteMultiplier.TYPE_KEY );
-            final ReadOnlyDynArray<PositionF> positions = multiplier.getPositions();
+            final DynArrayRO<PositionF> positions = multiplier.getPositions();
             
             for ( int p = 0; p < positions.capacity(); p++ ) {
                 PositionF pos = positions.get( p );

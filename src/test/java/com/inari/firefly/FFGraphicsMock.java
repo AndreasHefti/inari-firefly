@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.rendering.SpriteRenderable;
 import com.inari.firefly.graphics.view.View;
@@ -121,7 +122,7 @@ public class FFGraphicsMock implements FFGraphics {
     }
 
     @Override
-    public void flush( DynArray<View> virtualViews ) {
+    public void flush( DynArrayRO<View> virtualViews ) {
         log.add( "flush" );
     }
 

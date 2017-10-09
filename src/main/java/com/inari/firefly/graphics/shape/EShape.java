@@ -5,7 +5,7 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.ReadOnlyDynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -73,7 +73,7 @@ public class EShape extends EntityComponent implements ShapeData {
         this.vertices = vertices;
     }
 
-    public final ReadOnlyDynArray<RGBColor> getColors() {
+    public final DynArrayRO<RGBColor> getColors() {
         return colors;
     }
 

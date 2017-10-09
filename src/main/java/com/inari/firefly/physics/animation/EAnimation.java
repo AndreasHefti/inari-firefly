@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.ReadOnlyDynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -29,7 +29,7 @@ public class EAnimation extends EntityComponent {
         animationMapping.clear();
     }
     
-    public final ReadOnlyDynArray<AnimationMapping> getAnimationMappings() {
+    public final DynArrayRO<AnimationMapping> getAnimationMappings() {
         return animationMapping;
     }
     

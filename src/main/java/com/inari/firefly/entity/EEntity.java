@@ -8,6 +8,7 @@ import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
+import com.inari.commons.lang.list.IntBagRO;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.control.Controller;
@@ -53,11 +54,11 @@ public class EEntity extends EntityComponent {
         this.entityName = entityName;
     }
 
-    public final IntBag getControllerIds() {
+    public final IntBagRO getControllerIds() {
         return controllerIds;
     }
 
-    public final void setControllerIds( IntBag controllerIds ) {
+    public final void setControllerIds( IntBagRO controllerIds ) {
         this.controllerIds.clear();
         if ( controllerIds != null ) {
             this.controllerIds.addAll( controllerIds );

@@ -3,8 +3,10 @@ package com.inari.firefly.system.component;
 import java.util.BitSet;
 import java.util.Iterator;
 
+import com.inari.commons.lang.BitSetIterator;
+import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.ReadOnlyDynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.utils.Disposable;
 
@@ -27,7 +29,7 @@ public class SystemComponentMap<C extends SystemComponent> {
     protected static final BuilderListener<?> VOID_BUILDER_LSTENER = new BuilderListenerAdapter<>();
 
     public final SystemComponentKey<C> componentKey;
-    public final ReadOnlyDynArray<C> map;
+    public final DynArrayRO<C> map;
     
     private final DynArray<C> _map;
     private final BitSet activeComponents;
@@ -163,11 +165,19 @@ public class SystemComponentMap<C extends SystemComponent> {
     }
     
     public final boolean isActive( int id ) {
+        if ( id < 0 ) {
+            return false;
+        }
+        
         return activeComponents.get( id );
     }
     
     public final int nextActive( int from ) {
         return activeComponents.nextSetBit( from );
+    }
+    
+    public final IntIterator allActive() {
+        return new BitSetIterator( activeComponents );
     }
     
     public C remove( int id ) {

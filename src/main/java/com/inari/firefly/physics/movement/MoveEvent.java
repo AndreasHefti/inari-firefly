@@ -17,6 +17,7 @@ package com.inari.firefly.physics.movement;
 
 import com.inari.commons.event.Event;
 import com.inari.commons.lang.list.IntBag;
+import com.inari.commons.lang.list.IntBagRO;
 import com.inari.firefly.system.FFContext;
 
 public final class MoveEvent extends Event<MoveEventListener> {
@@ -34,7 +35,7 @@ public final class MoveEvent extends Event<MoveEventListener> {
         entityIds.add( entityId );
     }
     
-    public final IntBag movedEntityIds() {
+    public final IntBagRO movedEntityIds() {
         return entityIds;
     }
 

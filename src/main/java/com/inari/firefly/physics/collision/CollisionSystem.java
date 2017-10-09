@@ -13,7 +13,7 @@ import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.Indexed;
-import com.inari.commons.lang.list.IntBag;
+import com.inari.commons.lang.list.IntBagRO;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.graphics.ETransform;
@@ -120,7 +120,7 @@ public final class CollisionSystem
     }
     
     public final void onMoveEvent( final MoveEvent event ) {
-        final IntBag movedEntityIds = event.movedEntityIds();
+        final IntBagRO movedEntityIds = event.movedEntityIds();
         final int nullValue = movedEntityIds.getNullValue();
         
         for ( int i = 0; i < movedEntityIds.length(); i++ ) {

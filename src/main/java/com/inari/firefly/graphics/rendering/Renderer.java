@@ -5,6 +5,7 @@ import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
@@ -45,7 +46,7 @@ public abstract class Renderer extends SystemComponent {
         final IndexedTypeSet components = entitySystem.getComponents( entityId );
         if ( accept( entityId, aspects, components ) ) {
             final ETransform transform = components.get( ETransform.TYPE_KEY );
-            final DynArray<IndexedTypeSet> renderablesOfView = getEntites( transform.getViewId(), transform.getLayerId(), true );
+            final DynArray<IndexedTypeSet> renderablesOfView = _getEntites( transform.getViewId(), transform.getLayerId(), true );
             renderablesOfView.add( components );
             accepted( entityId, aspects, renderablesOfView );
             return true;
@@ -58,7 +59,7 @@ public abstract class Renderer extends SystemComponent {
         final IndexedTypeSet components = entitySystem.getComponents( entityId );
         if ( accept( entityId, aspects, components ) ) {
             final ETransform transform = components.get( ETransform.TYPE_KEY );
-            final DynArray<IndexedTypeSet> renderablesOfView = getEntites( transform.getViewId(), transform.getLayerId(), false );
+            final DynArray<IndexedTypeSet> renderablesOfView = _getEntites( transform.getViewId(), transform.getLayerId(), false );
             if ( renderablesOfView != null ) {
                 renderablesOfView.remove( components );
             }
@@ -73,7 +74,11 @@ public abstract class Renderer extends SystemComponent {
         return true;
     }
     
-    protected final DynArray<IndexedTypeSet> getEntites( int viewId, int layerId, boolean createNew ) {
+    protected final DynArrayRO<IndexedTypeSet> getEntites( int viewId, int layerId, boolean createNew ) {
+        return _getEntites( viewId, layerId, createNew );
+    }
+    
+    private DynArray<IndexedTypeSet> _getEntites( int viewId, int layerId, boolean createNew ) {
         DynArray<DynArray<IndexedTypeSet>> spritePerLayer = null;
         if ( spritesPerViewAndLayer.contains( viewId ) ) { 
             spritePerLayer = spritesPerViewAndLayer.get( viewId );

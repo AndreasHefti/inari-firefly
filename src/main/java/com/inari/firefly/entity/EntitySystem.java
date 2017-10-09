@@ -28,6 +28,7 @@ import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
+import com.inari.commons.lang.list.IntBagRO;
 import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -291,7 +292,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     }
     
     private void notifyEntityController( int entityId, boolean activated ) {
-        final IntBag controllerIds = getComponent( entityId, EEntity.TYPE_KEY ).getControllerIds();
+        final IntBagRO controllerIds = getComponent( entityId, EEntity.TYPE_KEY ).getControllerIds();
         for ( int i = 0; i < controllerIds.length(); i++ ) {
             if ( controllerIds.isEmpty( i ) ) {
                 continue;
@@ -483,9 +484,8 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             if ( attributeMap == null ) {
                 return;
             }
-            String activeEntityIdsString = attributeMap.getValue( Entity.ACTIVE_ENTITY_IDS );
-            IntBag activeEntityIds = new IntBag();
-            activeEntityIds.fromConfigString( activeEntityIdsString );
+
+            IntBag activeEntityIds = attributeMap.getValue( Entity.ACTIVE_ENTITY_IDS );
             for ( int i = 0; i < activeEntityIds.length(); i++ ) {
                 if ( activeEntityIds.isEmpty( i ) ) {
                     continue;
@@ -506,7 +506,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
             
             EntityAttributeMap attributeMap = new EntityAttributeMap( context );
             attributeMap.setComponentId( Entity.ACTIVE_ENTITIES_IDS_KEY );
-            attributeMap.put( Entity.ACTIVE_ENTITY_IDS, activeEntityIds.toConfigString() );
+            attributeMap.put( Entity.ACTIVE_ENTITY_IDS, activeEntityIds );
             attributes.add( attributeMap );
             
             IntIterator inactive = entities( false );
@@ -536,7 +536,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
     public final static class Entity extends SystemComponent implements IndexedType {
         
         public static final SystemComponentKey<Entity> ENTITY_TYPE_KEY = SystemComponentKey.create( Entity.class );
-        static final AttributeKey<String> ACTIVE_ENTITY_IDS = AttributeKey.createString( "ACTIVE_ENTITY_IDS", Entity.class );
+        static final AttributeKey<IntBag> ACTIVE_ENTITY_IDS = AttributeKey.createIntBag( "ACTIVE_ENTITY_IDS", Entity.class );
         static final ComponentId ACTIVE_ENTITIES_IDS_KEY = new ComponentId( ENTITY_TYPE_KEY, -1 );
         
         Entity() {

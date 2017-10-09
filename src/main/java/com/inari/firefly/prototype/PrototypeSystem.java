@@ -3,7 +3,7 @@ package com.inari.firefly.prototype;
 import java.util.Set;
 
 import com.inari.commons.JavaUtils;
-import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.component.ComponentId;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
@@ -41,7 +41,7 @@ public class PrototypeSystem extends ComponentSystem<PrototypeSystem> {
         );
     }
 
-    public final DynArray<ComponentId> createOne( int prototypeId, AttributeMap attributes ) {
+    public final DynArrayRO<ComponentId> createOne( int prototypeId, AttributeMap attributes ) {
         if ( prototypes.map.contains( prototypeId ) ) {
             return null;
         }

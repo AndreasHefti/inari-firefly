@@ -20,7 +20,7 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.ReadOnlyDynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.system.FFContext;
@@ -86,7 +86,7 @@ public final class AnimationSystem
     }
 
     public final void entityActivated( int entityId, Aspects aspects ) {
-        ReadOnlyDynArray<AnimationMapping> animationMappings = context
+        DynArrayRO<AnimationMapping> animationMappings = context
             .getEntityComponent( entityId, EAnimation.TYPE_KEY )
             .getAnimationMappings();
         

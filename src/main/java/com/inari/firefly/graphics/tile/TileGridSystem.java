@@ -20,7 +20,7 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Position;
 import com.inari.commons.lang.aspect.Aspects;
-import com.inari.commons.lang.list.ReadOnlyDynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.entity.EntitySystem;
@@ -93,7 +93,7 @@ public final class TileGridSystem
         final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         final ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         final TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
-        final ReadOnlyDynArray<Position> gridPositions = tile.getGridPositions();
+        final DynArrayRO<Position> gridPositions = tile.getGridPositions();
         
         for ( int i = 0; i < gridPositions.capacity(); i++ ) {
             if ( !gridPositions.contains( i ) ) {
@@ -108,7 +108,7 @@ public final class TileGridSystem
         final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         final ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         final TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
-        final ReadOnlyDynArray<Position> gridPositions = tile.getGridPositions();
+        final DynArrayRO<Position> gridPositions = tile.getGridPositions();
         
         for ( int i = 0; i < gridPositions.capacity(); i++ ) {
             if ( !gridPositions.contains( i ) ) {

@@ -20,7 +20,7 @@ public class EntitySystemTest extends FFTest {
         ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
-            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
+            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:IntBag=IntBag [nullValue=-1, expand=10, size=0, length=0, array=[]]", 
             attrs.toString()
         );
         assertEquals( "1024", String.valueOf( entitySystem.activeEntities.size() ) );
@@ -38,7 +38,7 @@ public class EntitySystemTest extends FFTest {
         ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
-            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
+            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:IntBag=IntBag [nullValue=-1, expand=10, size=0, length=0, array=[]]", 
             attrs.toString()
         );
     }
@@ -51,7 +51,7 @@ public class EntitySystemTest extends FFTest {
         ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
-            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
+            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:IntBag=IntBag [nullValue=-1, expand=10, size=0, length=0, array=[]]", 
             attrs.toString()
         );
     }
@@ -64,7 +64,7 @@ public class EntitySystemTest extends FFTest {
         ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         
         assertEquals( 
-            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
+            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:IntBag=IntBag [nullValue=-1, expand=10, size=0, length=0, array=[]]", 
             attrs.toString()
         );
         
@@ -79,7 +79,7 @@ public class EntitySystemTest extends FFTest {
         assertEquals( "1", String.valueOf( entitySystem.components.size() ) );
         ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         assertEquals(
-            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=0 "
+            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:IntBag=IntBag [nullValue=-1, expand=10, size=1, length=1, array=[0]] "
             + "SystemComponent:Entity(0)::"
             + "viewId:Integer:ETransform=1, "
             + "layerId:Integer:ETransform=0, "
@@ -106,7 +106,7 @@ public class EntitySystemTest extends FFTest {
         attrs = new Attributes();
         ffContext.toAttributes( attrs, EntitySystem.Entity.ENTITY_TYPE_KEY );
         assertEquals( 
-            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:String=", 
+            "SystemComponent:Entity(-1)::ACTIVE_ENTITY_IDS:IntBag=IntBag [nullValue=-1, expand=10, size=0, length=0, array=[]]", 
             attrs.toString()
         );
     }

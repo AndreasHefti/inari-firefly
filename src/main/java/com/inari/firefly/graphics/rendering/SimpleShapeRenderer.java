@@ -3,7 +3,7 @@ package com.inari.firefly.graphics.rendering;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
-import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
@@ -34,7 +34,7 @@ public final class SimpleShapeRenderer extends Renderer {
 
     @Override
     public final void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer ) {
-        final DynArray<IndexedTypeSet> spritesToRender = getEntites( viewId, layerId, false );
+        final DynArrayRO<IndexedTypeSet> spritesToRender = getEntites( viewId, layerId, false );
         if ( spritesToRender == null ) {
             return;
         }

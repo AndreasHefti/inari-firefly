@@ -1,13 +1,11 @@
 package com.inari.firefly.physics.animation.timeline;
 
-import com.inari.commons.StringUtils;
-import com.inari.commons.config.StringConfigurable;
 import com.inari.firefly.physics.animation.Frame;
 
-public final class IntFrameImpl implements Frame.IntFrame, StringConfigurable {
+public final class IntFrameImpl implements Frame.IntFrame {
     
-    private int value;
-    private long time;
+    private final int value;
+    private final long time;
     
 
     public IntFrameImpl( int value, long time ) {
@@ -23,16 +21,16 @@ public final class IntFrameImpl implements Frame.IntFrame, StringConfigurable {
         return time;
     }
 
-    public final void fromConfigString( String stringValue ) {
-        String[] stringValues = StringUtils.splitToArray( stringValue, StringUtils.VALUE_SEPARATOR_STRING );
-        this.value = Integer.parseInt( stringValues[ 0 ] );
-        this.time = Long.parseLong( stringValues[ 1 ] );
-    }
-
-    public final String toConfigString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append( value ).append( StringUtils.VALUE_SEPARATOR ).append( time );
-        return builder.toString();
-    }
+//    public final void fromConfigString( String stringValue ) {
+//        String[] stringValues = StringUtils.splitToArray( stringValue, StringUtils.VALUE_SEPARATOR_STRING );
+//        this.value = Integer.parseInt( stringValues[ 0 ] );
+//        this.time = Long.parseLong( stringValues[ 1 ] );
+//    }
+//
+//    public final String toConfigString() {
+//        StringBuilder builder = new StringBuilder();
+//        builder.append( value ).append( StringUtils.VALUE_SEPARATOR ).append( time );
+//        return builder.toString();
+//    }
 
 }

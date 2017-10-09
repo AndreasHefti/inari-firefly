@@ -21,7 +21,7 @@ import java.util.Random;
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.control.task.TaskSystem;
@@ -101,7 +101,7 @@ public abstract class FireFlyApp {
         View baseView = viewSystem.getView( ViewSystem.BASE_VIEW_ID );
         
         if ( viewSystem.hasActiveViewports() ) {
-            final DynArray<View> viewports = viewSystem.getActiveViewports();
+            final DynArrayRO<View> viewports = viewSystem.getActiveViewports();
             for ( int i = 0; i < viewports.size(); i++ ) {
                 View view = viewports.get( i );
                 if ( !view.isActive() ) {

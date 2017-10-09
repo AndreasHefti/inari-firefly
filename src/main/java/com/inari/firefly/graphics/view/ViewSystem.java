@@ -25,6 +25,7 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.component.build.ComponentCreationException;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
@@ -114,7 +115,7 @@ public final class ViewSystem extends ComponentSystem<ViewSystem> {
         return !activeOrderedViewports.isEmpty();
     }
     
-    public final DynArray<View> getActiveViewports() {
+    public final DynArrayRO<View> getActiveViewports() {
         return activeOrderedViewports;
     }
     

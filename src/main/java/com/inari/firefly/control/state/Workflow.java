@@ -20,6 +20,7 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.component.SystemComponent;
@@ -137,11 +138,11 @@ public final class Workflow extends SystemComponent {
         return null;
     }
 
-    public final DynArray<StateChange> getStateChanges() {
+    public final DynArrayRO<StateChange> getStateChanges() {
         return stateChanges;
     }
     
-    public final DynArray<StateChange> getStateChangesOfCurrentState() {
+    public final DynArrayRO<StateChange> getStateChangesOfCurrentState() {
         return stateChangesOfCurrentState;
     }
 

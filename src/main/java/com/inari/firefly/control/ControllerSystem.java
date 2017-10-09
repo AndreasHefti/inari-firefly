@@ -63,7 +63,7 @@ public final class ControllerSystem
     }
 
     public final void update( final FFTimer timer ) {
-        for ( int i = controller.nextActive( 0 ); i >= 0; i = controller.nextActive( i+1 ) ) {
+        for ( int i = controller.nextActive( 0 ); i >= 0; i = controller.nextActive( i + 1 ) ) {
             controller.map.get( i ).processUpdate();
         }
     }

@@ -4,7 +4,7 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
-import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.BlendMode;
@@ -36,7 +36,7 @@ public final class SimpleTextRenderer extends Renderer {
 
     @Override
     public final void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer ) {
-        DynArray<IndexedTypeSet> texts = getEntites( viewId, layerId, false );
+        DynArrayRO<IndexedTypeSet> texts = getEntites( viewId, layerId, false );
         if ( texts == null ) {
             return;
         }

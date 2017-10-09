@@ -16,11 +16,13 @@
 package com.inari.firefly.system.external;
 
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.graphics.ShaderAsset;
 import com.inari.firefly.graphics.rendering.SpriteRenderable;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewEventListener;
+import com.inari.firefly.graphics.view.ViewSystem;
+import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.utils.FFContextInitiable;
 
 /** This defines the low level API interface for all graphical functions used by the firefly API. <p>
@@ -139,7 +141,7 @@ public interface FFGraphics extends FFContextInitiable, ViewEventListener {
      */
     void endRendering( View view );
     
-    void flush( DynArray<View> virtualViews );
+    void flush( DynArrayRO<View> virtualViews );
     
     byte[] getScreenshotPixels( Rectangle area );
 

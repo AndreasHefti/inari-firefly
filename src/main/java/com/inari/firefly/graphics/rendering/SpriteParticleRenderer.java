@@ -3,8 +3,7 @@ package com.inari.firefly.graphics.rendering;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
-import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.ReadOnlyDynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.graphics.particle.EParticle;
@@ -33,7 +32,7 @@ public final class SpriteParticleRenderer extends Renderer {
 
     @Override
     public final void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer ) {
-        final DynArray<IndexedTypeSet> particleToRender = getEntites( viewId, layerId, false );
+        final DynArrayRO<IndexedTypeSet> particleToRender = getEntites( viewId, layerId, false );
         if ( particleToRender == null ) {
             return;
         }
@@ -44,7 +43,7 @@ public final class SpriteParticleRenderer extends Renderer {
                 continue;
             }
 
-            final ReadOnlyDynArray<Particle> particle = components.<EParticle>get( EParticle.TYPE_KEY ).getParticle();
+            final DynArrayRO<Particle> particle = components.<EParticle>get( EParticle.TYPE_KEY ).getParticle();
             final ETransform transform = components.get( ETransform.TYPE_KEY );
             for ( int ip = 0; ip < particle.capacity(); ip++ ) {
                 final Particle p = particle.get( ip );

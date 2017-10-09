@@ -5,7 +5,6 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.functional.Callback;
-import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
@@ -24,7 +23,6 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
     );
     
     private SystemComponentMap<Scene> scenes;
-    private IntBag activeScenes;
 
     protected SceneSystem() {
         super( SYSTEM_KEY );
@@ -35,7 +33,6 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
         super.init( context );
         
         scenes = new SystemComponentMap<>( this, Scene.TYPE_KEY );
-        activeScenes = new IntBag( 10, -1, 5 );
         
         context.registerListener( UpdateEvent.TYPE_KEY, this );
         context.registerListener( SceneEvent.TYPE_KEY, this );
@@ -57,8 +54,8 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
             scene.running = true;
             scene.paused = false;
             scene.callback = callback;
+            scenes.activate( scene.index() );
             scene.run( context );
-            activeScenes.add( scene.index() );
         }
     }
 
@@ -70,7 +67,7 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
     }
 
     public final void pauseAll() {
-        final IntIterator iterator = activeScenes.iterator();
+        final IntIterator iterator = scenes.allActive();
         while( iterator.hasNext() ) {
             scenes.get( iterator.next() ).paused = true;
         }
@@ -84,7 +81,7 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
     }
 
     public final void resumeAll() {
-        final IntIterator iterator = activeScenes.iterator();
+        final IntIterator iterator = scenes.allActive();
         while( iterator.hasNext() ) {
             scenes.get( iterator.next() ).paused = false;
         }
@@ -95,14 +92,14 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
     }
 
     public final void stopAll() {
-        final IntIterator iterator = activeScenes.iterator();
+        final IntIterator iterator = scenes.allActive();
         while( iterator.hasNext() ) {
             stopScene( scenes.get( iterator.next() ) );
         }
     }
 
     public final void update( final FFTimer timer ) {
-        final IntIterator iterator = activeScenes.iterator();
+        final IntIterator iterator = scenes.allActive();
         while( iterator.hasNext() ) {
             final Scene scene = scenes.get( iterator.next() );
             if ( scene == null ) {
@@ -129,16 +126,14 @@ public final class SceneSystem extends ComponentSystem<SceneSystem> implements S
             scene.running = false;
             scene.paused = false;
             scene.reset( context );
+            scenes.deactivate( scene.index() );
         } else {
             scenes.delete( scene.index() );
         }
-        
-        activeScenes.remove( scene.index() );
     }
     
     public final  void clearSystem() {
         scenes.clear();
-        activeScenes.clear();
     }
 
     public final void dispose( FFContext context ) {

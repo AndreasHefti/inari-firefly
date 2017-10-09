@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.ReadOnlyDynArray;
+import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.physics.animation.Frame;
@@ -35,11 +35,11 @@ public final class IntTimelineAnimation extends IntAnimation {
         currentIndex = 0;
     }
 
-    public final ReadOnlyDynArray<Frame.IntFrame> getTimeline() {
+    public final DynArrayRO<Frame.IntFrame> getTimeline() {
         return timeline;
     }
 
-    public final IntTimelineAnimation setTimeline( final ReadOnlyDynArray<Frame.IntFrame> timeline ) {
+    public final IntTimelineAnimation setTimeline( final DynArrayRO<Frame.IntFrame> timeline ) {
         this.timeline.clear();
         this.timeline.addAll( timeline );
         this.timeline.trim();
