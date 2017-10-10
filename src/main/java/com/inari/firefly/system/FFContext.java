@@ -20,6 +20,7 @@ import com.inari.commons.lang.Named;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.Indexed;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
@@ -36,6 +37,7 @@ import com.inari.firefly.entity.EntitySystem.EntityBuilder;
 import com.inari.firefly.system.FFSystem.FFSystemTypeKey;
 import com.inari.firefly.system.component.Activatable;
 import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.ComponentTypeAware;
 import com.inari.firefly.system.component.ComponentSystem.BuildType;
 import com.inari.firefly.system.component.IComponentId;
 import com.inari.firefly.system.component.IComponentName;
@@ -589,6 +591,17 @@ public final class FFContext {
         SystemBuilderAdapter<?> builderHelper = systemBuilderAdapter.get( key.index() );
         builderHelper.delete( builderHelper.getId( componentName ) );
         return this;
+    }
+    
+    public final ComponentBuilder getComponentBuilder( ComponentTypeAware componentType ) {
+        IIndexedTypeKey typeKey = componentType.typeKey();
+        if ( typeKey.baseType() == SystemComponent.class ) {
+            return getComponentBuilder( (SystemComponentKey<?>) typeKey );
+        } else if ( typeKey == Entity.ENTITY_TYPE_KEY ) {
+            return getEntityBuilder();
+        } 
+        
+        return null;
     }
 
     public final <C extends SystemComponent> ComponentBuilder getComponentBuilder( SystemComponentKey<C> key ) {
