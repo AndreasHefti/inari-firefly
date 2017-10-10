@@ -603,6 +603,18 @@ public final class FFContext {
         
         return null;
     }
+    
+    @SuppressWarnings( "unchecked" )
+    public final <C extends SystemComponent> ComponentBuilder getComponentBuilder( ComponentTypeAware componentType, Class<? extends C> subType ) {
+        IIndexedTypeKey typeKey = componentType.typeKey();
+        if ( typeKey.baseType() == SystemComponent.class ) {
+            return getComponentBuilder( (SystemComponentKey<C>) typeKey, subType );
+        } else if ( typeKey == Entity.ENTITY_TYPE_KEY ) {
+            return getEntityBuilder();
+        } 
+        
+        return null;
+    }
 
     public final <C extends SystemComponent> ComponentBuilder getComponentBuilder( SystemComponentKey<C> key ) {
         int id = key.index();
