@@ -2,6 +2,7 @@ package com.inari.firefly.graphics.rendering;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.aspect.IAspects;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.graphics.ETransform;
@@ -35,7 +36,7 @@ public final class SimpleTileGridRenderer extends Renderer {
     }
 
     @Override
-    public final boolean match( Aspects aspects ) {
+    public final boolean match( IAspects aspects ) {
         return aspects.include( MATCHING_ASPECTS );
     }
 

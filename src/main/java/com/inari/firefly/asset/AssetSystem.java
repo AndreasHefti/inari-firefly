@@ -141,11 +141,8 @@ public class AssetSystem extends ComponentSystem<AssetSystem> {
     private void findeDependingAssets( int assetId ) {
         dependingAssetIds.clear();
         for ( Asset asset : assets.map ) {
-            if ( asset.dependsOn >= 0 ) {
-                if ( asset.dependsOn == assetId ) {
-                    dependingAssetIds.add( asset.index() );
-                    break;
-                }
+            if ( asset.dependsOn == assetId ) {
+                dependingAssetIds.add( asset.index() );
             }
         }
     }

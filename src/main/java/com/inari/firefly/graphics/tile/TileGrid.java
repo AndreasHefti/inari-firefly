@@ -413,10 +413,10 @@ public final class TileGrid extends SystemComponent implements ViewAndLayerAware
         }
         
         final void mapWorldClipToTileGridClip( final Rectangle worldClip, TileGrid tileGrid, Rectangle result ) {
-            tmpClip.x = (int) Math.floor( (double) ( worldClip.x - tileGrid.worldXPos ) / tileGrid.cellWidth );
-            tmpClip.y = (int) Math.floor( (double) ( worldClip.y - tileGrid.worldYPos ) / tileGrid.cellHeight );
-            int x2 = (int) Math.ceil( (double) ( worldClip.x - tileGrid.worldXPos + worldClip.width ) / tileGrid.cellWidth );
-            int y2 = (int) Math.ceil( (double) ( worldClip.y - tileGrid.worldYPos + worldClip.height ) / tileGrid.cellHeight );
+            tmpClip.x = (int) Math.floor( ( (double) worldClip.x - tileGrid.worldXPos ) / tileGrid.cellWidth );
+            tmpClip.y = (int) Math.floor( ( (double) worldClip.y - tileGrid.worldYPos ) / tileGrid.cellHeight );
+            int x2 = (int) Math.ceil( ( (double) worldClip.x - tileGrid.worldXPos + worldClip.width ) / tileGrid.cellWidth );
+            int y2 = (int) Math.ceil( ( (double) worldClip.y - tileGrid.worldYPos + worldClip.height ) / tileGrid.cellHeight );
             tmpClip.width = x2 - tmpClip.x;
             tmpClip.height = y2 - tmpClip.y;
             GeomUtils.intersection( tmpClip, tileGrid.normalisedWorldBounds, result );

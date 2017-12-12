@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.aspect.IAspects;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.DynArrayRO;
@@ -30,12 +31,12 @@ public final class SpriteGroupRenderer extends Renderer {
     }
     
     @Override
-    public final boolean match( Aspects aspects ) {
+    public final boolean match( IAspects aspects ) {
         return aspects.include( MATCHING_ASPECTS );
     }
 
     @Override
-    protected final void accepted( int entityId, final Aspects aspects, final DynArray<IndexedTypeSet> renderablesOfView ) {
+    protected final void accepted( int entityId, final IAspects aspects, final DynArray<IndexedTypeSet> renderablesOfView ) {
         renderablesOfView.sort( RENDERABLE_COMPARATOR );
     }
 

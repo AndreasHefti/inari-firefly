@@ -3,7 +3,7 @@ package com.inari.firefly.control.behavior;
 import java.util.Set;
 
 import com.inari.commons.JavaUtils;
-import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.aspect.IAspects;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.control.action.EntityActionSystem;
@@ -55,15 +55,15 @@ public final class BehaviorSystem extends ComponentSystem<BehaviorSystem> implem
         );
     }
     
-    public final boolean match( final Aspects aspects ) {
+    public final boolean match( final IAspects aspects ) {
         return aspects.contains( EBehavoir.TYPE_KEY );
     }
 
-    public final void entityActivated( int entityId, final Aspects aspects ) {
+    public final void entityActivated( int entityId, final IAspects aspects ) {
         entityIds.add( entityId );
     }
 
-    public final void entityDeactivated( int entityId, final Aspects aspects ) {
+    public final void entityDeactivated( int entityId, final IAspects aspects ) {
         entityIds.remove( entityId );
     }
     

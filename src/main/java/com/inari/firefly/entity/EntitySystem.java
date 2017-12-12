@@ -22,7 +22,6 @@ import java.util.Set;
 import com.inari.commons.JavaUtils;
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.Aspects;
-import com.inari.commons.lang.indexed.IndexedType;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.indexed.Indexer;
@@ -533,7 +532,7 @@ public final class EntitySystem extends ComponentSystem<EntitySystem> {
         }
     }
     
-    public final static class Entity extends SystemComponent implements IndexedType {
+    public final static class Entity extends SystemComponent {
         
         public static final SystemComponentKey<Entity> ENTITY_TYPE_KEY = SystemComponentKey.create( Entity.class );
         static final AttributeKey<IntBag> ACTIVE_ENTITY_IDS = AttributeKey.createIntBag( "ACTIVE_ENTITY_IDS", Entity.class );

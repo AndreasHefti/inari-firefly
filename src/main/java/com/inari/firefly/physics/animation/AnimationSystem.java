@@ -18,7 +18,7 @@ package com.inari.firefly.physics.animation;
 import java.util.Set;
 
 import com.inari.commons.JavaUtils;
-import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.aspect.IAspects;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.entity.EntityActivationEvent;
@@ -81,11 +81,11 @@ public final class AnimationSystem
         );
     }
 
-    public final boolean match( Aspects aspects ) {
+    public final boolean match( IAspects aspects ) {
         return aspects.contains( EAnimation.TYPE_KEY );
     }
 
-    public final void entityActivated( int entityId, Aspects aspects ) {
+    public final void entityActivated( int entityId, IAspects aspects ) {
         DynArrayRO<AnimationMapping> animationMappings = context
             .getEntityComponent( entityId, EAnimation.TYPE_KEY )
             .getAnimationMappings();
@@ -105,7 +105,7 @@ public final class AnimationSystem
         }
     }
 
-    public final void entityDeactivated( int entityId, Aspects aspects ) {
+    public final void entityDeactivated( int entityId, IAspects aspects ) {
         for ( int i = 0; i < activeMappings.capacity(); i++ ) {
             AnimationMapping animationMapping = activeMappings.get( i );
             if ( animationMapping == null ) {

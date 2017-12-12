@@ -3,16 +3,6 @@ package com.inari.firefly.physics.movement;
 import com.inari.firefly.graphics.ETransform;
 
 public final class DummyIntegrator implements Integrator {
-    
-    private float gravity;
-
-    public final float getGravity() {
-        return gravity;
-    }
-
-    public final void setGravity( float gravity ) {
-        this.gravity = gravity;
-    }
 
     @Override
     public final void integrate( final EMovement movement, final ETransform transform, final float deltaTimeInSeconds ) {

@@ -1,7 +1,7 @@
 package com.inari.firefly.graphics.rendering;
 
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.aspect.IAspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
@@ -42,7 +42,7 @@ public abstract class Renderer extends SystemComponent {
         return TYPE_KEY;
     }
     
-    public final boolean accept( int entityId, Aspects aspects ) {
+    public final boolean accept( int entityId, IAspects aspects ) {
         final IndexedTypeSet components = entitySystem.getComponents( entityId );
         if ( accept( entityId, aspects, components ) ) {
             final ETransform transform = components.get( ETransform.TYPE_KEY );
@@ -55,7 +55,7 @@ public abstract class Renderer extends SystemComponent {
         return false;
     }
     
-    public final void dispose( int entityId, Aspects aspects ) {
+    public final void dispose( int entityId, IAspects aspects ) {
         final IndexedTypeSet components = entitySystem.getComponents( entityId );
         if ( accept( entityId, aspects, components ) ) {
             final ETransform transform = components.get( ETransform.TYPE_KEY );
@@ -66,11 +66,11 @@ public abstract class Renderer extends SystemComponent {
         }
     }
     
-    protected void accepted( int entityId, final Aspects aspects, final DynArray<IndexedTypeSet> renderablesOfView ) {
+    protected void accepted( int entityId, final IAspects aspects, final DynArray<IndexedTypeSet> renderablesOfView ) {
         // NOOP
     }
     
-    protected boolean accept( int entityId, Aspects aspects, IndexedTypeSet components ) {
+    protected boolean accept( int entityId, IAspects aspects, IndexedTypeSet components ) {
         return true;
     }
     
@@ -102,7 +102,7 @@ public abstract class Renderer extends SystemComponent {
         return spritesOfLayer;
     }
     
-    public abstract boolean match( final Aspects aspects );
+    public abstract boolean match( final IAspects aspects );
     
     
     public abstract void render( int viewId, int layerId, final Rectangle clip, final FFTimer timer );

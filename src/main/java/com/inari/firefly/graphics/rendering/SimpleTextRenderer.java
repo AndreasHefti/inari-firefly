@@ -3,6 +3,7 @@ package com.inari.firefly.graphics.rendering;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.aspect.IAspects;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.asset.Asset;
@@ -23,14 +24,14 @@ public final class SimpleTextRenderer extends Renderer {
         EText.TYPE_KEY 
     );
     
-    private final ExactTransformDataCollector renderingTranform = new ExactTransformDataCollector();
+    private final ExactTransformDataCollector renderingTransform = new ExactTransformDataCollector();
 
     protected SimpleTextRenderer( int index ) {
         super( index );
     }
 
     @Override
-    public final boolean match( Aspects aspects ) {
+    public final boolean match( IAspects aspects ) {
         return aspects.include( MATCHING_ASPECTS );
     }
 
@@ -55,25 +56,25 @@ public final class SimpleTextRenderer extends Renderer {
             textRenderable.blendMode = text.getBlendMode();
             textRenderable.tintColor = text.getTintColor();
             textRenderable.shaderId = text.getShaderId();
-            renderingTranform.set( transform );
+            renderingTransform.set( transform );
             float horizontalStep = ( font.getCharWidth() + font.getCharSpace() ) * transform.getScaleX();
             float verticalStep = ( font.getCharHeight() + font.getLineSpace() ) * transform.getScaleY();
             
             for ( char character : chars ) {
                 if ( character == '\n' ) {
-                    renderingTranform.xpos = transform.getXpos();
-                    renderingTranform.ypos += verticalStep;
+                    renderingTransform.xpos = transform.getXpos();
+                    renderingTransform.ypos += verticalStep;
                     continue;
                 }
                 
                 if ( character == ' ' ) {
-                    renderingTranform.xpos += horizontalStep;
+                    renderingTransform.xpos += horizontalStep;
                     continue;
                 }
 
                 textRenderable.spriteId = font.getSpriteId( character );
-                graphics.renderSprite( textRenderable, renderingTranform );
-                renderingTranform.xpos += horizontalStep;
+                graphics.renderSprite( textRenderable, renderingTransform );
+                renderingTransform.xpos += horizontalStep;
             }
         }
     }

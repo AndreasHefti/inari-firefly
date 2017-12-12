@@ -45,7 +45,7 @@ public final class FontAsset extends Asset implements TextureData {
         CHAR_TEXTURE_MAP,
         CHAR_WIDTH,
         CHAR_HEIGHT,
-        CHAR_HEIGHT,
+        CHAR_SPACE,
         LINE_SPACE,
         DEFAULT_CHAR
     );

@@ -19,7 +19,7 @@ import java.util.Set;
 
 import com.inari.commons.JavaUtils;
 import com.inari.commons.geom.Position;
-import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.aspect.IAspects;
 import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.entity.EntityActivationEvent;
 import com.inari.firefly.entity.EntityActivationListener;
@@ -89,7 +89,7 @@ public final class TileGridSystem
         tileGrids.map.get( tileGridId ).set( entityId, x, y );
     }
     
-    public final void entityActivated( int entityId, final Aspects aspects ) {
+    public final void entityActivated( int entityId, final IAspects aspects ) {
         final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         final ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         final TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
@@ -104,7 +104,7 @@ public final class TileGridSystem
         }
     }
     
-    public final void entityDeactivated( int entityId, final Aspects aspects ) {
+    public final void entityDeactivated( int entityId, final IAspects aspects ) {
         final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         final ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         final TileGrid tileGrid = getTileGrid( transform.getViewId(), transform.getLayerId() );
@@ -126,7 +126,7 @@ public final class TileGridSystem
         }
     }
     
-    public final boolean match( Aspects aspects ) {
+    public final boolean match( IAspects aspects ) {
         return aspects.contains( ETile.TYPE_KEY );
     }
 

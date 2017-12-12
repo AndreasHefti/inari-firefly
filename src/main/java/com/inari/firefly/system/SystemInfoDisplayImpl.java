@@ -101,10 +101,6 @@ final class SystemInfoDisplayImpl implements SystemInfoDisplay, PostRenderEventL
         }
     }
     
-    final CharSequence getInfo() {
-        return textbuffer;
-    }
-    
     final void renderSystemInfoDisplay() {
         update();
         

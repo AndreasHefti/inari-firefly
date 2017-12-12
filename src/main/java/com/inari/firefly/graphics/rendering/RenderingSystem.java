@@ -1,7 +1,7 @@
 package com.inari.firefly.graphics.rendering;
 
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.aspect.IAspects;
 import com.inari.commons.lang.indexed.IIndexedTypeKey;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntityActivationEvent;
@@ -59,11 +59,11 @@ public final class RenderingSystem implements FFSystem, RenderEventListener, Ent
         this.allowMultipleAcceptance = allowMultipleAcceptance;
     }
 
-    public final boolean match( final Aspects aspects ) {
+    public final boolean match( final IAspects aspects ) {
         return true;
     }
 
-    public final void entityActivated( final int entityId, final Aspects aspects ) {
+    public final void entityActivated( final int entityId, final IAspects aspects ) {
         for ( int i = 0; i < renderingChain.elements.capacity(); i++ ) {
             RenderingChain.Element element = renderingChain.elements.get( i );
             if ( element == null || element.renderer == null ) {
@@ -80,7 +80,7 @@ public final class RenderingSystem implements FFSystem, RenderEventListener, Ent
         }
     }
 
-    public final void entityDeactivated( final int entityId, final Aspects aspects ) {
+    public final void entityDeactivated( final int entityId, final IAspects aspects ) {
         for ( int i = 0; i < renderingChain.elements.capacity(); i++ ) {
             RenderingChain.Element element = renderingChain.elements.get( i );
             if ( element == null || element.renderer == null ) {

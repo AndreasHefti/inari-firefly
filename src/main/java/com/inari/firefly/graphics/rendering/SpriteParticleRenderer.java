@@ -2,6 +2,7 @@ package com.inari.firefly.graphics.rendering;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.aspect.IAspects;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArrayRO;
 import com.inari.firefly.entity.EntityComponent;
@@ -26,7 +27,7 @@ public final class SpriteParticleRenderer extends Renderer {
     }
 
     @Override
-    public boolean match( Aspects aspects ) {
+    public boolean match( IAspects aspects ) {
         return aspects.include( MATCHING_ASPECTS );
     }
 

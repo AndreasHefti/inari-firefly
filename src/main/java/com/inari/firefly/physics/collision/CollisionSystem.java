@@ -12,6 +12,7 @@ import com.inari.commons.lang.Named;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.aspect.IAspects;
 import com.inari.commons.lang.indexed.Indexed;
 import com.inari.commons.lang.list.IntBagRO;
 import com.inari.firefly.entity.EntityActivationEvent;
@@ -99,20 +100,20 @@ public final class CollisionSystem
         }
     }
     
-    public final boolean match( Aspects aspects ) {
+    public final boolean match( IAspects aspects ) {
         return aspects.contains( ECollision.TYPE_KEY ) && 
                aspects.contains( ETransform.TYPE_KEY ) && 
                !aspects.contains( ETile.TYPE_KEY );
     }
     
-    public final void entityActivated( int entityId, final Aspects aspects ) {
+    public final void entityActivated( int entityId, final IAspects aspects ) {
         final ContactPool pool = contactPools.get( context.getEntityComponent( entityId, ETransform.TYPE_KEY ) );
         if ( pool != null ) {
             pool.add( entityId );
         }
     }
 
-    public final void entityDeactivated( int entityId, final Aspects aspects ) {
+    public final void entityDeactivated( int entityId, final IAspects aspects ) {
         final ContactPool pool = contactPools.get( context.getEntityComponent( entityId, ETransform.TYPE_KEY ) );
         if ( pool != null ) {
             pool.remove( entityId );
