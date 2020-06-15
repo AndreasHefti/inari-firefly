@@ -1,5 +1,7 @@
 # Firefly
 
+NOTE: This project is out of date. For an actual implementation of Firefly on Kotlin please visit: https://github.com/Inari-Soft/flyKo
+
 [![Build Status](https://travis-ci.org/Inari-Soft/inari-firefly.svg?branch=master)](https://travis-ci.org/Inari-Soft/inari-firefly) 
 
 Projects this depends on:
